@@ -58,27 +58,33 @@ body {
 
 /* Member grid */
 /* Define cells using float and width */
-#membergrid .photol {
-  float: left;
-  width: 30%;
-}
-#membergrid .photor {
-  float: right;
-  width: 30%;
-}
-#membergrid .textl {
-  float: left;
+#membergrid .row div {
   width: 65%;
 }
-#membergrid .textr {
-  float: right;
-  width: 65%;
+#membergrid .row img {
+  width: 30%;
 }
-/* Prevent collapse of row element */
+#membergrid .row.photo-left img {
+  float: left;
+}
+#membergrid .row.photo-left div {
+  float: right;
+}
+#membergrid .row.photo-right img {
+  float: right;
+}
+#membergrid .row.photo-right div {
+  float: left;
+}
+/* Prevent collapse of row element due to using float */
 #membergrid .row:after {
   content: "";
   display: table;
   clear: both;
+}
+/* Add space between membergrid rows */
+#membergrid .row + .row {
+  margin-top: 1em;
 }
 
 /* Links */
