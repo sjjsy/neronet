@@ -1,1 +1,1 @@
-console.log('This would be the main JS file.');
+console.log('Hello mate, this is JS by Team 11 speaking!');
