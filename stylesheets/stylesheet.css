@@ -86,6 +86,11 @@ body {
 #membergrid .row + .row {
   margin-top: 1em;
 }
+/* Make membergrid text smaller */
+#membergrid p {
+  font-size: 0.8em;
+}
+
 
 /* Links */
 a {
