@@ -58,22 +58,22 @@ body {
 
 /* Member grid */
 /* Define cells using float and width */
-#membergrid .row div {
+#membergrid .row > div {
   width: 65%;
 }
-#membergrid .row img {
+#membergrid .row > img {
   width: 30%;
 }
-#membergrid .row.photo-left img {
+#membergrid .row.photo-left > img {
   float: left;
 }
-#membergrid .row.photo-left div {
+#membergrid .row.photo-left > div {
   float: right;
 }
-#membergrid .row.photo-right img {
+#membergrid .row.photo-right > img {
   float: right;
 }
-#membergrid .row.photo-right div {
+#membergrid .row.photo-right > div {
   float: left;
 }
 /* Prevent collapse of row element due to using float */
@@ -91,6 +91,10 @@ body {
   font-size: 0.8em;
   line-height: 1.3;
   margin-bottom: 0.5em;
+}
+/* Hide alternate divs */
+#membergrid .row div.relaxed {
+  display: none;
 }
 
 
@@ -365,6 +369,10 @@ footer a {
 }
 footer a:hover {
   color: #444;
+}
+
+th {
+  font-weight: bold;
 }
 
 /* MISC */
