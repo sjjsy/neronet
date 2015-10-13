@@ -1,5 +1,8 @@
+%%% Variables, functions and other settings
+%% Define document class and theme
 \documentclass{beamer}
 \usetheme{Goettingen}
+%% Define basic variables
 \title{Bootcamp}
 \subtitle{Getting sprint 0 started!}
 \author{Team 11}
@@ -12,41 +15,43 @@
 }
 \date{14th Oct 2015}
 \subject{Software engineering}
+%% Logo
+% Replace navigation symbols with a logo
 \logo{\includegraphics[height=1cm]{../gfx/logo_aalto.png}}
 \setbeamertemplate{navigation symbols}{\insertlogo}
+%% Functions
 % Define short set and clear background commands
-\newcommand{\bgset}[1]{
-  \usebackgroundtemplate{
-    \includegraphics[width=\paperwidth,height=\paperheight]{#1}
-  }
-}
+\newcommand{\bgset}[1]{\usebackgroundtemplate{
+  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
 \newcommand{\bgclear}{\usebackgroundtemplate{}}
-% Make LaTeX render a so called "outline" frame prior each new section
-\AtBeginSubsection[]
-{
+% Have LaTeX render an outline frame just before each new section/subsection
+\AtBeginSection[]{
+  \bgset{../gfx/neural4__bgmod.jpg}
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+  \bgset{../gfx/neural3__bgmod.jpg}}
+\AtBeginSubsection[]{
   \bgset{../gfx/neural4__bgmod.jpg}
   \begin{frame}<beamer>{Outline}
     \tableofcontents[currentsection,currentsubsection]
   \end{frame}
-  \bgclear
-}
-% Actual content
+  \bgset{../gfx/neural3__bgmod.jpg}}
+%%% Main document content
 \begin{document}
-% Title page
+%% Title page
 \bgset{../gfx/neural2__bgmod.jpg}
 \begin{frame}
   \titlepage
 \end{frame}
-% Outline page
+%% Outline page
 \bgset{../gfx/neural4__bgmod.jpg}
 \begin{frame}{Outline}
   \tableofcontents[pausesections]
 \end{frame}
-% Content pages
-
+%% Content pages
 \section{Things to do}
-
-\subsection{Overview} \bgset{../gfx/neural3__bgmod.jpg}
+\subsection{Overview}
 \begin{frame}{Overview}{}
   Things to do in Sprint 0:
   \begin{enumerate}
@@ -59,8 +64,7 @@
   \pause \item Get ready for sprint 1
   \end{enumerate}
 \end{frame}
-
-\subsection{Artifacts} \bgset{../gfx/neural3__bgmod.jpg}
+\subsection{Artifacts}
 \begin{frame}{Artifacts}{}
   Artifacts to prepare:
   \begin{enumerate}
@@ -75,7 +79,6 @@
   \end{enumerate}
   \pause \alert{Enough work} \pause for \alert{everyone}, huh!?
 \end{frame}
-
 \bgset{../gfx/neural1__bgmod.jpg}
 \begin{frame}{Product Vision}{}
   \begin{itemize}
@@ -133,10 +136,8 @@
   \end{itemize}
   Should be kept in mind though.
 \end{frame}
-
 \section{How to do them}
-
-\subsection{Notes} \bgset{../gfx/neural3__bgmod.jpg}
+\subsection{Notes}
 \begin{frame}{Notes}{}
   Some notes:
   \begin{enumerate}
@@ -150,8 +151,7 @@
   \end{enumerate}
   \pause So let's get working shall we!
 \end{frame}
-
-\subsection{Ideas} \bgset{../gfx/neural3__bgmod.jpg}
+\subsection{Ideas}
 \begin{frame}{Ideas}{}
   Ideas:
   \begin{itemize}
@@ -170,8 +170,7 @@
     \includegraphics[width=0.8\columnwidth]{../gfx/subteam_process.png}
   \end{figure}
 \end{frame}
-
-\subsection{Subteams} \bgset{../gfx/neural3__bgmod.jpg}
+\subsection{Subteams}
 \begin{frame}{Subteams}{}
   How about:
   \begin{table}
@@ -191,8 +190,7 @@
   \pause It's about balancing team\alert{power} and team\alert{waste}: \\
   $1 + 1 \approx 2.5$ but $8 ~\textrm{min} \times 7 \approx 1 ~\textrm{hour}$
 \end{frame}
-
-\subsection{Work allocation} \bgset{../gfx/neural3__bgmod.jpg}
+\subsection{Work allocation}
 \begin{frame}{Work allocation}{}
   How about we distribute the work thus:
   \begin{table}
@@ -207,7 +205,6 @@
   \end{table}
   \pause Fair?
 \end{frame}
-
 \subsection{Timeline} \bgset{../gfx/neural1__bgmod.jpg}
 \begin{frame}{Timeline}{}
   \begin{figure}
@@ -215,7 +212,6 @@
     \includegraphics[width=0.8\columnwidth]{../gfx/subteam_process_fixed.png}
   \end{figure}
 \end{frame}
-
 \section*{Summary}
 \begin{frame}{Summary}
   Main points:
@@ -226,12 +222,9 @@
   \pause \item It's better to start working now
   \end{itemize}
 \end{frame}
-
 \section*{Discussion}
 \begin{frame}{Discussion}
   Thanks for your patience! \\[1cm]
-  
   What did/do you think?
 \end{frame}
-
 \end{document}

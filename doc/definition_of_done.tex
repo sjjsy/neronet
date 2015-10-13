@@ -1,0 +1,78 @@
+%%% Variables, functions and other settings
+%% Define document class and theme
+\documentclass{beamer}
+\usetheme{Goettingen}
+%% Define basic variables
+\title{Definition of Done}
+\subtitle{}
+\author{Team 11}
+\institute[]{
+  Project 2 \\
+  Toolbox for managing the training \\
+  neural networks (Pyry Takala) \\[0.3cm]
+  CSE-C2610 Software Project \\
+  Aalto University
+}
+\date{14th Oct 2015}
+\subject{Software engineering}
+%% Logo
+% Replace navigation symbols with a logo
+\logo{\includegraphics[height=1cm]{gfx/logo_aalto.png}}
+\setbeamertemplate{navigation symbols}{\insertlogo}
+%% Functions
+% Define short set and clear background commands
+\newcommand{\bgset}[1]{\usebackgroundtemplate{
+  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
+\newcommand{\bgclear}{\usebackgroundtemplate{}}
+%%% Main document content
+\begin{document}
+%% Title page
+\bgset{gfx/neural2__bgmod.jpg}
+\begin{frame}
+  \titlepage
+\end{frame}
+%% Outline page
+\bgset{gfx/neural3__bgmod.jpg}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+%% Content pages
+\section{Introduction}
+\begin{frame}{Overview}{}
+  We have defined \emph{Done} in two levels:
+  \begin{itemize}
+  \item At the product backlog item level
+  \item At the sprint level
+  \end{itemize}
+  To ensure high quality we have specified important quality attributes
+  to make sure non-functional requirements are always met.
+\end{frame}
+\section{Quality attributes}
+\begin{frame}{Quality attributes}{}
+  \begin{itemize}
+  \item Usability
+  \item Security
+  \item Performance
+  \item Attribute 4
+  \item Attribute 5
+  \end{itemize}
+\end{frame}
+\section{DoD at PBI level}
+\begin{frame}{DoD at PBI level}{}
+  A product backlog item is complete if
+  \begin{itemize}
+  \item Criteria for unit test coverage
+  \item Criteria for functional system test coverage
+  \item Criteria for coding standard
+  \end{itemize}
+\end{frame}
+\section{DoD at Sprint level}
+\begin{frame}{DoD at Sprint level}{}
+  A sprint is complete if
+  \begin{itemize}
+  \item Criteria for unit test coverage
+  \item Criteria for functional system test coverage
+  \item Criteria for coding standard
+  \end{itemize}
+\end{frame}
+\end{document}

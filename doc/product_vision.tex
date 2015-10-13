@@ -1,0 +1,67 @@
+%%% Variables, functions and other settings
+%% Define document class and theme
+\documentclass{beamer}
+\usetheme{Goettingen}
+%% Define basic variables
+\title{Product Vision}
+\subtitle{}
+\author{Team 11}
+\institute[]{
+  Project 2 \\
+  Toolbox for managing the training \\
+  neural networks (Pyry Takala) \\[0.3cm]
+  CSE-C2610 Software Project \\
+  Aalto University
+}
+\date{14th Oct 2015}
+\subject{Software engineering}
+%% Logo
+% Replace navigation symbols with a logo
+\logo{\includegraphics[height=1cm]{gfx/logo_aalto.png}}
+\setbeamertemplate{navigation symbols}{\insertlogo}
+%% Functions
+% Define short set and clear background commands
+\newcommand{\bgset}[1]{\usebackgroundtemplate{
+  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
+\newcommand{\bgclear}{\usebackgroundtemplate{}}
+%%% Main document content
+\begin{document}
+%% Title page
+\bgset{gfx/neural2__bgmod.jpg}
+\begin{frame}
+  \titlepage
+\end{frame}
+%% Outline page
+\bgset{gfx/neural3__bgmod.jpg}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+%% Content pages
+\section{Why}
+\begin{frame}{Why}{}
+  Purposes
+  \begin{itemize}
+  \item a
+  \item b
+  \item c
+  \end{itemize}
+\end{frame}
+\section{What}
+\begin{frame}{What}{}
+  Functionalities
+  \begin{itemize}
+  \item a
+  \item b
+  \item c
+  \end{itemize}
+\end{frame}
+\section{For whom}
+\begin{frame}{For whom}{}
+  Users
+  \begin{itemize}
+  \item a
+  \item b
+  \item c
+  \end{itemize}
+\end{frame}
+\end{document}

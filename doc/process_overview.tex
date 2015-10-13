@@ -1,0 +1,117 @@
+%%% Variables, functions and other settings
+%% Define document class and theme
+\documentclass{beamer}
+\usetheme{Goettingen}
+%% Define basic variables
+\title{Process Overview}
+\subtitle{}
+\author{Team 11}
+\institute[]{
+  Project 2 \\
+  Toolbox for managing the training \\
+  neural networks (Pyry Takala) \\[0.3cm]
+  CSE-C2610 Software Project \\
+  Aalto University
+}
+\date{14th Oct 2015}
+\subject{Software engineering}
+%% Logo
+% Replace navigation symbols with a logo
+\logo{\includegraphics[height=1cm]{gfx/logo_aalto.png}}
+\setbeamertemplate{navigation symbols}{\insertlogo}
+%% Functions
+% Define short set and clear background commands
+\newcommand{\bgset}[1]{\usebackgroundtemplate{
+  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
+\newcommand{\bgclear}{\usebackgroundtemplate{}}
+% Have LaTeX render an outline frame just before each new section
+\AtBeginSection[]{
+  \bgset{gfx/neural3__bgmod.jpg}
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+  \bgset{gfx/neural1__bgmod.jpg}}
+%%% Main document content
+\begin{document}
+%% Title page
+\bgset{gfx/neural2__bgmod.jpg}
+\begin{frame}
+  \titlepage
+\end{frame}
+%% Outline page
+\bgset{gfx/neural3__bgmod.jpg}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+%% Content pages
+\section{Schedule}
+\subsection{Sprints}
+\begin{frame}{Sprints}{}
+  Diagram or table of sprints over time
+\end{frame}
+\begin{frame}{Workload}{}
+  Diagram or table of workload over sprints
+\end{frame}
+\subsection{Weeks}
+\begin{frame}{Week 1}{}
+  Diagram or table of week's activity
+\end{frame}
+\begin{frame}{Week 2}{}
+  Diagram or table of week's activity
+\end{frame}
+\begin{frame}{Week 3}{}
+  Diagram or table of week's activity
+\end{frame}
+% add other weeks!
+\section{Recurring events}
+\subsection{Overview}
+\begin{frame}{Overview}{}
+  Recurring events:
+  \begin{itemize}
+  \item Sprint Planning
+  \item Sprint Review
+  \item Sprint Retrospective
+  \item Daily Scrums
+  \item Teamwork sessions
+  \end{itemize}
+\end{frame}
+\subsection{Events}
+\begin{frame}{Sprint Planning}{}
+  Description.
+\end{frame}
+\begin{frame}{Sprint Review}{}
+  Description.
+\end{frame}
+% add the rest: Sprint Retrospective, Daily Scrums, Teamwork sessions
+\section{Practices}
+\subsection{Overview}
+\begin{frame}{Overview}{}
+  Used practices and tools:
+  \begin{itemize}
+  \item Testing \& quality assurance: ?
+  \item Communication: Flowdock, Email, GitHub issues, ?
+  \item Backlog management: Trello
+  \item Time tracking: ?
+  \item Version control: GitHub
+  \item Any other practices?
+  \end{itemize}
+\end{frame}
+\subsection{Information}
+\begin{frame}{Quality assurance}{}
+  Testing and other quality assurance practices. Also link or embed Definition
+  of Done here.
+\end{frame}
+\begin{frame}{Communication}{}
+  Communication channel(s)
+\end{frame}
+\begin{frame}{Backlog management}{}
+  Backlog management
+\end{frame}
+\begin{frame}{Time tracking}{}
+  Time tracking
+\end{frame}
+\begin{frame}{Version control}{}
+  Version control
+\end{frame}
+% Any other practices …
+\end{document}

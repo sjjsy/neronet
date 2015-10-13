@@ -1,0 +1,86 @@
+%%% Variables, functions and other settings
+%% Define document class and theme
+\documentclass{beamer}
+\usetheme{Goettingen}
+%% Define basic variables
+\title{Technical Overview}
+\subtitle{}
+\author{Team 11}
+\institute[]{
+  Project 2 \\
+  Toolbox for managing the training \\
+  neural networks (Pyry Takala) \\[0.3cm]
+  CSE-C2610 Software Project \\
+  Aalto University
+}
+\date{14th Oct 2015}
+\subject{Software engineering}
+%% Logo
+% Replace navigation symbols with a logo
+\logo{\includegraphics[height=1cm]{gfx/logo_aalto.png}}
+\setbeamertemplate{navigation symbols}{\insertlogo}
+%% Functions
+% Define short set and clear background commands
+\newcommand{\bgset}[1]{\usebackgroundtemplate{
+  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
+\newcommand{\bgclear}{\usebackgroundtemplate{}}
+% Have LaTeX render an outline frame just before each new section
+\AtBeginSection[]{
+  \bgset{gfx/neural3__bgmod.jpg}
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+  \bgset{gfx/neural1__bgmod.jpg}}
+%%% Main document content
+\begin{document}
+%% Title page
+\bgset{gfx/neural2__bgmod.jpg}
+\begin{frame}
+  \titlepage
+\end{frame}
+%% Outline page
+\bgset{gfx/neural3__bgmod.jpg}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+%% Content pages
+\section{Overview}
+\begin{frame}{Overview}{}
+  Diagram or table of architecture overview.
+\end{frame}
+\section{Components}
+\begin{frame}{Component 1}{}
+  Description of the component its responsibilities, interfaces, and what
+  are the used frameworks and technologies.
+\end{frame}
+\begin{frame}{Component 2}{}
+  Description of the component its responsibilities, interfaces, and what
+  are the used frameworks and technologies.
+\end{frame}
+\begin{frame}{Component 3}{}
+  Description of the component its responsibilities, interfaces, and what
+  are the used frameworks and technologies.
+\end{frame}
+\section{Views}
+\begin{frame}{View 1}{}
+  An enlightning view.
+  % Read https://leanpub.com/visualising-software-architecture/read
+\end{frame}
+\begin{frame}{View 2}{}
+  Another enlightning view.
+  % Read https://leanpub.com/visualising-software-architecture/read
+\end{frame}
+\begin{frame}{View 3}{}
+  Yet another enlightning view.
+  % Read https://leanpub.com/visualising-software-architecture/read
+\end{frame}
+\section{Remarks}
+\begin{frame}{Remarks}{}
+  \begin{itemize}
+  \item remark 1
+  \item remark 2
+  \item remark 3
+  \end{itemize}
+\end{frame}
+% Any other practices …
+\end{document}
