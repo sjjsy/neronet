@@ -1,0 +1,45 @@
+20:32:05 Starting an experiment on 2015-05-13 on host pc241. Parameters: Namespace(allow_dataset_reuse='False', dropout='0.10', epochs=1, filter_width='3', input='simple_sentences_500', input_test=None, l_combining='256', load_from=None, lowercase='True', m_rate='0.2', ma_dimensions=None, mb_size='10', mode='train', n_filters='10', n_o_threshold='5000', name='language_model', poolsize='3', pseudo_words=None, randomize_only_endings='False', rap='False', rapwords='1', stems_file='fi_stems.pickle', training_error='True', use_stemmer=None, vect_type='om', wi_layers='256', win_size='7', wo_layers='256')
+20:32:05 Started experiment language_model on pc241. Latest commit was bcf778a3cc9ebd363cc82b2ac01003e1aab25106
+20:32:05 Preprocessing: Creating temp-file (paddings, lowerc, stems)
+20:32:05 Preprocessing: text. 0 / 500 sentences.
+20:32:05 Preprocessing: Creating dictionaries.
+20:32:05 Preprocessing: Saving validation and test-data.
+20:32:05 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:05 Preprocessing: Preparing megabatch 1 / -1000
+20:32:05 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:05 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:05 Preprocessing: Preparing megabatch 1 / -1000
+20:32:05 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:05 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:05 Preprocessing: Creating megabatches.
+20:32:05 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:05 Preprocessing: Preparing megabatch 1 / 2
+20:32:05 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:06 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:06 Preprocessing: Preparing megabatch 2 / 2
+20:32:06 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:06 Temp-dir: 0 mb, RAM 18.4 percent
+20:32:06 Preprocessing: Dataset preprocessed.
+20:32:06 Temp-dir: 0 mb, RAM 18.3 percent
+20:32:06 Loading megabatch 1/2.
+20:32:06 Created dataset for language_model on pc241
+20:32:06 Building monitor without train
+20:32:06 Starting training of language_model on pc241
+20:32:06 Overriding channel total_update frequency to epoch
+20:32:06 Overriding channel training_error frequency to epoch
+20:32:06 Overriding channel test_error frequency to epoch
+20:32:08 Loading megabatch 1/2.
+20:32:08 Saving initial values
+20:32:08 Loading megabatch 1/2.
+20:32:08 nvcc compiler not found on $PATH. Check your nvcc installation and try again.
+20:32:08 Updated altogether 6 channels in 0:00:00.145317
+20:32:08 Loading megabatch 1/2.
+20:32:08 Starting training of language_model
+20:32:09 Loading megabatch 2/2.
+20:32:11 Loading megabatch 1/2.
+20:32:11 Saving parameters of language_model
+20:32:11 First epoch took 0:00:02.694695, estimated time remaining 0:00:00
+20:32:11 Finished training of language_model on pc241
+20:32:11 Training took 4.95404
+20:32:11 Latest commit was bcf778a3cc9ebd363cc82b2ac01003e1aab25106
+20:32:11 The network has 539648 params ([80384, 458752, 512]).
