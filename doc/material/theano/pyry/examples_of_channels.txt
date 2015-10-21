@@ -1,0 +1,83 @@
+# Channels that simply get what train gives
+class ChannelFromTrain(ChannelBase):
+    from_train = True
+    def _prepare_for_updates(self, p, trn, data, mdl, mon):
+        pass
+
+
+class TrainingCost(ChannelFromTrain):
+    name = "training_cost"
+    per_weight = False
+    freq = "mb"
+
+
+class LearningRateAdadelta(ChannelFromTrain):
+    name = "learning_rate_adadelta"
+    per_weight = True
+    freq = "mb"
+
+
+class LearningRateAdadeltaMax(ChannelFromTrain):
+    name = "learning_rate_adadelta_max"
+    per_weight = True
+    freq = "mb"
+
+
+class LearningRate(ChannelFromTrain):
+    name = "learning_rate"
+    per_weight = False
+    freq = "mb"
+
+
+class TotalGradient(ChannelFromTrain):
+    name = "total_gradient"
+    per_weight = False
+    freq = "mb"
+
+
+class PerMatrixGradient(ChannelFromTrain):
+    name = "per_matrix_gradient"
+    per_weight = True
+    freq = "mb"
+
+
+class TotalUpdate(ChannelFromTrain):
+    name = "total_update"
+    per_weight = True
+    freq = "mb"
+
+
+class ScalingMultiplier(ChannelFromTrain):
+    name = "scaling_multiplier"
+    per_weight = True
+    freq = "mb"
+
+
+class HFDuration(ChannelFromTrain):
+    name = "hf_duration"
+    per_weight = False
+    freq = "mb"
+
+
+class SGDDuration(ChannelFromTrain):
+    name = "sgd_duration"
+    per_weight = False
+    freq = "mb"
+
+
+class InitDuration(ChannelFromTrain):
+    name = "init_duration"
+    per_weight = False
+    freq = "begin"
+
+
+class MonTestDuration(ChannelFromTrain):
+    name = "mon_test_duration"
+    per_weight = False
+    freq = "mb"
+
+
+class NetParams(ChannelBase):
+    name = "netparams"
+    per_weight = True
+    freq = "epoch"
