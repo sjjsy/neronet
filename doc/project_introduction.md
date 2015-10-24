@@ -34,7 +34,7 @@ difficulties:
 
 ## State of the art
 
-The deep learning researchers at Aalto currently utilize three different
+The deep learning researchers at Aalto currently utilize a few different
 methods to meet their computational needs:
 
 - **byom** as in *bring your own machine* is the first way to test simple
@@ -66,7 +66,7 @@ methods to meet their computational needs:
   he realized they had a system similar to `gpu`.
 
 [slurm]: https://computing.llnl.gov/linux/slurm/
-[triton]: triton.aalto.fi
+[triton]: http://triton.aalto.fi
 
 TODO: yksinkertainen ssh työkalu, tutustaan: slurm, markkinat, muut mahdollisuudet
 
@@ -189,3 +189,29 @@ machine learning and deep learning during the project.
 - Tärkeää myös voida seurata tietokoneiden resursseja, mm. gpun muisti, ram,
   disk-space. Ideaalisti tietää jo ennen ajoa että esim. diskspace riittää
 - Profilointi (python, theano, etc.)
+
+# Existing tools
+
+## SLURM
+
+URL: [https://computing.llnl.gov/linux/slurm/][https://computing.llnl.gov/linux/slurm/]
+
+Simple Linux Utility for Resource Management (SLURM) is an open source,
+fault-tolerant, and highly scalable cluster management and job scheduling
+system for large and small Linux clusters.
+
+### Features
+
+Foobar
+
+### Technical overview
+
+Foobar
+
+### Extendability
+
+Foobar
+
+### Co-workability
+
+Foobar
