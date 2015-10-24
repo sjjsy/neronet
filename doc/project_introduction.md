@@ -194,7 +194,7 @@ machine learning and deep learning during the project.
 
 ## SLURM
 
-URL: [https://computing.llnl.gov/linux/slurm/]
+URL: https://computing.llnl.gov/linux/slurm/
 
 Simple Linux Utility for Resource Management (SLURM) is an open source,
 fault-tolerant, and highly scalable cluster management and job scheduling
