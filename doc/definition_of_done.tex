@@ -31,48 +31,64 @@
 \begin{frame}
   \titlepage
 \end{frame}
-%% Outline page
-\bgset{gfx/neural3__bgmod.jpg}
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
 %% Content pages
 \section{Introduction}
 \begin{frame}{Overview}
-  We have defined \emph{Done} in two levels:
-  \begin{itemize}
-  \item At the product backlog item level
+  We have defined \emph{Done} in three levels:
+
+  \begin{enumerate}
+  \item At the backlog item level
   \item At the sprint level
-  \end{itemize}
+  \item At the project level
+  \end{enumerate}
+
   To ensure high quality we have specified important quality attributes
-  to make sure non-functional requirements are always met.
+  to make sure non-functional requirements are respected.
 \end{frame}
 \section{Quality attributes}
 \begin{frame}{Quality attributes}
+  High priority quality attributes:
+
   \begin{itemize}
-  \item Usability
-  \item Security
+  \item Usability (easy for newbies)
+  \item Security (user data)
   \item Performance
-  \item Attribute 4
-  \item Attribute 5
+  %\item Attribute 4
+  %\item Attribute 5
   \end{itemize}
 \end{frame}
-\section{DoD at PBI level}
-\begin{frame}{DoD at PBI level}
-  A product backlog item is complete if
+\section{DoD at BI level}
+\begin{frame}{DoD at BI level}
+  A backlog item is \emph{Done} if
+
   \begin{itemize}
-  \item Criteria for unit test coverage
-  \item Criteria for functional system test coverage
-  \item Criteria for coding standard
+  \item unit test coverage $> 90\%$
+  \item functional system test coverage $> 80\%$
+  \item code confroms to guidelines
+  \item code is commented and documented
+  \item independent peer review has been completed
+  %\item Criteria for coding standard
   \end{itemize}
 \end{frame}
-\section{DoD at Sprint level}
-\begin{frame}{DoD at Sprint level}
-  A sprint is complete if
+\section{DoD at sprint level}
+\begin{frame}{DoD at sprint level}
+  A sprint is \emph{Done} if
+
   \begin{itemize}
-  \item Criteria for unit test coverage
-  \item Criteria for functional system test coverage
-  \item Criteria for coding standard
+  \item All BIs in the sprint backlog are \emph{Done}
+  \item Increment is tested and reviewed
+  \item Sprint goal is achieved
+  \end{itemize}
+\end{frame}
+\section{DoD at project level}
+\begin{frame}{DoD at project level}
+  A project is \emph{Done} if
+
+  \begin{itemize}
+  \item All sprints are \emph{Done}
+  \item The project is documented, tested and reviewed
+  \item The project results reflects the Product Vision
+  \item The PO is satisfied
   \end{itemize}
 \end{frame}
 \end{document}

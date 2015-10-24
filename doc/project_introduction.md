@@ -32,6 +32,44 @@ difficulties:
 [link2]: https://www.youtube.com/watch?v=V1eYniJ0Rnk
 [link3]: http://www.wired.com/2015/06/ais-next-frontier-machines-understand-language/
 
+## State of the art
+
+The deep learning researchers at Aalto currently utilize three different
+methods to meet their computational needs:
+
+- **byom** as in *bring your own machine* is the first way to test simple
+  computations. However, the lack of computing power and preinstalled and
+  configured tools as well as interference with other tasks required of
+  the machine make this method an inpopular one.
+- **gpu**s are a group of servers with powerful GPUs maintained by Aalto CS
+  Department (Simo Tuomisto, 3rd floor).
+  These servers named `gpu1`, `gpu2`, and so on are accessible
+  by SSH by anyone with an Aalto IT account. The department's sysadmins
+  maintain the machines and install generally useful software on request.
+  Researchers use `virtualenv` to manage their own libraries.
+  Certain user directories that are automounted in Aalto work desktops are
+  also mounted on these servers which facilitates file management.
+- **triton** (see [triton]) is a computer cluster managed by Aalto for
+  use by all Aalto researchers.
+  It utilizes the [slurm] queuing and task management system
+  to distribute computing resources to researchers. In practice, researchers
+  access a gateway server using SSH and then add their scripts to the queue
+  with a command of the form `slurm OPTIONS FILES`. A nasty aspect for deep
+  learning researchers is that they might have little knowledge of when and
+  how their experiment is progressing.
+  Similar to the case with `gpu` some user directories are also available
+  here.
+- **csc** is another cluster managed by the Finnish IT center for science.
+  From Aalto researchers' point of view, it is basically similar to `triton`
+  but harder to access and with no filesystem shares.
+- **amazon** is a commercial choice. When Pyry was doing research at Amazon
+  he realized they had a system similar to `gpu`.
+
+[slurm]: https://computing.llnl.gov/linux/slurm/
+[triton]: triton.aalto.fi
+
+TODO: yksinkertainen ssh työkalu, tutustaan: slurm, markkinat, muut mahdollisuudet
+
 ## Project goals
 
 A good toolbox for deep learning would let a researcher easily specify

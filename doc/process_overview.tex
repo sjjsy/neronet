@@ -48,6 +48,14 @@
 \subsection{Sprints}
 \begin{frame}{Sprints}
   Diagram or table of sprints over time
+;Sprint;Start;End;Days;Samuel;Matias;Iiro;Joona;Teemu;Tuomo;Juho;Comments
+;Sprint 0;19.10.;13.11.;25;50;35;35;35;35;35;35;
+;Sprint 1;13.11.;4.12.;21;35;34;34;34;34;34;34;Sprint change done before project review (7.-9.12.)
+;Sprint 2;4.12.;11.1.;38;20;34;34;34;34;34;34;Exams (7.-18.12.) and holidays (23.12.-1.1.)
+;Sprint 3;11.1.;1.2.;21;15;34;34;34;34;34;34;
+;Sprint 4;1.2.;29.2.;28;15;34;34;34;34;34;34;Exams (15.-19.2.)
+;Sprint 5;29.2.;21.3.;21;20;34;34;34;34;34;34;
+;Sprint 6;21.3.;11.4.;21;20;20;20;20;20;20;20;Only polishing & documenting for final review (11.-13.4.) amid exams (4.-9.4)
 \end{frame}
 \begin{frame}{Workload}
   Diagram or table of workload over sprints
@@ -63,10 +71,11 @@
   Diagram or table of week's activity
 \end{frame}
 % add other weeks!
-\section{Recurring events}
+\section{Recurring events} %Concrete, short instructions (e.g. when, organizer \& participants, how, results) for at least the following activities.
 \subsection{Overview}
 \begin{frame}{Overview}
   Recurring events:
+
   \begin{itemize}
   \item Sprint Planning
   \item Sprint Review
@@ -77,41 +86,131 @@
 \end{frame}
 \subsection{Events}
 \begin{frame}{Sprint Planning}
-  Description.
+  At the beginning of each sprint
+
+  \begin{itemize}
+  \item We define with the PO:
+    \begin{itemize}
+    \item the Sprint Goal (broad definition of the next increment)
+    \item the Sprint Backlog (an ordered list of BLIs included in the sprint)
+    \end{itemize}
+  \item The team starts planning how the chosen work will get done.
+  \end{itemize}
 \end{frame}
 \begin{frame}{Sprint Review}
-  Description.
+  At the end of each sprint
+
+  \begin{itemize}
+  \item We
+    \begin{itemize}
+    \item demonstrate the stories we were able to get done
+    \item adapt the product backlog based on the results, if needed
+    \end{itemize}
+  \end{itemize}
 \end{frame}
-% add the rest: Sprint Retrospective, Daily Scrums, Teamwork sessions
-\section{Practices}
+\begin{frame}{Sprint Retrospective}
+  \begin{itemize}
+  \item When: after the sprint review
+  \item What: We
+    \begin{itemize}
+    \item discuss how teamwork could be improved
+    \item evaluate and rank practices, replace bad ones, if needed
+    \item plan implementation of improvements
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+\begin{frame}{Daily Scrums}
+  \begin{itemize}
+  \item When: On Mondays and Fridays
+  \item What: Everyone quickly explains what
+    \begin{itemize}
+    \item they did since last Scrum
+    \item they plan to do next
+    \item problems have arisen
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+\begin{frame}{Teamwork sessions}
+  Most weeks, we'll have
+
+  \begin{itemize}
+  \item a quick remote Scrum on Mondays
+  \item a 2h session on Wednesdays
+  \item a Scrum and a 7h session on Fridays
+  \end{itemize}
+
+  In addition, we work remotely individually.
+\end{frame}
+\section{Practices} % Concrete, short instructions (e.g. when, by whom, how, results) for other main practices and tools.
 \subsection{Overview}
 \begin{frame}{Overview}
   Used practices and tools:
+
   \begin{itemize}
-  \item Testing \& quality assurance: ?
-  \item Communication: Flowdock, Email, GitHub issues, ?
-  \item Backlog management: Trello
-  \item Time tracking: ?
+  \item Testing \& quality assurance: DoD
+  \item Communication: Flowdock, Email, WhatsApp
+  \item Backlog management: Agilefant
+  \item Time tracking: Agilefant
   \item Version control: GitHub
   \item Any other practices?
   \end{itemize}
 \end{frame}
 \subsection{Information}
 \begin{frame}{Quality assurance}
-  Testing and other quality assurance practices. Also link or embed Definition
-  of Done here.
+  We guarantee quality by making
+
+  \begin{itemize}
+  \item sure team members adhere to the DoD.
+  \item each member responsible for the quality of the code he reviewed.
+  \item the PO is responsible for the quality of goals and value of stories.
+  \end{itemize}
+
+  The DoD is available here: FIXME
 \end{frame}
 \begin{frame}{Communication}
-  Communication channel(s)
+  We use the following channels:
+
+  \begin{itemize}
+  \item Flowdock – general forum for everyday discussion
+  \item Email – communication with PO and Coach
+  \item WhatsApp/Phone – urgent team communication
+  \end{itemize}
+
+  The SM communicates with the PO and Coach.
 \end{frame}
 \begin{frame}{Backlog management}
-  Backlog management
+  Agilefant is used for all backlogs.
+  
+  When defining BIs we specify
+
+  \begin{enumerate}
+  \item story points (by team)
+  \item value (by PO)
+  \item effort estimates (by team)
+  \item initial assignees (by team)
+  \end{enumerate}
 \end{frame}
 \begin{frame}{Time tracking}
-  Time tracking
+  We track our worktime with Agilefant by logging each session
+  duration as effort spent to a story or task.
 \end{frame}
 \begin{frame}{Version control}
-  Version control
+  We use Git with GitHub with branches:
+
+  \begin{itemize}
+  \item stable – tested and working version
+  \item sprint – increment work in progress
+  \item storyX – story work in progress
+  \end{itemize}
+
+  Our development process has four steps:
+
+  \begin{enumerate}
+  \item We assign a developer and reviewer for each story
+  \item The story assignee develops the story in a new branch
+  \item He makes a merge request once his work is ready for review
+  \item The reviewer merges the story to the sprint only when it meets the DoD
+  \end{enumerate}
 \end{frame}
-% Any other practices …
+% Any other practices?
 \end{document}
