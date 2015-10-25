@@ -63,7 +63,9 @@ methods to meet their computational needs:
   From Aalto researchers' point of view, it is basically similar to `triton`
   but harder to access and with no filesystem shares.
 - **amazon** is a commercial choice. When Pyry was doing research at Amazon
-  he realized they had a system similar to `gpu`.
+  he realized their systems were no different from those at the Aalto CS Dep.
+  One could hire servers like the `gpu`s start an SSH session in one and start
+  coding.
 
 [slurm]: https://computing.llnl.gov/linux/slurm/
 [triton]: http://triton.aalto.fi
