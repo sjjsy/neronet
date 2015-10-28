@@ -2,6 +2,7 @@
 %% Define document class and theme
 \documentclass{beamer}
 \usetheme{Goettingen}
+\hypersetup{colorlinks,linkcolor=,urlcolor=magenta}
 %% Define basic variables
 \title{Process Overview}
 \subtitle{}
@@ -101,10 +102,10 @@
   \begin{enumerate}
   \item Before the session
     \begin{itemize}
-    \item the PO makes sure the product backlog contains an ordered list
+    \item the PO makes sure the \alert{product backlog} contains an ordered list
     of items with a description and a number depicting business value
     \item the team plays planning poker to define effort estimates
-    (story points) for each BI
+    (\alert{story points}) for each BI
     \end{itemize}
   \item During it the team and the PO
     \begin{itemize}
@@ -113,9 +114,9 @@
     \end{itemize}
   \item After it, the team
     \begin{itemize}
-    \item chews the BIs into smaller bits
-    \item assigns effort estimates on the bits (planning poker)
-    \item assigns a developer and a reviewer to each bit
+    \item chews the BIs into \alert{smaller tasks}
+    \item assigns effort estimates on the tasks by \alert{planning poker}
+    \item assigns a \alert{developer and a reviewer} to each task
     \end{itemize}
   \end{enumerate}
 \end{frame}
@@ -174,13 +175,11 @@
   We guarantee quality by making
 
   \begin{itemize}
-  \item sure team members adhere to the DoD.
+  \item sure team members adhere to the \href{https://github.com/smarisa/sdpt11/raw/master/doc/definition_of_done.pdf}{DoD}.
   \item each member responsible for the quality of the code he reviewed.
   \item the PO is responsible for the business value of sprint goals and
   BIs and for making sure the team understands them.
   \end{itemize}
-
-  The DoD is available here: FIXME
 \end{frame}
 \begin{frame}{Communication}
   We use the following channels:
@@ -195,15 +194,11 @@
 \end{frame}
 \begin{frame}{Backlog management}
   Agilefant is used for all backlogs.
-  
-  When defining BIs we specify
 
-  \begin{enumerate}
-  \item story points (by team)
-  \item value (by PO)
-  \item effort estimates (by team)
-  \item initial assignees (by team)
-  \end{enumerate}
+  \begin{itemize}
+  \item Version 1 - the \href{https://cloud.agilefant.com/smarisa/editProject.action?projectId=154985}{product backlog} 
+  \item Sprint 0-6 - the sprint backlogs
+  \end{itemize}
 \end{frame}
 \begin{frame}{Time tracking}
   We track our worktime with Agilefant by logging each session
@@ -213,18 +208,24 @@
   We use Git with GitHub with branches:
 
   \begin{itemize}
-  \item stable - tested and working version
-  \item sprint - increment work in progress
-  \item storyX - story work in progress
+  \item \href{https://github.com/smarisa/sdpt11}{stable} - tested and working version
+  \item \href{https://github.com/smarisa/sdpt11}{sprint} - increment work in progress
+  \item story\emph{X} - story work in progress
   \end{itemize}
 
   Our development process has four steps:
 
   \begin{enumerate}
-  \item We assign a developer and reviewer for each story
-  \item The story assignee develops the story in a new branch
-  \item He makes a merge request once his work is ready for review
-  \item The reviewer merges the story to the sprint only when it meets the DoD
+  \item We assign a developer and a reviewer for each story
+  \item The developer solves the story in a new branch
+  \item Then he asks the reviewer for a merge review
+  \item The reviewer determines whether the work meets the story
+  requirements and the DoD
+    \begin{itemize}
+    \item if not, he asks the developer to continue working on it
+    \item if yes, he merges the story branch to the sprint branch and
+    the developer marks the story as \emph{done}
+    \end{itemize}
   \end{enumerate}
 \end{frame}
 % Any other practices?

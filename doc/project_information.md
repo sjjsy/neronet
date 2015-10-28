@@ -1,3 +1,14 @@
+# Agenda
+
+työstetään
+- Vision
+- Technical
+
+lisätään työajat
+- Agilefant (time tracking)
+
+- 15 Coach Eero visits us
+
 # Project introduction
 
 Project name: **Toolbox for managing the training neural networks**
@@ -54,9 +65,9 @@ methods to meet their computational needs:
   It utilizes the [slurm] queuing and task management system
   to distribute computing resources to researchers. In practice, researchers
   access a gateway server using SSH and then add their scripts to the queue
-  with a command of the form `slurm OPTIONS FILES`. A nasty aspect for deep
-  learning researchers is that they might have little knowledge of when and
-  how their experiment is progressing.
+  with terminal commands (almost `slurm OPTIONS FILES`). A nasty aspect for
+  deep learning researchers is that they might have little knowledge of when
+  and how their experiment is progressing.
   Similar to the case with `gpu` some user directories are also available
   here.
 - **csc** is another cluster managed by the Finnish IT center for science.
@@ -68,7 +79,7 @@ methods to meet their computational needs:
   coding.
 
 [slurm]: https://computing.llnl.gov/linux/slurm/
-[triton]: http://triton.aalto.fi
+[triton]: https://wiki.aalto.fi/display/Triton/
 
 TODO: yksinkertainen ssh työkalu, tutustaan: slurm, markkinat, muut mahdollisuudet
 
@@ -192,11 +203,36 @@ machine learning and deep learning during the project.
   disk-space. Ideaalisti tietää jo ennen ajoa että esim. diskspace riittää
 - Profilointi (python, theano, etc.)
 
+# Triton
+
+Gateway: triton.aalto.fi
+
+Resources
+
+- [Triton Wiki]
+- [Scientific computing in practice]
+
+[Triton Wiki]: https://wiki.aalto.fi/display/Triton/
+[Scientific computing in practice]: http://science-it.aalto.fi/wp-content/uploads/sites/2/2015/05/SCiP2015.Triton_practicalities.pdf
+
+## Triton Networking
+
+Cluster has two internal networks: Infiniband for MPI and Lustre filesystem and Gigabit Ethernet for everything else like NFS for /home directories and ssh.
+
+The internal networks are unaccessible from outside. The only host available for user access is the front-end triton.aalto.fi.
+
+All compute nodes and front-end are connected to DDN SFA10k storage system: large disk arrays with the Lustre filesystem on top of it cross-mounted under /triton directory. The system provides about 430TB of disk space available to end-user.
+
+URL: https://wiki.aalto.fi/display/Triton/Running+programs+on+Triton
+https://wiki.aalto.fi/display/Triton/Running+programs+on+Triton#RunningprogramsonTriton-Gettinginformationaboutclusterqueuesandjobs
+
 # Existing tools
 
 ## SLURM
 
 URL: https://computing.llnl.gov/linux/slurm/
+- https://computing.llnl.gov/linux/slurm/
+- https://en.wikipedia.org/wiki/Slurm_Workload_Manager
 
 Simple Linux Utility for Resource Management (SLURM) is an open source,
 fault-tolerant, and highly scalable cluster management and job scheduling
@@ -204,16 +240,58 @@ system for large and small Linux clusters.
 
 ### Features
 
-Foobar
+URL: http://slurm.schedmd.com/pdfs/summary.pdf
+
+### Usage
+
+Interactive use: https://rc.fas.harvard.edu/resources/running-jobs/#Interactive_jobs_and_srun
+
+salloc obtain job allocation
+srun obtain a job allocation and execute an app
+sbatch [options] script [args...]
+sbatch submits a batch script to SLURM. By default redirects output to "slurm-%j.out" ("%j" is the job allocation number).
+
+Example
+
+```
+#!/bin/bash
+#SBATCH -J LM_miuc            # Specify job name
+#SBATCH -o miuc_%j.out        # Specify output file name
+#SBATCH -p gpu                # Request a specific partition for the resource allocation
+#SBATCH --gres=gpu:2          # Generic resources required by each node
+#SBATCH --mem-per-cpu=16000   # Memory required per allocated CPU.
+#SBATCH -t 1-23:59:59         # Time limit
+
+module load python-env
+cd ../owlet
+echo "Starting the run"
+
+## list the commands you wish to run
+python lang_experiment.py
+# system("neronet --send-info neronet.cs.hut.fi --started lang_experiment.py")
+# system("neronet --send-info neronet.cs.hut.fi --log log.txt --data weights.json iter=1000")
+```
 
 ### Technical overview
 
-Foobar
+As a cluster resource manager, SLURM has three key functions. First, it allocates exclusive and/or non-exclusive access to resources (compute nodes) to users for some duration of time so they can perform work. Second, it provides a framework for starting, executing, and monitoring work (normally a parallel job) on the set of allocated nodes. Finally, it arbitrates contention for resources by managing a queue of pending work.
 
 ### Extendability
 
-Foobar
+https://computing.llnl.gov/linux/slurm/download.html#related
+
+- Foobar
 
 ### Co-workability
 
-Foobar
+- Foobar
+
+
+https://github.com/smarisa/sdpt11/blob/master/doc/material/theano/pyry/experiment1.slurm
+
+
+# Testing
+
+Robot Framework is a generic test automation framework for acceptance testing and acceptance test-driven development (ATDD). It has easy-to-use tabular test data syntax and it utilizes the keyword-driven testing approach. Its testing capabilities can be extended by test libraries implemented either with Python or Java, and users can create new higher-level keywords from existing ones using the same syntax that is used for creating test cases.
+
+http://robotframework.org/
