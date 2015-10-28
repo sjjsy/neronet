@@ -40,5 +40,5 @@ The team consists of
 - Pyry Takala -- *product owner*
 
 To learn more about us, you can check this repository's
-[IO page](http://smarisa.github.io/sdpt11) which we prepared for our PO when
+[IO page](http://smarisa.github.io/neronet) which we prepared for our PO when
 applying for this project.
