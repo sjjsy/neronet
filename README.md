@@ -11,8 +11,10 @@ This project is under the [MIT License](./LICENSE).
 
 These files contain lots of general project related information:
 
-- [Project Information](./doc/project_information.md) -- notes by the team to direct development
-- [Project Introduction](./doc/project_introduction.pdf) -- original project proposal by the PO
+- [Project Information](./doc/project_information.md) -- notes by the team to
+  direct development
+- [Project Introduction](./doc/project_introduction.pdf) -- original project
+  proposal by the PO
 
 ## Artifacts
 
@@ -36,3 +38,7 @@ The team consists of
 - Iiro Tähkä (Donkeyhead) -- *developer*
 - Eero Laukkanen (ecimon) -- *agile coach*
 - Pyry Takala -- *product owner*
+
+To learn more about us, you can check this repository's
+[IO page](http://smarisa.github.io/sdpt11) which we prepared for our PO when
+applying for this project.
