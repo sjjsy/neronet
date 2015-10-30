@@ -1,23 +1,14 @@
-# Agenda
-
-työstetään
-- Vision
-- Technical
-
-lisätään työajat
-- Agilefant (time tracking)
-
-- 15 Coach Eero visits us
-
-# Project introduction
+# Project information
 
 Project name: **Toolbox for managing the training neural networks**
+Project author: Pyry Takala
 
 This document is based on the combination of:
 
-- The original [project introduction] PDF by Pyry Takala
-- Material Pyry gave us via email
-- Notes we have made during Skype discussions
+- The original [project introduction] PDF by the PO
+- Material delivered by the PO via email
+- Notes made during Skype discussions with the PO
+- Information accumulated from the Internet
 
 [project introduction]: ./project_introduction__original.pdf
 
@@ -81,19 +72,16 @@ methods to meet their computational needs:
 [slurm]: https://computing.llnl.gov/linux/slurm/
 [triton]: https://wiki.aalto.fi/display/Triton/
 
-TODO: yksinkertainen ssh työkalu, tutustaan: slurm, markkinat, muut mahdollisuudet
-
 ## Project goals
 
 A good toolbox for deep learning would let a researcher easily specify
 experiments, manage a queue of experiments, and automatically monitor networks
-during training.
-During train-time, a diagnostics toolbox can perform various analyses on the
-training log and network parameters to detect possible problems early on.
-Notifications can be sent to a researcher early on so that expensive computing
-time is not wasted on an experiment that is unlikely to give good results.
-Naturally, the tool should not create a huge computational overhead, and
-usability should be good.
+during training. During train-time, a diagnostics toolbox can perform various
+analyses on the training log and network parameters to detect possible
+problems early on. Notifications can be sent to a researcher so that expensive
+computing time is not wasted on an experiment that is unlikely to give good
+results. Naturally, the tool should not create a huge computational overhead,
+and usability should be good.
 Majority of the work involves creating a tool that helps a user define network
 inputs, manage an experiment queue, and visualize intermediary and final
 values of the network.
@@ -104,6 +92,11 @@ Requirement gathering could be done from various deep learning users at the
 university, and potentially students could talk to some researchers abroad as
 well.
 
+Update: It is also important to be able to monitor host resources (GPU memory,
+RAM, disk-space). Ideally it should check already before starting whether
+there is enough diskspace available. Also consider profiling (python, theano,
+etc).
+
 ## Tools and technology
 
 The toolbox could be written e.g. as an interactive web tool (e.g. with
@@ -112,43 +105,41 @@ JavaScript) that could be always run on a server that manages the experiments.
 ## Requirements for the students
 
 The toolbox could be implemented for instance as a hybrid of JavaScript and
-Python.
-Some other language can be also considered if it appears more suitable for
-the task.
-Students participating in this project will need to be willing to read a
-little bit about neural networks, but a detailed view is not required.
-The interface of the tool should be created in English.
+Python. Some other language can be also considered if it appears more suitable
+for the task. Students participating in this project will need to be willing
+to read a little bit about neural networks, but a detailed view is not
+required. The interface of the tool should be created in English.
 
 ## Legal Issues
 
 Potentially, the resulting code could be released under an open-source license
-after the project.
-Signing the non-disclosure agreement (NDA) included in the Aalto's contract
-template is not required.
+after the project. Signing the non-disclosure agreement (NDA) included in the
+Aalto's contract template is not required.
 
 ## Client
 
 Aalto University’s Deep learning and Bayesian modeling group conducts research
-in the field of neural networks.
-Recent projects include for instance *DeepBeat* a neural network that
-generates rap [link4], an image-processing framework network *Ladder* that
-learns to recognize images from very small training datasets [link5], and an
-ongoing project of financial predictions.
+in the field of neural networks. Recent projects include for instance
+*DeepBeat* a neural network that generates rap [link4], an image-processing
+framework network *Ladder* that learns to recognize images from very small
+training datasets [link5], and an ongoing project of financial predictions.
 The toolbox would ideally be used by all researchers at Aalto and also
-researchers at other universities and companies.
-The student will have a good opportunity to get to know the field of
-machine learning and deep learning during the project.
+researchers at other universities and companies. The student will have a
+good opportunity to get to know the field of machine learning and deep
+learning during the project.
 
 [link4]: http://blogs.wsj.com/digits/2015/05/22/this-rappers-a-machine/
 [link5]: http://arxiv.org/pdf/1507.02672.pdf
 
 ### Client representative
 
-- Organization: Aalto University
-- Role: Researcher
 - Name: Pyry Takala
+- Role: Researcher
+- Organization: Aalto University
 
-## Notes about deep learning
+## Additional notes
+
+### About deep learning
 
 - Its a reborn topic.
 - Less than 10 researchers do neural networks research at Aalto.
@@ -159,55 +150,44 @@ machine learning and deep learning during the project.
 - The project could be useful to many deep learning labs and people in other
   fields running time consuming experiments (e.g. physics simulations).
 
-## Materials
+### Materials
 
-- Specify experiments
-- rnn_experiments.xlsx
+- Specify experiments: rnn_experiments.xlsx
+- Manage queue
+  - rnn_experiments.xlsx
+  - [experiment1.slurm]
+  - [Jobman] -- a tool to facilitate launching concurrent experiments
+- Monitor experiments
+  - notification (e.g. email) if X
+  - saving & loading requirements
+- Analyze (visualise) running experiments
+  - [error analysis] -- a plot of error by number of weight updates
+  - time analysis
+  - weight norm analysis (e.g. per layer)
+  - Analyze (visualise) ready experiments
+  - [Recurrent neural networks] -- A long post with lots of interesting
+    content.
+  - error analysis per input feature
+- Training log examples
+  - log.txt
+  - [Torch]
+  - [Lasagne]
+  - [Pylearn2]
+- Other deep learning resources
+  - [Colah] -- a blog with demos and visualizations
+  - [Deep learning portal]
 
-### Manage queue
+[experiment1.slurm]: ./material/theano/pyry/experiment1.slurm
+[Jobman]: http://deeplearning.net/software/jobman/intro.html
+[error analysis]: http://www.doc.ic.ac.uk/~sgc/teaching/pre2012/v231/errorplot.gif
+[Recurrent neural networks]: http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+[Torch]: http://torch5.sourceforge.net/manual/newbieTutorial.html
+[Lasagne]: http://lasagne.readthedocs.org/en/latest/user/tutorial.html
+[Pylearn2]: http://daemonmaker.blogspot.ca/2014/12/monitoring-experiments-in-pylearn2.html
+[Colah]: http://colah.github.io
+[Deep learning portal]: https://github.com/ChristosChristofidis/awesome-deep-learning
 
-- rnn_experiments.xlsx
-- experiment1.slurm
-- http://deeplearning.net/software/jobman/intro.html
-
-### Monitor experiments
-
-- notification (e.g. email) if X
-- saving & loading requirements
-
-### Analyze (visualise) running experiments
-
-- [error analysis][http://www.doc.ic.ac.uk/~sgc/teaching/pre2012/v231/errorplot.gif]
-- time analysis
-- weight norm analysis (e.g. per layer)
-- Analyze (visualise) ready experiments
-- [http://karpathy.github.io/2015/05/21/rnn-effectiveness/]
-- error analysis per input feature
-
-### Training log examples
-
-- log.txt
-- [Torch][http://torch5.sourceforge.net/manual/newbieTutorial.html]
-- [Lasagne][http://lasagne.readthedocs.org/en/latest/user/tutorial.html]
-- [Pylearn2][http://daemonmaker.blogspot.ca/2014/12/monitoring-experiments-in-pylearn2.html]
-
-### Muutamia lisäresursseja
-
-- Neuroverkkoblogi jossa aika paljon demoja ja visualisointeja:
-  [Colah][http://colah.github.io/]
-- Kattava [lista resursseja][https://github.com/ChristosChristofidis/awesome-deep-learning]
-
-## Muita vaatimuksia
-
-- Tärkeää myös voida seurata tietokoneiden resursseja, mm. gpun muisti, ram,
-  disk-space. Ideaalisti tietää jo ennen ajoa että esim. diskspace riittää
-- Profilointi (python, theano, etc.)
-
-# Triton
-
-Gateway: triton.aalto.fi
-
-Resources
+## Triton
 
 - [Triton Wiki]
 - [Scientific computing in practice]
@@ -215,20 +195,26 @@ Resources
 [Triton Wiki]: https://wiki.aalto.fi/display/Triton/
 [Scientific computing in practice]: http://science-it.aalto.fi/wp-content/uploads/sites/2/2015/05/SCiP2015.Triton_practicalities.pdf
 
-## Triton Networking
+### Triton Networking
 
-Cluster has two internal networks: Infiniband for MPI and Lustre filesystem and Gigabit Ethernet for everything else like NFS for /home directories and ssh.
+The cluster has two internal networks: Infiniband for MPI and Lustre
+filesystem and Gigabit Ethernet for everything else like NFS for /home
+directories and ssh.
 
-The internal networks are unaccessible from outside. The only host available for user access is the front-end triton.aalto.fi.
+The internal networks are unaccessible from outside. The only host available
+for user access is the front-end triton.aalto.fi.
 
-All compute nodes and front-end are connected to DDN SFA10k storage system: large disk arrays with the Lustre filesystem on top of it cross-mounted under /triton directory. The system provides about 430TB of disk space available to end-user.
+All compute nodes and front-end are connected to DDN SFA10k storage system:
+large disk arrays with the Lustre filesystem on top of it cross-mounted under
+/triton directory. The system provides about 430TB of disk space available to
+end-user.
 
 URL: https://wiki.aalto.fi/display/Triton/Running+programs+on+Triton
 https://wiki.aalto.fi/display/Triton/Running+programs+on+Triton#RunningprogramsonTriton-Gettinginformationaboutclusterqueuesandjobs
 
-# Existing tools
+## Existing tools
 
-## SLURM
+### SLURM
 
 URL: https://computing.llnl.gov/linux/slurm/
 - https://computing.llnl.gov/linux/slurm/
@@ -238,11 +224,11 @@ Simple Linux Utility for Resource Management (SLURM) is an open source,
 fault-tolerant, and highly scalable cluster management and job scheduling
 system for large and small Linux clusters.
 
-### Features
+#### Features
 
 URL: http://slurm.schedmd.com/pdfs/summary.pdf
 
-### Usage
+#### Usage
 
 Interactive use: https://rc.fas.harvard.edu/resources/running-jobs/#Interactive_jobs_and_srun
 
@@ -268,30 +254,56 @@ echo "Starting the run"
 
 ## list the commands you wish to run
 python lang_experiment.py
-# system("neronet --send-info neronet.cs.hut.fi --started lang_experiment.py")
-# system("neronet --send-info neronet.cs.hut.fi --log log.txt --data weights.json iter=1000")
 ```
 
-### Technical overview
+#### Technical overview
 
 As a cluster resource manager, SLURM has three key functions. First, it allocates exclusive and/or non-exclusive access to resources (compute nodes) to users for some duration of time so they can perform work. Second, it provides a framework for starting, executing, and monitoring work (normally a parallel job) on the set of allocated nodes. Finally, it arbitrates contention for resources by managing a queue of pending work.
 
-### Extendability
+#### Co-workability
 
-https://computing.llnl.gov/linux/slurm/download.html#related
+- Our app could be a simple command line tool that would be installed to all
+  the hosts where experiments are done
+- The `SBATCH` script (or the python program launched by it) could utilize
+  our tool to provide progress information (text, values, files) to a central
+  server that we would also develop which would then provide the information
+  to the researchers.
 
-- Foobar
+Example
+```
+#!/bin/bash
+#SBATCH -J LM_miuc            # Specify job name
+#SBATCH -o %j.out             # Specify output file name
+module load python-env
+# Send initial start notice along with system environment information
+neronet --server neronet.cs.hut.fi --started exp01.py
+# Launch the experiment
+python exp01.py --iter=0-500
+# Send progress information along with log and data files
+neronet --server neronet.cs.hut.fi --progress exp01.py --log *.out --data *.json
+# Continue experiment
+python lang_experiment.py --iter=500-1000
+# Send end state information along with log and data files
+neronet --server neronet.cs.hut.fi --finished exp01.py --log *.out --data *.json
+```
 
-### Co-workability
+## Related information
 
-- Foobar
+### Testing
 
+[Robot Framework] is a generic test automation framework for acceptance testing and acceptance test-driven development (ATDD). It has easy-to-use tabular test data syntax and it utilizes the keyword-driven testing approach. Its testing capabilities can be extended by test libraries implemented either with Python or Java, and users can create new higher-level keywords from existing ones using the same syntax that is used for creating test cases.
 
-https://github.com/smarisa/sdpt11/blob/master/doc/material/theano/pyry/experiment1.slurm
+[Robot Framework]: http://robotframework.org/
 
+### Scrum & Backlog tools
 
-# Testing
+- http://scrumfortrello.com/
+- http://www.tommasonervegna.com/blog/2014/1/9/10-effective-tips-for-using-trello-as-an-agile-scrum-project-management-tool
+- https://civicactions.com/blog/2012/oct/10/five_tips_for_using_trello_for_scrum
+- https://trello.com/b/Nr3RvsY1/sprint-template
+- http://www.screenful.me/blog/how-to-keep-your-product-backlog-clean-and-lean
+- http://blog.flowdock.com/2013/08/16/trello-integration-added-to-flowdock/
 
-Robot Framework is a generic test automation framework for acceptance testing and acceptance test-driven development (ATDD). It has easy-to-use tabular test data syntax and it utilizes the keyword-driven testing approach. Its testing capabilities can be extended by test libraries implemented either with Python or Java, and users can create new higher-level keywords from existing ones using the same syntax that is used for creating test cases.
+### Floobits & Sublime
 
-http://robotframework.org/
+- http://awan1.github.io/subl-floo-tutorial.html

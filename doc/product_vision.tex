@@ -1,67 +1,73 @@
-%%% Variables, functions and other settings
-%% Define document class and theme
+%% Define document class, variables and frontmatter
 \documentclass{beamer}
-\usetheme{Goettingen}
-%% Define basic variables
 \title{Product Vision}
-\subtitle{}
-\author{Team 11}
-\institute[]{
-  Project 2 \\
-  Toolbox for managing the training \\
-  neural networks (Pyry Takala) \\[0.3cm]
-  CSE-C2610 Software Project \\
-  Aalto University
-}
-\date{14th Oct 2015}
-\subject{Software engineering}
-%% Logo
-% Replace navigation symbols with a logo
-\logo{\includegraphics[height=1cm]{gfx/logo_aalto.png}}
-\setbeamertemplate{navigation symbols}{\insertlogo}
-%% Functions
-% Define short set and clear background commands
-\newcommand{\bgset}[1]{\usebackgroundtemplate{
-  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
-\newcommand{\bgclear}{\usebackgroundtemplate{}}
-%%% Main document content
-\begin{document}
-%% Title page
-\bgset{gfx/neural2__bgmod.jpg}
-\begin{frame}
-  \titlepage
-\end{frame}
-%% Outline page
-\bgset{gfx/neural3__bgmod.jpg}
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
+\input{tex/beamer.tex}
 %% Content pages
 \section{Why}
-\begin{frame}{Why}
-  Purposes
+\begin{frame}{Why -- business view}
+  Neural networks have become quite the hot topic when it comes to the machine learning research today. However, the tools available for most researchers for specifying, managing and queuing the neural network experiments are still stone-age. In particular, a good open source solution is still missing. 
+  
+  To satisfy the needs of deep learning researchers we have decided to develop an open source toolbox containing the most common necessities for managing the training of neural networks. 
+\end{frame}
+\begin{frame}{Why -- business view}
+  Currently available state-of-the-art tools for deep learning research aren't satisfactory (yet).
+
+  Researchers are burdened by practical difficulties like
   \begin{itemize}
-  \item a
-  \item b
-  \item c
+  \item monitoring progress of ongoing experiments
+  \item managing a queue of different experiments
+  \item getting information about the computing environment
   \end{itemize}
 \end{frame}
 \section{What}
-\begin{frame}{What}
+\begin{frame}{What -- product goals}
   Functionalities
   \begin{itemize}
-  \item a
-  \item b
-  \item c
+  \item Enabling users to use any of the most common frameworks for specifying their neural networks
+  \item Enabling specifying of neural network experiments and managing a queue of experiments via an internet-based solution
+  \item Enabling user login and setting of individual preferences
+  \item Enabling users to see an overview of all previous experiments
+  \item Enabling  monitoring ongoing experiments by analysing the training log and parameter values as well as giving understandable visualisations of the networks
   \end{itemize}
 \end{frame}
+\begin{frame}{What -- product goals}
+  The product's goals are to enable easy
+  \begin{itemize}
+  \item specification of experiments in a framework agnostic way
+  \item monitoring of ongoing experiments' logs and parameter values
+  \item access to experiment data during and after the run
+  \item configurable notifications on experiment state and progress
+  \item configurable criteria for experiment autotermination
+  \item management of experiment queues
+  \item logging of experiment history
+  \item visualisations from experiment data
+  \item preferences configuration
+  \end{itemize}
+  Non functional requirements:
+  \begin{itemize}
+  \item low computational and memory overhead
+  \item good usability
+  \item easily maintainable and extensible
+  \end{itemize}
+\end{frame}
+% to develop a toolbox for deep learning research with the following features:
+% - framework agnostic, support for at least Torch and Theano
+% - easy specification and management of experiments and experiment queues
+% - the work from the experiment queues is distributed to a computer cluster
+% - easy access to training logs during and after training
+% - automatic monitoring of training logs, configurable notifications of progress and state changes
+% - configurable criteria for experiment autotermination
+% - low computational and memory overhead
+% - good usability
+% - easily maintainable and extensible
+% - open source
 \section{For whom}
-\begin{frame}{For whom}
+\begin{frame}{For whom -- users}
   Users
   \begin{itemize}
-  \item a
-  \item b
-  \item c
+  \item Deep learning researchers
+  \item machine learning enthusiasts
+  \item other people who run long lasting experiments
   \end{itemize}
 \end{frame}
 \end{document}

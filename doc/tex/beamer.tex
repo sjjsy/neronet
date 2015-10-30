@@ -1,0 +1,47 @@
+%%% Variables, functions and other settings
+%% Define beamer theme
+\usetheme{Goettingen}
+%% Define basic variables
+\subtitle{}
+\author{Neronet}
+\institute[]{
+  Project 2 \\
+  Toolbox for managing the training \\
+  neural networks (Pyry Takala) \\[0.3cm]
+  CSE-C2610 Software Project \\
+  Aalto University
+}
+\date{\today{}}
+\subject{Software engineering}
+%% Colors and visuals
+% Specify link and URL colors
+\hypersetup{colorlinks,linkcolor=,urlcolor=magenta}
+% Replace navigation symbols with a logo
+\logo{\includegraphics[height=1cm]{gfx/logo_aalto.png}}
+\setbeamertemplate{navigation symbols}{\insertlogo}
+%% Functions
+% Define short set and clear background commands
+\newcommand{\bgset}[1]{\usebackgroundtemplate{
+  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
+\newcommand{\bgclear}{\usebackgroundtemplate{}}
+\ifdefined \showoutlineatsection
+  % Have LaTeX render an outline frame just before each new section
+  \AtBeginSection[]{
+    \bgset{gfx/neural3__bgmod.jpg}
+    \begin{frame}<beamer>{Outline}
+      \tableofcontents[currentsection]
+    \end{frame}
+    \bgset{gfx/neural1__bgmod.jpg}}
+\fi
+%%% Main document content
+\begin{document}
+%% Title page
+\bgset{gfx/neural2__bgmod.jpg}
+\begin{frame}
+  \titlepage
+\end{frame}
+%% Outline page
+\bgset{gfx/neural3__bgmod.jpg}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}

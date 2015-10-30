@@ -7,6 +7,8 @@ See the `stable` branch for the latest finished increment.
 
 This project is under the [MIT License](./LICENSE).
 
+[![Floobits Status](https://floobits.com/smarisa/neronet.svg)](https://floobits.com/smarisa/neronet/redirect)
+
 ## General information
 
 These files contain lots of general project related information:

@@ -1,48 +1,8 @@
-%%% Variables, functions and other settings
-%% Define document class and theme
+%% Define document class, variables and frontmatter
 \documentclass{beamer}
-\usetheme{Goettingen}
-%% Define basic variables
 \title{Technical Overview}
-\subtitle{}
-\author{Team 11}
-\institute[]{
-  Project 2 \\
-  Toolbox for managing the training \\
-  neural networks (Pyry Takala) \\[0.3cm]
-  CSE-C2610 Software Project \\
-  Aalto University
-}
-\date{14th Oct 2015}
-\subject{Software engineering}
-%% Logo
-% Replace navigation symbols with a logo
-\logo{\includegraphics[height=1cm]{gfx/logo_aalto.png}}
-\setbeamertemplate{navigation symbols}{\insertlogo}
-%% Functions
-% Define short set and clear background commands
-\newcommand{\bgset}[1]{\usebackgroundtemplate{
-  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
-\newcommand{\bgclear}{\usebackgroundtemplate{}}
-% Have LaTeX render an outline frame just before each new section
-\AtBeginSection[]{
-  \bgset{gfx/neural3__bgmod.jpg}
-  \begin{frame}<beamer>{Outline}
-    \tableofcontents[currentsection]
-  \end{frame}
-  \bgset{gfx/neural1__bgmod.jpg}}
-%%% Main document content
-\begin{document}
-%% Title page
-\bgset{gfx/neural2__bgmod.jpg}
-\begin{frame}
-  \titlepage
-\end{frame}
-%% Outline page
-\bgset{gfx/neural3__bgmod.jpg}
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
+\def\showoutlineatsection{1}
+\input{tex/beamer.tex}
 %% Content pages
 \section{Overview}
 \begin{frame}{Overview}
@@ -82,5 +42,26 @@
   \item remark 3
   \end{itemize}
 \end{frame}
-% Any other practices …
+\section{Used languages}
+\begin{frame}{Python 3}
+  Python is the main language to use Lasange, Pylearn2, Theano and Django
+\end{frame}
+\begin{frame}{C++}
+  Main language to use Torch framework.
+\end{frame}
+\begin{frame}{Qt}
+  Optionally can be used to create a user friendly GUI. Can also be used to launch python scripts.
+\end{frame}
+\section{Used libraries}
+\begin{frame}{Django}
+  The framework used to create the web interface for the system.
+\end{frame}
+\begin{frame}{Theano}
+  Main tool to train neural networks, most libraries are built onto this library.
+  % Read https://leanpub.com/visualising-software-architecture/read
+\end{frame}
+\begin{frame}{Torch}
+  Another popular deep leaning framework we plan to support.
+\end{frame}
+% Any other practices?
 \end{document}
