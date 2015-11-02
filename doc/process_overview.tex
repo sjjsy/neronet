@@ -1,52 +1,11 @@
-%%% Variables, functions and other settings
-%% Define document class and theme
+%% Define document class, variables and frontmatter
 \documentclass{beamer}
-\usetheme{Goettingen}
-\hypersetup{colorlinks,linkcolor=,urlcolor=magenta}
-%% Define basic variables
 \title{Process Overview}
-\subtitle{}
-\author{Team 11}
-\institute[]{
-  Project 2 \\
-  Toolbox for managing the training \\
-  neural networks (Pyry Takala) \\[0.3cm]
-  CSE-C2610 Software Project \\
-  Aalto University
-}
-\date{14th Oct 2015}
-\subject{Software engineering}
-%% Logo
-% Replace navigation symbols with a logo
-\logo{\includegraphics[height=1cm]{gfx/logo_aalto.png}}
-\setbeamertemplate{navigation symbols}{\insertlogo}
-%% Functions
-% Define short set and clear background commands
-\newcommand{\bgset}[1]{\usebackgroundtemplate{
-  \includegraphics[width=\paperwidth,height=\paperheight]{#1}}}
-\newcommand{\bgclear}{\usebackgroundtemplate{}}
-% Have LaTeX render an outline frame just before each new section
-\AtBeginSection[]{
-  \bgset{gfx/neural3__bgmod.jpg}
-  \begin{frame}<beamer>{Outline}
-    \tableofcontents[currentsection]
-  \end{frame}
-  \bgset{gfx/neural1__bgmod.jpg}}
-%%% Main document content
-\begin{document}
-%% Title page
-\bgset{gfx/neural2__bgmod.jpg}
-\begin{frame}
-  \titlepage
-\end{frame}
-%% Outline page
-\bgset{gfx/neural3__bgmod.jpg}
-\begin{frame}{Outline}
-  \tableofcontents
-\end{frame}
+\def\showoutlineatsection{1}
+\input{tex/beamer.tex}
 %% Content pages
 \section{Schedule}
-\subsection{Sprints}
+\subsection{Plans}
 \begin{frame}{Sprints}
   \begin{table} \small
   \begin{tabular}{l|lllllllllll}
@@ -69,19 +28,33 @@
   \item S6 includes exams (4.-9.4) and is reserved for mainly polishing \& documenting for final review (11.-13.4.)
   \end{itemize}
 \end{frame}
-\begin{frame}{Workload}
-  Diagram or table of realized workload over sprints
+\begin{frame}{Events}
+  \begin{table} \small
+  \begin{tabular}{lll}
+    Time          & Event              & Participants       \\ \hline
+    30.10. 16-18  & Project kickoff    & team + PO          \\
+    13.11. 15-17  & Sprint 0 demo      & team + Coach       \\
+    16.11. 11-13  & Sprint 1 planning  & team + PO          \\
+    04.12. 16-18  & Progress review I  & team + PO + Coach  \\
+  \end{tabular}
+  \end{table}
+
+  All events, locations, agendas and other details are uptodate in
+  \href{https://calendar.google.com/calendar/embed?src=0a7g91rk53ar9v75o089icgi8s\%40group.calendar.google.com\&ctz=Europe/Helsinki}{Google Calendar}.
 \end{frame}
-\subsection{Weeks}
-\begin{frame}{Week 1}
-  Summary diagram or table of week's activity from Agilefant data
-\end{frame}
-\begin{frame}{Week 2}
-  Summary diagram or table of week's activity from Agilefant data
-\end{frame}
-\begin{frame}{Week 3}
-  Summary diagram or table of week's activity from Agilefant data
-\end{frame}
+% \subsection{Realized}
+% \begin{frame}{Workload}
+%   Diagram or table of realized workload over sprints
+% \end{frame}
+% \begin{frame}{Week 1}
+%   Summary diagram or table of week's activity from Agilefant data
+% \end{frame}
+% \begin{frame}{Week 2}
+%   Summary diagram or table of week's activity from Agilefant data
+% \end{frame}
+% \begin{frame}{Week 3}
+%   Summary diagram or table of week's activity from Agilefant data
+% \end{frame}
 % add other weeks!
 \section{Recurring events} %Concrete, short instructions (e.g. when, organizer \& participants, how, results) for at least the following activities.
 \subsection{Overview}
@@ -137,24 +110,27 @@
   \end{itemize}
 \end{frame}
 \begin{frame}{Daily scrums}
-  On Mondays and Fridays we have a scrum in which everyone quickly
+  On Wednesdays and Fridays we have a scrum in which everyone quickly
   explains what
   \begin{itemize}
   \item they did since last Scrum
   \item problems they have encountered
   \item they plan to do next
   \end{itemize}
+
+  Work plans are adjusted depending on input.
 \end{frame}
 \begin{frame}{Teamwork sessions}
-  Most weeks, we'll have
+  Most weeks, we'll
 
   \begin{itemize}
-  \item a quick remote Scrum on Mondays
-  \item a 2h session on Wednesdays
-  \item a Scrum and a 7h session on Fridays (Tuomo would prefer splitting this)
+  \item have a Scrum and a 3h session on Wednesdays
+  \item have a Scrum and a 6h session on Fridays
+  \item do 2h of individual work remotely; more to cover up any missed
+    sessions
   \end{itemize}
 
-  In addition, we do individual work remotely.
+  Team sessions are mainly held in Maari.
 \end{frame}
 \section{Practices} % Concrete, short instructions (e.g. when, by whom, how, results) for other main practices and tools.
 \subsection{Overview}
@@ -163,10 +139,11 @@
 
   \begin{itemize}
   \item Testing \& quality assurance: DoD
-  \item Communication: Flowdock, Email, WhatsApp
+  \item Communication: Flowdock, Email, WhatsApp, Skype
   \item Backlog management: Agilefant
   \item Time tracking: Agilefant
   \item Version control: GitHub
+  \item Collaboration: Floobits, ShareLatex, Google Drive
   %\item Any other practices?
   \end{itemize}
 \end{frame}
@@ -188,6 +165,7 @@
   \item Flowdock - general forum for everyday discussion
   \item Email - communication with PO and Coach
   \item WhatsApp/Phone - urgent team communication
+  \item Skype - remote teamworking sessions
   \end{itemize}
 
   The SM communicates with the PO and Coach.
@@ -227,6 +205,14 @@
     the developer marks the story as \emph{done}
     \end{itemize}
   \end{enumerate}
+\end{frame}
+\begin{frame}{Collaboration}
+  When we work simultaneously on the same documents we use Floobits,
+  ShareLatex, or Google Drive depending on the document.
+
+  Floobits is connected to a Git repo clone which facilitates when working
+  with many files. It is particularly suitable for collaborative code level
+  planning and code reviews.
 \end{frame}
 % Any other practices?
 \end{document}

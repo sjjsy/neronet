@@ -154,28 +154,28 @@ learning during the project.
 
 - Specify experiments: rnn_experiments.xlsx
 - Manage queue
-  - rnn_experiments.xlsx
-  - [experiment1.slurm]
-  - [Jobman] -- a tool to facilitate launching concurrent experiments
+    - rnn_experiments.xlsx
+    - [experiment1.slurm]
+    - [Jobman] -- a tool to facilitate launching concurrent experiments
 - Monitor experiments
-  - notification (e.g. email) if X
-  - saving & loading requirements
+    - notification (e.g. email) if X
+    - saving & loading requirements
 - Analyze (visualise) running experiments
-  - [error analysis] -- a plot of error by number of weight updates
-  - time analysis
-  - weight norm analysis (e.g. per layer)
-  - Analyze (visualise) ready experiments
-  - [Recurrent neural networks] -- A long post with lots of interesting
-    content.
-  - error analysis per input feature
+    - [error analysis] -- a plot of error by number of weight updates
+    - time analysis
+    - weight norm analysis (e.g. per layer)
+    - Analyze (visualise) ready experiments
+    - [Recurrent neural networks] -- A long post with lots of interesting
+      content.
+    - error analysis per input feature
 - Training log examples
-  - log.txt
-  - [Torch]
-  - [Lasagne]
-  - [Pylearn2]
+    - log.txt
+    - [Torch]
+    - [Lasagne]
+    - [Pylearn2]
 - Other deep learning resources
-  - [Colah] -- a blog with demos and visualizations
-  - [Deep learning portal]
+    - [Colah] -- a blog with demos and visualizations
+    - [Deep learning portal]
 
 [experiment1.slurm]: ./material/theano/pyry/experiment1.slurm
 [Jobman]: http://deeplearning.net/software/jobman/intro.html
@@ -209,33 +209,34 @@ large disk arrays with the Lustre filesystem on top of it cross-mounted under
 /triton directory. The system provides about 430TB of disk space available to
 end-user.
 
-URL: https://wiki.aalto.fi/display/Triton/Running+programs+on+Triton
-https://wiki.aalto.fi/display/Triton/Running+programs+on+Triton#RunningprogramsonTriton-Gettinginformationaboutclusterqueuesandjobs
+### Usage
+
+- [Running programs on Triton](https://wiki.aalto.fi/display/Triton/Running+programs+on+Triton)
 
 ## Existing tools
 
 ### SLURM
 
-URL: https://computing.llnl.gov/linux/slurm/
-- https://computing.llnl.gov/linux/slurm/
-- https://en.wikipedia.org/wiki/Slurm_Workload_Manager
+- [SLURM web site] at llnl.gov
+- Wikipedia: [Slurm Workload Manager]
 
 Simple Linux Utility for Resource Management (SLURM) is an open source,
 fault-tolerant, and highly scalable cluster management and job scheduling
 system for large and small Linux clusters.
 
-#### Features
-
-URL: http://slurm.schedmd.com/pdfs/summary.pdf
+[SLURM web site]: https://computing.llnl.gov/linux/slurm/
+[Slurm Workload Manager]: https://en.wikipedia.org/wiki/Slurm_Workload_Manager
 
 #### Usage
 
-Interactive use: https://rc.fas.harvard.edu/resources/running-jobs/#Interactive_jobs_and_srun
+- Interactive use: https://rc.fas.harvard.edu/resources/running-jobs/#Interactive_jobs_and_srun
+- Summary of CLI usage: http://slurm.schedmd.com/pdfs/summary.pdf
 
-salloc obtain job allocation
-srun obtain a job allocation and execute an app
-sbatch [options] script [args...]
-sbatch submits a batch script to SLURM. By default redirects output to "slurm-%j.out" ("%j" is the job allocation number).
+Notes
+- salloc obtain job allocation
+- srun obtain a job allocation and execute an app
+- sbatch [options] script [args...]
+- sbatch submits a batch script to SLURM. By default redirects output to "slurm-%j.out" ("%j" is the job allocation number).
 
 Example
 
@@ -270,6 +271,7 @@ As a cluster resource manager, SLURM has three key functions. First, it allocate
   to the researchers.
 
 Example
+
 ```
 #!/bin/bash
 #SBATCH -J LM_miuc            # Specify job name
@@ -307,3 +309,47 @@ neronet --server neronet.cs.hut.fi --finished exp01.py --log *.out --data *.json
 ### Floobits & Sublime
 
 - http://awan1.github.io/subl-floo-tutorial.html
+
+### First meeting with PO (by Joona \& Teemu)
+
+Questions we discussed
+
+- importance of queue management functions
+- technical details
+
+Things we clarified
+
+- requirements by the PO
+- the current workflow
+
+Decisions made
+
+- Command prompt applications, no web UI
+- Two different applications: Server and client
+- Client application contacts server. The client application doesn't have to be running all the time.
+- Server application contacts the clusters to run the experiments, manages the experiment queues and collects information on running experiments. The server also saves the information and notifies the client if the experiments go wrong. In an ideal situation the server application is always running.
+- Queue management can use either jobman or slurm 
+- Server makes a .csv document about the past experiments and their outputs and the client can download it.
+- Server can tell the information on the available GPU:s etc.
+- Config:
+- Defines the ID of the experiment (author, subject, name, group name, git commit ID)
+- Define the variables that must be extracted and sent to the server
+- The Preconditions (minimum available disk space, expected max time, minimum RAM)
+- The files that must be sent to the cluster
+
+Things yet to research/decide
+
+- Simo
+- Possibly in the future a web interface and user login
+
+Jobman
+
+- requires python 2.7 to work on client side
+- requires postgreSQL on server side
+- client(s) running connects to server to retrieve a job to execute
+- jobman does it's thing and outputs files that an be synced with rsync
+- jobman updates database that job has been completed
+
+Roadmap
+
+- TBD
