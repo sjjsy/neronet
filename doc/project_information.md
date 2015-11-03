@@ -18,9 +18,11 @@ Deep learning is one of the newest trends in machine learning.
 Instead of specifying features that a machine should learn, neural networks
 can learn these features from data.
 Recent breakthroughs of deep learning include state-of-the-art image
-classification algorithms [link1],
-computers playing Atari-games above human-level [link2] and flexible tools for
-analyzing natural language [link3].
+[classification algorithms](http://www.technologyreview.com/news/537436/baidus-artificial-intelligence-supercomputer-beats-google-at-image-recognition/),
+computers
+[playing Atari-games above human-level](https://www.youtube.com/watch?v=V1eYniJ0Rnk)
+and flexible tools for
+[analyzing natural language](http://www.wired.com/2015/06/ais-next-frontier-machines-understand-language/).
 Training of neural networks is often challenging, with many practical
 difficulties:
 
@@ -30,20 +32,32 @@ difficulties:
 - How do we manage a queue of different experiments?
 - Why is training the network too slow?
 
-[link1]: http://www.technologyreview.com/news/537436/baidus-artificial-intelligence-supercomputer-beats-google-at-image-recognition/
-[link2]: https://www.youtube.com/watch?v=V1eYniJ0Rnk
-[link3]: http://www.wired.com/2015/06/ais-next-frontier-machines-understand-language/
-
 ## State of the art
 
-The deep learning researchers at Aalto currently utilize a few different
-methods to meet their computational needs:
+Deep learning research is conducted by modelling neural networks and other
+constructs using specific deep learning libraries. Such libraries include:
 
-- **byom** as in *bring your own machine* is the first way to test simple
+- [Theano] -- A Python library that allows you to define, optimize, and evaluate
+  mathematical expressions involving multi-dimensional arrays efficiently.
+    - [Lasagne] -- A lightweight library to build and train neural networks
+      in Theano.
+    - [Pylearn2] -- A machine learning library built on top of Theano.
+    - [Blocks] -- A framework to facilitate building and managing neural
+      network models using Theano.
+- [Torch] -- A scientific computing framework with wide support for machine
+  learning algorithms.
+  See [tutorial](http://torch5.sourceforge.net/manual/newbieTutorial.html).
+- There are lots of software for deep learning: [Deep learning portal]
+
+Deep learning research involves a lot of computing which is why the deep
+learning researchers at Aalto currently utilize a few different methods to
+meet their computational needs:
+
+- BYOM -- *Bring your own machine* is the first way to test simple
   computations. However, the lack of computing power and preinstalled and
   configured tools as well as interference with other tasks required of
   the machine make this method an inpopular one.
-- **gpu**s are a group of servers with powerful GPUs maintained by Aalto CS
+- gpus -- A group of servers with powerful GPUs maintained by Aalto CS
   Department (Simo Tuomisto, 3rd floor).
   These servers named `gpu1`, `gpu2`, and so on are accessible
   by SSH by anyone with an Aalto IT account. The department's sysadmins
@@ -51,9 +65,9 @@ methods to meet their computational needs:
   Researchers use `virtualenv` to manage their own libraries.
   Certain user directories that are automounted in Aalto work desktops are
   also mounted on these servers which facilitates file management.
-- **triton** (see [triton]) is a computer cluster managed by Aalto for
+- [Triton] -- A computer cluster managed by Aalto for
   use by all Aalto researchers.
-  It utilizes the [slurm] queuing and task management system
+  It utilizes the [Slurm] queuing and task management system
   to distribute computing resources to researchers. In practice, researchers
   access a gateway server using SSH and then add their scripts to the queue
   with terminal commands (almost `slurm OPTIONS FILES`). A nasty aspect for
@@ -61,16 +75,41 @@ methods to meet their computational needs:
   and how their experiment is progressing.
   Similar to the case with `gpu` some user directories are also available
   here.
-- **csc** is another cluster managed by the Finnish IT center for science.
+- [CSC] -- Another cluster managed by the Finnish IT center for science.
   From Aalto researchers' point of view, it is basically similar to `triton`
   but harder to access and with no filesystem shares.
-- **amazon** is a commercial choice. When Pyry was doing research at Amazon
-  he realized their systems were no different from those at the Aalto CS Dep.
-  One could hire servers like the `gpu`s start an SSH session in one and start
-  coding.
+- amazon -- A commercial choice for cloud computation. When Pyry was doing
+  research at Amazon he realized their systems were not fancier than those
+  at the Aalto CS Department. One could hire servers like the `gpu`s start
+  an SSH session in one and start coding.
 
-[slurm]: https://computing.llnl.gov/linux/slurm/
-[triton]: https://wiki.aalto.fi/display/Triton/
+In addition to advanced cluster computing environments and schedulers such as
+[Slurm], [OGE] or [Jobman] researchers use simpler job scheduler and experiment
+manager tools created or under development in deep learning labs around the
+world. However, most of them are sort of script like solutions to serve
+immediate needs. A better tool could be built to replace them:
+
+- [LadderNet] -- Looked a bit complicated at first glance.
+- [soteloplot] -- A script that sends email with plots
+- [sacred] -- Seemed a bit complicated at first glance.
+- [Checkpoint] -- Allegedly a pretty feature complete tool.
+- [Jobman] -- A tool to facilitate launching concurrent experiments
+
+[Theano]: http://deeplearning.net/software/theano/
+[Lasagne]: http://lasagne.readthedocs.org/en/latest/user/tutorial.html
+[Pylearn2]: http://deeplearning.net/software/pylearn2/
+[Blocks]: https://blocks.readthedocs.org/en/latest/
+[Torch]: http://torch.ch/
+[Deep learning portal]: https://github.com/ChristosChristofidis/awesome-deep-learning
+[Triton]: https://wiki.aalto.fi/display/Triton/
+[Slurm]: https://computing.llnl.gov/linux/slurm/
+[CSC]: https://www.csc.fi/en/csc
+[OGE]: https://en.wikipedia.org/wiki/Oracle_Grid_Engine
+[Jobman]: http://deeplearning.net/software/jobman/intro.html
+[LadderNet]: https://github.com/JimJarvis/LadderNet
+[soteloplot]: https://github.com/sotelo/play/blob/master/extensions/plot.py
+[sacred]: https://github.com/IDSIA/sacred
+[Checkpoint]: https://github.com/milaudem/blocksexamples
 
 ## Project goals
 
@@ -92,10 +131,28 @@ Requirement gathering could be done from various deep learning users at the
 university, and potentially students could talk to some researchers abroad as
 well.
 
-Update: It is also important to be able to monitor host resources (GPU memory,
+It is also important to be able to monitor host resources (GPU memory,
 RAM, disk-space). Ideally it should check already before starting whether
 there is enough diskspace available. Also consider profiling (python, theano,
 etc).
+
+In addition to the above, these requirements have been explicitly mentioned
+by deep learning researchers:
+
+- Sends customizable email notification (validation/test results, training
+  curve/crash report)
+- Queue and schedule lots of experiments with slightly different settings to
+  a cluster or just your local network
+- Should be lightweight (depend only on the python standard lib)
+- Easy resume capability (load parameters and hyperparameters from disk and
+  continue after a crash/failure)
+- Autocheck the code repo's git version and other facts
+- Record the history of "variables of interest" into a json file (validation
+  costs & validation error rates after each epoch)
+- The experiment manager should as simple as possible
+    - Should not rely on one toolchain
+    - Jobman feels oppressive. NoSQL setup should work better
+- Command line is king; programmatic access from Python is nice to have
 
 ## Tools and technology
 
@@ -120,16 +177,17 @@ Aalto's contract template is not required.
 
 Aalto University’s Deep learning and Bayesian modeling group conducts research
 in the field of neural networks. Recent projects include for instance
-*DeepBeat* a neural network that generates rap [link4], an image-processing
-framework network *Ladder* that learns to recognize images from very small
-training datasets [link5], and an ongoing project of financial predictions.
+*DeepBeat* a neural network that
+[generates rap](http://blogs.wsj.com/digits/2015/05/22/this-rappers-a-machine/),
+an image-processing framework network *Ladder* that
+[learns to recognize images](http://arxiv.org/pdf/1507.02672.pdf)
+from very small training datasets, and an ongoing project of financial
+predictions.
+
 The toolbox would ideally be used by all researchers at Aalto and also
 researchers at other universities and companies. The student will have a
 good opportunity to get to know the field of machine learning and deep
 learning during the project.
-
-[link4]: http://blogs.wsj.com/digits/2015/05/22/this-rappers-a-machine/
-[link5]: http://arxiv.org/pdf/1507.02672.pdf
 
 ### Client representative
 
@@ -156,7 +214,6 @@ learning during the project.
 - Manage queue
     - rnn_experiments.xlsx
     - [experiment1.slurm]
-    - [Jobman] -- a tool to facilitate launching concurrent experiments
 - Monitor experiments
     - notification (e.g. email) if X
     - saving & loading requirements
@@ -170,22 +227,15 @@ learning during the project.
     - error analysis per input feature
 - Training log examples
     - log.txt
-    - [Torch]
-    - [Lasagne]
-    - [Pylearn2]
+    - See [Monitoring experiments in Pylearn2]
 - Other deep learning resources
     - [Colah] -- a blog with demos and visualizations
-    - [Deep learning portal]
 
 [experiment1.slurm]: ./material/theano/pyry/experiment1.slurm
-[Jobman]: http://deeplearning.net/software/jobman/intro.html
 [error analysis]: http://www.doc.ic.ac.uk/~sgc/teaching/pre2012/v231/errorplot.gif
 [Recurrent neural networks]: http://karpathy.github.io/2015/05/21/rnn-effectiveness/
-[Torch]: http://torch5.sourceforge.net/manual/newbieTutorial.html
-[Lasagne]: http://lasagne.readthedocs.org/en/latest/user/tutorial.html
-[Pylearn2]: http://daemonmaker.blogspot.ca/2014/12/monitoring-experiments-in-pylearn2.html
+[Monitoring experiments in Pylearn2]: http://daemonmaker.blogspot.ca/2014/12/monitoring-experiments-in-pylearn2.html
 [Colah]: http://colah.github.io
-[Deep learning portal]: https://github.com/ChristosChristofidis/awesome-deep-learning
 
 ## Triton
 
@@ -217,26 +267,27 @@ end-user.
 
 ### SLURM
 
-- [SLURM web site] at llnl.gov
+- [Slurm] at llnl.gov
 - Wikipedia: [Slurm Workload Manager]
 
 Simple Linux Utility for Resource Management (SLURM) is an open source,
 fault-tolerant, and highly scalable cluster management and job scheduling
 system for large and small Linux clusters.
 
-[SLURM web site]: https://computing.llnl.gov/linux/slurm/
 [Slurm Workload Manager]: https://en.wikipedia.org/wiki/Slurm_Workload_Manager
 
 #### Usage
 
-- Interactive use: https://rc.fas.harvard.edu/resources/running-jobs/#Interactive_jobs_and_srun
-- Summary of CLI usage: http://slurm.schedmd.com/pdfs/summary.pdf
+- [Interactive use](https://rc.fas.harvard.edu/resources/running-jobs/#Interactive_jobs_and_srun)
+- [Summary of CLI usage](http://slurm.schedmd.com/pdfs/summary.pdf)
 
 Notes
+
 - salloc obtain job allocation
 - srun obtain a job allocation and execute an app
 - sbatch [options] script [args...]
-- sbatch submits a batch script to SLURM. By default redirects output to "slurm-%j.out" ("%j" is the job allocation number).
+- sbatch submits a batch script to SLURM. By default redirects output to
+  "slurm-%j.out" ("%j" is the job allocation number).
 
 Example
 
@@ -259,7 +310,7 @@ python lang_experiment.py
 
 #### Technical overview
 
-As a cluster resource manager, SLURM has three key functions:
+As a cluster resource manager, Slurm has three key functions:
 
 - Allocates exclusive and/or non-exclusive access to resources (compute nodes)
   to users for some duration of time so they can perform work
@@ -298,14 +349,12 @@ neronet --server neronet.cs.hut.fi --finished exp01.py --log *.out --data *.json
 ### Oracle Grid Engine
 
 [OGE] (previously known as SGE, Sun Grid Engine) is a grid computing computer
-cluster software system similar to SLURM. It manages grid computing resources
+cluster software system similar to Slurm. It manages grid computing resources
 and accepting, scheduling, dispatching, and managing the execution of large
 numbers of standalone, parallel or interactive user jobs.
 
-A practical tutorial is available [online].
-
-[OGE]: https://en.wikipedia.org/wiki/Oracle_Grid_Engine
-[online]: http://bioinformatics.mdc-berlin.de/intro2UnixandSGE/sun_grid_engine_for_beginners/README.html
+A practical tutorial is available
+[online](http://bioinformatics.mdc-berlin.de/intro2UnixandSGE/sun_grid_engine_for_beginners/README.html).
 
 Example
 
@@ -329,43 +378,6 @@ Notes
 - client(s) running connects to server to retrieve a job to execute
 - jobman does it's thing and outputs files that an be synced with rsync
 - jobman updates database that job has been completed
-
-### Other existing tools.
-
-There are other job scheduler and experiment manager tools created or under
-development in deep learning labs around the world. However, most of them
-are sort of script like solutions to serve immediate needs. A better tool
-could be built to replace them:
-
-- [Blocks] -- A framework to facilitate building and managing neural network
-  models using Theano.
-- [LadderNet] -- Looked a bit complicated at first glance.
-- [soteloplot] -- A script that sends email with plots
-- [sacred] -- Seemed a bit complicated at first glance.
-- [Checkpoint] -- Most of the below are done in Checkpoint.
-
-[Blocks]: https://blocks.readthedocs.org/en/latest/
-[LadderNet]: https://github.com/JimJarvis/LadderNet
-[soteloplot]: https://github.com/sotelo/play/blob/master/extensions/plot.py
-[sacred]: https://github.com/IDSIA/sacred
-[Checkpoint]: https://github.com/milaudem/blocksexamples
-
-There are many requirements explicitly mentioned by deep learning researchers:
-
-- Sends customizable email notification (validation/test results, training
-  curve/crash report)
-- Queue and schedule lots of experiments with slightly different settings to
-  a cluster or just your local network
-- Should be lightweight (depend only on the python standard lib)
-- Easy resume capability (load parameters and hyperparameters from disk and
-  continue after a crash/failure)
-- Autocheck the code repo's git version and other facts
-- Record the history of "variables of interest" into a json file (validation
-  costs & validation error rates after each epoch)
-- The experiment manager should as simple as possible
-    - Should not rely on one toolchain
-    - Jobman feels oppressive. NoSQL setup should work better
-- Command line is king; programmatic access from Python is nice to have
 
 ## Related information
 
@@ -397,7 +409,11 @@ existing ones using the same syntax that is used for creating test cases.
 
 See http://awan1.github.io/subl-floo-tutorial.html
 
-### First meeting with PO (by Joona \& Teemu)
+## Meeting notes
+
+### First meeting with PO
+
+Written by Joona \& Teemu
 
 Questions we discussed
 
