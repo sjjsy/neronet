@@ -10,26 +10,47 @@
 \usetikzlibrary{trees}
 \title{Technical Overview}
 \def\showoutlineatsection{1}
+\def\Neroman{\textcolor{blue}{Neroman}}
+\def\Neromum{\textcolor{red}{Neromum}}
+\def\Nerokid{\textcolor{green}{Nerokid}}
 \input{tex/beamer.tex}
 %% Content pages
 \section{Overview}
 % Diagram or table of architecture overview.
 % Read https://leanpub.com/visualising-software-architecture/read
 \begin{frame}{Introduction}
-  Neronet is a framework designed to facilitate the specification, submission,
-  monitoring, control, analysis and management of many different computational
-  experiments.
+  \textbf{Neronet} is a framework designed to facilitate the specification,
+  submission, monitoring, control, analysis and management of many different
+  computational experiments.
 
-  It has three components:
+  The Neronet family consists of three members:
   \begin{enumerate}
-  \item \texttt{jobman} -- A job scheduler for Linux clusters (f. ex. SLURM,
-    OGE or Jobman)
-  \item \texttt{nerojob} -- a program designed to be launched by a job
-    scheduler in cluster nodes to monitor, analyse and control single
-    experiment jobs and their environment in tandem with \texttt{neroman}
-  \item \texttt{neroman} -- a user run daemon that acts as the Neronet
-    information server and user interface to provide Neronet's features
+  \item \Neroman{} -- a user run tool that acts as the \emph{Neronet frontend}
+    and user interface to provide access to Neronet's features and
+    functionality. It is the researchers workhorse.
+  \item \Neromum{} -- a \Nerokid{} manager daemon that helps the family stay
+    organized while the kids are playing in distant clusters.
+    \Neromum{} is designed to collaborate with a \texttt{warden} (f. ex.
+    SLURM, OGE or Jobman) if necessary
+  \item \Nerokid{} -- a tiny creature that looks after your
+    computational toy and reports to mum in case it breaks.
   \end{enumerate}
+\end{frame}
+\begin{frame}{Introduction}
+  In more technical terms:
+  \begin{itemize}
+  \item \Nerokid{} is a program designed to be launched by a job scheduler or
+    \Neromum{} directly in a cluster node to monitor, analyse and control
+    a single experiment job and its environment in tandem with a \Neromum{}
+  \item \Neromum{} is a job scheduler, manager and communications agent
+    for Linux nodes or clusters designed to work by herself or with an
+    existing \texttt{warden} (job scheduler)
+  \item \Neroman{} is a tool that acts as the \emph{Neronet frontend} and
+    user interface to provide Neronet's functionality by dispatching
+    \Neromum{}s in specified clusters or nodes with a bunch of jobs to do.
+    The \Neromum{}s in turn dispatch the jobs to the \Nerokid{}s and then
+    continue as communication intermediaries.
+  \end{itemize}
 \end{frame}
 \begin{frame}{Introduction}
   The following three slides provide a good introduction:
@@ -46,17 +67,16 @@
   \begin{figure}
   \begin{tikzpicture}[every node/.append style={align=center}]
     \begin{scope}[every path/.append style={opacity=0.6}] % [blend group = soft light]
-      \fill[red]   ( 90:1.8) circle (2.3);
-      \fill[green] (210:1.8) circle (2.3);
-      \fill[blue]  (330:1.8) circle (2.3);
+      \fill[blue]   ( 90:1.8) circle (2.3);
+      \fill[red] (210:1.8) circle (2.3);
+      \fill[green]  (330:1.8) circle (2.3);
     \end{scope}
-    \node at ( 90:2.8)                {Scheduling \\ \& distribution};
-    \node at (210:2.8)                {State \& progress \\ communication};
-    \node at (330:2.8)                {Planning \\ \& analysis};
-    \node [font=\Large]               {Neronet};
-    \node [font=\scriptsize] at ( 90:2.0)  {\texttt{jobman}};
-    \node [font=\scriptsize] at ( 30:1.5)  {\texttt{neroman}};
-    \node [font=\scriptsize] at (190:2.0)  {\texttt{nerojob}};
+    \node at ( 90:2.8)                {planning \\ \& analysis};
+    \node at (210:2.8)                {scheduling \\ \& distribution};
+    \node at (330:2.8)                {monitoring \\ \& control};
+    \node at (140:1.9)                {\texttt{neroman}};
+    \node at (210:0.6)                {\texttt{neromum}};
+    \node at (350:2.5)                {\texttt{nerokid}};
   \end{tikzpicture}
   \end{figure}
 \end{frame}
@@ -65,9 +85,9 @@
   \tikzset{
     jmi/.append style={align=center,font=\tiny,shape=circle,draw,fill=gray!30,
     minimum size=1.4cm}, jmc/.style={font=\normalsize},
-    nman/.style={fill=blue!30}, nmnj/.style={fill=green!30},
-    nm/.style={color=blue!100}, nj/.style={color=green!100},
-    jm/.style={color=red!100}
+    man/.style={fill=blue!30}, mum/.style={draw=red,thick},
+    kid/.style={fill=green!30}, nm/.style={color=blue},
+    nj/.style={color=green}, jm/.style={color=red}
   }
   \resizebox{0.8\columnwidth}{!}{
   \begin{tikzpicture}
@@ -75,19 +95,19 @@
     \node (01) at (180:4) [jmi]              {Innovate \\ ideas};
     \node (02) at (150:4) [jmi]              {Review \\ literature};
     \node (03) at (120:4) [jmi]              {Write \\ code};
-    \node (04) at ( 90:4) [jmi,nman]         {Embed \\ analytics};
-    \node (05) at ( 60:4) [jmi,nman]         {Design \\ tests};
-    \node (06) at ( 30:4) [jmi,nman]         {Launch \\ tests};
-    \node (07) at (  0:4) [jmi,nmnj]         {Check \\ progress};
-    \node (08) at (330:4) [jmi,nmnj]         {Abort \\ failures};
-    \node (09) at (300:4) [jmi,nmnj]         {Collect \\ results};
-    \node (10) at (270:4) [jmi,nman]         {Analyse \\ results};
+    \node (04) at ( 90:4) [jmi,man]          {Embed \\ analytics};
+    \node (05) at ( 60:4) [jmi,man]          {Design \\ tests};
+    \node (06) at ( 30:4) [jmi,man,mum]      {Launch \\ tests};
+    \node (07) at (  0:4) [jmi,kid,mum]      {Check \\ progress};
+    \node (08) at (330:4) [jmi,kid,mum]      {Abort \\ failures};
+    \node (09) at (300:4) [jmi,kid,mum]      {Collect \\ results};
+    \node (10) at (270:4) [jmi,man]          {Analyse \\ results};
     \node (12) at (225:4) [jmi]              {Publish/drop \\ results};
     \foreach \a/\b in {00/01,01/02,02/03,03/04,04/05,05/06,06/07,07/08,08/09,09/10,10/01,10/12,12/00}
       \draw [->] (\a) edge (\b);
     \node (nm) at ( 30:2) [nm]               {\texttt{neroman}};
-    \node (nm) at (  0:2) [jm]               {\texttt{jobman}};
-    \node (nj) at (330:2) [nj]               {\texttt{nerojob}};
+    \node (nm) at (  0:2) [jm]               {\texttt{neromum}};
+    \node (nj) at (330:2) [nj]               {\texttt{nerokid}};
   \end{tikzpicture}
   }
   \end{figure}
@@ -101,12 +121,17 @@
     analytics developed and test inputs setup in Neronet compatible manner
   \item \textbf{Basic flow}:
     \begin{enumerate} \tiny
-    \item Specify a batch of \emph{nerojobs} in the \emph{experiments Excel}
+    \item Specify a batch of \Nerokid{}s in the \emph{experiments excel}
       with parameters, inputs and other configurations
-    \item Run \texttt{neroman --launch 20-28} to dispatch the jobs to the
-      SLURM setup with autogenerated \texttt{sbatch} scripts and arguments
+    \item Dispatch the jobs to the SLURM setup with autogenerated
+      \texttt{sbatch} scripts and arguments:
+      \texttt{neroman --start 124-186} or \texttt{neroman --start 'tmod<1h'}
     \item Receive and check progress notifications from email
-    \item See near realtime updates in the \emph{results Excel} of analytics
+    \item Reconfigure some jobs in excel and restart them:
+      \texttt{neroman --restart 'crashed,144-149,170,175'}
+    \item Abort some others:
+      \texttt{neroman --abort 'runtime>7200\&\&errorrate>0.40'}
+    \item See near realtime updates in the \emph{results excel} of analytics
       variable updates
     \item Receive final results data and updates to the job excel as
       configured
@@ -209,62 +234,50 @@
 \section{Components}
 \begin{frame}{Components}
   \begin{itemize}
-  \item Both \texttt{neroman} and \texttt{nerojob} are Python programs run
-    with just the researcher's privileges on any modern *nix
-  \item SSH is used for intercomponent communication (user's existing ssh
-    keys, ssh configs and privileges are used)
-    \begin{itemize}
-    \item \texttt{neroman} and \texttt{nerojob} exchange data and files
-      via their CLI and Python interfaces
-    \item \texttt{neroman} and \texttt{nerojob} communicate with the
-      \texttt{jobman} setup using their APIs and/or CLIs
-    \end{itemize}
-  \item The system is ment to be very easy to setup, lightweight and the
+  \item All Nero components are lightweight Python programs run with just the
+    researcher's privileges on any modern *nix
+  \item SSH is used for communication between \Neroman{} and \Neromum{}s
+    (user's existing ssh keys, ssh configs and privileges are used)
+  \item Sockets are used between \Neromum{}s and \Nerokid{}s
+  \item \Neromum{} communicates with the Jobmen using their CLIs and/or APIs
+  \item The system is ment to be easy to setup, lightweight and the
     usability good for several types of uses.
   \end{itemize}
 \end{frame}
 \begin{frame}{Communication}
   \begin{figure}
   \tikzset{
-    ncmp/.style={align=center,font=\small,shape=circle,draw,minimum size=3cm},
-    ngw/.style={align=center,font=\tiny,shape=circle,draw,minimum size=2cm},
     ndom/.style={align=left}
+    ncmp/.style={align=center,font=\small,shape=circle,draw,minimum size=3cm},
+    ncmp/.style={align=center,font=\small,shape=circle,draw,minimum size=3cm},
+    nmum/.style={align=center,font=\small,shape=circle,draw,minimum size=2cm},
+    njob/.style={align=center,font=\tiny,shape=circle,draw,fill=green!30},
   }
   \resizebox{0.8\columnwidth}{!}{
     \begin{tikzpicture}
       \draw[dashed] ( 0, 6  ) rectangle (11,11);
       \draw[dashed] ( 0, 0  ) rectangle (11, 5);
-      \node (ln) at ( 2,10  ) [ndom]               {Local network};
-      \node (ln) at ( 2, 4  ) [ndom]               {Cluster network};
-      \node (nm) at ( 6, 9  ) [ncmp,fill=blue!30]  {\texttt{neroman}};
-      \node (sj) at ( 8, 2  ) [ncmp,fill=red!30]   {\texttt{jobman}};
-      \node (nj) at ( 4, 2  ) [ncmp,fill=green!30] {\texttt{nerojob}};
-      \node (gw) at ( 6, 5.5) [ngw,fill=gray!30]   {SSH \\ gateway};
-      \foreach \a/\b in {nm/gw,gw/nj,gw/sj,nj/sj}
+      \node (ln) at ( 2,10  ) [ndom]                 {Local network};
+      \node (ln) at ( 2, 4  ) [ndom]                 {Cluster network};
+      \node (nm) at ( 6, 9  ) [ncmp,fill=blue!30]    {\texttt{neroman}};
+      \node (mm) at ( 6, 5.5) [nmum,fill=yellow!30]  {\texttt{neromum}};
+      \node (jm) at ( 8, 2  ) [ncmp,fill=red!30]     {\texttt{warden}};
+      \node (j1) at ( 1, 2  ) [njob]                 {\texttt{nerokid}};
+      \node (j2) at ( 5, 1  ) [njob]                 {\texttt{nerokid}};
+      \node (j3) at (3.8,3) [njob]                 {\texttt{nerokid}};
+      \foreach \a/\b in {nm/mm,mm/jm,jm/j1,jm/j2,jm/j3,mm/j1,mm/j2,mm/j3}
         \draw [<->] (\a) edge (\b);
     \end{tikzpicture}
   }
   \end{figure}
-\end{frame}
-\begin{frame}{\texttt{jobman}}
-  % Description of the component its responsibilities, interfaces, and what
-  % are the used frameworks and technologies.
-  \begin{itemize}
-  \item Neronet is ment to work with standard job scheduling systems for Linux
-    clusters. Here \texttt{jobman} refers to all or any of SLURM, OGE, Jobman.
-  \item Each has both CLI and API interfaces and at least one of them is
-    expected to be presetup by research systems administrators.
-  \item SLURM is currently used by Triton and CSC. OGE has been used a lot
-    in the past worldwide. Jobman could be easily setup for the gpu cluster
-    used by deep learning researchers at Aalto.
-  \end{itemize}
 \end{frame}
 \begin{frame}{\texttt{neroman}}
   % Description of the component its responsibilities, interfaces, and what
   % are the used frameworks and technologies.
   \begin{itemize}
   \item A daemon administered and configured by the researcher herself
-  \item Should be run on a system with two way SSH access to the cluster nodes
+  \item Should be run on a system with two way SSH access to the cluster
+    gateway or nodes where the \Neromum{}s are deployed
   \item Key functionality
     \begin{itemize}
     \item Facilitate and standardize experiment specification
@@ -280,20 +293,43 @@
     \end{itemize}
   \end{itemize}
 \end{frame}
-\begin{frame}{\texttt{nerojob}}
+\begin{frame}{\texttt{neromum}}
   % Description of the component its responsibilities, interfaces, and what
   % are the used frameworks and technologies.
   \begin{itemize}
-  \item A program ment to be started by a \texttt{jobman} on any modern *nix
-    (cluster nodes) on job launch
+  \item A daemon started and administered by a \Neroman{}.
+  \item Should be run on a system with two way SSH access to the \Neroman{}
+    and socket access to the nodes where \Nerokid{}s are deployed
+  \item Ment to work with \texttt{warden}s -- standard job scheduling systems
+    for Linux clusters such as SLURM, OGE or Jobman.
+    \begin{itemize}
+    \item Each has both CLI and API interfaces and at least one of them is
+      expected to be presetup by research systems administrators.
+    \item SLURM is currently used by Triton and CSC. OGE has been used a lot
+      in the past worldwide. Jobman could be easily setup for the gpu cluster
+      used by deep learning researchers at Aalto.
+    \end{itemize}
   \item Key functionality
     \begin{itemize}
-    \item Fetch and send computing environment information to \texttt{neroman}
+    \item Collect information from \Nerokid{}s and send them to \Neroman{}
+    \item Transmit commands from \Neroman{} to the \Nerokid{}s
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+\begin{frame}{\texttt{nerokid}}
+  % Description of the component its responsibilities, interfaces, and what
+  % are the used frameworks and technologies.
+  \begin{itemize}
+  \item A daemon started and administered by a \Neromum{} on any modern *nix
+    cluster node to start and monitor computational jobs
+  \item Key functionality
+    \begin{itemize}
+    \item Fetch and send computing environment information to \Neromum{}
     \item Monitor experiment job progress (parse output logs and data files
       (eg. CSV, JSON))
-    \item Autocollect and send information and data to \texttt{neroman}
-    \item Interact with \texttt{jobman} as specified (eg. autotermination based
-      on poor experiment progress)
+    \item Autocollect and send information and data to \Neromum{}
+    \item Interact with the \texttt{warden} as specified (eg. autotermination
+      based on poor experiment progress)
     \item Lightweight and extendable with custom functionality
     \item Configurable via YAML files
     \end{itemize}

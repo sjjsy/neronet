@@ -44,6 +44,7 @@ constructs using specific deep learning libraries. Such libraries include:
     - [Pylearn2] -- A machine learning library built on top of Theano.
     - [Blocks] -- A framework to facilitate building and managing neural
       network models using Theano.
+      See [examples](https://github.com/mila-udem/blocks-examples).
 - [Torch] -- A scientific computing framework with wide support for machine
   learning algorithms.
   See [tutorial](http://torch5.sourceforge.net/manual/newbieTutorial.html).
@@ -59,9 +60,9 @@ meet their computational needs:
   the machine make this method an inpopular one.
 - gpus -- A group of servers with powerful GPUs maintained by Aalto CS
   Department (Simo Tuomisto, 3rd floor).
-  These servers named `gpu1`, `gpu2`, and so on are accessible
-  by SSH by anyone with an Aalto IT account. The department's sysadmins
-  maintain the machines and install generally useful software on request.
+  These servers named `gpu[1-n]` are accessible by SSH by anyone with an
+  Aalto CS account. The department's sysadmins maintain the machines and
+  install generally useful software on request.
   Researchers use `virtualenv` to manage their own libraries.
   Certain user directories that are automounted in Aalto work desktops are
   also mounted on these servers which facilitates file management.
@@ -70,30 +71,35 @@ meet their computational needs:
   It utilizes the [Slurm] queuing and task management system
   to distribute computing resources to researchers. In practice, researchers
   access a gateway server using SSH and then add their scripts to the queue
-  with terminal commands (almost `slurm OPTIONS FILES`). A nasty aspect for
+  with terminal commands (eg. `srun OPTIONS FILES`). A nasty aspect for
   deep learning researchers is that they might have little knowledge of when
-  and how their experiment is progressing.
-  Similar to the case with `gpu` some user directories are also available
-  here.
+  and how their experiments are progressing and few means to interact with
+  them. Similar to the case with `gpu` some user directories are also
+  available here.
 - [CSC] -- Another cluster managed by the Finnish IT center for science.
   From Aalto researchers' point of view, it is basically similar to `triton`
   but harder to access and with no filesystem shares.
-- amazon -- A commercial choice for cloud computation. When Pyry was doing
+- Amazon -- A commercial choice for cloud computation. When Pyry was doing
   research at Amazon he realized their systems were not fancier than those
-  at the Aalto CS Department. One could hire servers like the `gpu`s start
-  an SSH session in one and start coding.
+  at the Aalto CS Department. One could hire servers, start an SSH session in
+  one and start coding.
 
 In addition to advanced cluster computing environments and schedulers such as
-[Slurm], [OGE] or [Jobman] researchers use simpler job scheduler and experiment
+[Slurm] or [OGE] or even [Jobman] (another tool to facilitate launching
+concurrent experiments) researchers use simpler job scheduler and experiment
 manager tools created or under development in deep learning labs around the
-world. However, most of them are sort of script like solutions to serve
-immediate needs. A better tool could be built to replace them:
+world, often in the midst of other neural networks libraries and tools.
+However, many of them are somewhat hackish solutions to serve immediate needs.
+A better dedicated tool could be built to replace them. Examples:
 
-- [LadderNet] -- Looked a bit complicated at first glance.
+- [LadderNet] --  Ladder network is a deep learning algorithm that combines
+  supervised and unsupervised learning but is extended with some experiment
+  manager type software
+- [sacred] -- Sacred is a tool to configure, organize, log and reproduce
+  computational experiments. It is designed to introduce only minimal
+  overhead, while encouraging modularity and configurability of experiments.
+  See the [docs](http://sacred.readthedocs.org/en/latest/).
 - [soteloplot] -- A script that sends email with plots
-- [sacred] -- Seemed a bit complicated at first glance.
-- [Checkpoint] -- Allegedly a pretty feature complete tool.
-- [Jobman] -- A tool to facilitate launching concurrent experiments
 
 [Theano]: http://deeplearning.net/software/theano/
 [Lasagne]: http://lasagne.readthedocs.org/en/latest/user/tutorial.html
@@ -107,9 +113,8 @@ immediate needs. A better tool could be built to replace them:
 [OGE]: https://en.wikipedia.org/wiki/Oracle_Grid_Engine
 [Jobman]: http://deeplearning.net/software/jobman/intro.html
 [LadderNet]: https://github.com/JimJarvis/LadderNet
-[soteloplot]: https://github.com/sotelo/play/blob/master/extensions/plot.py
 [sacred]: https://github.com/IDSIA/sacred
-[Checkpoint]: https://github.com/milaudem/blocksexamples
+[soteloplot]: https://github.com/sotelo/play/blob/master/extensions/plot.py
 
 ## Project goals
 
@@ -207,6 +212,11 @@ learning during the project.
   Notable are also Montreal LISA lab, Google DeepMind.
 - The project could be useful to many deep learning labs and people in other
   fields running time consuming experiments (e.g. physics simulations).
+
+Online forums:
+
+- [Deep Learning at Google Plus](https://plus.google.com/communities/112866381580457264725)
+- [Machine Learning at Reddit](https://www.reddit.com/r/MachineLearning/)
 
 ### Materials
 
