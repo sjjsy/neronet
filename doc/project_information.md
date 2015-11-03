@@ -193,7 +193,7 @@ learning during the project.
 - [Scientific computing in practice]
 
 [Triton Wiki]: https://wiki.aalto.fi/display/Triton/
-[Scientific computing in practice]: http://science-it.aalto.fi/wp-content/uploads/sites/2/2015/05/SCiP2015.Triton_practicalities.pdf
+[Scientific computing in practice]: http://science-it.aalto.fi/scip/kickstart2015/
 
 ### Triton Networking
 
@@ -253,13 +253,19 @@ module load python-env
 cd ../owlet
 echo "Starting the run"
 
-## list the commands you wish to run
+# launch experiment
 python lang_experiment.py
 ```
 
 #### Technical overview
 
-As a cluster resource manager, SLURM has three key functions. First, it allocates exclusive and/or non-exclusive access to resources (compute nodes) to users for some duration of time so they can perform work. Second, it provides a framework for starting, executing, and monitoring work (normally a parallel job) on the set of allocated nodes. Finally, it arbitrates contention for resources by managing a queue of pending work.
+As a cluster resource manager, SLURM has three key functions:
+
+- Allocates exclusive and/or non-exclusive access to resources (compute nodes)
+  to users for some duration of time so they can perform work
+- Provides a framework for starting, executing, and monitoring work (normally
+  a parallel job) on the set of allocated nodes
+- Arbitrates contention for resources by managing a queue of pending work.
 
 #### Co-workability
 
@@ -289,11 +295,88 @@ python lang_experiment.py --iter=500-1000
 neronet --server neronet.cs.hut.fi --finished exp01.py --log *.out --data *.json
 ```
 
+### Oracle Grid Engine
+
+[OGE] (previously known as SGE, Sun Grid Engine) is a grid computing computer
+cluster software system similar to SLURM. It manages grid computing resources
+and accepting, scheduling, dispatching, and managing the execution of large
+numbers of standalone, parallel or interactive user jobs.
+
+A practical tutorial is available [online].
+
+[OGE]: https://en.wikipedia.org/wiki/Oracle_Grid_Engine
+[online]: http://bioinformatics.mdc-berlin.de/intro2UnixandSGE/sun_grid_engine_for_beginners/README.html
+
+Example
+
+```
+# Submit a job
+qsub -V -b n -cwd runJob.sh
+```
+
+### Jobman
+
+[Jobman] aims to facilitate the process of launching many concurrent jobs, by
+automatically handling how parameters are passed to your programs and how
+results are stored for further analysis. While Jobman is application-agnostic,
+it is particularly well suited for machine learning when performing model
+selection (handling of hyperparameters, storing and analyzing results).
+
+Notes
+
+- requires python 2.7 to work on client side
+- requires postgreSQL on server side
+- client(s) running connects to server to retrieve a job to execute
+- jobman does it's thing and outputs files that an be synced with rsync
+- jobman updates database that job has been completed
+
+### Other existing tools.
+
+There are other job scheduler and experiment manager tools created or under
+development in deep learning labs around the world. However, most of them
+are sort of script like solutions to serve immediate needs. A better tool
+could be built to replace them:
+
+- [Blocks] -- A framework to facilitate building and managing neural network
+  models using Theano.
+- [LadderNet] -- Looked a bit complicated at first glance.
+- [soteloplot] -- A script that sends email with plots
+- [sacred] -- Seemed a bit complicated at first glance.
+- [Checkpoint] -- Most of the below are done in Checkpoint.
+
+[Blocks]: https://blocks.readthedocs.org/en/latest/
+[LadderNet]: https://github.com/JimJarvis/LadderNet
+[soteloplot]: https://github.com/sotelo/play/blob/master/extensions/plot.py
+[sacred]: https://github.com/IDSIA/sacred
+[Checkpoint]: https://github.com/milaudem/blocksexamples
+
+There are many requirements explicitly mentioned by deep learning researchers:
+
+- Sends customizable email notification (validation/test results, training
+  curve/crash report)
+- Queue and schedule lots of experiments with slightly different settings to
+  a cluster or just your local network
+- Should be lightweight (depend only on the python standard lib)
+- Easy resume capability (load parameters and hyperparameters from disk and
+  continue after a crash/failure)
+- Autocheck the code repo's git version and other facts
+- Record the history of "variables of interest" into a json file (validation
+  costs & validation error rates after each epoch)
+- The experiment manager should as simple as possible
+    - Should not rely on one toolchain
+    - Jobman feels oppressive. NoSQL setup should work better
+- Command line is king; programmatic access from Python is nice to have
+
 ## Related information
 
 ### Testing
 
-[Robot Framework] is a generic test automation framework for acceptance testing and acceptance test-driven development (ATDD). It has easy-to-use tabular test data syntax and it utilizes the keyword-driven testing approach. Its testing capabilities can be extended by test libraries implemented either with Python or Java, and users can create new higher-level keywords from existing ones using the same syntax that is used for creating test cases.
+[Robot Framework] is a generic test automation framework for acceptance
+testing and acceptance test-driven development (ATDD). It has easy-to-use
+tabular test data syntax and it utilizes the keyword-driven testing approach.
+Its testing capabilities can be extended by test libraries implemented either
+with Python or Java, and users can create new higher-level keywords from
+existing ones using the same syntax that is used for creating test cases.
 
 [Robot Framework]: http://robotframework.org/
 
@@ -308,7 +391,11 @@ neronet --server neronet.cs.hut.fi --finished exp01.py --log *.out --data *.json
 
 ### Floobits & Sublime
 
-- http://awan1.github.io/subl-floo-tutorial.html
+- Provides realtime simultaneous file editing collaboration cababilities.
+- Can be setup with a repo such that changes are easy to reflect back in
+  GitHub.
+
+See http://awan1.github.io/subl-floo-tutorial.html
 
 ### First meeting with PO (by Joona \& Teemu)
 
@@ -341,14 +428,6 @@ Things yet to research/decide
 
 - Simo
 - Possibly in the future a web interface and user login
-
-Jobman
-
-- requires python 2.7 to work on client side
-- requires postgreSQL on server side
-- client(s) running connects to server to retrieve a job to execute
-- jobman does it's thing and outputs files that an be synced with rsync
-- jobman updates database that job has been completed
 
 Roadmap
 
