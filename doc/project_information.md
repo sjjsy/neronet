@@ -458,3 +458,15 @@ Things yet to research/decide
 Roadmap
 
 - TBD
+
+### Workshop 11-04
+
+Participants: team
+Agenda:
+- Aalto-student contract
+- Time tracking & Agilefant
+- Evaluation criteria
+- Technical Overview (Simo's input)
+- Market research
+- Prototype development
+- EES participation
