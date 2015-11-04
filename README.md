@@ -20,7 +20,7 @@ These files contain lots of general project related information:
 
 ## Artifacts
 
-The artifacts are work in progress:
+The artifacts are updated continuously:
 
 - [Product Vision](./doc/product_vision.pdf)
 - [Process Overview](./doc/process_overview.pdf)

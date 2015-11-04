@@ -1,19 +1,19 @@
 # Evaluation
 
-This document contains a summary of the evaluation principles and criteria as
-described by the course staff in MyCourses and our coach himself.
+This document contains a summary of the evaluation principles and criteria
+as described by the course staff in MyCourses and our coach himself.
 
 ## Overview
 
 Points allocation:
 
-- 3x5p -- Work practices (coach)
-- 3x5p -- Progress (PO)
-- 30p -- End result (coach + PO)
-- 4x0.5p -- EES participation: 
+- 3x5p -- Work practices (coach) -- After each project review
+- 3x5p -- Progress (PO) -- After each project review
+- 30p -- End result (coach + PO) -- After the last project review
+- 4x0.5p -- EES participation -- After each EES
 - 62p -- Total
 
-5p from progress or 13-15p from final results are given by the PO only if
+5p from progress and 13-15p from final results are given by the PO only if
 they **exceed expectations**. 13-15p are given by the coach only if the
 project is both difficult and the results are **exemplary**.
 
@@ -42,6 +42,7 @@ Pitfalls:
 - Give feedback to team members of their success in their role.
 - We must apply Scrum as defined in the Project Manual and Scrum Guide.
 - Daily Scrum (once a week, max. 15 min)
+- Learning Diaries (Before each project review)
 
 ### Scrum master
 
@@ -80,14 +81,17 @@ Pitfalls:
 ### EES 
 
 - Two topic proposals submitted in advance
-- Topics can be 1) a problem description, 2) a good solution to a common problem, or 3) a short demo of a useful tool
+- Topics can be 1) a problem description, 2) a good solution to a common
+  problem, or 3) a short demo of a useful tool
 - Topics are presented by proposers, and discussed
 - 1-3 attendants per team
 
 #### Topic candidates
 
-- Leadership in self-organizing teams? Eliciting intrinsic motivation and self-direction and initiative in team members.
-- Interviews for requirements gathering and/or researching feasibility of potential technical solutions?
+- Leadership in self-organizing teams? Eliciting intrinsic motivation and
+  self-direction and initiative in team members.
+- Interviews for requirements gathering and/or researching feasibility of
+  potential technical solutions?
 
 ## Sources and links
 
