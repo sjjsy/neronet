@@ -1,7 +1,7 @@
 # Meetings
 
 Notes on meetings. Each meeting is documented under a section title of the
-form: <month>-<day> <duration_in_minutes> <event title>
+form: `<month>-<day> <duration_in_minutes>m <event title>`
 
 ## 10-07 60m First skype with PO (teamPy)
 
@@ -20,7 +20,16 @@ Agenda:
 - learning about research practices
 - discussion about project
 
-## 10-22 60m Quick SM-PO chat (PySa)
+## 10-14 120m Drafts meeting
+
+Participants: team - TuIiJu
+Agenda:
+
+- initial plans
+- current drafts
+- distribution of work
+
+## 10-22 60m Quick SM-PO chat
 
 Participants: Samuel + Pyry
 Agenda:
@@ -30,7 +39,7 @@ Agenda:
 - practical issues
 - technical research methods
 
-## 10-23 210m Artifacts workskype (SaJoMa)
+## 10-23 210m Artifacts workskype
 
 Participants: Samuel, Joona, Matias
 Agenda:
@@ -39,7 +48,7 @@ Agenda:
 - Product Vision -- Joona
 - Definition of Done -- Joona
 
-## 10-24 120m Artifacts workskype (SaTeTu)
+## 10-24 120m Artifacts workskype
 
 Participants: Samuel, Teemu, Tuomo
 Agenda:
@@ -184,8 +193,6 @@ Agenda:
 - Time tracking & Agilefant
 - Evaluation criteria
 - Technical Overview (Simo's input)
-- Market research
-- Prototype development
 - EES participation
 
 ## 11-04 120m EES 01: Adapting scrum

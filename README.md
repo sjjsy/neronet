@@ -27,6 +27,15 @@ The artifacts are updated continuously:
 - [Technical Overview](./doc/technical_overview.pdf)
 - [Definition of Done](./doc/definition_of_done.pdf)
 
+## Notes on related themes
+
+- [Evaluation](./doc/notes_on_evaluation.md) -- a summary of course evaluation
+- [Meetings](./doc/notes_on_meetings.md) -- a chronology of meetings history
+  with notes
+- [Teamwork](./doc/notes_on_teamwork.md) -- notes to improve teamwork
+- [Tools](./doc/notes_on_tools.md) -- notes on selected or candidate tools
+- [Scrum](./doc/notes_on_scrum.md) -- some notes on Scrum
+
 ## Team
 
 The team consists of
