@@ -302,9 +302,9 @@
   \item A daemon started and administered by a \Neroman{}.
   \item Should be run on a system with two way SSH access to the \Neroman{}
     and socket access to the nodes where \Nerokid{}s are deployed
-  \item Collaborates with standard \Warden{}s.
-    \scriptsize{SLURM is currently used by Triton and CSC. OGE is still used
-    worldwide. Jobman could be setup for the CS gpu cluster.}
+  \item Collaborates with standard \Warden{}s.\footnote{SLURM is currently
+    used by Triton and CSC. OGE is still used worldwide. Jobman could be
+    setup for the CS gpu cluster.}
   \item Key functionality
     \begin{itemize}
     \item Receive and execute commands from \Neroman{}
@@ -320,18 +320,21 @@
   % Description of the component its responsibilities, interfaces, and what
   % are the used frameworks and technologies.
   \begin{itemize}
-  \item A daemon started and administered by a \Neromum{} on any modern *nix
-    cluster node to start and monitor computational jobs
+  \item A daemon started and administered by a \Neromum{} directly or through
+    a \Warden{} on any modern *nix system (typically a cluster node) to start
+    and monitor computational jobs
   \item Key functionality
     \begin{itemize}
-    \item Fetch and send computing environment information to \Neromum{}
-    \item Monitor experiment job progress (parse output logs and data files
-      (eg. CSV, JSON))
-    \item Autocollect and send information and data to \Neromum{}
-    \item Interact with the \texttt{warden} as specified (eg. autotermination
+    \item Send information to \Neroman{} via \Neromum{} as configured
+      \begin{itemize}
+      \item computing environment information
+      \item experiment job progress information read either through an API
+      or by parsing output logs and data files (eg. CSV, JSON)
+      \end{itemize}
+    \item Interact with the \Warden{} as specified (eg. autotermination
       based on poor experiment progress)
     \item Lightweight and extendable with custom functionality
-    \item Configurable via YAML files
+    \item Configurable via YAML files and perhaps a Python API
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -351,27 +354,38 @@
 \section{Remarks}
 \begin{frame}{Remarks}
   \begin{itemize}
-  \item A server (\texttt{neroman} daemon) per user approach is chosen because
+  \item A server (\Neroman{}) per user approach is chosen because
     \begin{itemize}
     \item easy minimalist setup (easy to try)
     \item no need for special privileges
     \item fully customizable by the user herself
+    \item low resources overhead per setup
+    \item total number of users relatively low as well
     \end{itemize}
   \item SSH is used because
     \begin{itemize}
-    \item it is an existing standard in most modern research systems and
-      clusters
-    \item user's existing ssh keys and configs provide an easy and
-      effective way to provide safe networking
+    \item it is an existing standard among target system environments
+    \item user's existing SSH keys and configs provide an easy and effective
+      way to provide secure networking
     \item no need for network, port routing or privileges adjustments
     \end{itemize}
+  \end{itemize}
+\end{frame}
+\begin{frame}{Remarks}
+  \begin{itemize}
   \item Python 3 is used because
     \begin{itemize}
-    \item available in most modern *nix systems
-    \item has good support for the system's needs
-    \item it is easy to learn and familiar to most computational researchers
-    \item Many research libraries use it (Scipy, Numpy, Theano, Lasange,
-      Pylearn, Blocks)
+    \item it is already available in most modern *nix systems
+    \item it has good support for the known software requirements
+    \item it is already popular among computational researchers
+    \item many related research libraries use it
+      (Scipy, Numpy, Theano, Lasange, Pylearn, Blocks)
+    \end{itemize}
+  \item Sockets are used because
+    \begin{itemize}
+    \item they provide fast and efficient realtime communication in tightly
+      connected networks
+    \item they are lightweight for the cluster filesystem
     \end{itemize}
   \end{itemize}
 \end{frame}
