@@ -1,4 +1,4 @@
-# Meetings
+f# Meetings
 
 Notes on meetings. Each meeting is documented under a section title of the
 form: `<month>-<day> <duration_in_minutes>m <event title>`
@@ -223,13 +223,91 @@ Software quality:
 - Quality assurance and automated deployment (continuous integration) with
   Github, CircleCI and Heroku
 
-## 11-06 300m Frifury
+## 11-06 90m Expert meeting (Simo Tuomisto)
+
+Notes
+
+- Neroman could run on a web browser or be a QT application
+- Excel or application shows results (multiple options) 
+- parameter combinations can be numerous
+- SSH can be slow + file system unreliable + can crash unexpectedly
+- http could be a better protocol
+- SSH-Stdout-payload-scp
+- Refresh/real time data
+- Neroman could be http server application
+- Possible implementing order nerokid-neromum-neroman
+- Job scheduling
+- hdf5 could be used by neromum to save the experiment output data
+
+## 11-06 210m Frifury
 
 Participants: team
-Agenda::
-- 7x15m Scrum
-- 3x120m Market research (matute)
-- 3x120m Prototype design (iijoju)
-- 7x40m Discussing results
-- 2x120m Market research (iijo)
-- 4x120m Prototype development (matuteju)
+Agenda:
+- 6x15m Scrum
+- 6x10m General discussion
+- 6x30m Agilefant
+- 6x20m Schedule
+- 3x90m Market research (matute)
+- 2x90m Prototype design (iijo)
+- 6x30m Discussing results
+
+### Scrum:
+
+Tuomo:
+
+- Has studied Jobman
+- Thought it is important to show the technical overview to the PO
+
+Iiro:
+
+- Has studied iPython
+- We should continue researching user requirements
+
+Matias:
+
+- Has thought about teamwork practices and Agilefant
+- We should communicate more with the end users and then improve the accuracy
+  of the software design
+
+Teemu:
+
+- Thinks it is very important to have good plan before starting to code
+- Feels the current plan is pretty reasonable
+
+Joona:
+
+- Has thought about teamwork practices and Agilefant
+- Thinks we need to define classes and make class diagrams
+- Need input how to specify experiments
+
+Samuel:
+
+- Has been doing techincal overview to prepare to our interviews
+- Has been interviewing simo
+- Redone agilefant
+- Participated in EES
+
+### Notes on existing tools
+
+Blocks
+
+- saving and resuming training
+- monitoring, analyzing values
+- Theano operations
+- algorithms to optimize a model
+
+Ipython
+
+- manages job distibution
+- manages parallelism
+- seemingly quite similar to Slurm
+
+Ask the custom whether they have used Blocks/Ipython/Sacred etc
+
+## 11-06 180m Satscrum in Hangout
+
+Participants: team
+Agenda:
+- 6x15m Scrum
+- 2x150m Market research (iijo)
+- 3x150m Prototype development (matute)

@@ -388,3 +388,35 @@ Notes
 - client(s) running connects to server to retrieve a job to execute
 - jobman does it's thing and outputs files that an be synced with rsync
 - jobman updates database that job has been completed
+- 
+
+### Laddernet
+- Ladder network is a deep learning algorithm that combines supervised and unsupervised learning
+- seems to be helper project to define neural networks for reserchers
+-
+
+### sacred
+- another project definer / helper
+- keep track of all the parameters of your experiment
+- easily run your experiment for different settings
+- save configurations for individual runs in a database
+- reproduce your results
+- Command-line interface: You get a powerful command-line interface for each experiment that you can use to change parameters and run different variants.
+- Observers: Sacred provides Observers that log all kinds of information about your experiment, its dependencies, the configuration you used, the machine it is run on, and of course the result. These can be saved to a MongoDB, for easy access later.
+- IN PRACTISE
+- can be used to dump parameters to files / database
+- automatically fills function parameters
+
+
+##python unit testing in nutshell
+- define test in advance beforemaking the main function
+- define function as normal
+- make new python script and import unittest
+- use unit test like this
+- class MyTest(unittest.TestCase):
+    def test(self):
+        self.assertEqual(my_funcion(my_parameter), exected value)
+        self.assertEqual(squareNuber(2),5) #false 
+        self.assertEqual(squareNuber(2),5) #true
+
+run script and compare results
