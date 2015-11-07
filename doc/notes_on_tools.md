@@ -2,7 +2,41 @@
 
 Notes on tools organized by tool domain.
 
+## Documentation
+
+### Sphinx & Read the Docs
+
+Sphinx is a tool that makes it easy to create intelligent and beautiful documentation, written by Georg Brandl and licensed under the BSD license.
+
+Read the Docs automates the process of building and uploading Sphinx documentation after every commit.
+
+https://readthedocs.org/
+
+Of course, this site is also created from reStructuredText sources using Sphinx! The following features should be highlighted:
+
+Output formats: HTML (including Windows HTML Help), LaTeX (for printable PDF versions), ePub, Texinfo, manual pages, plain text
+Extensive cross-references: semantic markup and automatic links for functions, classes, citations, glossary terms and similar pieces of information
+Hierarchical structure: easy definition of a document tree, with automatic links to siblings, parents and children
+Automatic indices: general index as well as a language-specific module indices
+Code handling: automatic highlighting using the Pygments highlighter
+Extensions: automatic testing of code snippets, inclusion of docstrings from Python modules (API docs), and more
+Contributed extensions: more than 50 extensions contributed by users in a second repository; most of them installable from PyPI
+
+http://sphinx-doc.org/tutorial.html
+
 ## Software testing
+
+### Python unit testing framework
+
+The Python unit testing framework, dubbed 'PyUnit' by convention, is a Python language version of JUnit, by smart cookies Kent Beck and Erich Gamma. JUnit is, in turn, a Java version of Kent's Smalltalk testing framework. Each is the de facto standard unit testing framework for its respective language.
+
+This document explains the Python-specific aspects of the design and usage of PyUnit; for background information on the basic design of the framework the reader is referred to Kent's original paper, "Simple Smalltalk Testing: With Patterns".
+
+PyUnit forms a part of the Python Standard Library as of Python version 2.1.
+
+The following information assumes knowledge of Python, a language so easy that even I managed to learn it, and so addictive that I can't stop.
+
+http://pyunit.sourceforge.net/pyunit.html
 
 ### Robot Framework
 
@@ -15,9 +49,9 @@ existing ones using the same syntax that is used for creating test cases.
 
 [Robot Framework]: http://robotframework.org/
 
-### CircleCI
+### CircleCi
 
-Let [CircleCI] help your team focus on making a great product. Speed up your
+Let [CircleCi] help your team focus on making a great product. Speed up your
 testing and development cycle to improve productivity. CircleCI is flexible
 to run in your environment and scale with your growth. Have the peace of mind
 by reducing bugs and improving the quality of your application.

@@ -243,13 +243,13 @@ Notes
 
 Participants: team
 Agenda:
+
 - 6x15m Scrum
-- 6x10m General discussion
-- 6x30m Agilefant
+- 6x20m General discussion
+- 6x40m Agilefant
 - 6x20m Schedule
-- 3x90m Market research (matute)
-- 2x90m Prototype design (iijo)
-- 6x30m Discussing results
+- 3x100m Market research (matute)
+- 2x100m Prototype design (iijo)
 
 ### Scrum:
 
@@ -308,6 +308,8 @@ Ask the custom whether they have used Blocks/Ipython/Sacred etc
 
 Participants: team
 Agenda:
-- 6x15m Scrum
-- 2x150m Market research (iijo)
-- 3x150m Prototype development (matute)
+- 6x10m Scrum
+- 6x30m Discussing results
+- 3x140m Prototype development (matute)
+- 2x100m Market research (iijo)
+- 2x40m Prototype development (iijo)
