@@ -9,20 +9,20 @@ Identifying architecturally significant requirements:
     - Input
     - Neronet should not create restrictions to the creation of experiments
     - Should be streamlined and simple
-- Management of queues 
-  - Work with slurm, jobman or other
+- Management of queues
+    - Work with slurm, jobman or other
 - Batch submission of experiment jobs to computing clusters
-  - Shouldn't overload the clusters
-  - Should check clusters resource availability
+    - Shouldn't overload the clusters
+    - Should check clusters resource availability
 - Monitoring of ongoing experiments’ logs and parameter values 
-  - Real time access
+    - Real time access
 - Access to experiment information during and after the run 
-  - Output values must be stored
+    - Output values must be stored
 - Conﬁgurable notiﬁcations on experiment state and progress 
 - Conﬁgurable criteria for experiment autotermination
-  - Input must have a specific format
+    - Input must have a specific format
 - Logging of experiment history 
-  - Database noSQL/SQL
+    - Database noSQL/SQL
 - Preferences conﬁguration
 
 ## System
@@ -82,12 +82,14 @@ Identifying architecturally significant requirements:
 
 #### Neromum
 
-- Neromum is created by neroman
+- Neromum is installed to cluster systems by neroman
 - Neroman starts Neromum
-- Neromum creates the Nerokids according to the information received from Neroman
+- Neromum installs and starts the Nerokids according to the information
+  received from Neroman (possibly with the help of a Warden)
 - Neromum listens to the Nerokids and saves the information on a hdf file
 - Neromum gives information to Neroman upon request
-- Neroman tells Neromum to stop when the experiments are done and all data has been transferred
+- Neroman tells Neromum to stop when the experiments are done and all data
+  has been transferred
 
 #### Nerokid
 

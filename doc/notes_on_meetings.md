@@ -6,6 +6,7 @@ form: `<month>-<day> <duration_in_minutes>m <event title>`
 ## 10-07 60m First skype with PO (teamPy)
 
 Participants: team + Pyry
+
 Agenda:
 
 - introduction to project
@@ -14,6 +15,7 @@ Agenda:
 ## 10-09 120m Meeting Jelena
 
 Participants: team + Jelena
+
 Agenda:
 
 - introduction to research group
@@ -23,6 +25,7 @@ Agenda:
 ## 10-14 120m Drafts meeting
 
 Participants: team - TuIiJu
+
 Agenda:
 
 - initial plans
@@ -32,6 +35,7 @@ Agenda:
 ## 10-22 60m Quick SM-PO chat
 
 Participants: Samuel + Pyry
+
 Agenda:
 
 - status overview
@@ -42,6 +46,7 @@ Agenda:
 ## 10-23 210m Artifacts workskype
 
 Participants: Samuel, Joona, Matias
+
 Agenda:
 
 - Process Overview -- Matias
@@ -51,6 +56,7 @@ Agenda:
 ## 10-24 120m Artifacts workskype
 
 Participants: Samuel, Teemu, Tuomo
+
 Agenda:
 
 - Product Backlog
@@ -59,6 +65,7 @@ Agenda:
 ## 10-25 90m Tech workskype
 
 Participants: Samuel, Matias, Teemu, Tuomo, Iiro
+
 Agenda:
 
 - Discussed and studied the state of the art
@@ -66,6 +73,7 @@ Agenda:
 ## 10-25 120m Triton workskype
 
 Participants: Samuel, Tuomo, Iiro, (Matias)
+
 Agenda:
 
 - Studied Triton and SLURM
@@ -73,6 +81,7 @@ Agenda:
 ## 10-28 180m Wedshop
 
 Participants: team (team - Juho)
+
 Agenda:
 
 - general status check
@@ -82,6 +91,7 @@ Agenda:
 ## 10-30 300m Frifury
 
 Participants: team (team - Juho)
+
 Agenda:
 
 - Agilefant (time tracking)
@@ -107,15 +117,22 @@ Decisions made
 
 - Command prompt applications, no web UI
 - Two different applications: Server and client
-- Client application contacts server. The client application doesn't have to be running all the time.
-- Server application contacts the clusters to run the experiments, manages the experiment queues and collects information on running experiments. The server also saves the information and notifies the client if the experiments go wrong. In an ideal situation the server application is always running.
+- Client application contacts server. The client application doesn't have to
+  be running all the time.
+- Server application contacts the clusters to run the experiments, manages
+  the experiment queues and collects information on running experiments. The
+  server also saves the information and notifies the client if the experiments
+  go wrong. In an ideal situation the server application is always running.
 - Queue management can use either jobman or slurm 
-- Server makes a .csv document about the past experiments and their outputs and the client can download it.
+- Server makes a .csv document about the past experiments and their outputs
+  and the client can download it.
 - Server can tell the information on the available GPU:s etc.
 - Config:
-- Defines the ID of the experiment (author, subject, name, group name, git commit ID)
+- Defines the ID of the experiment (author, subject, name, group name, git
+  commit ID)
 - Define the variables that must be extracted and sent to the server
-- The Preconditions (minimum available disk space, expected max time, minimum RAM)
+- The Preconditions (minimum available disk space, expected max time, minimum
+  RAM)
 - The files that must be sent to the cluster
 
 Things yet to research/decide
@@ -130,6 +147,7 @@ Roadmap
 ## 11-03 90m Lunch with Simo
 
 Participants: Samuel + Simo Tuomisto
+
 Agenda:
 
 - introduction
@@ -187,6 +205,7 @@ CS/Triton Admin
 ## 11-04 180m Wedshop
 
 Participants: team - Juho
+
 Agenda:
 
 - Aalto-student contract
@@ -225,7 +244,7 @@ Software quality:
 
 ## 11-06 90m Expert meeting (Simo Tuomisto)
 
-Notes
+Notes:
 
 - Neroman could run on a web browser or be a QT application
 - Excel or application shows results (multiple options) 
@@ -242,6 +261,7 @@ Notes
 ## 11-06 210m Frifury
 
 Participants: team
+
 Agenda:
 
 - 6x15m Scrum
@@ -289,14 +309,14 @@ Samuel:
 
 ### Notes on existing tools
 
-Blocks
+Blocks:
 
 - saving and resuming training
 - monitoring, analyzing values
 - Theano operations
 - algorithms to optimize a model
 
-Ipython
+Ipython:
 
 - manages job distibution
 - manages parallelism
@@ -307,9 +327,38 @@ Ask the custom whether they have used Blocks/Ipython/Sacred etc
 ## 11-06 180m Satscrum in Hangout
 
 Participants: team
+
 Agenda:
 - 6x10m Scrum
 - 6x30m Discussing results
-- 3x140m Prototype development (matute)
-- 2x100m Market research (iijo)
-- 2x40m Prototype development (iijo)
+- 4x120m Prototype development (iitutejo)
+- 1x80m Prototype development (ma)
+- 6x20m Discussing results
+
+Tasks:
+- iitu by 17:00: come up with a design in how the Python package and version
+  management should be dealt in our project. Google and check existing
+  projects.
+- jote by 17:00: start sketching the prototype.
+
+Homework:
+- Everyone installs and tests a Python 3.5 environment
+
+## 11-09 klo 20 90m Review of product vision
+
+Participants: team + PO
+
+
+Agenda:
+- 7x60m Discussing the product vision
+- 2x30m Market research (iima)
+
+## 11-11 240m Wedshop
+
+Participants: team
+
+Agenda:
+- 6x10m Scrum
+- 2x150m Neroman development (iijo)
+- 3x150m Nerokid and Neromum development (tutema)
+- 6x30m Discussing results
