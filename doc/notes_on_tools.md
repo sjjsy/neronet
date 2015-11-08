@@ -2,6 +2,17 @@
 
 Notes on tools organized by tool domain.
 
+## General
+
+Articles:
+- [Open sourcing a Python project the right way](https://www.jeffknupp.com/blog/2013/08/16/open-sourcing-a-python-project-the-right-way/)
+
+## Version control
+
+### Git
+
+The way to use git or the [git-flow](http://nvie.com/posts/a-successful-git-branching-model/).
+
 ## Documentation
 
 ### Sphinx & Read the Docs
@@ -28,15 +39,32 @@ http://sphinx-doc.org/tutorial.html
 
 ### Python unit testing framework
 
-The Python unit testing framework, dubbed 'PyUnit' by convention, is a Python language version of JUnit, by smart cookies Kent Beck and Erich Gamma. JUnit is, in turn, a Java version of Kent's Smalltalk testing framework. Each is the de facto standard unit testing framework for its respective language.
-
-This document explains the Python-specific aspects of the design and usage of PyUnit; for background information on the basic design of the framework the reader is referred to Kent's original paper, "Simple Smalltalk Testing: With Patterns".
+[PyUnit](http://pyunit.sourceforge.net/pyunit.html) or the Python unit testing
+framework is the de facto standard unit testing framework for Python. It is
+based on JUnit.
 
 PyUnit forms a part of the Python Standard Library as of Python version 2.1.
 
-The following information assumes knowledge of Python, a language so easy that even I managed to learn it, and so addictive that I can't stop.
+### PyTest
 
-http://pyunit.sourceforge.net/pyunit.html
+[pytest](pytest.org/) is a mature full-featured Python testing tool that helps
+you write better programs.
+
+### Tox
+
+[Tox](http://tox.readthedocs.org/en/latest/) aims to automate and standardize
+testing in Python. It is part of a larger vision of easing the packaging,
+testing and release process of Python software.
+
+Tox is a generic virtualenv management and test command line tool you can use
+for:
+- checking your package installs correctly with different Python versions and
+  interpreters
+- running your tests in each of the environments, configuring your test tool
+  of choice
+- acting as a frontend to Continuous Integration servers, greatly reducing
+  boilerplate and merging CI and shell-based testing.
+
 
 ### Robot Framework
 
@@ -48,6 +76,14 @@ with Python or Java, and users can create new higher-level keywords from
 existing ones using the same syntax that is used for creating test cases.
 
 [Robot Framework]: http://robotframework.org/
+
+## Continuous integration
+
+### Travis
+
+[Travis](https://travis-ci.org/) is the home of open source testing. Over 200k
+open source projects and 126k users are testing on Travis CI. Easily sync your
+GitHub projects with Travis CI and you’ll be testing your code in minutes!
 
 ### CircleCi
 

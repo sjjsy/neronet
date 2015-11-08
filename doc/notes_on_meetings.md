@@ -344,6 +344,21 @@ Tasks:
 Homework:
 - Everyone installs and tests a Python 3.5 environment
 
+### Homework
+
+On Ubuntu 14.04:
+```
+sudo add-apt-repository ppa:fkrull/deadsnakes
+sudo apt-get update
+sudo apt-get install python3.5
+
+python3.5 -m venv projects/neronet/.venv
+```
+
+Resources:
+- [PEP-0405](https://www.python.org/dev/peps/pep-0405/)
+- [venv](https://docs.python.org/3/library/venv.html)
+
 ## 11-09 90m Review of product vision
 
 Participants: team + PO
