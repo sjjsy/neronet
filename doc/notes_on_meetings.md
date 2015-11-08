@@ -344,7 +344,7 @@ Tasks:
 Homework:
 - Everyone installs and tests a Python 3.5 environment
 
-## 11-09 klo 20 90m Review of product vision
+## 11-09 90m Review of product vision
 
 Participants: team + PO
 
@@ -450,15 +450,15 @@ Agenda:
 Participants: team + coach
 
 Agenda:
-- 15:00 7x10m discussing agenda
-- 15:10 7x20m retrospective results
-- 15:30 7x15m process overview
-- 15:45 7x10m product vision
-- 15:55 7x10m technical overview
-- 16:05 7x10m definition of done
-- 16:15 7x15m backlogs
-- 16:30 7x15m prototype demo
-- 16:45 7x15m post review discussion
+- 15:00 7x10m Discussing agenda
+- 15:10 7x20m Retrospective results
+- 15:30 7x15m Process overview
+- 15:45 7x10m Product vision
+- 15:55 7x10m Technical overview
+- 16:05 7x10m Definition of done
+- 16:15 7x15m Backlogs
+- 16:30 7x15m Prototype demo
+- 16:45 7x15m Post review discussion
 
 ## 11-16 120m Sprint 1 planning
 
