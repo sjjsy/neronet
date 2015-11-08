@@ -84,6 +84,64 @@ by reducing bugs and improving the quality of your application.
 - [How to maintain a lean product backlog](http://www.screenful.me/blog/how-to-keep-your-product-backlog-clean-and-lean)
 - [Working with storyless tasks](https://www.mountaingoatsoftware.com/blog/working-with-storyless-tasks)
 
+Below some important points related to backlog management. Some content and
+quotes taken from
+[MountainGoatSoftware.com](https://www.mountaingoatsoftware.com/agile/user-stories)
+and [ScrumAlliance.org](https://www.scrumalliance.org/community/articles/2013/september/agile-user-stories).
+
+Quote:
+
+    If you don't get the user needs right, it doesn't matter how well you
+    execute the rest of the project. The Standish Group surveyed IT executive
+    managers in 1995 for their opinions about why projects succeed.
+    The three major reasons that a project will succeed are
+    user involvement (15.9%), executive management support (13.9%), and a clear
+    statement of requirements (13%). Opinions about why projects are impaired
+    and ultimately canceled included incomplete requirements (13.1%) and lack
+    of user involvement (12.4%) at the top of the list. In his now classic ROI
+    presentation at XP 2002, Jim Johnson shared research regarding the
+    productivity achieved by those software projects that do deliver
+    something. Among these, he found that 45% of product features are never
+    used, 19% are rarely used, and 36% are routinely used. This tells us that
+    traditional requirement engineering practices are not helping us deliver
+    value to our customer through our traditional practices.
+
+The goals described in the product vision must be broken down into clear sub
+goals and requirements. Backlogs are used for managing these sub goals and
+requirements.
+
+*User stories* are short, simple descriptions of a feature told from the
+perspective of the person who desires the new capability, usually a user or
+customer of the system:
+
+    *As a <type of user>, I want <some goal> so that <some reason>.*
+
+or
+
+    *As a <type of user>,
+    I want <to perform some task>
+    so that I can <achieve some goal/benefit/value>.*
+
+When user stories are too large to be completed in one iteration they are
+called *epics*. They must be split into multiple smaller user stories before
+they can be worked on. Example:
+
+    *As a user, I want to monitor ongoing experiments so that I know what to do
+    next.*
+
+It should be broken down to:
+
+    *As a user, I want to monitor prespecified variable values of ongoing experiments so that I know what to do
+    next.*
+
+Note:
+
+    The risk of writing stories too detailed is that you minimize the
+    involvement of the team, if you write stupid things you get stupid
+    functionality, but no stupid questions. Thus spend less time on defining
+    what stories should look like and spent more time on involving the PO with
+    the team.
+
 ### Agilefant
 
 Agilefant is an end-to-end project management tool that supports also product

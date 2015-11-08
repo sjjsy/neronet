@@ -41,7 +41,7 @@ Pitfalls:
 - The effort spent per student must be available to coach weekly.
 - Give feedback to team members of their success in their role.
 - We must apply Scrum as defined in the Project Manual and Scrum Guide.
-- Daily Scrum (once a week, max. 15 min)
+- Daily Scrum (at least once a week, max. 15 min at a time)
 - Learning Diaries (Before each project review)
 
 ### Scrum master

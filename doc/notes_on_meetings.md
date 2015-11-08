@@ -348,17 +348,123 @@ Homework:
 
 Participants: team + PO
 
-
 Agenda:
-- 7x60m Discussing the product vision
-- 2x30m Market research (iima)
+- 20:00: 7x10m Discussing agenda
+- 20:10: 7x10m Summary of past weeks
+- 20:20: 7x20m Discussing existing tools
+- 20:40: 7x20m Updating the product vision
+- 21:00: 7x20m Discussing backlog management
+- 21:20: 7x10m Discussing contacting other researchers
 
-## 11-11 240m Wedshop
+### Backlog management
+
+*See notes on tools.*
+
+[Agilefant](https://cloud.agilefant.com/smarisa/editProject.action?projectId=154985)
+
+- As a user, I want to specify experiments so that they are easy to manage and run.
+    - As a user, I want to alter the experiments data programmatically so that I can manage it more effectively.
+    - As a user, I want to batch import experiments data so that it is easy to migrate.
+    - As a user, I want to specify experiments by name, files and parameters to distinguish them.
+    - As a user, I want to specify experiment collections to help manage them.
+    - As a user, I want to edit existing experiments and collections so that I can update them.
+- As a user, I want configurable views to my experiments and collections so that I can review them effectively.
+    - As a user, I want a compact CLI summary view so that I can review them remotely.
+    - As a user, I want a compact CLI collections view so that I can review them remotely.
+    - As a user, I want a compact CLI experiment view so that I can review experiment details remotely.
+    - As a user, I want an interactive and configurable GUI view to review my experiments.
+- As a user, I want to manage the running of experiments so that my resources are best used.
+    - As a user, I want to configure clusters to best utilize my resources.
+        - As a user, I want to configure clusters by address and type to specify my computing resources.
+            - As a user, I want to configure unmanaged nodes to utilize simple clusters.
+            - As a user, I want to configure Slurm cluster gateways to utilize Slurm clusters.
+    - As a user, I want to submit individual experiments to be run so that I can later analyse them.
+    - As a user, I want to submit batches to be run so that I can later analyse them.
+    - As a user, I want to specify experiment batches and queues to best utilize my resources.
+- As a user, I want to monitor ongoing experiments so that I know what to do next.
+    - As a user, I want to monitor batch and experiment run status so that I know what is going on.
+- As a user, I want to access the data of my past experiments so that I can analyse them.
+    - As a user, I want to backup and extract the experiments data files manually so that I remain in full control.
+    - As a user, I want to batch export experiments data so that I remain in full control.
+
+## 11-11 360m Wedshop
 
 Participants: team
 
 Agenda:
-- 6x10m Scrum
-- 2x150m Neroman development (iijo)
-- 3x150m Nerokid and Neromum development (tutema)
-- 6x30m Discussing results
+- 13:00: 6x15m Scrum (Python 3.5 environment setup homework)
+- 13:20: 6x20m Team spirit recap
+- 13:40: 2x60m Neroman development (iijo)
+- 13:40: 3x60m Nerokid and Neromum development (tutema)
+- 14:40: 6x20m Pause
+- 15:00: 6x20m Discussing results and making decisions
+- 15:20: 3x60m Tests developement (iimatu)
+- 15:20: 1x60m Neroman development (jo)
+- 15:20: 1x60m Nerokid and Neromum development (te)
+- 16:20: 6x20m Pause
+- 16:40: 6x20m Discussing results and making decisions
+- 17:00: 5x60m Preparing prototype demo (iimatutejo)
+- 18:00: 6x10m Pause
+- 18:10: 2x20m Updating process & vision artifacts (joma)
+- 18:10: 3x20m Updating technical & dod artifacts (tuteii)
+- 18:30: 6x20m Backlog item planning poker
+- 18:50: 6x10m Updating agilefant
+- 19:00: Going home!
+
+### Team spirit recap
+
+- Mission: Why we exist
+- Values: What we believe in and how we will behave
+- Vision: What we want to be
+- Strategy: What our competitive game plan will be
+    - Objective: Ends
+    - Scope: Domain
+    - Advantage: Means
+- Balanced scorecard
+
+### Neroman development
+
+- Database daemon + CLI client + GUI client
+
+## 11-13 60m Demo exercise
+
+Participants: team
+
+Agenda:
+- 13:00 6x10m Agree demo presentation tasks
+- 13:10 6x40m Practice presentation
+- 13:50 6x10m Pause
+
+## 11-13 60m Sprint retrospective
+
+Participants: team
+
+Agenda:
+- 14:00 6x10m Sketch retrospective structure
+- 14:10 6x30m Discussion
+- 14:40 6x10m Review
+- 14:50 6x10m Pause
+
+## 11-13 120m Sprint 0 demo
+
+Participants: team + coach
+
+Agenda:
+- 15:00 7x10m discussing agenda
+- 15:10 7x20m retrospective results
+- 15:30 7x15m process overview
+- 15:45 7x10m product vision
+- 15:55 7x10m technical overview
+- 16:05 7x10m definition of done
+- 16:15 7x15m backlogs
+- 16:30 7x15m prototype demo
+- 16:45 7x15m post review discussion
+
+## 11-16 120m Sprint 1 planning
+
+Participants: team + PO
+
+Agenda:
+- reviewing sprint 0 results
+- defining the sprint goal
+- defining the sprint backlog
