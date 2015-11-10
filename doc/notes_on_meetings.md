@@ -371,6 +371,20 @@ Agenda:
 - 21:00: 7x20m Discussing backlog management
 - 21:20: 7x10m Discussing contacting other researchers
 
+Links:
+- https://floobits.com/smarisa/neronet/file/doc/notes_on_meetings.md:362
+- https://floobits.com/smarisa/neronet/file/doc/project_information.md:35
+- https://floobits.com/smarisa/neronet/file/doc/project_information.md:393
+- https://github.com/smarisa/neronet/blob/sprint/doc/product_vision.pdf
+- https://floobits.com/smarisa/neronet/file/doc/notes_on_tools.md:115
+
+Notes:
+- Keep studying LadderNet's similar functionalities and sacred. Could these be utilized with our project? Possibly also check Blocks.
+- Query requirements and other ideas after prototype is finished
+    - Targets: Simo, Blocks lead developer at GitHub and Torch developers, Google group, Reddit
+    - Example: Hey, we've been thinking a tool like ... would be great. What do you think?
+- Later when the product has taken some shape and we've had some user testing, possibly start marketing more clearly
+
 ### Backlog management
 
 *See notes on tools.*

@@ -45,6 +45,21 @@ based on JUnit.
 
 PyUnit forms a part of the Python Standard Library as of Python version 2.1.
 
+Python unit testing in nutshell:
+- define test in advance beforemaking the main function
+- define function as normal
+- make new python script and import unittest
+- use unit test like this:
+
+    ```
+    class MyTest(unittest.TestCase):
+        def test(self):
+            self.assertEqual(my_funcion(my_parameter), exected value)
+            self.assertEqual(squareNuber(2),5) #false 
+            self.assertEqual(squareNuber(2),5) #true
+    ```
+
+run script and compare results
 ### PyTest
 
 [pytest](pytest.org/) is a mature full-featured Python testing tool that helps
@@ -169,6 +184,7 @@ It should be broken down to:
 
     *As a user, I want to monitor prespecified variable values of ongoing experiments so that I know what to do
     next.*
+    ...
 
 Note:
 

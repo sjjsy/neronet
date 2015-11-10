@@ -391,11 +391,13 @@ Notes
 - 
 
 ### Laddernet
+
 - Ladder network is a deep learning algorithm that combines supervised and unsupervised learning
 - seems to be helper project to define neural networks for reserchers
 -
 
 ### sacred
+
 - another project definer / helper
 - keep track of all the parameters of your experiment
 - easily run your experiment for different settings
@@ -406,17 +408,3 @@ Notes
 - IN PRACTISE
 - can be used to dump parameters to files / database
 - automatically fills function parameters
-
-
-##python unit testing in nutshell
-- define test in advance beforemaking the main function
-- define function as normal
-- make new python script and import unittest
-- use unit test like this
-- class MyTest(unittest.TestCase):
-    def test(self):
-        self.assertEqual(my_funcion(my_parameter), exected value)
-        self.assertEqual(squareNuber(2),5) #false 
-        self.assertEqual(squareNuber(2),5) #true
-
-run script and compare results
