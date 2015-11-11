@@ -4,14 +4,25 @@
 
 
 import socket
+import nerokid.py
+import time
 
 class NeroMum(object):
 
   def __init__(self):
-    """Initialize the NeroKid"""
-    self.initialize_socket()
+    """Initialize the NeroMum"""
+    self.host = '10.100.43.119'
+    self.port = 50007
+    self.connection, self.address = self.initialize_socket()
 
   def run(self):
+    self.start_nerokid()
+    while self.ask_nerokid_status() == False:
+      time.sleep(5)
+    else:
+      data = self.retrieve_nerokid_data()
+      #self.save_to_file(data, file)
+    
     """The Neromum main.
     Listens for communication from Neroman or Nerokids
     and does as needed. Manages a queue of jobs by the user
@@ -20,16 +31,29 @@ class NeroMum(object):
     pass
 
   def initialize_socket(self):
+    HOST = '10.100.43.119' # The remote host (my local ip)
+    PORT = 50007 # The same port as used by the server
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # internet, tcp
+    s.connect(HOST,PORT)
+    s.bind(HOST,PORT)
+    s.listen(1)
+    conn, addr = s.accept()
+    return conn, addr
     """Initialize socket"""
-    pass
+    #pass
 
-  def save_to_file(self):
+  def save_to_file(self, data, file):
+    
     """Save data to the .hdf file"""
     pass
 
-  def start_nerokid(self ):
+  def start_nerokid(self):
+
+    kid = Nerokid(HOST, PORT)
+    return kid  
+    
     """Start a nerokid process on a node"""
-    pass
+    #pass
   
   def send_data_to_neroman(self):
     """Send data to neroman on request"""
@@ -48,12 +72,17 @@ class NeroMum(object):
     pass
   
   def ask_nerokid_status(self)
+    conn.sendall("status")
+    return conn.recv() #True or False
+    
     """see if nerokid is done with the task"""
-    pass
+    #pass
   
   def retrieve_nerokid_data(self):
+    conn.sendall("retr_data")
+    return conn.recv()
     """if any data, collect it from kid"""
-    pass
+    #pass
 
 def socket_test():
   HOST = '10.100.43.119' # The remote host (my local ip)

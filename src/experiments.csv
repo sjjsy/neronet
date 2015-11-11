@@ -1,3 +1,0 @@
-Name,Path,Executable,Count,Interval
-exp1,experiments/exp1,testexp.py,20,10
-exp2,experiments/exp1,testexp.py,40,5

@@ -26,12 +26,11 @@ class Neroman():
         """Adds a cluster to self.clusters"""
         self.clusters[name] = {'address': address}
 
-    def create_experiment(experiment_filename, data_filename):
+    def create_experiment(experiment_folder):
         """Creates an experiment
 
         Args:
-            experiment_filename (string): Filename of the experiment file
-            data_filename (string): Filename of the data file
+            experiment_folder (string): Path to the 
         Return:
             experiment (nerokid): Created experiment nerokid
         """
