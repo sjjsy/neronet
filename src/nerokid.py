@@ -1,51 +1,50 @@
 # nerokid.py
 #
 # one line description
-
+HOST = '0.0.0.0' # Symbolic name meaning all available interfaces
+PORT = 50007 # Arbitrary non-privileged port
 
 import socket
+import os
+import subprocess
+
 
 class NeroKid(object):
 
-  def __init__(self, socket, port):
+  def __init__(self):
     """"""
-    self.socket = socket
-    self.port = port
-  
-  def main(self ):
-  	"""The Nerokid main."""
-  	pass
-  	
-  def initialize_socket(self):
-    """initialize socket"""
+    self.s = None
+    self.conn = None
+    self.addr = None
     pass
 
+  def run(self):
+    """The Nerokid main."""
+    ##self.initialize_socket()
+    self.launch_child_process()
+    #self.send_data_to_neromum()
+
+  def initialize_socket(self):
+    """initialize socket"""
+    self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    self.s.bind(('0.0.0.0', 50008)) # binds socket to port
+    print("waiting for connetion")
+    self.s.listen(1) # Listens port or incoming tcp connections
+    self.conn, self.addr = self.s.accept() # Accepts connection and saves handle and address of recipent
+
   def send_data_to_neromum(self ):
-  	"""Send status data to Neromum."""  	
-    pass
-  	
+    """Send status data to Neromum."""
+    self.conn.sendall(self.proc.communicate()[0])
+
   def launch_child_process(self ):
     """Launches received script"""
-    pass
-  
+    file = open("tsti_results.txt", "w")
+    #self.proc = subprocess.Popen(['python3','tsti.py'],universal_newlines=True, stdout=file)
+    self.proc = subprocess.Popen(['python3','tsti.py'])
+
   def collect_std_out_data(self):
     """Collect data what child process outputs"""
     pass
   
-  def socket_test(self):
-  	HOST = '0.0.0.0' # Symbolic name meaning all available interfaces
-  	PORT = 50007 # Arbitrary non-privileged port
-  	# normal socket with internet and udp, sock_dgram would be tcp
-  	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  	s.bind((HOST, PORT)) # binds socket to port
-  	s.listen(1) # Listens port or incoming tcp connections
-  	conn, addr = s.accept() # Accepts connection and saves handle and address of recipent
-  	print 'Connected by', addr
-  	while 1:
-  	    data = conn.recv(1024) # Conn is the socket we are trying to read data from
-  	    if not data: break
-  	    conn.sendall(data) # Echoes back the data we received earlier
-  	conn.close()
-  
 if __name__ == '__main__':
-	main()
+  NeroKid().run()

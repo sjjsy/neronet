@@ -2,10 +2,10 @@
 #
 # 
 
-
 import socket
 import nerokid.py
 import time
+from subprocess import call
 
 class NeroMum(object):
 
@@ -13,10 +13,11 @@ class NeroMum(object):
     """Initialize the NeroMum"""
     self.host = '10.100.43.119'
     self.port = 50007
-    self.connection, self.address = self.initialize_socket()
+    #self.connection, self.address
 
   def run(self):
     self.start_nerokid()
+    self.connection, self.address = self.initialize_socket()
     while self.ask_nerokid_status() == False:
       time.sleep(5)
     else:
@@ -48,12 +49,9 @@ class NeroMum(object):
     pass
 
   def start_nerokid(self):
-
-    kid = Nerokid(HOST, PORT)
-    return kid  
-    
     """Start a nerokid process on a node"""
-    #pass
+    call(["python", "nerokid.py"])
+    return True 
   
   def send_data_to_neroman(self):
     """Send data to neroman on request"""
@@ -71,12 +69,10 @@ class NeroMum(object):
     """See if there is a free node"""
     pass
   
-  def ask_nerokid_status(self)
+  def ask_nerokid_status(self):
+    """see if nerokid is done with the task"""
     conn.sendall("status")
     return conn.recv() #True or False
-    
-    """see if nerokid is done with the task"""
-    #pass
   
   def retrieve_nerokid_data(self):
     conn.sendall("retr_data")
