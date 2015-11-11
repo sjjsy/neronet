@@ -3,7 +3,9 @@
 # one line description
 
 import yaml
+import argparse
 import csv
+
 
 class Neroman():
     def __init__(self,config_file='default.cfg'):
@@ -13,20 +15,20 @@ class Neroman():
         """
         self.clusters = {}
         self.experiments = []
-        parse_configurations(config_file)
+        self.load_configurations(config_file)
 
-    def load_configurations(filename='default.cfg'):
+    def load_configurations(self, filename='default.cfg'):
         """Parse the config file given by researcher."""
         with open(filename, 'r') as file:
             configs = yaml.load(file.read())
         self.clusters = configs['clusters']
         #self.experiments configs['experiments'] #maybe?
 
-    def add_cluster(name, address):
+    def add_cluster(self, name, address, scheduler_type):
         """Adds a cluster to self.clusters"""
-        self.clusters[name] = {'address': address}
+        self.clusters[name] = {'address': address, 'type': scheduler_type}
 
-    def create_experiment(experiment_filename, data_filename):
+    def add_experiment(self, experiment_folder):
         """Creates an experiment
 
         Args:
@@ -35,31 +37,66 @@ class Neroman():
         Return:
             experiment (nerokid): Created experiment nerokid
         """
-        self.experiments.append((experiment_filename, data_filename))
-        #with open(data_filename, 'r') as file:
-        #    reader = csv.reader(file)
-        #pass
+        pass
 
-    def install_neromum():
+    def install_neromum(self):
         """Creates a Neromum and installs it to destination."""
-        os.system('ssh ' + ssh_params)
         pass
 
-    def get_available_clusters():
+    def get_available_clusters(self):
         """Returns the info on available clusters in the given network."""
-        pass
+        print(self.clusters)
+           
+            
     
-    def get_experiments():
+    def get_experiments(self):
         """Returns the past experiments"""
         pass
     
-    def display_experiments():
+    def display_experiments(self):
         """Displays experiments to user"""
+        pass
+
+    def submit_experiment(self, cluster_name, experiment_name):
+        pass
+
+    def monitor_experiment(self, experiment_name):
         pass
 
 def main():
     """The Neroman main."""
-    pass 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cluster', 
+            metavar=('cluster_name', 'cluster_address', 'scheduler_type'), 
+            nargs=3)
+    parser.add_argument('--experiment',
+            metavar='experiment_folder',
+            nargs=1)
+    parser.add_argument('--submit',
+            metavar=('cluster_name', 'experiment_name'),
+            nargs=2)
+    parser.add_argument('--monitor',
+            metavar='experiment_name',
+            nargs=1)
+    args = parser.parse_args()
+    
+    neroman = Neroman()
+    if args.cluster:
+        cluster_name = args.cluster[0]
+        cluster_address = args.cluster[1]
+        scheduler_type = args.cluster[2]
+        neroman.add_cluster(cluster_name, cluster_address, scheduler_type)
+    if args.experiment:
+        experiment_folder = args.experiment[0]
+        neroman.add_experiment(experiment_folder)
+    if args.submit:
+        cluster_name = args.submit[0]
+        experiment_name = args.submit[1]
+        neroman.submit_experiment(cluster_name, experiment)
+    if args.monitor:
+        experiment_name = args.monitor[0]
+        neroman.monitor_experiment(experiment_name)
+    neroman.get_available_clusters()
 
 if __name__ == '__main__':
     main()
