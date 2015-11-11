@@ -32,8 +32,7 @@ class Neroman():
         """Creates an experiment
 
         Args:
-            experiment_filename (string): Filename of the experiment file
-            data_filename (string): Filename of the data file
+            experiment_folder (string): Path to the 
         Return:
             experiment (nerokid): Created experiment nerokid
         """

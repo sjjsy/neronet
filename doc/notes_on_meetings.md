@@ -1,4 +1,4 @@
-f# Meetings
+# Meetings
 
 Notes on meetings. Each meeting is documented under a section title of the
 form: `<month>-<day> <duration_in_minutes>m <event title>`
@@ -422,33 +422,46 @@ Participants: team
 
 Agenda:
 - 13:00: 6x15m Scrum (Python 3.5 environment setup homework)
-- 13:20: 6x20m Team spirit recap
-- 13:40: 2x60m Neroman development (iijo)
-- 13:40: 3x60m Nerokid and Neromum development (tutema)
-- 14:40: 6x20m Pause
-- 15:00: 6x20m Discussing results and making decisions
-- 15:20: 3x60m Tests developement (iimatu)
-- 15:20: 1x60m Neroman development (jo)
-- 15:20: 1x60m Nerokid and Neromum development (te)
-- 16:20: 6x20m Pause
-- 16:40: 6x20m Discussing results and making decisions
-- 17:00: 5x60m Preparing prototype demo (iimatutejo)
-- 18:00: 6x10m Pause
-- 18:10: 2x20m Updating process & vision artifacts (joma)
-- 18:10: 3x20m Updating technical & dod artifacts (tuteii)
-- 18:30: 6x20m Backlog item planning poker
+- 13:15: 6x45m Team spirit recap
+- 14:00: 2x15m Updating process & vision artifacts (jote)
+- 14:00: 3x15m Updating technical & dod artifacts (tuma)
+- 14:35: 6x110m Backlog item planning poker
+- 17:20: 2x40m Neroman development (iite)
+- 17:20: 3x40m Nerokid and Neromum development (tuma)
+- 18:00: 6x15m Discussing results and making decisions
+- 18:15: 5x35m Preparing prototype demo
 - 18:50: 6x10m Updating agilefant
 - 19:00: Going home!
+
+- 16:20: 3x60m Tests developement (iimatu)
 
 ### Team spirit recap
 
 - Mission: Why we exist
+    - Create useful software for Pyry (and others)
+    - We are doing this project to learn: software development, re,
+      architecture, project management, quality assurance, Scrum,
+      communication with client
+    - We want grade five, quality award
 - Values: What we believe in and how we will behave
+    - Superior quality
+    - Self-development
+    - Respect
+    - TBD, Achievement? --  We work together to deliver superior results and achieve understanding.
 - Vision: What we want to be
+    - We want to see ourselves as the best of the course teams
+    - We want to win the Quality award!
+    - We want to get grade 5+.
+    - We want to get an awesome reference (GitHub repo) that we can market on
+      our future job applications.
+    - We want our tool to server people in such a way that a community of
+      users develops around it and continues it's development. We want to
+      launch a successful open source project, which we can speak proudly of
+      even years from now.
 - Strategy: What our competitive game plan will be
-    - Objective: Ends
-    - Scope: Domain
-    - Advantage: Means
+    - Objective: Ace the course and develop a very useful and popular tool
+    - Scope: See product vision
+    - Advantage: We have high motivation, we meet in person every week, active and responsible Scrum Master
 - Balanced scorecard
 
 ### Neroman development
