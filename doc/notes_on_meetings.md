@@ -128,12 +128,12 @@ Decisions made
   and the client can download it.
 - Server can tell the information on the available GPU:s etc.
 - Config:
-- Defines the ID of the experiment (author, subject, name, group name, git
-  commit ID)
-- Define the variables that must be extracted and sent to the server
-- The Preconditions (minimum available disk space, expected max time, minimum
-  RAM)
-- The files that must be sent to the cluster
+    - Defines the ID of the experiment (author, subject, name, group name, git
+      commit ID)
+    - Define the variables that must be extracted and sent to the server
+    - The Preconditions (minimum available disk space, expected max time, minimum
+      RAM)
+    - The files that must be sent to the cluster
 
 Things yet to research/decide
 
@@ -172,8 +172,8 @@ The main reason for this recommendation is that piping ssh through
 multiple layers of gateways is inefficient and troublesome to configure.
 Typical network structure looks like this:
 
-user <-> user network gateway / shell server <-> internet <-> cluster
-network gateway / frontend <-> cluster node
+    user <-> user network gateway / shell server <-> internet <-> cluster
+    network gateway / frontend <-> cluster node
 
 Now running job in cluster node requires ssh to frontend, but if a
 response would be initiated by the cluster node, it would require ssh to
@@ -329,6 +329,7 @@ Ask the custom whether they have used Blocks/Ipython/Sacred etc
 Participants: team
 
 Agenda:
+
 - 6x10m Scrum
 - 6x30m Discussing results
 - 4x120m Prototype development (iitutejo)
@@ -336,17 +337,20 @@ Agenda:
 - 6x20m Discussing results
 
 Tasks:
+
 - iitu by 17:00: come up with a design in how the Python package and version
   management should be dealt in our project. Google and check existing
   projects.
 - jote by 17:00: start sketching the prototype.
 
 Homework:
+
 - Everyone installs and tests a Python 3.5 environment
 
 ### Homework
 
 On Ubuntu 14.04:
+
 ```
 sudo add-apt-repository ppa:fkrull/deadsnakes
 sudo apt-get update
@@ -356,6 +360,7 @@ python3.5 -m venv projects/neronet/.venv
 ```
 
 Resources:
+
 - [PEP-0405](https://www.python.org/dev/peps/pep-0405/)
 - [venv](https://docs.python.org/3/library/venv.html)
 
@@ -364,6 +369,7 @@ Resources:
 Participants: team + PO
 
 Agenda:
+
 - 20:00: 7x10m Discussing agenda
 - 20:10: 7x10m Summary of past weeks
 - 20:20: 7x20m Discussing existing tools
@@ -372,6 +378,7 @@ Agenda:
 - 21:20: 7x10m Discussing contacting other researchers
 
 Links:
+
 - https://floobits.com/smarisa/neronet/file/doc/notes_on_meetings.md:362
 - https://floobits.com/smarisa/neronet/file/doc/project_information.md:35
 - https://floobits.com/smarisa/neronet/file/doc/project_information.md:393
@@ -379,6 +386,7 @@ Links:
 - https://floobits.com/smarisa/neronet/file/doc/notes_on_tools.md:115
 
 Notes:
+
 - Keep studying LadderNet's similar functionalities and sacred. Could these be utilized with our project? Possibly also check Blocks.
 - Query requirements and other ideas after prototype is finished
     - Targets: Simo, Blocks lead developer at GitHub and Torch developers, Google group, Reddit
@@ -421,6 +429,7 @@ Notes:
 Participants: team
 
 Agenda:
+
 - 13:00: 6x15m Scrum (Python 3.5 environment setup homework)
 - 13:15: 6x45m Team spirit recap
 - 14:00: 2x15m Updating process & vision artifacts (jote)
@@ -473,6 +482,7 @@ Agenda:
 Participants: team
 
 Agenda:
+
 - 13:00 6x10m Agree demo presentation tasks
 - 13:10 6x40m Practice presentation
 - 13:55 6x5m Pause
@@ -482,6 +492,7 @@ Agenda:
 Participants: team
 
 Agenda:
+
 - 14:00 6x10m Sketch retrospective structure
 - 14:10 6x30m Discussion
 - 14:40 6x10m Review
@@ -490,7 +501,8 @@ Agenda:
 
 ### Evaluate and rank teamwork practices
 
-sprint planning:
+Sprint planning:
+
 - backlog items must be clear and simple -teemu
 - backlog items have been unclear, but the user guide probably helps -joona
 - it would have been better if the PO had created the stories from scratch
@@ -500,18 +512,21 @@ sprint planning:
 - we should make sure we reserve enough time for the actual story selection
   on Monday -matias
 
-daily scrums:
+Daily scrums:
+
 - we have mostly been doing teamwork, so there has been little new info in
   the scrums -Matias -Joona -Teemu
 - they have been overly long and they have extended due to inexperience.
 - people are late.
 
-teamwork sessions:
+Teamwork sessions:
+
 - sessions are too long and sometimes people get hungry.
 - generally someone has to leave early or comes late
 - we balanced the session lengths(wed 6h fri 5h).
 
-tools:
+Tools:
+
 - flowdock is good x6
 - for remote work we have been using google hangout and skype. Skype has
   proven to be the most stable.
@@ -533,12 +548,10 @@ tools:
 #. Six tactics
 #. Agilefant
 
-### how teamwork could be improved
+### How teamwork could be improved
+
 - People should be more on time.
 - hard to think on improvements on sprint 0
-
-### give feedback to teammates
-
 
 Usernames: smarisa, perat1, marjakj1, pitkanl5, blomqvt1, tahkai1
 
@@ -547,6 +560,7 @@ Usernames: smarisa, perat1, marjakj1, pitkanl5, blomqvt1, tahkai1
 Participants: team + coach
 
 Agenda:
+
 - 15:00 7x10m Discussing agenda -Samuel
 - 15:05 7x20m Process overview -Joona
 - 15:25 7x20m Retrospective results -Teemu
@@ -562,6 +576,79 @@ Agenda:
 Participants: team + PO
 
 Agenda:
-- reviewing sprint 0 results
-- defining the sprint goal
-- defining the sprint backlog
+
+- 11:00: Agenda
+- 11:10: Review of sprint 0 results
+- 11:20: Sprint team leader's word
+- 11:30: Discussing the budget
+- 11:40: Discussing the product backlog
+- 11:50: Definition of the sprint goal
+- 12:10: Selection of backlog items (BIs)
+- 12:30: Clarification of BIs (user guide)
+
+### Sprint team leader
+
+- S0: Samuel
+- S1: Joona
+- S2: Iiro
+- S3: Tuomo
+- S4: Matias
+- S5: Teemu
+- S6: Samuel
+
+Tasks:
+
+- Scheduling & communication with all parties
+- Planning and preparing meeting agendas
+- Keeping track of progress and ensuring achievement of sprint goals
+- Making sure the *big picture* progresses optimally
+- Making sure the sprint review & demo is excellent
+- Maintaining and boosting team spirit and motivation
+
+Feedback is given to team leader at the end of sprint.
+
+### Budget
+
+Fact: We have at least 10h of storyless work per developer, thus only 5x25h
+of developer time budget left for story fullfilment work.
+
+Fact: Total story points in product backlog: 26
+
+Assumption: We have two two person teams doing pair programming.
+
+Result: The budget is 50h of pair time 
+
+Assumption: One story point equals 3h of pair time.
+
+Result: We can do 16 story points this sprint. Which?
+
+### Sprint goal
+
+Quote:
+
+    Sprint Goals are a high level summary of the business and technical goals
+    that the team and Product Owner agree to accomplish in a sprint.
+
+References:
+
+- [ScaledAgileFrameworks.com: Sprint goals](http://www.scaledagileframework.com/sprint-goals/)
+- [Effective sprint goals](http://www.romanpichler.com/blog/effective-sprint-goals/)
+
+Benefits:
+
+- Align team members to a common purpose
+- Ensures that everyone moves in the same direction
+- Facilitates prioritisation
+- Facilitates teamwork
+- Facilitates giving and analysing feedback
+- Supports communication
+
+Candidates:
+
+- Develop a prototype that offers the most basic functionality via a CLI
+- (any alternatives?)
+
+### Sprint backlog
+
+[Sprint 1 in Agilefant](https://cloud.agilefant.com/smarisa/editIteration.action?iterationId=154988)
+

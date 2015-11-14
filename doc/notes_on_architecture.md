@@ -4,7 +4,7 @@
 
 Identifying architecturally significant requirements:
 
-- Speciﬁcation of experiments
+- Specification of experiments
     - Program(s) to be run
     - Input
     - Neronet should not create restrictions to the creation of experiments
@@ -18,12 +18,13 @@ Identifying architecturally significant requirements:
     - Real time access
 - Access to experiment information during and after the run 
     - Output values must be stored
-- Conﬁgurable notiﬁcations on experiment state and progress 
-- Conﬁgurable criteria for experiment autotermination
+- Configurable
+- Configurable notifications on experiment state and progress 
+- Configurable criteria for experiment autotermination
     - Input must have a specific format
 - Logging of experiment history 
     - Database noSQL/SQL
-- Preferences conﬁguration
+- Preferences configuration
 
 ## System
 
