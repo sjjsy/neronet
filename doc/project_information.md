@@ -116,6 +116,13 @@ A better dedicated tool could be built to replace them. Examples:
 [sacred]: https://github.com/IDSIA/sacred
 [soteloplot]: https://github.com/sotelo/play/blob/master/extensions/plot.py
 
+The field is progressing as we speak:
+
+- 2015-11-11: Google's [TensorFlow] [was open sourced.]
+  (http://www.wired.com/2015/11/google-open-sources-its-artificial-intelligence-engine)
+
+[TensorFlow]: http://www.tensorflow.org
+
 ## Project goals
 
 A good toolbox for deep learning would let a researcher easily specify

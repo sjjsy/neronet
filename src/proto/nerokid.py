@@ -8,7 +8,7 @@ import shlex
 
 from core import Logger, Socket
 
-INTERVAL = 1.0
+INTERVAL = 2.0
 LOG_FILES = 'stdout.log', 'stderr.log'
 
 class LogFile:
@@ -26,11 +26,11 @@ class LogFile:
                 self.seek = stream.tell()
                 return changes
 
-# Define log files
-log_files = [LogFile(log_file_path) for log_file_path in LOG_FILES]
 # Define a logger
 logger = Logger('KID')
 logger.log('Kid launched!')
+# Define process log files
+log_files = [LogFile(log_file_path) for log_file_path in LOG_FILES]
 # Parse arguments
 host, port = sys.argv[1:3]
 experiment = ' '.join(sys.argv[3:])

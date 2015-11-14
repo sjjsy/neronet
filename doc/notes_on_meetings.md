@@ -454,7 +454,7 @@ Agenda:
     - We want to get grade 5+.
     - We want to get an awesome reference (GitHub repo) that we can market on
       our future job applications.
-    - We want our tool to server people in such a way that a community of
+    - We want our tool to serve people in such a way that a community of
       users develops around it and continues it's development. We want to
       launch a successful open source project, which we can speak proudly of
       even years from now.
@@ -475,7 +475,7 @@ Participants: team
 Agenda:
 - 13:00 6x10m Agree demo presentation tasks
 - 13:10 6x40m Practice presentation
-- 13:50 6x10m Pause
+- 13:55 6x5m Pause
 
 ## 11-13 60m Sprint retrospective
 
@@ -485,21 +485,76 @@ Agenda:
 - 14:00 6x10m Sketch retrospective structure
 - 14:10 6x30m Discussion
 - 14:40 6x10m Review
+- 14:50 6x5m Get everyone's aalto account id (username), send them to Simo
 - 14:50 6x10m Pause
+
+### Evaluate and rank teamwork practices
+
+sprint planning:
+- backlog items must be clear and simple -teemu
+- backlog items have been unclear, but the user guide probably helps -joona
+- it would have been better if the PO had created the stories from scratch
+  -matias, tuomo
+- the PO should give input when developing the user guide -joona
+- we should do it on monday -tuomo, joona, teemu
+- we should make sure we reserve enough time for the actual story selection
+  on Monday -matias
+
+daily scrums:
+- we have mostly been doing teamwork, so there has been little new info in
+  the scrums -Matias -Joona -Teemu
+- they have been overly long and they have extended due to inexperience.
+- people are late.
+
+teamwork sessions:
+- sessions are too long and sometimes people get hungry.
+- generally someone has to leave early or comes late
+- we balanced the session lengths(wed 6h fri 5h).
+
+tools:
+- flowdock is good x6
+- for remote work we have been using google hangout and skype. Skype has
+  proven to be the most stable.
+- for faster communication we are using whatsapp.
+- agilefant has a steep learning curve. -Iiro
+- people tend to forget to log their time at agilefant.
+- hope to use more github during sprints
+- floobits ain't very good. Doesn't seem to work in its intended purpose.
+
+### Top 3 tools
+
+#. GitHub
+#. Flowdock
+#. Agilefant
+
+### Worst 3 tools
+
+#. Floobits
+#. Six tactics
+#. Agilefant
+
+### how teamwork could be improved
+- People should be more on time.
+- hard to think on improvements on sprint 0
+
+### give feedback to teammates
+
+
+Usernames: smarisa, perat1, marjakj1, pitkanl5, blomqvt1, tahkai1
 
 ## 11-13 120m Sprint 0 demo
 
 Participants: team + coach
 
 Agenda:
-- 15:00 7x10m Discussing agenda
-- 15:10 7x20m Retrospective results
-- 15:30 7x15m Process overview
-- 15:45 7x10m Product vision
-- 15:55 7x10m Technical overview
-- 16:05 7x10m Definition of done
-- 16:15 7x15m Backlogs
-- 16:30 7x15m Prototype demo
+- 15:00 7x10m Discussing agenda -Samuel
+- 15:05 7x20m Process overview -Joona
+- 15:25 7x20m Retrospective results -Teemu
+- 15:45 7x10m Product vision -Matias
+- 15:55 7x15m Technical overview -Tuomo
+- 16:10 7x10m Definition of done -Iiro
+- 16:20 7x10m Backlogs -Iiro
+- 16:30 7x15m Prototype demo -Samuel
 - 16:45 7x15m Post review discussion
 
 ## 11-16 120m Sprint 1 planning
