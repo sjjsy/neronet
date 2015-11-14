@@ -1,13 +1,33 @@
-# Neronet Sprint Branch
+[![Floobits Status](https://floobits.com/smarisa/neronet.svg)](https://floobits.com/smarisa/neronet/redirect)
 
-This is the `sprint` branch of the *Neronet* repository. It contains the work
-in progress of the current increment.
+# Neronet
 
-See the `stable` branch for the latest finished increment.
+Neronet is going to be a framework designed to facilitate the specification,
+submission, monitoring, control, analysis and management of many different
+computational experiments. It is designed to work in collaboration with
+computing cluster resource managers and job schedulers such as
+[Slurm](https://computing.llnl.gov/linux/slurm/).
+
+Neronet is a software development project undertaken by Team 11 of the Aalto
+University course CSE-­C2610 Software Project of semestern 2015-16 for Pyry
+Takala from the
+[Aalto deep learning research group](http://research.ics.aalto.fi/bayes/).
 
 This project is under the [MIT License](./LICENSE).
 
-[![Floobits Status](https://floobits.com/smarisa/neronet.svg)](https://floobits.com/smarisa/neronet/redirect)
+## Branches
+
+The project repo contains two main branches:
+
+- [stable](https://github.com/smarisa/neronet/tree/sprint) -- the stable state
+  of the product as per the latest finished increment. It's content should be
+  production ready, and it has passed our definition of done.
+- [sprint](https://github.com/smarisa/neronet/tree/sprint) -- the work
+  in progress of the currently ongoing increment (sprint).
+
+Since we have only just started sprint 1 we have no product code ready in the
+`stable` branch. The `sprint` branch is under active development and will be
+merged to `stable` once the sprint increment is done.
 
 ## General information
 
@@ -35,6 +55,8 @@ The artifacts are updated continuously:
 - [Teamwork](./doc/notes_on_teamwork.md) -- notes to improve teamwork
 - [Tools](./doc/notes_on_tools.md) -- notes on selected or candidate tools
 - [Scrum](./doc/notes_on_scrum.md) -- some notes on Scrum
+- [Architecture](./doc/notes_on_architecture.md) -- notes about the initial
+  sketching of the product system architecture
 
 ## Team
 
@@ -43,7 +65,6 @@ The team consists of
 - Samuel Marisa (smarisa) -- *scrum master*
 - Teemu	Blomqvist (blomqvt1) -- *developer*
 - Joona Marjakangas (AbleCable1) -- *developer*
-- Juho Pekkinen (motonki) -- *developer*
 - Tuomo Perä (ltukezl) -- *developer*
 - Matias Pitkänen (Matte27) -- *developer*
 - Iiro Tähkä (Donkeyhead) -- *developer*

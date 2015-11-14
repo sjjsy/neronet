@@ -1,7 +1,9 @@
 # sleep.py
 #
-# Usage: main.py count interval
-# Example: main.py 100 10
+# Usage: sleep.py count interval
+# Examples:
+#   sleep.py 4 10
+#   sleep.py 100 0.4
 #
 # Writes the system time <count> times into stdout with an interval of
 # <interval> seconds
