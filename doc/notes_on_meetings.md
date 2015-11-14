@@ -585,8 +585,16 @@ Agenda:
 - 11:50: Definition of the sprint goal
 - 12:10: Selection of backlog items (BIs)
 - 12:30: Clarification of BIs (user guide)
+- 12:50: Committing to the sprint goals
+
+What is sprint planning: *A time-boxed event of 1 day, or less, to start a
+Sprint. It serves for the Scrum Team to inspect the work from the Product
+Backlog that’s most valuable to be done next and design that work into Sprint
+backlog.*
 
 ### Sprint team leader
+
+Leaders:
 
 - S0: Samuel
 - S1: Joona
@@ -624,15 +632,28 @@ Result: We can do 16 story points this sprint. Which?
 
 ### Sprint goal
 
-Quote:
-
-    Sprint Goals are a high level summary of the business and technical goals
-    that the team and Product Owner agree to accomplish in a sprint.
-
 References:
 
+- [Scrum.org: Scrum Glossary](https://www.scrum.org/Resources/Scrum-Glossary)
 - [ScaledAgileFrameworks.com: Sprint goals](http://www.scaledagileframework.com/sprint-goals/)
-- [Effective sprint goals](http://www.romanpichler.com/blog/effective-sprint-goals/)
+- [RomanPichler.com: Effective sprint goals](http://www.romanpichler.com/blog/effective-sprint-goals/)
+- [Luxoft.com: 7 sprint goal patterns for building great teams](http://www.luxoft.com/blog/vmoskalenko/7-sprint-goal-patterns-for-building-great-teams-part-one/)
+
+Quotes:
+
+- *Sprint Goals are a high level summary of the business and technical goals
+  that the team and Product Owner agree to accomplish in a sprint.*
+- *Sprint Goal: a short expression of the purpose of a Sprint, often a business
+  problem that is addressed. Functionality might be adjusted during the Sprint
+  in order to achieve the Sprint Goal.*
+- *The Sprint Goal, or mission objective, is not repeated over the course of
+  many sprints. Each sprint should have its own unique mission.*
+- *Setting the Sprint Goal is the Product Owner’s responsibility, but crafting
+  it is a shared responsibility of the Scrum Team, including PO.*
+- *The Sprint Goal encourages initiative in multiple areas – teamwork,
+  technology, quality, and mindset. However, while improving those areas, make
+  sure that you are creating a potentially releasable increment by the end of
+  the Sprint.*
 
 Benefits:
 
