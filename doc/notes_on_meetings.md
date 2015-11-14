@@ -214,14 +214,14 @@ Agenda:
 - Technical Overview (Simo's input)
 - EES participation
 
-## 11-04 120m EES 01: Adapting scrum
+## 11-04 105m EES 01: Adopting scrum
 
 Participants: Samuel
 
 PO and requirements:
 
 - Interviews for requirements gathering and/or researching feasibility of
-  potential technical solutions
+  potential technical solutions -Samuel
 - How to modify customer requirements into user stories into the backlog
 - How to specify requirements if different persons from client company have
   different opinions about a topic
@@ -233,7 +233,7 @@ Teamwork:
 - Scrum, scrum master and team leadership. Should a Scrum Master take the
   role of a Team Leader?
 - Leadership in self-organizing teams. Eliciting intrinsic motivation and
-  self-direction and initiative in team members.
+  self-direction and initiative in team members. -Samuel
 - Teamwork power structure, work organization, effort distribution
 
 Software quality:
@@ -674,3 +674,13 @@ Candidates:
 
 [Sprint 1 in Agilefant](https://cloud.agilefant.com/smarisa/editIteration.action?iterationId=154988)
 
+## 11-18 105m EES 02: Requirements engineering
+
+Participants: Samuel
+
+PO and requirements:
+
+- Methods to elicit/gather requirements from potential users, other than
+  interviews, maybe via web communities? -Samuel
+- Developing a User guide as a kind of product prototype to boost discussion
+  and understanding of user stories. -Samuel

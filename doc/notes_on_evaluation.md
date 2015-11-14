@@ -86,13 +86,6 @@ Pitfalls:
 - Topics are presented by proposers, and discussed
 - 1-3 attendants per team
 
-#### Topic candidates
-
-- Leadership in self-organizing teams? Eliciting intrinsic motivation and
-  self-direction and initiative in team members.
-- Interviews for requirements gathering and/or researching feasibility of
-  potential technical solutions?
-
 ## Sources and links
 
 - [Evaluation Principles]
