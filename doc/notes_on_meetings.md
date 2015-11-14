@@ -538,15 +538,15 @@ Tools:
 
 ### Top 3 tools
 
-#. GitHub
-#. Flowdock
-#. Agilefant
+1. GitHub
+2. Flowdock
+3. Agilefant
 
 ### Worst 3 tools
 
-#. Floobits
-#. Six tactics
-#. Agilefant
+1. Floobits
+2. Six tactics
+3. Agilefant
 
 ### How teamwork could be improved
 
@@ -611,7 +611,8 @@ Tasks:
 - Keeping track of progress and ensuring achievement of sprint goals
 - Making sure the *big picture* progresses optimally
 - Making sure the sprint review & demo is excellent
-- Maintaining and boosting team spirit and motivation
+- Maintaining and boosting team spirit and motivation in collaboration with
+  the scrum master
 
 Feedback is given to team leader at the end of sprint.
 
