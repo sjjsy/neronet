@@ -4,14 +4,16 @@
 
 Neronet is going to be a framework designed to facilitate the specification,
 submission, monitoring, control, analysis and management of many different
-computational experiments. It is designed to work in collaboration with
-computing cluster resource managers and job schedulers such as
+computational experiments in collaboration with computing cluster resource
+managers and job schedulers such as
 [Slurm](https://computing.llnl.gov/linux/slurm/).
 
 Neronet is a software development project undertaken by Team 11 of the Aalto
 University course CSE-­C2610 Software Project of semestern 2015-16 for Pyry
 Takala from the
 [Aalto deep learning research group](http://research.ics.aalto.fi/bayes/).
+The project was started in October 19th 2015 and will be finished by April
+11th 2016. The project is conducted in seven sprints and Scrum is employed.
 
 This project is under the [MIT License](./LICENSE).
 
@@ -31,27 +33,24 @@ merged to `stable` once the sprint increment is done.
 
 ## General information
 
-These files contain lots of general project related information:
+The files listed below offer lots of project related information:
 
 - [Project Information](./doc/project_information.md) -- notes by the team to
   direct development
 - [Project Introduction](./doc/project_introduction.pdf) -- original project
   proposal by the PO
-
-## Artifacts
-
-The artifacts are updated continuously:
-
-- [Product Vision](./doc/product_vision.pdf)
-- [Process Overview](./doc/process_overview.pdf)
-- [Technical Overview](./doc/technical_overview.pdf)
-- [Definition of Done](./doc/definition_of_done.pdf)
+- [Product Vision](./doc/product_vision.pdf) -- why, what, for whom
+- [Process Overview](./doc/process_overview.pdf) -- how in practice
+- [Technical Overview](./doc/technical_overview.pdf) -- what in practice
+- [Definition of Done](./doc/definition_of_done.pdf) -- a Scrum tool to help
+  us ensure high quality
 
 ## Notes on related themes
 
 - [Evaluation](./doc/notes_on_evaluation.md) -- a summary of course evaluation
+  criteria
 - [Meetings](./doc/notes_on_meetings.md) -- a chronology of meetings history
-  with notes
+  with related notes
 - [Teamwork](./doc/notes_on_teamwork.md) -- notes to improve teamwork
 - [Tools](./doc/notes_on_tools.md) -- notes on selected or candidate tools
 - [Scrum](./doc/notes_on_scrum.md) -- some notes on Scrum
