@@ -614,22 +614,43 @@ Tasks:
 - Maintaining and boosting team spirit and motivation in collaboration with
   the scrum master
 
-Feedback is given to team leader at the end of sprint.
+Note:
+
+- The scrum master will coach and support the sprint leader.
+- Constructive feedback is given to the leader by all team members at the end
+  of the sprint.
 
 ### Budget
 
-Fact: We have at least 10h of storyless work per developer, thus only 5x25h
-of developer time budget left for story fullfilment work.
+Facts:
 
-Fact: Total story points in product backlog: 26
+- We have at least 10h of storyless work per developer to be done during
+  sprint 1, thus only 5x25h of developer time is left for story fulfilment
+  work.
+- Total story points in product backlog defined for non-epic stories at the
+  end of sprint 0: 26
 
-Assumption: We have two two person teams doing pair programming.
+Assumptions:
 
-Result: The budget is 50h of pair time 
+- We have two two person teams doing pair programming.
+- One story point equals 4h of (productive) pair time:
+   - 30min of studying for and planning the work,
+   - 90min of developing the code and unit tests,
+   - 30min of documenting the work and updating the user guide,
+   - 50min of peer reviewing and testing the work of an other pair, and
+   - 40min for backlog management, time tracking and pauses
 
-Assumption: One story point equals 3h of pair time.
+Results:
 
-Result: We can do 16 story points this sprint. Which?
+- The sprint budget is 50h of pair time.
+- We can do about 12.5 story points per sprint.
+- Our average weekly pair time budget is about 16h.
+- Our week velocity (number of story points done per week) should be about 4.
+
+Question:
+
+- Are the assumptions reasonable?
+- Which stories should we do in sprint 1?
 
 ### Sprint goal
 
