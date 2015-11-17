@@ -9,7 +9,7 @@ managers and job schedulers such as
 [Slurm](https://computing.llnl.gov/linux/slurm/).
 
 Neronet is a software development project undertaken by Team 11 of the Aalto
-University course CSE-­C2610 Software Project of semestern 2015-16 for Pyry
+University course CSE-C2610 Software Project of semestern 2015-16 for Pyry
 Takala from the
 [Aalto deep learning research group](http://research.ics.aalto.fi/bayes/).
 The project was started in October 19th 2015 and will be finished by April

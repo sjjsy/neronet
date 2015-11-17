@@ -1,4 +1,6 @@
 # neromum.py
+#
+# python3.5 neromum.py python3.5 sleep.py 20 0.5
 
 import sys
 import socket

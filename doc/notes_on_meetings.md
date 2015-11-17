@@ -701,9 +701,58 @@ Candidates:
 - Sprint goal: Develop a prototype that offers the most basic functionality
   via a CLI
 
+## 11-17 60m Team leader mentoring session
+
+Participants: Joona + Samuel
+
+Agenda:
+
+- 19:00 Schedule
+- 19:10 Work plan
+- 19:40 Architecture, interfaces, databases, work instructions
+
+## 11-18 360m Wedshop
+
+Participants: team
+
+Agenda:
+
+- 13.00: Daily scrum
+- 13.15: Discussing work distribution (f.ex tuma: submit experiments to
+  unmanaged nodes (5 pts) jo: user guide (3 pts) iite: the rest (5 pts)
+  reviewers: tuma-> jo, jo->iite, iite->tuma)
+- 13.30: Dividing user stories to subtasks and estimating work
+- 13.45: Updating user guide
+- 14:15: Defining component interfaces (DBs, configs, nero daemons,
+  individual functions)
+- 15.00: Break (Someone might want to eat)
+- 15.30: Reviewing results and redistributing the work in case the original
+  work distribution turns out to be unfair
+- 15.50: Pair programming
+- 18:50: Update agilefant (time tracking)
+
+User guide:
+
+- implementation 10h
+- peer review 2h
+
+Submit experiments to unmanaged nodes:
+
+- planning 3h
+- neroman 3h
+- neromum 3h
+- nerokid 3h
+- testing 3h
+- documentation 2h
+- peer review 3h
+
+### Notes
+
+- http://sphinx-doc.org/
+
 ## 11-18 105m EES 02: Requirements engineering
 
-Participants: Samuel
+Participants: Samuel, Joona
 
 PO and requirements:
 
@@ -711,3 +760,16 @@ PO and requirements:
   interviews, maybe via web communities? -Samuel
 - Developing a User guide as a kind of product prototype to boost discussion
   and understanding of user stories. -Samuel
+
+## 11-20 300m Story skype & Frifury
+
+Participants: team + PO (90m)
+
+Agenda:
+
+- 14:00 Scrum with Pyry on Skype
+- 14:15 Sketch CLI user guide to understand user stories (Joona, Pyry, ?)
+- 14:15 Development (others)
+- 16:30 Testing & documentation workshop
+- 17:00 Development
+- 18:50 Time tracking

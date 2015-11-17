@@ -13,27 +13,58 @@ Articles:
 
 The way to use git or the [git-flow](http://nvie.com/posts/a-successful-git-branching-model/).
 
+## Package management
+
+On Ubuntu 14.04 see:
+
+- [PEP-0405](https://www.python.org/dev/peps/pep-0405/)
+- [venv](https://docs.python.org/3/library/venv.html)
+- [installing venv in Ubuntu](http://www.thefourtheye.in/2014/12/Python-venv-problem-with-ensurepip-in-Ubuntu.html)
+
+And run:
+
+```
+sudo add-apt-repository ppa:fkrull/deadsnakes
+sudo apt-get update
+sudo apt-get install python3.5
+
+cd /path/to/repo/neronet
+python3.5 -m venv ./venv --without-pip
+source ./venv/bin/activate
+wget https://bootstrap.pypa.io/get-pip.py
+venv/bin/python3.5 get-pip.py
+```
+
 ## Documentation
 
 ### Sphinx & Read the Docs
 
-Sphinx is a tool that makes it easy to create intelligent and beautiful documentation, written by Georg Brandl and licensed under the BSD license.
+Sphinx is a tool that makes it easy to create intelligent and beautiful
+documentation, written by Georg Brandl and licensed under the BSD license.
 
-Read the Docs automates the process of building and uploading Sphinx documentation after every commit.
+https://en.wikipedia.org/wiki/Sphinx_%28documentation_generator%29
+http://sphinx-doc.org/tutorial.html
+https://pythonhosted.org/an_example_pypi_project/sphinx.html
+
+Read the Docs automates the process of building and uploading Sphinx
+documentation after every commit.
 
 https://readthedocs.org/
 
-Of course, this site is also created from reStructuredText sources using Sphinx! The following features should be highlighted:
+Of course, this site is also created from reStructuredText sources using
+Sphinx! The following features should be highlighted:
 
-Output formats: HTML (including Windows HTML Help), LaTeX (for printable PDF versions), ePub, Texinfo, manual pages, plain text
-Extensive cross-references: semantic markup and automatic links for functions, classes, citations, glossary terms and similar pieces of information
+Output formats: HTML (including Windows HTML Help), LaTeX (for printable PDF
+versions), ePub, Texinfo, manual pages, plain text
+Extensive cross-references: semantic markup and automatic links for
+functions, classes, citations, glossary terms and similar pieces of information
 Hierarchical structure: easy definition of a document tree, with automatic links to siblings, parents and children
 Automatic indices: general index as well as a language-specific module indices
 Code handling: automatic highlighting using the Pygments highlighter
 Extensions: automatic testing of code snippets, inclusion of docstrings from Python modules (API docs), and more
 Contributed extensions: more than 50 extensions contributed by users in a second repository; most of them installable from PyPI
 
-http://sphinx-doc.org/tutorial.html
+[sphinx-ext-autodoc](http://sphinx-doc.org/ext/autodoc.html)
 
 ## Software testing
 
@@ -42,6 +73,8 @@ http://sphinx-doc.org/tutorial.html
 [PyUnit](http://pyunit.sourceforge.net/pyunit.html) or the Python unit testing
 framework is the de facto standard unit testing framework for Python. It is
 based on JUnit.
+
+[Unittest documentation](https://docs.python.org/3/library/unittest.html)
 
 PyUnit forms a part of the Python Standard Library as of Python version 2.1.
 
@@ -60,10 +93,13 @@ Python unit testing in nutshell:
     ```
 
 run script and compare results
+
 ### PyTest
 
 [pytest](pytest.org/) is a mature full-featured Python testing tool that helps
 you write better programs.
+
+- http://halfcooked.com/presentations/pyconau2013/why_I_use_pytest.html
 
 ### Tox
 
@@ -80,6 +116,9 @@ for:
 - acting as a frontend to Continuous Integration servers, greatly reducing
   boilerplate and merging CI and shell-based testing.
 
+### Nose
+
+http://pythontesting.net/framework/nose/nose-introduction/
 
 ### Robot Framework
 
