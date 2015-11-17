@@ -634,10 +634,10 @@ Assumptions:
 
 - We have two two person teams doing pair programming.
 - One story point equals 4h of (productive) pair time:
-   - 30min of studying for and planning the work,
-   - 90min of developing the code and unit tests,
-   - 30min of documenting the work and updating the user guide,
-   - 50min of peer reviewing and testing the work of an other pair, and
+   - 40min of studying for and planning the work and sketching the user guide
+   - 90min of developing the code and unit tests
+   - 30min of documenting the work and updating the user guide
+   - 40min of peer reviewing and testing the work of an other pair
    - 40min for backlog management, time tracking and pauses
 
 Results:
@@ -694,6 +694,12 @@ Candidates:
 ### Sprint backlog
 
 [Sprint 1 in Agilefant](https://cloud.agilefant.com/smarisa/editIteration.action?iterationId=154988)
+
+### Meeting results
+
+- Assumptions are resonable.
+- Sprint goal: Develop a prototype that offers the most basic functionality
+  via a CLI
 
 ## 11-18 105m EES 02: Requirements engineering
 
