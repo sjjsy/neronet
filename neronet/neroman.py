@@ -1,11 +1,15 @@
 import os.path
+from argparse import ArgumentParser
+
 import yaml
 
 CONFIG_FILENAME = 'config.yaml'
 
+
 class Neroman():
     """
     """
+
     def __init__(self, database = "default.yaml"):
         """
         """
@@ -37,7 +41,20 @@ class Neroman():
         except KeyError:
             print("Error while loading experiment")
 
+
 def main():
+    """
+    """
+    parser = ArgumentParser()
+    parser.add_argument('--experiment',
+            metavar='folder',
+            nargs=1)
+    args = parser.parse_args()
     neroman = Neroman()
+    if args.experiment:
+        experiment_folder = args.experiment[0]
+        neroman.specify_experiment(experiment_folder)
+
+
 if __name__ == '__main__':
-    main():
+    main()
