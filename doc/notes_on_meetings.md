@@ -722,12 +722,12 @@ Agenda:
 - 13.15: Discussing work distribution (f.ex tuma: submit experiments to
   unmanaged nodes (5 pts) jo: user guide (3 pts) iite: the rest (5 pts)
   sa: sphinx reviewers: tuma-> jo, jo->iite, iite->tuma)
-- 13.20: quick discussion of tools (sphinx, unittest, coverage.py?, PEP 8, autopep)
+- 13.20: Quick discussion of tools (sphinx, unittest, coverage.py?, PEP 8, autopep)
 - 14.00: Dividing user stories to subtasks, estimating work, Updating user guide and
   Defining component interfaces (DBs, configs, nero daemons, individual functions) x6
 - 16.00: Pair programming x4
 - 16.00: EES2 josa
-- 18.15: Sphinx demo, PEP 8, autoPep
+- 18.30: Sphinx demo, PEP 8, autoPep
 - 18:50: Update agilefant (time tracking)
 
 User guide:
@@ -800,7 +800,8 @@ Joona:
 
 ### Notes
 
-- http://sphinx-doc.org/
+- [Sphinx documentation](http://sphinx-doc.org/)
+- [Google style guide](http://sphinx-doc.org/latest/ext/example_google.html)
 
 ## 11-18 105m EES 02: Requirements engineering
 
@@ -825,3 +826,4 @@ Agenda:
 - 16:30 Testing & documentation workshop
 - 17:00 Development
 - 18:50 Time tracking
+

@@ -33,6 +33,7 @@ class LogFile(object):
 
 
 class NeroKid(object):
+    """The """
 
     def __init__(self):
         """"""

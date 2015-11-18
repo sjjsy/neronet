@@ -14,7 +14,6 @@ Contents:
    intro
 
 
-
 Indices and tables
 ==================
 
@@ -22,3 +21,21 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+Neroman
+=======
+
+.. automodule:: neronet.neroman
+   :members:
+
+Neromum
+=======
+
+.. automodule:: neronet.neromum
+   :members:
+
+Nerokid
+=======
+
+.. automodule:: neronet.nerokid
+   :members:
