@@ -717,18 +717,21 @@ Participants: team
 
 Agenda:
 
-- 13.00: Daily scrum
+- 13.00: Discussing agenda
+- 13.05: Daily scrum
 - 13.15: Discussing work distribution (f.ex tuma: submit experiments to
   unmanaged nodes (5 pts) jo: user guide (3 pts) iite: the rest (5 pts)
-  reviewers: tuma-> jo, jo->iite, iite->tuma)
-- 13.30: Dividing user stories to subtasks and estimating work
-- 13.45: Updating user guide
+  sa: sphinx reviewers: tuma-> jo, jo->iite, iite->tuma)
+- 13.20: quick discussion of tools (sphinx, unittest, coverage.py?, PEP 8, autopep)
+- 14.00: Dividing user stories to subtasks and estimating work
+- 14.00: Updating user guide
 - 14:15: Defining component interfaces (DBs, configs, nero daemons,
   individual functions)
 - 15.00: Break (Someone might want to eat)
-- 15.30: Reviewing results and redistributing the work in case the original
+- 15.45: Reviewing results and redistributing the work in case the original
   work distribution turns out to be unfair
-- 15.50: Pair programming
+- 15.55: Pair programming
+- 18.15: Sphinx demo, PEP 8, autoPep
 - 18:50: Update agilefant (time tracking)
 
 User guide:
@@ -745,6 +748,59 @@ Submit experiments to unmanaged nodes:
 - testing 3h
 - documentation 2h
 - peer review 3h
+
+Specify clusters by address and type to specify my computing resources: (4h)
+
+- planning 40min
+- neroman 90min
+- testing 40min
+- documentation 40min 
+- peer review 30min
+
+Specify experiments by name, files and parameters and edit and delete them: (8h)
+
+- setup 40min
+- planning 110min
+- neroman 150min
+- testing 60min
+- documentation 60min
+- peer review 60min
+
+Want an experiment status report so that I can review experiment status details: (8h)
+
+- planning 
+- neroman 
+- neromum 
+- nerokid 
+- testing 
+- documentation 
+- peer review 
+
+Daily scrum:
+
+Iiro:
+-Didn't participate
+
+Tuomo:
+-Has listened at a boring sprint planning
+-No preferences as to what to do next
+-No problems, too much time used on defining file hierarchy
+
+Matias:
+-The same as Tuomo
+-Wants to install tools
+-Too little time for the first sprint planning
+
+Teemu:
+-The same
+-Wants to start working
+-Didn't have time to plan setting clusters well enough at the sprint planning
+
+Joona:
+-Participated at the sprint planning
+-Has planned the team meeting with Samuel
+-Wants to start working
+-Others don't know enough compared to Samuel
 
 ### Notes
 
