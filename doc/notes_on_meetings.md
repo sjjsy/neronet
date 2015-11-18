@@ -723,14 +723,10 @@ Agenda:
   unmanaged nodes (5 pts) jo: user guide (3 pts) iite: the rest (5 pts)
   sa: sphinx reviewers: tuma-> jo, jo->iite, iite->tuma)
 - 13.20: quick discussion of tools (sphinx, unittest, coverage.py?, PEP 8, autopep)
-- 14.00: Dividing user stories to subtasks and estimating work
-- 14.00: Updating user guide
-- 14:15: Defining component interfaces (DBs, configs, nero daemons,
-  individual functions)
-- 15.00: Break (Someone might want to eat)
-- 15.45: Reviewing results and redistributing the work in case the original
-  work distribution turns out to be unfair
-- 15.55: Pair programming
+- 14.00: Dividing user stories to subtasks, estimating work, Updating user guide and
+  Defining component interfaces (DBs, configs, nero daemons, individual functions) x6
+- 16.00: Pair programming x4
+- 16.00: EES2 josa
 - 18.15: Sphinx demo, PEP 8, autoPep
 - 18:50: Update agilefant (time tracking)
 
