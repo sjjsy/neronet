@@ -1,10 +1,9 @@
-import os.path
+import os
 from argparse import ArgumentParser
 
 import yaml
 
 CONFIG_FILENAME = 'config.yaml'
-
 
 class Neroman():
     """
@@ -21,15 +20,28 @@ class Neroman():
 
     def _load_database(self, filename):
         """Load the database from an yaml file"""
+        if os.stat(filename).st_size == 0:
+            return
         with open(filename, 'r') as file:
             database = yaml.load(file.read())
         self.clusters = database.get('clusters', {})
         self.experiments = database.get('experiments', {})
         self.preferences = database.get('preferences', {})
     
+    def save_database(self):
+        with open(self.database, 'w') as file:
+            file.write(yaml.dump({'preferences': self.preferences}, default_flow_style=False))
+            file.write(yaml.dump({'clusters': self.clusters}, default_flow_style=False))
+            file.write(yaml.dump({'experiments': self.experiments}, default_flow_style=False))
+
     def specify_experiment(self, folder):
         """
         """
+        file_path = os.path.join(folder, CONFIG_FILENAME)
+        if os.stat(file_path).st_size == 0:
+            print("Empty config file")
+            return
+
         with open(os.path.join(folder, CONFIG_FILENAME), 'r') as file:
             experiment_data = yaml.load(file.read())
         try:
@@ -54,7 +66,7 @@ def main():
     if args.experiment:
         experiment_folder = args.experiment[0]
         neroman.specify_experiment(experiment_folder)
-
+        neroman.save_database()
 
 if __name__ == '__main__':
     main()
