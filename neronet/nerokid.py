@@ -47,9 +47,9 @@ class NeroKid(object):
         self.logger.log('Kid launched!')
         self.initialize_socket()
         self.logger.log('Launching the experiment...')
-        launch_child_process()
-        monitor_process()
-        logger.log('Process finished!')
+        self.launch_child_process()
+        self.monitor_process()
+        self.logger.log('Process finished!')
 
     def initialize_socket(self):
         """initialize socket"""
@@ -66,16 +66,22 @@ class NeroKid(object):
 
     def launch_child_process(self):
         """Launches received script"""
+        #For windows
+        #self.process = subprocess.Popen(['python', shlex.split(self.experiment)], universal_newlines=True,
+        #stdout=open('stdout.log', 'w'), stderr=open('stderr.log', 'w'),
+        #bufsize=1)
+
+        #for linux
         self.process = subprocess.Popen(shlex.split(self.experiment), universal_newlines=True,
         stdout=open('stdout.log', 'w'), stderr=open('stderr.log', 'w'),
         close_fds=True, bufsize=1)
 
     def monitor_process(self):
-        logger.log('- Experiment PID: %s' % (process.pid))
-        while process.poll() == None:
+        self.logger.log('- Experiment PID: %s' % (self.process.pid))
+        while self.process.poll() == None:
             # Sleep to wait for changes
             time.sleep(INTERVAL)
-            collect_new_file_data()
+            self.collect_new_file_data()
 
     def collect_new_file_data(self):
         """Collect data what child process outputs"""
@@ -87,7 +93,7 @@ class NeroKid(object):
                 log_output[log_file.path] = changes
         # Send any new log output to Mum
         if log_output:
-            sock.send_data({'log_output': log_output})
+            self.sock.send_data({'log_output': log_output})
 
 if __name__ == '__main__':
     NeroKid().run()
