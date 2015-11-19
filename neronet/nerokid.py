@@ -13,7 +13,6 @@ from core import Logger, Socket
 INTERVAL = 2.0
 LOG_FILES = 'stdout.log', 'stderr.log'
 
-
 class LogFile(object):
 
     def __init__(self, path):
@@ -62,7 +61,7 @@ class NeroKid(object):
 
     def send_data_to_neromum(self, text):
         """Send status data to Neromum."""
-        sock.send_data(text)
+        self.sock.send_data(text)
 
     def launch_child_process(self):
         """Launches received script"""
@@ -72,6 +71,7 @@ class NeroKid(object):
         #bufsize=1)
 
         #for linux
+        self.logger.log(shlex.split(self.experiment))
         self.process = subprocess.Popen(shlex.split(self.experiment), universal_newlines=True,
         stdout=open('stdout.log', 'w'), stderr=open('stderr.log', 'w'),
         close_fds=True, bufsize=1)
