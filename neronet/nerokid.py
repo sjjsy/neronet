@@ -95,5 +95,10 @@ class NeroKid(object):
         if log_output:
             self.sock.send_data({'log_output': log_output})
 
+    def terminate_process(self):
+        """stop the experiment"""
+        self.process.kill()
+        self.logger.log('- Experiment PID: %s terminate' % (self.process.pid))
+
 if __name__ == '__main__':
     NeroKid().run()
