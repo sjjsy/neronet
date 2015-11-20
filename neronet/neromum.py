@@ -6,9 +6,12 @@ import sys
 import socket
 import os
 import pickle
+import select
 
 from core import Logger
 
+
+#need database parsing
 
 class Neromum(object):
 
@@ -16,14 +19,21 @@ class Neromum(object):
         self.sock = None
         self.experiment = ' '.join(sys.argv[1:])
         self.logger = Logger('MUM')
+        self.running = True
+        self.open_incoming_connections = []
+        self.open_outgoing_connections = []
 
     def run(self):
+
         self.logger.log('Creating the socket')
         self.initialize_socket()
         self.start_nerokid()
+        self.start_nerokid()
         self.listen_loop()
-        logger.log('Shutting down')
+        self.logger.log('Shutting down')
         sock.shutdown(socket.SHUT_RDWR)
+
+
 
     def initialize_socket(self):
         self.sock = socket.socket()
@@ -34,6 +44,7 @@ class Neromum(object):
         self.sock.listen(1)
         # Retrieve socket specs
         self.host, self.port = self.sock.getsockname()
+        self.open_incoming_connections.append(self.sock)
 
     def save_to_file(self, data, file):
         pass
@@ -98,10 +109,20 @@ class Neromum(object):
 
     def listen_loop(self):
         while True:
-            if(self.get_nerokid_connection()):
-                self.get_data_from_nerokid()
-            # Process data
-            self.parse_nerokid_data()
+            inRdy,outRdy ,excpRdy = select.select(self.open_incoming_connections, [],[])
+            for s in inRdy:
+                if s == self.sock:
+                    print("testi")
+                    client, address = s.accept() 
+                    self.open_incoming_connections.append(client) 
+                    print('new client added%s'%str(address)) 
+                else:
+                    self.data = s.recv(4096)
+                    if self.data:
+                        self.parse_nerokid_data()
+                    else:
+                        s.close()
+                        self.open_incoming_connections.remove(s)
 
 
 
