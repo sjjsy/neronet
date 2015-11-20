@@ -11,13 +11,21 @@ from core import Logger
 
 
 class Neromum(object):
+    """A class to specify the Neromum object.
 
+    Runs in the cluster and manages and monitors all the nodes.
+
+    Gets the experiment as the 1st command line argument
+    Experiment parameters from 2nd onwards"""
     def __init__(self):
         self.sock = None
         self.experiment = ' '.join(sys.argv[1:])
         self.logger = Logger('MUM')
 
     def run(self):
+        """The Neromum main.
+
+        """
         self.logger.log('Creating the socket')
         self.initialize_socket()
         self.start_nerokid()
@@ -26,6 +34,7 @@ class Neromum(object):
         sock.shutdown(socket.SHUT_RDWR)
 
     def initialize_socket(self):
+        """Creates the socket and sets it to listen"""
         self.sock = socket.socket()
         self.sock.settimeout(5.0)
         # Bind the socket to localhost, auto choose port
@@ -36,9 +45,11 @@ class Neromum(object):
         self.host, self.port = self.sock.getsockname()
 
     def save_to_file(self, data, file):
+
         pass
 
     def start_nerokid(self):
+        """Starts the nerokid in the node"""
         self.logger.log('Launching kids')
         os.system('python3.5 nerokid.py %s %d %s &' % (self.host, self.port, self.experiment))
 
