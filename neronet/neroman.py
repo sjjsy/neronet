@@ -63,8 +63,9 @@ class Neroman():
                 default_flow_style=False))
             file.write(yaml.dump({'clusters': self.clusters}, 
                 default_flow_style=False))
-            file.write(yaml.dump({'experiments': self.experiments}, 
+            file.write(yaml.dump({'experiments': self.experiments},
                 default_flow_style=False))
+
 
     def specify_experiment(self, folder):
         """Specify experiments so that Neroman is aware of them.
@@ -75,11 +76,14 @@ class Neroman():
         Args:
             folder (str): The path of the folder that includes 
                 the experiment that's being specified.
+        Returns:
+            True or False: If it fails then it raises an error or
+                returns False.
         """
         file_path = os.path.join(folder, CONFIG_FILENAME)
         if os.stat(file_path).st_size == 0:
             print("Empty config file")
-            return
+            return False
 
         with open(file_path, 'r') as file:
             experiment_data = yaml.load(file.read())
@@ -91,6 +95,8 @@ class Neroman():
             self.experiments[folder] = experiment
         except KeyError:
             print("Error while loading experiment")
+            return False
+        return True
 
 
 def main():
