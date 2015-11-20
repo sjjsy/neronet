@@ -41,6 +41,7 @@ class LogFile(object):
 
 
 class NeroKid(object):
+
     """A class to specify the Nerokid object.
 
     Runs in a cluster node and manages and monitors the experiment given.
@@ -49,8 +50,6 @@ class NeroKid(object):
     Port as the 2nd
     Experiment as the 3rd
     Experiment parameters from 4th argument onwards
-
-
     """
     def __init__(self):
         self.sock = None

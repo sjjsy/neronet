@@ -40,8 +40,10 @@ The files listed below offer lots of project related information:
 - [Project Introduction](./doc/project_introduction.pdf) -- original project
   proposal by the PO
 - [Product Vision](./doc/product_vision.pdf) -- why, what, for whom
-- [Process Overview](./doc/process_overview.pdf) -- how in practice
+- [Process Overview](./doc/process_overview.pdf) -- how in practice (schedule,
+  development practices)
 - [Technical Overview](./doc/technical_overview.pdf) -- what in practice
+  (architecture, etc.)
 - [Definition of Done](./doc/definition_of_done.pdf) -- a Scrum tool to help
   us ensure high quality
 
