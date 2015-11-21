@@ -27,8 +27,9 @@ class Neromum(object):
 
         self.logger.log('Creating the socket')
         self.initialize_socket()
+        self.send_experiment_to_node()
         self.start_nerokid()
-        self.start_nerokid()
+        #self.start_nerokid2()
         self.listen_loop()
         self.logger.log('Shutting down')
         sock.shutdown(socket.SHUT_RDWR)
@@ -51,13 +52,13 @@ class Neromum(object):
 
     def start_nerokid(self):
         self.logger.log('Launching kids')
-        os.system('python3.5 nerokid.py %s %d %s &' % (self.host, self.port, self.experiment))
+        os.system('ssh localhost python3 nerokid.py %s %d %s &' % (self.host, self.port, self.experiment))
 
     def send_data_to_neroman(self):
         pass
 
-    def start_file_transfer(self):
-        pass
+    def send_experiment_to_node(self):
+        os.system('scp sleep.py core.py nerokid.py localhost:~/')
 
     def kill_child(self):
         pass
@@ -112,7 +113,6 @@ class Neromum(object):
             inRdy,outRdy ,excpRdy = select.select(self.open_incoming_connections, [],[])
             for s in inRdy:
                 if s == self.sock:
-                    print("testi")
                     client, address = s.accept() 
                     self.open_incoming_connections.append(client) 
                     print('new client added%s'%str(address)) 
