@@ -11,16 +11,25 @@ import shlex
 from core import Logger, Socket
 
 INTERVAL = 2.0
+"""float: interval for how long the kid waits until it rechecks for changes in the log file
+"""
 LOG_FILES = 'stdout.log', 'stderr.log'
+"""tuple: log files for stdout and stderr
+"""
 
 class LogFile(object):
-
+    """"""
     def __init__(self, path):
+        """
+        Args:
+            path (str) : the file path to the log file.
+        """
         self.path = path
         self.rtime = 0
         self.seek = 0
 
     def read_changes(self):
+        """Reads the changes made to the logfile"""
         mtime = os.stat(self.path).st_mtime
         if mtime > self.rtime:
             self.rtime = mtime
@@ -32,10 +41,17 @@ class LogFile(object):
 
 
 class NeroKid(object):
-    """The """
 
+    """A class to specify the Nerokid object.
+
+    Runs in a cluster node and manages and monitors the experiment given.
+
+    Gets host as the 1st command line argument
+    Port as the 2nd
+    Experiment as the 3rd
+    Experiment parameters from 4th argument onwards
+    """
     def __init__(self):
-        """"""
         self.sock = None
         self.process = None
         self.logger = Logger('KID')
@@ -43,7 +59,10 @@ class NeroKid(object):
         self.log_files = [LogFile(log_file_path) for log_file_path in LOG_FILES]
 
     def run(self):
-        """The Nerokid main."""
+        """The Nerokid main.
+
+        Initializes the socket, launches the child process and starts to monitor the child process
+        """
         self.logger.log('Kid launched!')
         self.initialize_socket()
         self.logger.log('Launching the experiment...')
@@ -52,7 +71,7 @@ class NeroKid(object):
         self.logger.log('Process finished!')
 
     def initialize_socket(self):
-        """initialize socket"""
+        """initialize socket with command line arguments for host and port"""
         host, port = sys.argv[1:3]
         port = int(port)
         # Define a socket
@@ -78,6 +97,7 @@ class NeroKid(object):
         close_fds=True, bufsize=1)
 
     def monitor_process(self):
+        """Writes information about the process into a log file on set intervals"""
         self.logger.log('- Experiment PID: %s' % (self.process.pid))
         while self.process.poll() == None:
             # Sleep to wait for changes
@@ -85,7 +105,7 @@ class NeroKid(object):
             self.collect_new_file_data()
 
     def collect_new_file_data(self):
-        """Collect data what child process outputs"""
+        """Collect any data that the child process outputs and send them to neromum"""
         # Check for any new log output
         log_output = {}
         for log_file in self.log_files:
@@ -97,9 +117,9 @@ class NeroKid(object):
             self.sock.send_data({'log_output': log_output})
 
     def terminate_process(self):
-        """stop the experiment"""
+        """Terminate the experiment"""
         self.process.kill()
-        self.logger.log('- Experiment PID: %s terminate' % (self.process.pid))
+        self.logger.log('- Experiment PID: %s terminated' % (self.process.pid))
 
 if __name__ == '__main__':
     NeroKid().run()
