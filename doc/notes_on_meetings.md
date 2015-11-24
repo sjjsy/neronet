@@ -836,9 +836,35 @@ Participants: team + PO (90m)
 
 Agenda:
 
-- 14:00 Scrum with Pyry on Skype
-- 14:15 Sketch CLI user guide to understand user stories (Joona, Pyry, ?)
-- 14:15 Development (others)
-- 16:30 Testing & documentation workshop
-- 17:00 Development
+- 14:00 Development
+- 14:40 Scrum
+- 15:00 Development
+- 15:45 Discuss user guide (JoIiTe)
+- 16:15 Discuss user guide (JoMaTu)
+- 17:00 Pyry on Skype
+- 18:20 Testing & documentation workshop
+- 18:50 Time tracking
+
+## 11-25 360m Wedshop
+
+Participants: team
+
+Agenda:
+
+- 13:00 Scrum
+- 13:20 Development
+- 18:00 Status review
+- 18:20 Estimating remaining tasks
+- 18:50 Time tracking
+
+## 11-27 300m Frifury
+
+Participants: team
+
+Agenda:
+
+- 14:00 Scrum
+- 14:20 Development
+- 17:50 Testing & documentation workshop
+- 18:30 Estimating remaining tasks
 - 18:50 Time tracking
