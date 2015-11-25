@@ -34,12 +34,12 @@ class Neromum(object):
         """
         self.logger.log('Creating the socket')
         self.initialize_socket()
-        self.send_experiment_to_node()
+        #self.send_experiment_to_node()
         self.start_nerokid()
         #self.start_nerokid2()
         self.listen_loop()
         self.logger.log('Shutting down')
-        sock.shutdown(socket.SHUT_RDWR)
+        self.sock.shutdown(socket.SHUT_RDWR)
 
 
 
@@ -62,7 +62,7 @@ class Neromum(object):
     def start_nerokid(self):
         """Starts the nerokid in the node"""
         self.logger.log('Launching kids')
-        os.system('ssh localhost python3 nerokid.py %s %d %s &' % (self.host, self.port, self.experiment))
+        os.system('python3 nerokid.py %s %d %s &' % (self.host, self.port, self.experiment))
 
     def send_data_to_neroman(self):
         pass
@@ -104,23 +104,19 @@ class Neromum(object):
         if self.data:
             self.data = pickle.loads(self.data)
             if type(self.data) == dict:
-                if 'log_output' in self.data:
-                    for log_path, new_text in self.data['log_output'].items():
-                        self.logger.log('New output in %s:' % (log_path))
-                        for ln in new_text.split('\n'):
-                            if not ln:
-                                continue
-                            self.logger.log('    %s' % (ln.strip()))
-                elif 'state' in self.data:
-                    if self.data['state'] == 'STARTED':
-                        self.logger.log('Kid has started!')
-                    elif self.data['state'] == 'FINISHED':
-                        self.logger.log('Kid has finished!')
-                        return
+                for log_path, new_text in self.data['log_output'].items():
+                    self.logger.log('New output in %s:' % (log_path))
+                    for ln in new_text.split('\n'):
+                        if not ln:
+                            continue
+                        self.logger.log('    %s' % (ln.strip()))
+                if not self.data["running"]:
+                    self.logger.log('Kid has finished!')
+                    self.running = False #delete later when finished testing. (ie mom is working as daemon)
 
     def listen_loop(self):
-        while True:
-            inRdy,outRdy ,excpRdy = select.select(self.open_incoming_connections, [],[])
+        while self.running:
+            inRdy, outRdy, excpRdy = select.select(self.open_incoming_connections, [],[])
             for s in inRdy:
                 if s == self.sock:
                     client, address = s.accept() 
