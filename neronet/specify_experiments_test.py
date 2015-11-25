@@ -10,16 +10,13 @@ class TestSpecifyExperiments(unittest.TestCase):
         self.folder = tempfile.mkdtemp()
         self.path = os.path.join(self.folder, neroman.CONFIG_FILENAME)
         with open(self.path, 'w') as f:
-            f.write(
-"""
-run_command_prefix: python
-main_code_file: sleep.py
-parameters:
-    count: 5
-    interval: 5
-parameters_format:
-    'count interval'
-""")
+            f.write("run_command_prefix: python\n"
+                    "main_code_file: sleep.py\n"
+                    "parameters:\n"
+                    "   count: 5\n"
+                    "   interval: 5\n"
+                    "parameters_format:\n"
+                    "   'count interval'")
     
     def tearDown(self):
         os.remove(self.path)
@@ -27,6 +24,8 @@ parameters_format:
         
 
     def test_no_experiment_folder(self):
+        """
+        """
         with self.assertRaises(FileNotFoundError):
             self.testman.specify_experiments('/nonexistent')
 
@@ -54,15 +53,12 @@ parameters_format:
                                 self.testman.experiments[self.folder][field])
     def test_badly_formatted_config_file(self):
         with open(self.path, 'w') as f:
-            f.write(
-"""
-run_command_prefix: python
-parameters:
-    count: 5
-    interval: 5
-parameters_format:
-    'count interval'
-""")
+            f.write("run_command_prefix: python\n"
+                    "parameters:\n"
+                    "   count: 5\n"
+                    "   interval: 5\n"
+                    "parameters_format:\n"
+                    "   'count interval'")
         with self.assertRaises(neroman.FormatError):
             self.testman.specify_experiments(self.folder)
 

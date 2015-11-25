@@ -9,11 +9,13 @@ Attributes:
 """
 
 import os
-from argparse import ArgumentParser
+from enum import Enum
 
 import yaml
 
 CONFIG_FILENAME = 'config.yaml'
+ClusterType = Enum('ClusterType', 'unmanaged slurm')
+ExperimentStatus = Enum('ExperimentStatus', 'defined running done')
 
 class Neroman():
     """The part of Neronet that handles user side things.
@@ -25,7 +27,9 @@ class Neroman():
         preferences (Dict): A dictionary containing the preferences
     """
 
-    def __init__(self, database = 'default.yaml'):
+    def __init__(self, database = 'default.yaml', 
+                        preferences_file = 'preferences.yaml', 
+                        clusters_file = 'clusters.yaml'):
         """Initializes Neroman
 
         Reads the contents of its attributes from a database (currently just
@@ -36,36 +40,55 @@ class Neroman():
                 rest of the attributes will be parsed from the database.
         """
         self.database = database
+        self.clusters_file = clusters_file
+        self.preferences_file = preferences_file
         self.clusters = {}
         self.experiments = {}
         self.preferences = {}
-        self._load_database(database)
+        self._load_configurations(database, clusters_file, preferences_file)
 
-    def _load_database(self, filename):
-        """Load the database from an yaml file
+    def _load_configurations(self, database, clusters, preferences):
+        """Load the configurations from the yaml files or creates them if they
+        don't exist
         
         Args:
-            filename (str): The filepath of the database file
+            database (str): The filepath of the database file
+            clusters (str): The filepath of the clusters file
+            preferences (str): The filepath of the preferences file
         """
-        if os.stat(filename).st_size == 0:
-            return
-        with open(filename, 'r') as file:
-            database = yaml.load(file.read())
-        self.clusters = database.get('clusters', {})
-        self.experiments = database.get('experiments', {})
-        self.preferences = database.get('preferences', {})
+
+        if not os.path.exists(preferences):
+            with open(preferences, 'w') as f:
+                f.write("name:\nemail:")
+        else:
+            with open(preferences, 'r') as f:
+                self.preferences = yaml.load(f.read())
+        if not os.path.exists(clusters):
+            with open(clusters, 'w') as f:
+                f.write("clusters:\ngroups:")
+        else:
+            with open(clusters, 'r') as f:
+                self.clusters = yaml.load(f.read())
+
+        if not os.path.exists(database):
+            with open(database, 'w') as f:
+                f.write()
+                self.experiments = {}
+        else:
+            with open(database, 'r') as f:
+                self.experiments = yaml.load(f.read())
+                if not self.experiments:
+                    self.experiments = {}
     
     def save_database(self):
         """Save the contents of Neroman's attributes in the database
         """
         with open(self.database, 'w') as file:
-            file.write(yaml.dump({'preferences': self.preferences}, 
-                default_flow_style=False))
-            file.write(yaml.dump({'clusters': self.clusters}, 
-                default_flow_style=False))
-            file.write(yaml.dump({'experiments': self.experiments},
+            file.write(yaml.dump(self.experiments,
                 default_flow_style=False))
 
+    def specify_cluster(self, cluster_name, ssh_address, cluster_type):
+        pass    
 
     def specify_experiments(self, folder):
         """Specify experiments so that Neroman is aware of them.
@@ -102,28 +125,14 @@ class Neroman():
             if field not in experiment_data:
                 raise FormatError('No %s field in experiment' % field)
             experiment[field] = experiment_data[field]
+        experiment['status'] = ExperimentStatus.defined
         self.experiments[folder] = experiment
+        self.save_database()
 
 class FormatError(Exception):
+    """ Exception raised when experiment config file is poorly formatted
+    """
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
-
-
-def main():
-    """Parses the command line arguments and starts Neroman
-    """
-    parser = ArgumentParser()
-    parser.add_argument('--experiment',
-            metavar='folder',
-            nargs=1)
-    args = parser.parse_args()
-    neroman = Neroman()
-    if args.experiment:
-        experiment_folder = args.experiment[0]
-        neroman.specify_experiment(experiment_folder)
-        neroman.save_database()
-
-if __name__ == '__main__':
-    main()
