@@ -64,8 +64,9 @@ class Daemon(object):
     class NoPidFileError(Exception):
         pass
 
-    def __init__(self, pd):
-        self.pd = Path.home() / '.neronet' / pd
+    def __init__(self, name):
+        self.name = name
+        self.pd = Path.home() / '.neronet' / self.name
         self.pfout = self.pd / 'out'
         self.pferr = self.pd / 'err'
         self.pfpid = self.pd / 'pid'
@@ -222,6 +223,7 @@ class Daemon(object):
         try:
             proc = psutil.Process(pid)
             if 'python' not in proc.name():
+                raise psutil.NoSuchProcess
         except psutil.NoSuchProcess:
             self.err("stop(): The pid file is deprecated!")
         else:
@@ -229,10 +231,10 @@ class Daemon(object):
                 self.err("stop(): The daemon has already stopped running!")
             else:
                 proc.send_signal(SIGQUIT)
-                time.sleep(0.3)
+                time.sleep(0.4)
                 self.log("stop(): Daemon terminated!")
         if self.pfpid.exists():
-            self.log("stop(): ERR: The daemon failed to cleanup!")
+            self.err("stop(): The daemon failed to cleanup!")
             self.pfpid.unlink()
 
     def restart(self):
