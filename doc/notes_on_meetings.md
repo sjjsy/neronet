@@ -853,9 +853,34 @@ Agenda:
 
 - 13:00 Scrum
 - 13:20 Development
+- 13:35 Discussing peer review and GUI user guide and user stories
 - 18:00 Status review
 - 18:20 Estimating remaining tasks
 - 18:50 Time tracking
+
+### Scrum
+
+Iiro & Teemu:
+- Trying to make tests work
+- Trying to figure out if functions should return exceptions (Iiro: yes)
+- hdf5 requires numpy
+- Will succeed in implementing user stories by next week
+- Will finish specify experiments and start specify clusters
+
+Tuomo & Matias:
+- Make neromum code better
+- Made one-to-many connection from mum to kids
+- Documenting
+- Trying to get sphinx to work
+- Potential problems: parsing packages
+- Will make better communication between mum and kids
+- Will make communication happen between neromanand neromum
+
+Joona:
+- Skype PO to get input to user guide
+- Writing user guide
+- No problems
+- Will finish CLI user guide
 
 ## 11-27 300m Frifury
 
