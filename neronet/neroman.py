@@ -15,9 +15,6 @@ import yaml
 
 
 CONFIG_FILENAME = 'config.yaml'
-ClusterType = Enum('ClusterType', 'unmanaged slurm')
-ExperimentStatus = Enum('ExperimentStatus', 'defined running done')
-
 
 class Neroman():
     """The part of Neronet that handles user side things.
@@ -90,10 +87,24 @@ class Neroman():
                 default_flow_style=False))
 
     def specify_cluster(self, cluster_name, ssh_address, cluster_type):
+        """Specify clusters so that Neroman is aware of them.
+        
+        Writes cluster name, address and type to the clusters config file
+    
+        Args:
+            cluster_name (str): The name of the cluster, should be unique
+            ssh_address (str): SSH address of the cluster
+            cluster_type (str): Type of the cluster. Either slurm or unmanaged
+
+        Raises:
+            FormatError: if the cluster type isn't unmanaged or slurm
+
+        """
+        if cluster_type != 'slurm' and cluster_type != 'unmanaged':
+            raise FormatError("Cluster type should be slurm or unmanaged")
+
         if not self.clusters['clusters']:
             self.clusters['clusters'] = {}
-        cluster_type = ClusterType.slurm if cluster_type == 'slurm' \
-                                        else ClusterType.unmanaged
         self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address, 
                                                     'type': cluster_type}
         with open(self.clusters_file, 'w') as f:
@@ -108,9 +119,7 @@ class Neroman():
         Args:
             folder (str): The path of the folder that includes 
                 the experiment that's being specified.
-        Returns:
-            True or False: If it fails then it raises an error or
-                returns False.
+
         Raises:
             FileNotFoundError: If the folder doesn't exists or the config file
                 doesn't exists
@@ -134,11 +143,13 @@ class Neroman():
             if field not in experiment_data:
                 raise FormatError('No %s field in experiment' % field)
             experiment[field] = experiment_data[field]
-        experiment['status'] = ExperimentStatus.defined
+        experiment['status'] = 'defined'
         self.experiments[folder] = experiment
         self.save_database()
 
     def specify_user(self, name, email):
+        """ Updates user data
+        """
         self.preferences['name'] = name
         self.preferences['email'] = email
         with open(self.preferences_file, 'w') as f:
@@ -147,6 +158,8 @@ class Neroman():
         
 
     def display(self):
+        """ Displays Neroman data on into stdstream
+        """
         print(self.preferences)
         print(self.clusters)
         print(self.experiments)

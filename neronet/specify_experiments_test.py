@@ -67,6 +67,7 @@ class TestSpecifyExperiments(unittest.TestCase):
             with self.subTest(field=field):
                 self.assertEqual(values[i], 
                                 self.testman.experiments[self.folder][field])
+
     def test_badly_formatted_config_file(self):
         with open(self.path, 'w') as f:
             f.write("run_command_prefix: python\n"
