@@ -67,9 +67,6 @@ class Neromum(object):
     def send_data_to_neroman(self):
         pass
 
-    def send_experiment_to_node(self):
-        os.system('scp sleep.py core.py nerokid.py localhost:~/')
-
     def kill_child(self):
         pass
 

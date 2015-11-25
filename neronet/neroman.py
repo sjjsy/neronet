@@ -57,14 +57,14 @@ class Neroman():
     def run(self):
         experiment = "sleep.py"
         experiment_source =  Path.cwd()
-        experiment_destination = Path('/tmp') / 'neronet'
+        experiment_destination = Path('/tmp')
         cluster_address = 'localhost'
-        cluster_port = 55565
+        cluster_port = 22
         os.system(
             'rsync -avz --progress -e "ssh -p%s" "%s" "%s:%s"'
             % (cluster_port, experiment_source, cluster_address,
                 experiment_destination))
-        os.system('ssh -p%s %s "cd %s; python3.5 neromum.py %s"'
+        os.system('ssh -p%s %s "cd %s/neronet; python3.5 neromum.py %s 10 0.5"'
         % (cluster_port, cluster_address, experiment_destination, experiment))
 
 def main():
