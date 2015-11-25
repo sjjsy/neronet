@@ -25,7 +25,7 @@ class Neroman():
         preferences (Dict): A dictionary containing the preferences
     """
 
-    def __init__(self, database = "default.yaml"):
+    def __init__(self, database = 'default.yaml'):
         """Initializes Neroman
 
         Reads the contents of its attributes from a database (currently just
@@ -67,7 +67,7 @@ class Neroman():
                 default_flow_style=False))
 
 
-    def specify_experiment(self, folder):
+    def specify_experiments(self, folder):
         """Specify experiments so that Neroman is aware of them.
 
         Reads the contents of the experiment from a config file inside the
@@ -79,24 +79,36 @@ class Neroman():
         Returns:
             True or False: If it fails then it raises an error or
                 returns False.
+        Raises:
+            FileNotFoundError: If the folder doesn't exists or the config file
+                doesn't exists
+            FormatError: If the config file is badly formated
         """
+        if not os.path.isdir(folder):
+            raise FileNotFoundError('No such folder')
+        
         file_path = os.path.join(folder, CONFIG_FILENAME)
+        if not os.path.exists(file_path):
+            raise FileNotFoundError('No config file in folder')
+
         if os.stat(file_path).st_size == 0:
-            print("Empty config file")
-            return False
+            raise FormatError('Empty config file')
 
         with open(file_path, 'r') as file:
             experiment_data = yaml.load(file.read())
-        try:
-            experiment = {}
-            for field in ['run_command_prefix', 'main_code_file',
+        experiment = {}
+        for field in ['run_command_prefix', 'main_code_file',
                         'parameters', 'parameters_format']:
-                experiment[field] = experiment_data[field]
-            self.experiments[folder] = experiment
-        except KeyError:
-            print("Error while loading experiment")
-            return False
-        return True
+            if field not in experiment_data:
+                raise FormatError('No %s field in experiment' % field)
+            experiment[field] = experiment_data[field]
+        self.experiments[folder] = experiment
+
+class FormatError(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
 
 
 def main():
