@@ -87,6 +87,3 @@ def main():
         neroman.specify_experiment(experiment_folder)
         neroman.save_database()
     neroman.run()
-
-if __name__ == '__main__':
-    main()

@@ -73,6 +73,7 @@ class Daemon(object):
         self.pfport = self.pd / 'port'
         self.cleanup_files = [self.pfpid, self.pfport]
         self.restart_files = [self.pfout, self.pferr] + self.cleanup_files
+        self.pd.mkdir(parents=True, exist_ok=True)
 
     def log_form(self, prefix, message):
         return '%s %s  %s\n' % (prefix,
@@ -160,7 +161,7 @@ class Daemon(object):
             sys.exit(1)
 
         # Decouple from parent environment
-        os.chdir(self.pd)
+        os.chdir(str(self.pd))
         os.setsid()
         os.umask(0)
 
@@ -251,5 +252,5 @@ class Daemon(object):
         You should override this method when you subclass DaemonBase. It will be called after the process has been
         daemonized by start() or restart().
         """
-        self.loge("run(): Running an abstract function!!!")
+        self.err("run(): Running an abstract function!!!")
         sys.exit(1)
