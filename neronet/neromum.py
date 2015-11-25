@@ -79,7 +79,7 @@ class Neromum(object):
 
     # yup, evrything below needs complete rewrite.
     def get_nerokid_connection(self):
-        """"""
+        """Accept nerokid's socket connection"""
         self.logger.log('Waiting for kid connection...')
         try:
             self.kid_con, (khost, kport) = self.sock.accept()
@@ -89,7 +89,7 @@ class Neromum(object):
         return True
 
     def get_data_from_nerokid(self):
-        # wait for a connection
+        """Receive data from nerokid in chunks"""
 
         # Receive the data in small chunks and retransmit it
         self.data = b''
@@ -119,6 +119,7 @@ class Neromum(object):
                     self.running = False
 
     def listen_loop(self):
+        """Listen to the socket from nerokid and receive data"""
         while self.running:
             inRdy, outRdy, excpRdy = select.select(
                 self.open_incoming_connections, [], [])

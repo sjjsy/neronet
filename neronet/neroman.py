@@ -60,6 +60,10 @@ class Neroman():
             print("Error while loading experiment")
 
     def run(self):
+        """Main loop of neroman
+
+        rsync the experiment data and neromum + kid to the remote server with ssh
+        start the experiment in the cluster using ssh"""
         experiment = "sleep.py"
         experiment_source = Path.cwd()
         experiment_destination = Path('/tmp')  # get from experiment name
