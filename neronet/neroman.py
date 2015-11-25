@@ -13,9 +13,11 @@ from enum import Enum
 
 import yaml
 
+
 CONFIG_FILENAME = 'config.yaml'
 ClusterType = Enum('ClusterType', 'unmanaged slurm')
 ExperimentStatus = Enum('ExperimentStatus', 'defined running done')
+
 
 class Neroman():
     """The part of Neronet that handles user side things.
@@ -63,32 +65,39 @@ class Neroman():
         else:
             with open(preferences, 'r') as f:
                 self.preferences = yaml.load(f.read())
+                if not self.preferences: self.preferences = {}
         if not os.path.exists(clusters):
             with open(clusters, 'w') as f:
                 f.write("clusters:\ngroups:")
         else:
             with open(clusters, 'r') as f:
                 self.clusters = yaml.load(f.read())
+                if not self.clusters: self.clusters = {}
 
         if not os.path.exists(database):
             with open(database, 'w') as f:
-                f.write()
-                self.experiments = {}
+                f.write('')
         else:
             with open(database, 'r') as f:
                 self.experiments = yaml.load(f.read())
-                if not self.experiments:
-                    self.experiments = {}
+                if not self.experiments: self.experiments = {}
     
     def save_database(self):
         """Save the contents of Neroman's attributes in the database
         """
-        with open(self.database, 'w') as file:
-            file.write(yaml.dump(self.experiments,
+        with open(self.database, 'w') as f:
+            f.write(yaml.dump(self.experiments,
                 default_flow_style=False))
 
     def specify_cluster(self, cluster_name, ssh_address, cluster_type):
-        pass    
+        if not self.clusters['clusters']:
+            self.clusters['clusters'] = {}
+        cluster_type = ClusterType.slurm if cluster_type == 'slurm' \
+                                        else ClusterType.unmanaged
+        self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address, 
+                                                    'type': cluster_type}
+        with open(self.clusters_file, 'w') as f:
+            f.write(yaml.dump(self.clusters, default_flow_style=False))
 
     def specify_experiments(self, folder):
         """Specify experiments so that Neroman is aware of them.
@@ -129,6 +138,19 @@ class Neroman():
         self.experiments[folder] = experiment
         self.save_database()
 
+    def specify_user(self, name, email):
+        self.preferences['name'] = name
+        self.preferences['email'] = email
+        with open(self.preferences_file, 'w') as f:
+            f.write(yaml.dump(self.preferences, default_flow_style=False))
+
+        
+
+    def display(self):
+        print(self.preferences)
+        print(self.clusters)
+        print(self.experiments)
+
 class FormatError(Exception):
     """ Exception raised when experiment config file is poorly formatted
     """
@@ -136,3 +158,4 @@ class FormatError(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
+

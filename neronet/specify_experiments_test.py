@@ -6,7 +6,22 @@ import neroman
 class TestSpecifyExperiments(unittest.TestCase):    
     
     def setUp(self):
-        self.testman = neroman.Neroman()
+        
+        #Create a database
+        self.database_file = "database.yaml"
+        with open(self.database_file, 'w') as f:
+            f.write("experiment1:\n"
+                    "   run_command_prefix: python3\n"
+                    "   main_code_file: party.py\n"
+                    "   parameters:\n"
+                    "        when: now\n"
+                    "   parameters_format:\n"
+                    "       'when'")
+        
+        #Initialize Neroman with database
+        self.testman = neroman.Neroman(database=self.database_file)
+        
+        #Create an experiment folder
         self.folder = tempfile.mkdtemp()
         self.path = os.path.join(self.folder, neroman.CONFIG_FILENAME)
         with open(self.path, 'w') as f:
@@ -19,6 +34,7 @@ class TestSpecifyExperiments(unittest.TestCase):
                     "   'count interval'")
     
     def tearDown(self):
+        os.remove(self.database_file)
         os.remove(self.path)
         os.removedirs(self.folder)
         
