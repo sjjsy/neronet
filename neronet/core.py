@@ -5,6 +5,8 @@
 import datetime
 import socket
 import pickle
+import time
+from pathlib import Path
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
@@ -41,3 +43,54 @@ class Socket:
         # Close socket
         #self.logger.log('Closing socket...')
         sock.close()
+
+class Daemon(object):
+    """
+    A generic daemon class.
+    """
+
+    def __init__(self, pd):
+        self.pd = Path.home() / '.neronet' / pd
+        self.pfpid = self.pd / 'pid'
+        self.pfout = self.pd / 'out'
+        self.pferr = self.pd / 'err'
+
+    def log_form(self, prefix, message):
+        return '%s %s  %s\n' % (prefix,
+            time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()), message)
+
+    def log(self, message):
+        sys.stdout.write(self.log_form('LOG', message))
+
+    def wrn(self, message):
+        sys.stdout.write(self.out('WRN', message))
+
+    def err(self, message, err=None):
+        output = self.log_form('ERR', message)
+        sys.stdout.write(output)
+        if err:
+            sys.stderr.write(output)
+            print_exc()
+            sys.stderr.write('\n')
+        else:
+            sys.stderr.write(output)
+
+    def write_pid(self):
+        self.pfpid.write_text(str(self.pid))
+
+    def write_port(self):
+        self.pfport.write_text(str(self.port))
+
+    def _read_i_or_nan(self, pf):
+        try:
+            return int(pf.read_text())
+        except:
+            return None
+
+    def rpfpid(self):
+        self.pid = self._read_i_or_nan(self.pfpid)
+        return self.pid
+
+    def rpfport(self):
+        self.port = self._read_i_or_nan(self.pfport)
+        return self.port
