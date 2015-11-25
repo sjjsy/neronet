@@ -8,7 +8,9 @@ class TestSpecifyExperiments(unittest.TestCase):
     def setUp(self):
         
         #Create a database
-        self.database_file = "database.yaml"
+        self.database_file = "default.yaml"
+        self.preferences_file = "preferences.yaml"
+        self.clusters_file = "clusters.yaml"
         with open(self.database_file, 'w') as f:
             f.write("experiment1:\n"
                     "   run_command_prefix: python3\n"
@@ -19,8 +21,9 @@ class TestSpecifyExperiments(unittest.TestCase):
                     "       'when'")
         
         #Initialize Neroman with database
-        self.testman = neroman.Neroman(database=self.database_file)
-        
+        self.testman = neroman.Neroman(self.database_file,
+                                        self.preferences_file, 
+                                        self.clusters_file)
         #Create an experiment folder
         self.folder = tempfile.mkdtemp()
         self.path = os.path.join(self.folder, neroman.CONFIG_FILENAME)
@@ -35,6 +38,8 @@ class TestSpecifyExperiments(unittest.TestCase):
     
     def tearDown(self):
         os.remove(self.database_file)
+        os.remove(self.preferences_file)
+        os.remove(self.clusters_file)
         os.remove(self.path)
         os.removedirs(self.folder)
         
