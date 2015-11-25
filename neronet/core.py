@@ -2,10 +2,15 @@
 #
 # Core class and function definitions
 
+import os
+import sys
 import datetime
 import socket
 import pickle
 import time
+import psutil
+from signal import signal, SIGTERM, SIGQUIT
+from traceback import print_exc
 from pathlib import Path
 
 TIME_OUT = 5.0
@@ -45,15 +50,19 @@ class Socket:
         sock.close()
 
 class Daemon(object):
-    """
-    A generic daemon class.
-    """
+    """A generic daemon class."""
+
+    class NoPidFileError(Exception):
+        pass
 
     def __init__(self, pd):
         self.pd = Path.home() / '.neronet' / pd
-        self.pfpid = self.pd / 'pid'
         self.pfout = self.pd / 'out'
         self.pferr = self.pd / 'err'
+        self.pfpid = self.pd / 'pid'
+        self.pfport = self.pd / 'port'
+        self.cleanup_files = [self.pfpid, self.pfport]
+        self.restart_files = [self.pfout, self.pferr] + self.cleanup_files
 
     def log_form(self, prefix, message):
         return '%s %s  %s\n' % (prefix,
@@ -94,3 +103,140 @@ class Daemon(object):
     def rpfport(self):
         self.port = self._read_i_or_nan(self.pfport)
         return self.port
+
+    def is_running(self):
+        return self.rpfpid() != None
+
+    def cleanup(self):
+        """Remove daemon instance related files."""
+        self.log("cleanup(): Removing instance related files...")
+        for pf in self.cleanup_files:
+            if not pf.exists():
+                continue
+            self.log('cleanup(): Removing "%s"...' % (pf))
+            pf.unlink()
+
+    def quit(self):
+        self.cleanup()
+        self.log("quit(): Exiting... Bye!")
+        sys.exit(0)
+
+    def recv_signal(self, sign, frme):
+        self.log('recv_signal(): Received signal "%s"!' % (sign))
+        if sign in (SIGTERM, SIGQUIT):
+            self.quit()
+
+    def daemonize(self):
+        """Daemonize the process.
+
+        Essentially
+        - Daemonizes the process by double forking
+        - Redefines a few variables and a few handles to unix signals
+        - Defines stdout, stderr and logging streams
+        - Writes the pid file
+        """
+
+        # Exit first parent (first fork)
+        self.log("daemonize(): Daemonizing the process...")
+        try:
+            pid = os.fork()
+            if pid > 0:
+                sys.exit(0)
+        except OSError as err:
+            self.err('daemonize(): Fork #1 failed!', err=err)
+            sys.exit(1)
+
+        # Decouple from parent environment
+        os.chdir(self.pd)
+        os.setsid()
+        os.umask(0)
+
+        # Do second fork
+        try:
+            pid = os.fork()
+            if pid > 0:
+                sys.exit(0)
+        except OSError as err:
+            self.err('daemonize(): Fork #2 failed!', err=err)
+            sys.exit(1)
+
+        # Redirect standard file descriptors
+        sys.stdout.flush()
+        sys.stderr.flush()
+        so = self.pfout.open('w', encoding='utf-8')
+        se = self.pferr.open('w', encoding='utf-8')
+        os.dup2(so.fileno(), sys.stdout.fileno())
+        os.dup2(se.fileno(), sys.stderr.fileno())
+
+        # Update PID
+        self.pid = os.getpid()
+        self.write_pid()
+
+        # Add signal handlers
+        self.log('daemonize(): Adding a signal handler...')
+        signal(SIGTERM, self.recv_signal)
+        signal(SIGQUIT, self.recv_signal)
+
+        # Print encoding info
+        import locale
+        self.log(
+            'daemonize(): Active encodings: %s, %s...' %
+            (sys.getfilesystemencoding(), locale.getpreferredencoding()))
+
+    def start(self):
+        """Start the daemon."""
+        # Check for a pfpid to see if the daemon already runs
+        if self.is_running():
+            self.err('start(): The daemon is already running!' % (self.pfpid))
+            sys.exit(1)
+        self.log('start(): Starting the daemon...')
+        # Remove old files...
+        for pf in self.restart_files:
+            if pf.exists():
+                pf.unlink()
+        # Start the daemon
+        self.daemonize()
+        self.log('start(): Executing run...')
+        self.run()
+
+    def stop(self):
+        """Stop the daemon."""
+        self.log('stop(): Stopping the daemon...')
+        # Get the pid from the pfpid
+        pid = self.rpfpid()
+        if not pid:
+            self.err("stop(): The daemon is not running!")
+            raise self.NoPidFileError
+        try:
+            proc = psutil.Process(pid)
+            if 'python' not in proc.name():
+        except psutil.NoSuchProcess:
+            self.err("stop(): The pid file is deprecated!")
+        else:
+            if not proc.is_running():
+                self.err("stop(): The daemon has already stopped running!")
+            else:
+                proc.send_signal(SIGQUIT)
+                time.sleep(0.3)
+                self.log("stop(): Daemon terminated!")
+        if self.pfpid.exists():
+            self.log("stop(): ERR: The daemon failed to cleanup!")
+            self.pfpid.unlink()
+
+
+    def restart(self):
+        """Restart the daemon."""
+        self.log("restart(): Restarting the daemon...")
+        try:
+            self.stop()
+        except self.NoPidFileError:
+            pass
+        self.start()
+
+    def run(self):
+        """
+        You should override this method when you subclass DaemonBase. It will be called after the process has been
+        daemonized by start() or restart().
+        """
+        self.loge("run(): Running an abstract function!!!")
+        sys.exit(1)

@@ -8,7 +8,7 @@ import os
 import pickle
 import select
 
-from core import Logger
+from .core import Logger
 
 
 #need database parsing

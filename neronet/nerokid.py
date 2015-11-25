@@ -8,7 +8,7 @@ import os
 import time
 import subprocess
 import shlex
-from core import Logger, Socket
+from .core import Logger, Socket
 
 INTERVAL = 2.0
 """float: interval for how long the kid waits until it rechecks for changes in the log file
