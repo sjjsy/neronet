@@ -16,8 +16,12 @@ from pathlib import Path
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
+
+
 class Logger:
+
     """A class to simplify logging."""
+
     def __init__(self, name):
         self.name = name
 
@@ -26,8 +30,11 @@ class Logger:
         # Print to stdout in a clear format
         print('%s %s: %s' % (datetime.datetime.now(), self.name, msg))
 
+
 class Socket:
+
     """A class to simplify socket usage."""
+
     def __init__(self, logger, host, port):
         # Save key attributes
         self.logger = logger
@@ -49,7 +56,9 @@ class Socket:
         #self.logger.log('Closing socket...')
         sock.close()
 
+
 class Daemon(object):
+
     """A generic daemon class."""
 
     class NoPidFileError(Exception):
@@ -66,7 +75,10 @@ class Daemon(object):
 
     def log_form(self, prefix, message):
         return '%s %s  %s\n' % (prefix,
-            time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()), message)
+                                time.strftime(
+                                    '%Y-%m-%d %H:%M:%S',
+                                    time.localtime()),
+                                message)
 
     def log(self, message):
         sys.stdout.write(self.log_form('LOG', message))
@@ -222,7 +234,6 @@ class Daemon(object):
         if self.pfpid.exists():
             self.log("stop(): ERR: The daemon failed to cleanup!")
             self.pfpid.unlink()
-
 
     def restart(self):
         """Restart the daemon."""

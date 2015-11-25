@@ -6,11 +6,13 @@ from argparse import ArgumentParser
 
 CONFIG_FILENAME = 'config.yaml'
 
+
 class Neroman():
+
     """
     """
 
-    def __init__(self, database = "default.yaml"):
+    def __init__(self, database="default.yaml"):
         """
         """
         self.database = database
@@ -31,9 +33,12 @@ class Neroman():
 
     def save_database(self):
         with open(self.database, 'w') as file:
-            file.write(yaml.dump({'preferences': self.preferences}, default_flow_style=False))
-            file.write(yaml.dump({'clusters': self.clusters}, default_flow_style=False))
-            file.write(yaml.dump({'experiments': self.experiments}, default_flow_style=False))
+            file.write(yaml.dump({'preferences': self.preferences},
+                                 default_flow_style=False))
+            file.write(yaml.dump({'clusters': self.clusters},
+                                 default_flow_style=False))
+            file.write(yaml.dump({'experiments': self.experiments},
+                                 default_flow_style=False))
 
     def specify_experiment(self, folder):
         """
@@ -48,7 +53,7 @@ class Neroman():
         try:
             experiment = {}
             for field in ['run_command_prefix', 'main_code_file',
-                        'parameters', 'parameters_format']:
+                          'parameters', 'parameters_format']:
                 experiment[field] = experiment_data[field]
             self.experiments[folder] = experiment
         except KeyError:
@@ -56,24 +61,25 @@ class Neroman():
 
     def run(self):
         experiment = "sleep.py"
-        experiment_source =  Path.cwd()
-        experiment_destination = Path('/tmp') #get from experiment name
+        experiment_source = Path.cwd()
+        experiment_destination = Path('/tmp')  # get from experiment name
         cluster_address = 'localhost'
         cluster_port = 22
         os.system(
             'rsync -avz --progress -e "ssh -p%s" "%s" "%s:%s"'
             % (cluster_port, experiment_source, cluster_address,
                 experiment_destination))
-        os.system('ssh -p%s %s "cd %s/neronet; python3.5 neromum.py %s 10 0.5"' #parse arguments
-        % (cluster_port, cluster_address, experiment_destination, experiment))
+        os.system('ssh -p%s %s "cd %s/neronet; python3.5 neromum.py %s 10 0.5"'  # parse arguments
+                  % (cluster_port, cluster_address, experiment_destination, experiment))
+
 
 def main():
     """
     """
     parser = ArgumentParser()
     parser.add_argument('--experiment',
-            metavar='folder',
-            nargs=1)
+                        metavar='folder',
+                        nargs=1)
     args = parser.parse_args()
     neroman = Neroman()
     if args.experiment:

@@ -15,7 +15,7 @@ import datetime
 count = int(sys.argv[1])
 interval = float(sys.argv[2])
 
-for i in range(1, count+1):
+for i in range(1, count + 1):
     time.sleep(interval)
     print('%s: %d/%d (%.1f)' % (datetime.datetime.now(), i, count, interval))
     sys.stdout.flush()

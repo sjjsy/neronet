@@ -16,12 +16,14 @@ INTERVAL = 2.0
 LOG_FILES = 'stdout.log', 'stderr.log'
 """tuple: log files for stdout and stderr
 """
-packet = {"running" : True, "log_output": ""}
+packet = {"running": True, "log_output": ""}
 commands = ("status")
 
 
 class LogFile(object):
+
     """"""
+
     def __init__(self, path):
         """
         Args:
@@ -54,12 +56,14 @@ class NeroKid(object):
     Experiment as the 3rd
     Experiment parameters from 4th argument onwards
     """
+
     def __init__(self):
         self.sock = None
         self.process = None
         self.logger = Logger('KID')
         self.experiment = ' '.join(sys.argv[3:])
-        self.log_files = [LogFile(log_file_path) for log_file_path in LOG_FILES]
+        self.log_files = [LogFile(log_file_path)
+                          for log_file_path in LOG_FILES]
 
     def run(self):
         """The Nerokid main.
@@ -72,7 +76,6 @@ class NeroKid(object):
         self.launch_child_process()
         self.monitor_process()
         self.logger.log('Process finished!')
-
 
     def initialize_socket(self):
         """initialize socket with command line arguments for host and port"""
@@ -91,8 +94,8 @@ class NeroKid(object):
         """Launches received script"""
         self.logger.log(shlex.split(self.experiment))
         self.process = subprocess.Popen(["python3.5", *shlex.split(self.experiment)], universal_newlines=True,
-        stdout=open('stdout.log', 'w'), stderr=open('stderr.log', 'w'),
-        close_fds=True, bufsize=1)
+                                        stdout=open('stdout.log', 'w'), stderr=open('stderr.log', 'w'),
+                                        close_fds=True, bufsize=1)
 
     def monitor_process(self):
         """Writes information about the process into a log file on set intervals"""
