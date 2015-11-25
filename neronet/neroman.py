@@ -1,7 +1,8 @@
 import os
+from pathlib import Path
 from argparse import ArgumentParser
 
-import yaml
+#import yaml
 
 CONFIG_FILENAME = 'config.yaml'
 
@@ -27,7 +28,7 @@ class Neroman():
         self.clusters = database.get('clusters', {})
         self.experiments = database.get('experiments', {})
         self.preferences = database.get('preferences', {})
-    
+
     def save_database(self):
         with open(self.database, 'w') as file:
             file.write(yaml.dump({'preferences': self.preferences}, default_flow_style=False))
@@ -53,6 +54,18 @@ class Neroman():
         except KeyError:
             print("Error while loading experiment")
 
+    def run(self):
+        experiment = "sleep.py"
+        experiment_source =  Path.cwd() / 'test'
+        experiment_destination = Path('/tmp') / 'neronet'
+        cluster_address = 'localhost'
+        cluster_port = 55565
+        os.system(
+            'rsync -avz --progress -e "ssh -p%s" "%s" "%s:%s"'
+            % (cluster_port, experiment_source, cluster_address,
+                experiment_destination))
+        os.system('ssh -p%s %s "cd %s; python3.5 neromum.py %s"'
+        % (cluster_port, cluster_address, experiment_destination, experiment))
 
 def main():
     """
@@ -67,6 +80,7 @@ def main():
         experiment_folder = args.experiment[0]
         neroman.specify_experiment(experiment_folder)
         neroman.save_database()
+    neroman.run()
 
 if __name__ == '__main__':
     main()
