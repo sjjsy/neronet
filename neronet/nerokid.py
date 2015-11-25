@@ -16,7 +16,8 @@ INTERVAL = 2.0
 LOG_FILES = 'stdout.log', 'stderr.log'
 """tuple: log files for stdout and stderr
 """
-packet = {"running" : True, "log_output": ""} 
+packet = {"running" : True, "log_output": ""}
+commands = ("status")
 
 
 class LogFile(object):
