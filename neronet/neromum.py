@@ -19,7 +19,8 @@ class Neromum(object):
     Runs in the cluster and manages and monitors all the nodes.
 
     Gets the experiment as the 1st command line argument
-    Experiment parameters from 2nd onwards"""
+    Experiment parameters from 2nd onwards
+    """
     def __init__(self):
         self.sock = None
         self.experiment = ' '.join(sys.argv[1:])
@@ -29,9 +30,7 @@ class Neromum(object):
         self.open_outgoing_connections = []
 
     def run(self):
-        """The Neromum main.
-
-        """
+        """The Neromum main."""
         self.logger.log('Creating the socket')
         self.initialize_socket()
         #self.send_experiment_to_node()
@@ -67,6 +66,9 @@ class Neromum(object):
     def send_data_to_neroman(self):
         pass
 
+    def send_experiment_to_node(self):
+        pass
+
     def kill_child(self):
         pass
 
@@ -75,6 +77,7 @@ class Neromum(object):
 
     #yup, evrything below needs complete rewrite.
     def get_nerokid_connection(self):
+        """"""
         self.logger.log('Waiting for kid connection...')
         try:
             self.kid_con, (khost, kport) = self.sock.accept()
@@ -116,9 +119,9 @@ class Neromum(object):
             inRdy, outRdy, excpRdy = select.select(self.open_incoming_connections, [],[])
             for s in inRdy:
                 if s == self.sock:
-                    client, address = s.accept() 
-                    self.open_incoming_connections.append(client) 
-                    print('new client added%s'%str(address)) 
+                    client, address = s.accept()
+                    self.open_incoming_connections.append(client)
+                    print('new client added%s'%str(address))
                 else:
                     self.data = s.recv(4096)
                     if self.data:
