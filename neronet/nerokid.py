@@ -16,6 +16,8 @@ INTERVAL = 2.0
 LOG_FILES = 'stdout.log', 'stderr.log'
 """tuple: log files for stdout and stderr
 """
+packet = {"running" : True, "log_output": ""} 
+
 
 class LogFile(object):
     """"""
@@ -70,6 +72,7 @@ class NeroKid(object):
         self.monitor_process()
         self.logger.log('Process finished!')
 
+
     def initialize_socket(self):
         """initialize socket with command line arguments for host and port"""
         host, port = sys.argv[1:3]
@@ -99,10 +102,13 @@ class NeroKid(object):
     def monitor_process(self):
         """Writes information about the process into a log file on set intervals"""
         self.logger.log('- Experiment PID: %s' % (self.process.pid))
+        packet["running"] = True
         while self.process.poll() == None:
             # Sleep to wait for changes
             time.sleep(INTERVAL)
             self.collect_new_file_data()
+        packet["running"] = False
+        self.send_data_to_neromum(packet)
 
     def collect_new_file_data(self):
         """Collect any data that the child process outputs and send them to neromum"""
@@ -114,7 +120,8 @@ class NeroKid(object):
                 log_output[log_file.path] = changes
         # Send any new log output to Mum
         if log_output:
-            self.sock.send_data({'log_output': log_output})
+            packet["log_output"] = log_output
+            self.send_data_to_neromum(packet)
 
     def terminate_process(self):
         """Terminate the experiment"""
