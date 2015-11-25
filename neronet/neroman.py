@@ -56,7 +56,7 @@ class Neroman():
 
     def run(self):
         experiment = "sleep.py"
-        experiment_source =  Path.cwd() / 'test'
+        experiment_source =  Path.cwd()
         experiment_destination = Path('/tmp') / 'neronet'
         cluster_address = 'localhost'
         cluster_port = 55565
