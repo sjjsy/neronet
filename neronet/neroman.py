@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from argparse import ArgumentParser
 
 #import yaml
@@ -55,9 +56,16 @@ class Neroman():
 
     def run(self):
         experiment = "sleep.py"
-        os.system('rsync -avz -e --progress ssh -p 55565 localhost:test /experiments')
-        os.system('ssh -p 55565 localhost "cd %s; python3.5 neromum.py %s"'
-        % (os.getcwd(), experiment))
+        experiment_source =  Path.cwd() / 'test'
+        experiment_destination = Path('/tmp') / 'neronet'
+        cluster_address = 'localhost'
+        cluster_port = 55565
+        os.system(
+            'rsync -avz --progress -e "ssh -p%s" "%s" "%s:%s"'
+            % (cluster_port, experiment_source, cluster_address,
+                experiment_destination))
+        os.system('ssh -p%s %s "cd %s; python3.5 neromum.py %s"'
+        % (cluster_port, cluster_address, experiment_destination, experiment))
 
 def main():
     """
