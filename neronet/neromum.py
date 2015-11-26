@@ -62,7 +62,7 @@ class Neromum(object):
         """Starts the nerokid in the node"""
         self.logger.log('Launching kids')
         os.system(
-            'python3 nerokid.py %s %d %s &' %
+            'nerokid %s %d %s &' %
             (self.host, self.port, self.experiment))
 
     def send_data_to_neroman(self):
@@ -137,5 +137,5 @@ class Neromum(object):
                         self.open_incoming_connections.remove(s)
 
 
-if __name__ == '__main__':
+def main():
     Neromum().run()

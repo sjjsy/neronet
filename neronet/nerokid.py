@@ -1,6 +1,4 @@
 # nerokid.py
-
-# nerokid.py
 #
 # one line description
 import sys
@@ -126,5 +124,5 @@ class NeroKid(object):
         self.process.kill()
         self.logger.log('- Experiment PID: %s terminated' % (self.process.pid))
 
-if __name__ == '__main__':
+def main():
     NeroKid().run()
