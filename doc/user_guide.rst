@@ -1,4 +1,9 @@
-**CLI**
+==================
+Neronet User Guide
+==================
+
+Command Line Interface
+----------------------
 
 **Installation**
 
@@ -20,7 +25,7 @@ CPU with the cpu attribute. You can also write all of the cluster's hardware inf
 under the hardware attribute.
 
 It is also possible to group some of your unmanaged nodes under a single cluster name
-using the following format: GROUP_ID: (NODE_ID, NODE_ID, ...)
+using the following format: GROUP_ID: [NODE_ID, NODE_ID, ...]
 
 Neronet supports slurm clusters and unmanaged nodes.
 
@@ -43,9 +48,10 @@ Neronet supports slurm clusters and unmanaged nodes.
 	gpu: [gpu1, gpu2]
 
 
-After that open preferences.yaml and fill in your preferences using the following format.::
-	name: Pyry Takala
-	email: pyry.takala@gmail.com
+*After that open preferences.yaml and fill in your preferences using the following format:*
+::
+	name: John Doe
+	email: john.doe@gmail.com
 
 
 Then start neronet. The program will notify you if the installation failed. 
@@ -65,7 +71,8 @@ You can specify clusters either via command line or by manually updating
 the clusters.yaml file. See the section *Installation* to get information
 on the format to use when manually updating the clusters.yaml file.
 
-To add clusters via command line use the following format::
+*To add clusters via command line use the following format:*
+::
 	Usage: neroman --cluster ID SSH_ADDRESS TYPE
 	Example: neroman --cluster triton triton.cs.hut.fi slurm
 
@@ -90,15 +97,13 @@ different experiments you want to run using the following format:
 - ID-attribute must be specified on the topmost row. Must be unique.
 - Each experiment specification must begin with a row containing the experiment id (format: experiment_Id: ID, f.ex experiment_Id: lang_exp1) and be followed by a block containing all the experiment's attributes. The experiment ids must be unique within the same config file.
 - Each different experiment must have the following attributes
-
 	- main_code_file: The path to the code file that is to be run when executing the experiment
 	- run_command_prefix: The prefix of the run command f.ex 'python3'
 	- logoutput: The location to which the log output of the experiment is to be written. Can be either stdout or a file path.
 	- parameters: This attribute is followed by a block containing all the unique parameters of this specific experiment. Parameter names can be arbitrary.
 	- parameter_format: The format in which the parameter values are given to the experiment code file.
-
-- Additionally, if you want neronet to autoterminate an experiment or give you a warning under certain circumstances you can use the warning-attribute. Neronet supports warnings and autotermination based on a variable exceeding, falling below or reaching a predetermined value. The warning-attribute must be followed by a block containing the following attributes:
- 	- The warning condition is specified by the following three attributes:
+- Additionally, if you want neronet to autoterminate an experiment or give you a warning under certain circumstances you can use the warning-attribute. Neronet supports warnings and autotermination based on a variable exceeding, falling below or reaching a predetermined value. The warning-attribute must be followed by a block containing the following attributes
+ 	- The warning condition is specified by the following three attributes
 	 	- variablename: This is the name of the variable you want to monitor
 	 	- killvalue: This is the value to which you want neronet to compare the monitored variable
 	 	- comparator: Either >, < or = Use > if you want a warning when the value of the variable monitored exceeds killvalue, < if you want a warning when the variable falls below killvalue and = if you want a warning when the variable reaches killvalue.
@@ -106,6 +111,7 @@ different experiments you want to run using the following format:
  	- action: Specifies what you want neronet to do when the warning condition is fulfilled. The value of this attribute is either 'kill' (if you want the experiment to be terminated when the warning condition is fulfilled), 'warn' (if you only want to see a warning message the next time you check the experiment status) or email (if you want to receive a warning email when the warning condition is fulfilled)
  	- The log output from the experiment code must contain rows of the format: 'VARIABLENAME VALUE'. So that neronet is able to follow the variable values. For example in the example below the log output of lang_exp1 must contain rows like 'error_rate 24.3334', 'error_rate 49', 'error_rate 67.01', etc...
 - If multiple experiments have the same attribute values, it is not necessary to re-write every attribute for every experiment. The experiments defined in inner blocks automatically inherit all the attribute values specified in the outer blocks. For example in the example below 'lang_exp1' and 'lang_exp2' inherit the run_command_prefix, main_code_file and logoutput values from the outmost block and lang_exp3 inherits all the parameter values from lang_exp1. If you don't want to inherit a specific value, just specify it again in the inner block and it is automatically overwritten. For example in the example below lang_exp3 uses different huperparamz and parameter_format values than its parent lang_exp1.
+- Brackets
 
 *Example:*
 ::
@@ -143,23 +149,23 @@ different experiments you want to run using the following format:
 		parameter_format: '--hyperparamx %s{hyperparamx} %hyperparamy
 
 
-After your experiment folder contains the config file of the correct
-format and all the code and parameter files, you can submit it to neronet
-queue using the following command::
+After your experiment folder contains the config file of the correct format and all the code and parameter files, you can submit it to neronet queue using the following command::
 	Usage: neroman --experiment FOLDER
 	Example: neroman --experiment ~/experiments/lang_exp
 
 
 **Delete Experiments**
 
-The following command deletes a specified experiment from the experiment queue::
+*The following command deletes a specified experiment from the experiment queue:*
+::
 	neroman --delexp EXPERIMENT_ID
 	neroman --delexp FOLDER
 
 
 **Submit experiments and batches of experiments**
 
-To get info on clusters before submitting experiments type the following command::
+*To get info on clusters before submitting experiments type the following command:*
+::
 	Usage: neroman --submit CLUSTER_ID EXPERIMENT_ID
 	Example: neroman --submit triton lang_exp3
 
@@ -170,7 +176,8 @@ Using 'all' as EXPERIMENT_ID will submit all specified but not submitted experim
 CLUSTER_ID can be any cluster id or cluster group id specified in the clusters.yaml file or via CLI.
 Using 'any' as CLUSTER_ID will divide the work (if it can be divided) and submit it to all free clusters.
 
-Tasks can be submitted also by logical arguments::
+*Tasks can be submitted also by logical arguments:*
+::
 	Usage: neroman --submit CLUSTER_ID ARGUMENT
 
 	#Specify an experiment and submit it instantly
@@ -188,12 +195,14 @@ Tasks can be submitted also by logical arguments::
 
 **Monitoring log output**
 
+*Example:*
 ::
 	Usage: neroman --monitor EXPERIMENT_ID
 	Example: neroman --monitor lang-exp/lang_exp3
 
 
-The output will be of the following format::
+*The output will be of the following format:*
+::
 	Cluster
 	Starting time
 	Log output
@@ -208,7 +217,8 @@ specified clusters and experiments.
 	Usage: neroman --status [ARGS]
 
 
-ARGS can refer to experiment or cluster IDs, or be collection specifiers::
+ARGS can refer to experiment or cluster IDs, or be collection specifiers.
+::
 	Example: neroman --status # Overall status information
 	#Prints the list of experiments, their overall statuses
 	#(in queue/running/finished/terminated) and locations (queue/CLUSTER_ID)
