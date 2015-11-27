@@ -68,7 +68,7 @@ class Neroman():
         else:
             with open(clusters, 'r') as f:
                 self.clusters = yaml.load(f.read())
-        if not self.clusters: self.clusters = {}
+        if not self.clusters: self.clusters = {'clusters': None }
         if not self.clusters['clusters']: self.clusters['clusters'] = {}
         
         if not os.path.exists(database):
