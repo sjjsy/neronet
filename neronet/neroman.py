@@ -157,12 +157,15 @@ class Neroman():
 
         
 
-    def display(self):
+    def status(self, params):
         """ Displays Neroman data on into stdstream
         """
-        print(self.preferences)
-        print(self.clusters)
+        print("Clusters")
+        if not self.clusters['clusters']:
+             
+            
         print(self.experiments)
+        print(self.preferences)
 
 class FormatError(Exception):
     """ Exception raised when experiment config file is poorly formatted

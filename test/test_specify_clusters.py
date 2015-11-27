@@ -2,7 +2,9 @@ import unittest
 import tempfile
 import os
 import shutil
-import neroman
+
+import neronet.neroman as neroman
+
 
 class TestSpecifyClusters(unittest.TestCase):    
     
