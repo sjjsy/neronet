@@ -68,7 +68,7 @@ class Neroman():
         else:
             with open(clusters, 'r') as f:
                 self.clusters = yaml.load(f.read())
-        if not self.clusters: self.clusters = {}
+        if not self.clusters: self.clusters = {'clusters': None }
         if not self.clusters['clusters']: self.clusters['clusters'] = {}
         
         if not os.path.exists(database):
@@ -103,7 +103,6 @@ class Neroman():
         if cluster_type != 'slurm' and cluster_type != 'unmanaged':
             raise FormatError("Cluster type should be slurm or unmanaged")
 
-        print(self.clusters)
         self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address, 
                                                     'type': cluster_type}
         with open(self.clusters_file, 'w') as f:
