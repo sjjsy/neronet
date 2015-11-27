@@ -62,9 +62,8 @@ class Neroman():
 
     def get_experiment_results(self):
         """Get the experiment results from neromum"""
-        experiment = "stdout"
         experiment_source = Path.cwd()
-        experiment_destination = Path('/tmp')  # get from experiment name
+        experiment_destination = Path('/tmp/stdout')  # get from experiment name
         cluster_address = 'localhost'
         cluster_port = 22
         os.system(
