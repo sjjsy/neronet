@@ -9,7 +9,6 @@ Attributes:
 """
 
 import os
-from enum import Enum
 
 import yaml
 
@@ -157,15 +156,21 @@ class Neroman():
 
         
 
-    def status(self, params):
+    def status(self):
         """ Displays Neroman data on into stdstream
         """
+        print("Neroman")
         print("Clusters")
         if not self.clusters['clusters']:
-             
-            
-        print(self.experiments)
-        print(self.preferences)
+            print("No clusters defined")
+        else:
+             for cluster in self.clusters['clusters']:
+                address = self.clusters['clusters'][cluster]['ssh_address']
+                type = self.clusters['clusters'][cluster]['type']
+                print("{} {} {}".format(cluster, address, type))
+        print('No' if not len(self.experiments) else len(self.experiments), 
+                "experiments defined")
+         
 
 class FormatError(Exception):
     """ Exception raised when experiment config file is poorly formatted

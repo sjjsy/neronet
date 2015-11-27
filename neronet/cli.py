@@ -1,25 +1,34 @@
 # -*- coding: utf-8 -*-
 
 from argparse import ArgumentParser
+import sys
 
 import neroman
 
-def main():
-    """Parses the command line arguments and starts Neroman
-    """
+def create_parser():
     parser = ArgumentParser()
     parser.add_argument('--experiment',
             metavar='folder',
-            nargs=1)
+            nargs=1,
+            help='Creates experiments according to the config file found in'
+            'the folder')
     parser.add_argument('--cluster',
             metavar=('id', 'address', 'type'),
-            nargs=3)
+            nargs=3,
+            help='Specify a new cluster for computing')
     parser.add_argument('--user',
             metavar=('name', 'email'),
-            nargs=2)
+            nargs=2,
+            help='Updates user information')
     parser.add_argument('--status',
-            nargs='?',
-            default='all', status_parser = parser.add_subparsers())
+            action='store_true',
+            help='Displays neronet status information')
+    return parser
+            
+def main():
+    """Parses the command line arguments and starts Neroman
+    """
+    parser = create_parser()
     args = parser.parse_args()
     nero = neroman.Neroman()
     if args.experiment:
