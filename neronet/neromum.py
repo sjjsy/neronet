@@ -77,31 +77,6 @@ class Neromum(object):
     def ask_slurm_for_free_node(self):
         pass
 
-    # yup, evrything below needs complete rewrite.
-    def get_nerokid_connection(self):
-        """Accept nerokid's socket connection"""
-        self.logger.log('Waiting for kid connection...')
-        try:
-            self.kid_con, (khost, kport) = self.sock.accept()
-        except socket.timeout:
-            self.logger.log('- receive timeout...')
-            return False
-        return True
-
-    def get_data_from_nerokid(self):
-        """Receive data from nerokid in chunks"""
-
-        # Receive the data in small chunks and retransmit it
-        self.data = b''
-        while True:
-            chunk = self.kid_con.recv(4096)  # 16, 4096
-            if chunk:
-                self.data += chunk
-            else:
-                break
-        # Clean up the connection
-        self.kid_con.close()
-
     def parse_nerokid_data(self):
         if self.data:
             self.data = pickle.loads(self.data)
