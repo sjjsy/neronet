@@ -5,6 +5,18 @@ Neronet User Guide
 Contents
 --------
 
+- **Introduction**
+- Command Line Interface:
+	- Installation
+	- Starting Neronet CLI
+	- Specifying and Configuring Experiments in Neronet CLI
+	- Deleting Defined Experiments from Neronet
+	- Submitting Experiments and Batches of Experiments to Computing Clusters
+	- Specifying Clusters in Neronet CLI
+	- Monitoring log output in Neronet CLI
+	- Status report in Neronet CLI
+- GUI:
+
 Introduction
 ------------
 
@@ -17,6 +29,8 @@ Neronet is a python-based, framework agnostic tool for computational researchers
 - configurable notifications on experiment state and progress
 - configurable criteria for experiment autotermination
 - logging of experiment history
+
+Neronet can be used either via command-line interface or via GUI.
 
 Command Line Interface
 ----------------------
@@ -157,7 +171,9 @@ To delete a specified experiment from your Neronet application's database you ca
 
 **Submitting Experiments and Batches of Experiments to Computing Clusters**
 
-*To get info on clusters before submitting experiments type the following command:*
+The following command will submit a batch of experiments to a specified cluster.
+
+*Example:*
 ::
 	Usage: neroman --submit CLUSTER_ID EXPERIMENT_ID
 	Example: neroman --submit triton lang_exp3
@@ -182,7 +198,7 @@ Using 'any' as CLUSTER_ID will divide the work (if it can be divided) and submit
 	#Submit all that have a specified parameter
 	Example: neroman --submit triton params=*data/1.txt*
 
-	#Submit all experiments from the queue
+	#Submit all defined but not submitted experiments
 	Example: neroman --submit any all
 
 
@@ -200,9 +216,7 @@ ID is a user defined id of the cluster
 SSH_ADDRESS is the ssh address of the cluster
 TYPE is either slurm or unmanaged
 
-The information given via CLI is then automatically updated to clusters.yaml.
-If you want to save other information on a specific cluster besides the cluster's
-address, name and type, you must manually write them to the clusters.yaml file.
+The information given via CLI is then automatically updated to clusters.yaml. If you want to save other information on a specific cluster besides the cluster's address, name and type, you must manually write them to the clusters.yaml file.
 
 
 **Monitoring log output**
@@ -230,30 +244,53 @@ specified clusters and experiments.
 
 
 ARGS can refer to experiment or cluster IDs, or be collection specifiers.
+
+*Overall status:*
 ::
-	Example: neroman --status # Overall status information
-	#Prints the list of experiments, their overall statuses
-	#(in queue/running/finished/terminated) and locations (queue/CLUSTER_ID)
+	neroman --status 
 
-	Example: neroman --status lang_exp/lang_exp3 # experiment status
-	#Prints the experiment's parameters, times when the experiment was specified,
-	#whether the experiment is in the queue, running, finished and/or terminated
-	#and where the experiment is running if it is running
-	#If the experiment is finished this also prints the experiment's final output.
+The command above will print the overall status information. That is, printing the number of experiments with each of the different experiment states, the list of defined clusters and their current states and finally the list of experiments and their current states.
 
-	Example: neroman --status 'tsub>yesterday' # collection status
-	#Prints the list of experiments specified since yesterday and their overall
-	statuses (in the queue/running/finished/terminated)) and locations (queue/CLUSTER_ID)
+*Experiment status:*
+::
+	neroman --status lang_exp/lang_exp3
 
-	Example: neroman --status queue # all the experiments in the queue
-	#Prints a list of experiments not submitted to any cluster and the
-	#times when they were specified.
+The experiment status report contains:
+- The experiment's parameters
+- The experiment's last modification date
+- The experiment's current state and the times when the state has changed
+- The final output, if the experiment is finished
 
-	Example: neroman --status triton # cluster status
-	#Prints the list of experiments running in the given cluster and their starting times
+The experiment state is either 'defined' (specified but not submitted to any cluster), 'submitted CLUSTER_ID' (submitted to a cluster but not yet running), 'running CLUSTER_ID', 'finished CLUSTER_ID' or 'terminated CLUSTER_ID'. CLUSTER_ID will be replaced with the correct cluster's id. 
 
-	Example: neroman --status clusters # all cluster's statuses
+*Collection status:*
+::
+	#All experiments that were modified since 2015-11-23
+	Example: neroman --status tmod>2015-11-23
 
+	#All experiments that have a specified parameter
+	Example: neroman --status params=*data/1.txt*
+
+	#All experiments that have the current state of 'defined'
+	Example: neroman --status defined
+
+The collection status will contain a list of experiments in that collection and their current states.
+
+*All cluster's statuses:*
+::
+	neroman --status clusters
+
+Prints a list of all clusters and their current states. A cluster's current state is the number of experiments running in that cluster.
+
+*Single cluster status:*
+::
+	Usage: neroman --status CLUSTER_ID
+	Example neroman --status triton
+
+Prints
+- The number of experiments submitted to and running in the given cluster
+- The list of experiments submitted to and running in the given cluster
+- The times when the experiments were submitted and started running
 
 **GUI**
 
