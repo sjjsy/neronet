@@ -10,7 +10,7 @@ class Neromum_test(unittest.TestCase):
     def setUp(self):
         self.mum = neronet.neromum.Neromum()
         self.mum.experiment = 'sleep.py'
-        self.d = { "log_output": {1:"stdout", 2:"testi"}, "running": False }
+        self.d = { "log_output": {1:"stdout", 2:"test\n\n\ni\n"}, "running": False }
         self.data = pickle.dumps(self.d)
         self.mum.initialize_socket()
 
