@@ -1,13 +1,16 @@
 import unittest
 import tempfile
 import os
+import shutil
 import neroman
 
 class TestSpecifyExperiments(unittest.TestCase):    
     
     def setUp(self):
         
-        #Create a database
+        #Create a testfolder and specify config filenames
+        self.testfolder = tempfile.mkdtemp()
+        os.chdir(self.testfolder)
         self.database_file = "default.yaml"
         self.preferences_file = "preferences.yaml"
         self.clusters_file = "clusters.yaml"
@@ -25,8 +28,8 @@ class TestSpecifyExperiments(unittest.TestCase):
                                         self.preferences_file, 
                                         self.clusters_file)
         #Create an experiment folder
-        self.folder = tempfile.mkdtemp()
-        self.path = os.path.join(self.folder, neroman.CONFIG_FILENAME)
+        self.expfolder = tempfile.mkdtemp(dir = self.testfolder)
+        self.path = os.path.join(self.expfolder, neroman.CONFIG_FILENAME)
         with open(self.path, 'w') as f:
             f.write("run_command_prefix: python\n"
                     "main_code_file: sleep.py\n"
@@ -37,33 +40,25 @@ class TestSpecifyExperiments(unittest.TestCase):
                     "   'count interval'")
     
     def tearDown(self):
-        os.remove(self.database_file)
-        os.remove(self.preferences_file)
-        os.remove(self.clusters_file)
-        os.remove(self.path)
-        os.removedirs(self.folder)
-        
+        shutil.rmtree(self.testfolder)
 
     def test_no_experiment_folder(self):
-        """
-        """
         with self.assertRaises(FileNotFoundError):
             self.testman.specify_experiments('/nonexistent')
 
 
     def test_no_config_file_in_folder(self):
-        empty_folder = tempfile.mkdtemp()
+        empty_folder = tempfile.mkdtemp(dir = self.testfolder)
         with self.assertRaises(FileNotFoundError):
             self.testman.specify_experiments(empty_folder)
-        os.removedirs(empty_folder)
 
     def test_empty_config_file(self):
         open(self.path, 'w').close()
         with self.assertRaises(neroman.FormatError):
-            self.testman.specify_experiments(self.folder)
+            self.testman.specify_experiments(self.expfolder)
 
     def test_read_experiment(self):
-        self.testman.specify_experiments(self.folder)
+        self.testman.specify_experiments(self.expfolder)
         fields = ['run_command_prefix', 'main_code_file', 
                 'parameters', 'parameters_format']
         values = ['python', 'sleep.py', {'count': 5, 'interval': 5}, 
@@ -71,7 +66,7 @@ class TestSpecifyExperiments(unittest.TestCase):
         for i, field in enumerate(fields):
             with self.subTest(field=field):
                 self.assertEqual(values[i], 
-                                self.testman.experiments[self.folder][field])
+                                self.testman.experiments[self.expfolder][field])
 
     def test_badly_formatted_config_file(self):
         with open(self.path, 'w') as f:
@@ -80,9 +75,9 @@ class TestSpecifyExperiments(unittest.TestCase):
                     "   count: 5\n"
                     "   interval: 5\n"
                     "parameters_format:\n"
-                    "   'count interval'")
+                    "   'count interval'\n")
         with self.assertRaises(neroman.FormatError):
-            self.testman.specify_experiments(self.folder)
+            self.testman.specify_experiments(self.expfolder)
 
 if __name__ == '__main__':
     unittest.main()
