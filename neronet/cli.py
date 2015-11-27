@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 import sys
 
-import neronet.neroman as neroman
+import neroman
 
 def create_parser():
     parser = ArgumentParser()

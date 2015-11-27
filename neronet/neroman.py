@@ -159,8 +159,8 @@ class Neroman():
     def status(self):
         """ Displays Neroman data on into stdstream
         """
-        print("Neroman")
-        print("Clusters")
+        print("================Neroman=================")
+        print("\n================Clusters================")
         if not self.clusters['clusters']:
             print("No clusters defined")
         else:
@@ -168,8 +168,13 @@ class Neroman():
                 address = self.clusters['clusters'][cluster]['ssh_address']
                 type = self.clusters['clusters'][cluster]['type']
                 print("{} {} {}".format(cluster, address, type))
-        print('No' if not len(self.experiments) else len(self.experiments), 
-                "experiments defined")
+        print("\n================Experiments=============")
+        if not len(self.experiments):
+            print("No experiments defined")
+        else:
+            for experiment in self.experiments:
+                print(experiment, self.experiments[experiment]['status'])
+                
 
 class FormatError(Exception):
     """ Exception raised when experiment config file is poorly formatted
