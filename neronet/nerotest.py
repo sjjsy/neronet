@@ -5,6 +5,6 @@ from .core import Daemon
 class TestDmn(Daemon):
     pass
 
-if __name__ == '__main__':
+def main():
     td = TestDmn('testd')
     td.start()
