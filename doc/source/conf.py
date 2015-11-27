@@ -52,15 +52,15 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Neronet'
-copyright = '2015, Marisa, Marjakangas, Perä, Pitkänen, Blomqvist, Tähk'
-author = 'Marisa, Marjakangas, Perä, Pitkänen, Blomqvist, Tähk'
+copyright = '2015, Marisa, Marjakangas, Perä, Pitkänen, Blomqvist, Tähkä'
+author = 'Marisa, Marjakangas, Perä, Pitkänen, Blomqvist, Tähkä'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = '0.0.1'
+version = '0.0'
 # The full version, including alpha/beta/rc tags.
 release = '0.0.1'
 
@@ -228,7 +228,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   (master_doc, 'Neronet.tex', 'Neronet Documentation',
-   'Marisa, Marjakangas, Perä, Pitkänen, Blomqvist, Tähk', 'manual'),
+   'Marisa, Marjakangas, Perä, Pitkänen, Blomqvist, Tähkä', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

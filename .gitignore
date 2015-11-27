@@ -59,5 +59,6 @@ target/
 # Sublime projects and workspaces
 *.sublime-*
 
-# Python virtual environment
+# Python virtual environments
+.venv
 venv

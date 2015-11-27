@@ -54,29 +54,30 @@ class Neroman():
             clusters (str): The filepath of the clusters file
             preferences (str): The filepath of the preferences file
         """
-
         if not os.path.exists(preferences):
             with open(preferences, 'w') as f:
-                f.write("name:\nemail:")
+                f.write("name:\nemail:\n")
         else:
             with open(preferences, 'r') as f:
                 self.preferences = yaml.load(f.read())
-                if not self.preferences: self.preferences = {}
+        if not self.preferences: self.preferences = {}
+
         if not os.path.exists(clusters):
             with open(clusters, 'w') as f:
-                f.write("clusters:\ngroups:")
+                f.write("clusters:\ngroups:\n")
         else:
             with open(clusters, 'r') as f:
                 self.clusters = yaml.load(f.read())
-                if not self.clusters: self.clusters = {}
-
+        if not self.clusters: self.clusters = {}
+        if not self.clusters['clusters']: self.clusters['clusters'] = {}
+        
         if not os.path.exists(database):
             with open(database, 'w') as f:
                 f.write('')
         else:
             with open(database, 'r') as f:
                 self.experiments = yaml.load(f.read())
-                if not self.experiments: self.experiments = {}
+        if not self.experiments: self.experiments = {}
     
     def save_database(self):
         """Save the contents of Neroman's attributes in the database
@@ -102,8 +103,7 @@ class Neroman():
         if cluster_type != 'slurm' and cluster_type != 'unmanaged':
             raise FormatError("Cluster type should be slurm or unmanaged")
 
-        if not self.clusters['clusters']:
-            self.clusters['clusters'] = {}
+        print(self.clusters)
         self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address, 
                                                     'type': cluster_type}
         with open(self.clusters_file, 'w') as f:
@@ -170,7 +170,6 @@ class Neroman():
                 print("{} {} {}".format(cluster, address, type))
         print('No' if not len(self.experiments) else len(self.experiments), 
                 "experiments defined")
-         
 
 class FormatError(Exception):
     """ Exception raised when experiment config file is poorly formatted
