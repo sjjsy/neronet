@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from argparse import ArgumentParser
+import time
 
 #import yaml
 
@@ -59,6 +60,18 @@ class Neroman():
         except KeyError:
             print("Error while loading experiment")
 
+    def get_experiment_results(self):
+        """Get the experiment results from neromum"""
+        experiment = "stdout"
+        experiment_source = Path.cwd()
+        experiment_destination = Path('/tmp')  # get from experiment name
+        cluster_address = 'localhost'
+        cluster_port = 22
+        os.system(
+            'rsync -avz --progress -e "ssh -p%s" "%s:%s" "%s"'
+            % (cluster_port, cluster_address,
+                experiment_destination, experiment_source))
+
     def run(self):
         """Main loop of neroman
 
@@ -75,8 +88,8 @@ class Neroman():
                 experiment_destination))
         os.system('ssh -p%s %s "cd %s/neronet; python3.5 neromum.py %s 10 0.5"'  # parse arguments
                   % (cluster_port, cluster_address, experiment_destination, experiment))
-
-
+        time.sleep(10)
+        self.get_experiment_results()
 def main():
     """
     """
