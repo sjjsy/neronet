@@ -256,6 +256,7 @@ The command above will print the overall status information. That is, printing t
 	neroman --status lang_exp/lang_exp3
 
 The experiment status report contains:
+
 - The experiment's parameters
 - The experiment's last modification date
 - The experiment's current state and the times when the state has changed
@@ -287,7 +288,8 @@ Prints a list of all clusters and their current states. A cluster's current stat
 	Usage: neroman --status CLUSTER_ID
 	Example neroman --status triton
 
-Prints
+Prints:
+
 - The number of experiments submitted to and running in the given cluster
 - The list of experiments submitted to and running in the given cluster
 - The times when the experiments were submitted and started running
