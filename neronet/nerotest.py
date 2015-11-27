@@ -1,10 +1,10 @@
 # dmntest.py
 
-from .core import Daemon
+#from .core import Daemon
 
-class TestDmn(Daemon):
-    pass
+#class TestDmn(Daemon):
+#    pass
 
-def main():
-    td = TestDmn('testd')
-    td.start()
+#def main():
+#    td = TestDmn('testd')
+#    td.start()
