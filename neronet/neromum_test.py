@@ -4,6 +4,7 @@ import socket
 import os
 import pickle
 
+
 class Neromum_test(unittest.TestCase):
 
     def setUp(self):
@@ -30,3 +31,6 @@ class Neromum_test(unittest.TestCase):
         self.mum.data = self.data
         self.mum.parse_nerokid_data()
         self.assertEqual(self.mum.data, self.d)
+
+if __name__ == '__main__':
+	unittest.main()
