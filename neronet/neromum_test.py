@@ -8,9 +8,9 @@ import pickle
 class Neromum_test(unittest.TestCase):
 
     def setUp(self):
-        self.mum = Neromum()
+        self.mum = neronet.neromum.Neromum()
         self.mum.experiment = 'sleep.py'
-        self.d = { "lion": "yellow", "kitty": "red" }
+        self.d = { "log_output": {1:"stdout", 2:"testi"}, "running": False }
         self.data = pickle.dumps(self.d)
         self.mum.initialize_socket()
 
@@ -18,13 +18,11 @@ class Neromum_test(unittest.TestCase):
 
         self.assertTrue(self.mum.sock)
         self.assertTrue(isinstance( self.mum.port, int ))
-        self.assertEqual(self.mum.host,'localhost')
-        self.assertEqual(self.mum.open_incoming_connections, [mum.sock])
+        self.assertEqual(self.mum.host,'127.0.0.1')
+        self.assertEqual(self.mum.open_incoming_connections, [self.mum.sock])
         self.assertEqual(self.mum.open_outgoing_connections, [])
 
-    def test_data_from_nerokid(self):
 
-        self.mum.start_nerokid():
 
     def test_parse_data(self):
 
