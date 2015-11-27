@@ -2,32 +2,30 @@
 Neronet User Guide
 ==================
 
+Contents
+--------
+
+Introduction
+------------
+
+Neronet is a python-based, framework agnostic tool for computational researchers that is made to enable easy
+
+- batch submission of experiment jobs to computing clusters
+- management of experiment queues
+- monitoring of ongoing experiments' logs and parameter values
+- access to experiment information during and after the run
+- configurable notifications on experiment state and progress
+- configurable criteria for experiment autotermination
+- logging of experiment history
+
 Command Line Interface
 ----------------------
 
 **Installation**
 
-Before installing neronet check that you have Python 3.5 installed on your local machine and the clusters.
+All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 3.5, so before installation please check that you have the right version of python installed on your local machine and the computing clusters you intend to use. Then download neronet folder and set up your initial cluster setup in the clusters.yaml file using your favorite text editor.
 
-Download neronet folder
-and open clusters.yaml in your favorite text editor.
-Specify your initial cluster setup using the following format:
-
-The specification of a cluster must start with the user-specified cluster-id 
-on a separate line. The following lines containing the cluster's information
-must be indented and contain at least the following attributes:
-ssh_address: (f.ex  triton.aalto.fi) and type: (either 'unmanaged' or 'slurm').
-
-Additionally, it is possible to specify the maximum queue with the attribute
-queue_max and save important information on the cluster such as the cluster's 
-hard disk space with the hard_disk_space attribute and the cluster's
-CPU with the cpu attribute. You can also write all of the cluster's hardware information
-under the hardware attribute.
-
-It is also possible to group some of your unmanaged nodes under a single cluster name
-using the following format: GROUP_ID: [NODE_ID, NODE_ID, ...]
-
-Neronet supports slurm clusters and unmanaged nodes.
+The format of clusters.yaml is as follows. From here on out we will explain the formats of important files by first showing an example file and then explaining the important points.
 
 *Example:*
 ::
@@ -48,70 +46,37 @@ Neronet supports slurm clusters and unmanaged nodes.
 	gpu: [gpu1, gpu2]
 
 
-*After that open preferences.yaml and fill in your preferences using the following format:*
+
+The specification of a cluster must start with the user-specified cluster-id on a separate line. The following lines containing the cluster's information must be indented and contain at least the following attributes: ssh_address: (f.ex  triton.aalto.fi) and type: (either 'unmanaged' or 'slurm').
+
+Additionally, it is possible to specify the maximum queue with the attribute queue_max and save important information on the cluster such as the cluster's hard disk space with the hard_disk_space attribute and the cluster's CPU with the cpu attribute. You can also write all of the cluster's hardware information under the hardware attribute.
+
+It is also possible to group some of your clusters or unmanaged nodes under a single virtual cluster name using the following format: GROUP_ID: [NODE_ID, NODE_ID, ...] (f.ex 'gpu: [gpu1, gpu2]' in the example above) Then later on you can submit your experiments to that virtual cluster name and let neronet automatically divide the work between the actual nodes.
+
+Neronet supports slurm clusters and unmanaged nodes.
+
+After specifying your initial cluster setup fill in your personal information and preferences in the preferences.yaml. The format is as follows.
+
+*Example:*
 ::
 	name: John Doe
 	email: john.doe@gmail.com
 
 
-Then start neronet. The program will notify you if the installation failed. 
+If you followed the instructions clearly, your neronet application should be ready to run now. Proceed by starting neronet. The program will notify you if the installation failed for some reason or another.
 
-**Start neronet**
+**Starting Neronet CLI**
 
-Neronet CLI starts by running neroman.py on the command line.
+To start your Neronet CLI application, run neroman.py on your local machine's command line.
 
 *Example:*
 ::
 	python3.5 neroman.py
 
 
-**Specify clusters**
+**Specifying and Configuring Experiments in Neronet CLI**
 
-You can specify clusters either via command line or by manually updating
-the clusters.yaml file. See the section *Installation* to get information
-on the format to use when manually updating the clusters.yaml file.
-
-*To add clusters via command line use the following format:*
-::
-	Usage: neroman --cluster ID SSH_ADDRESS TYPE
-	Example: neroman --cluster triton triton.cs.hut.fi slurm
-
-
-ID is a user defined id of the cluster
-SSH_ADDRESS is the ssh address of the cluster
-TYPE is either slurm or unmanaged
-
-The information given via CLI is then automatically updated to clusters.yaml.
-If you want to save other information on a specific cluster besides the cluster's
-address, name and type, you must manually write them to the clusters.yaml file.
-
-**Specify experiments**
-
-Start by writing your experiment code and saving all experiments you deem somehow
-related to a single folder. Then include a YAML configuration file in your folder
-adn name it 'config.yaml'. In the configuration file you are to specify all the
-different experiments you want to run using the following format:
-
-
-- The information on the config.yaml file is divided to blocks that have the same indentation.
-- ID-attribute must be specified on the topmost row. Must be unique.
-- Each experiment specification must begin with a row containing the experiment id (format: experiment_Id: ID, f.ex experiment_Id: lang_exp1) and be followed by a block containing all the experiment's attributes. The experiment ids must be unique within the same config file.
-- Each different experiment must have the following attributes
-	- main_code_file: The path to the code file that is to be run when executing the experiment
-	- run_command_prefix: The prefix of the run command f.ex 'python3'
-	- logoutput: The location to which the log output of the experiment is to be written. Can be either stdout or a file path.
-	- parameters: This attribute is followed by a block containing all the unique parameters of this specific experiment. Parameter names can be arbitrary.
-	- parameter_format: The format in which the parameter values are given to the experiment code file.
-- Additionally, if you want neronet to autoterminate an experiment or give you a warning under certain circumstances you can use the warning-attribute. Neronet supports warnings and autotermination based on a variable exceeding, falling below or reaching a predetermined value. The warning-attribute must be followed by a block containing the following attributes
- 	- The warning condition is specified by the following three attributes
-	 	- variablename: This is the name of the variable you want to monitor
-	 	- killvalue: This is the value to which you want neronet to compare the monitored variable
-	 	- comparator: Either >, < or = Use > if you want a warning when the value of the variable monitored exceeds killvalue, < if you want a warning when the variable falls below killvalue and = if you want a warning when the variable reaches killvalue.
- 	- when: The value of this attribute can be either 'immediately' or 'time MINUTES' where MINUTES is the time interval in minutes after which the warning condition is checked.
- 	- action: Specifies what you want neronet to do when the warning condition is fulfilled. The value of this attribute is either 'kill' (if you want the experiment to be terminated when the warning condition is fulfilled), 'warn' (if you only want to see a warning message the next time you check the experiment status) or email (if you want to receive a warning email when the warning condition is fulfilled)
- 	- The log output from the experiment code must contain rows of the format: 'VARIABLENAME VALUE'. So that neronet is able to follow the variable values. For example in the example below the log output of lang_exp1 must contain rows like 'error_rate 24.3334', 'error_rate 49', 'error_rate 67.01', etc...
-- If multiple experiments have the same attribute values, it is not necessary to re-write every attribute for every experiment. The experiments defined in inner blocks automatically inherit all the attribute values specified in the outer blocks. For example in the example below 'lang_exp1' and 'lang_exp2' inherit the run_command_prefix, main_code_file and logoutput values from the outmost block and lang_exp3 inherits all the parameter values from lang_exp1. If you don't want to inherit a specific value, just specify it again in the inner block and it is automatically overwritten. For example in the example below lang_exp3 uses different huperparamz and parameter_format values than its parent lang_exp1.
-- Brackets
+Start by writing your experiment code and saving all experiments you deem somehow related to a single folder. Then include a YAML configuration file in your folder and name it 'config.yaml'. In the configuration file you are to specify all the different experiments you want to run using the following format. Please read this section carefully for it contains a ton of important information.
 
 *Example:*
 ::
@@ -125,7 +90,7 @@ different experiments you want to run using the following format:
 			hyperparamy: 2
 			data_file: data/1.txt
 			hyperparamz: 2
-		parameter_format: '--hyperparamx %s{hyperparamx} %hyperparamy
+		parameter_format: '{hyperparamx} {hyperparamy} {data_file} {hyperparamz}'
 		warning:
 			variablename: error_rate
 			killvalue: 50
@@ -133,10 +98,9 @@ different experiments you want to run using the following format:
 			when: time 6000
 			action: kill
 
-		experiment_Id: lang_exp3 #This inherits all the parameters from lang_exp1
+		experiment_Id: lang_exp3 
 			parameters:
-				hyperparamz: 2 #This parameter is overwritten
-			parameter_format: --hyperparamx %s{hyperparamx} %hyperparamy
+				hyperparamz: 2 
 
 	experiment_Id: lang_exp2
 		run_command_prefix: python2
@@ -146,23 +110,52 @@ different experiments you want to run using the following format:
 		    hyperparamy: nyt
 		    data_file: data/2.txt
 		    hyperparamz: 400
-		parameter_format: '--hyperparamx %s{hyperparamx} %hyperparamy
+		parameter_format: '{hyperparamx} {hyperparamy} {data_file} {hyperparamz}'
 
 
-After your experiment folder contains the config file of the correct format and all the code and parameter files, you can submit it to neronet queue using the following command::
+- The information on the config.yaml file is divided to blocks that have the same indentation.
+- ID-attribute must be specified on the topmost row and it must be unique.
+- Each experiment specification must begin with a row containing the experiment id (format: experiment_Id: ID, f.ex experiment_Id: lang_exp1) and be followed by a block containing all the experiment's attributes. The experiment ids must be unique within the same config file.
+- Each different experiment specification must have the following attributes
+	- main_code_file: The path to the code file that is to be run when executing the experiment
+	- run_command_prefix: The prefix of the run command f.ex 'python3'
+	- logoutput: The location to which the log output of the experiment is to be written. Can be either stdout or a file path.
+	- parameters: This attribute is followed by a block containing all the unique parameters of this specific experiment. Parameter names can be arbitrary.
+	- parameter_format: Specifies the order in which the parameters are given to the experiment code file in the form of a string. Write the attribute value within single quotes. Parameter names written within braces will be replaced by their values defined in the *parameters* section. F.ex in the example above lang_exp2 --parameter_format defines a parameter string 'kh nyt data/2.txt 400'
+
+**ATTENTION: Your experiments should be runnable with a command of the form 'RUN_COMMAND_PREFIX MAIN_CODE_FILE PARAMETER_STRING' F.ex in the example above lang_exp2 must be runnable with the command 'python2 main2.py kh nyt data/2.txt 400'**
+
+- Additionally, if you want neronet to autoterminate an experiment or give you a warning under certain circumstances you can use the warning-attribute. Neronet supports warnings and autotermination based on a variable exceeding, falling below or reaching a predetermined value. The warning-attribute must be followed by a block containing the following attributes 	
+	- variablename: This is the name of the variable you want to monitor
+	- killvalue: This is the value to which you want neronet to compare the monitored variable
+	- comparator: Either >, < or = Use > if you want a warning when the value of the variable monitored exceeds killvalue, < if you want a warning when the variable falls below killvalue and = if you want a warning when the variable reaches killvalue.
+ 	- when: The value of this attribute can be either 'immediately' or 'time MINUTES' where MINUTES is the time interval in minutes after which the warning condition is checked.
+ 	- action: Specifies what you want neronet to do when the warning condition is fulfilled. The value of this attribute is either 'kill' (if you want the experiment to be terminated when the warning condition is fulfilled), 'warn' (if you only want to see a warning message the next time you check the experiment status) or email (if you want to receive a warning email when the warning condition is fulfilled)
+ 	- The log output from the experiment code must contain rows of the format: 'VARIABLENAME VALUE'. So that neronet is able to follow the variable values. F.ex. in the example above the log output of lang_exp1 must contain rows of the form 'error_rate 24.3334', 'error_rate 49', 'error_rate 67.01', etc...
+- If multiple experiments have the same attribute values, it is not necessary to re-write every attribute for every experiment. The experiments defined in inner blocks automatically inherit all the attribute values specified in outer blocks. For example in the example above 'lang_exp1' and 'lang_exp2' inherit the run_command_prefix, main_code_file and logoutput values from the outmost block and lang_exp3 inherits all the parameter values from lang_exp1. If you don't want to inherit a specific value, just specify it again in the inner block and it is automatically overwritten. For example in the example above lang_exp3 uses different hyperparamz and parameter_format values than its parent lang_exp1.
+- If you place multiple parameter values within brackets and separated by a comma (like in the example above lang_exp1 -- hyperparamx: [1,2,34,20])Neronet will automatically run the experiment multiple times for each value specified within brackets. (f.ex lang_exp1 would be run with the parameters '1 2 data/1.txt 2', '2 2 data/1.txt 2', '34 2 data/1.txt 2' and '20 2 data/1.txt 2')
+
+After your experiment folder contains the config file of the correct format and all the code and parameter files, you can then submit the folder to your Neronet application with the following command.
+
+*Example:*
+::
 	Usage: neroman --experiment FOLDER
 	Example: neroman --experiment ~/experiments/lang_exp
 
 
-**Delete Experiments**
+**Deleting Defined Experiments from Neronet**
 
-*The following command deletes a specified experiment from the experiment queue:*
+To delete a specified experiment from your Neronet application's database you can use the following command.
+
+*Example:*
 ::
 	neroman --delexp EXPERIMENT_ID
 	neroman --delexp FOLDER
 
+**ATTENTION: Using the command above doesn't delete the experiment folder or any files within it. It only removes the experiment's information from Neronet's database.**
 
-**Submit experiments and batches of experiments**
+
+**Submitting Experiments and Batches of Experiments to Computing Clusters**
 
 *To get info on clusters before submitting experiments type the following command:*
 ::
@@ -191,6 +184,25 @@ Using 'any' as CLUSTER_ID will divide the work (if it can be divided) and submit
 
 	#Submit all experiments from the queue
 	Example: neroman --submit any all
+
+
+**Specifying Clusters in Neronet CLI**
+
+You can specify clusters either via command line or by manually updating the clusters.yaml file. See the section *Installation* to get information on the format to use when manually updating the clusters.yaml file.
+
+*To add clusters via command line use the following format:*
+::
+	Usage: neroman --cluster ID SSH_ADDRESS TYPE
+	Example: neroman --cluster triton triton.cs.hut.fi slurm
+
+
+ID is a user defined id of the cluster
+SSH_ADDRESS is the ssh address of the cluster
+TYPE is either slurm or unmanaged
+
+The information given via CLI is then automatically updated to clusters.yaml.
+If you want to save other information on a specific cluster besides the cluster's
+address, name and type, you must manually write them to the clusters.yaml file.
 
 
 **Monitoring log output**
