@@ -14,11 +14,12 @@ def main():
     parser.add_argument('--cluster',
             metavar=('id', 'address', 'type'),
             nargs=3)
-    parser.add_argument('--display',
-            action='store_true')
     parser.add_argument('--user',
             metavar=('name', 'email'),
             nargs=2)
+    parser.add_argument('--status',
+            nargs='?',
+            default='all', status_parser = parser.add_subparsers())
     args = parser.parse_args()
     nero = neroman.Neroman()
     if args.experiment:
@@ -34,8 +35,8 @@ def main():
         name = args.user[0]
         email = args.user[1]
         nero.specify_user(name, email)
-    if args.display:
-        nero.display()
+    if args.status:
+        nero.status()
 
 if __name__ == '__main__':
     main()

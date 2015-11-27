@@ -2,7 +2,9 @@ import unittest
 import tempfile
 import os
 import shutil
-import neroman
+
+import neronet.neroman as neroman
+
 
 class TestSpecifyExperiments(unittest.TestCase):    
     
@@ -78,6 +80,7 @@ class TestSpecifyExperiments(unittest.TestCase):
                     "   'count interval'\n")
         with self.assertRaises(neroman.FormatError):
             self.testman.specify_experiments(self.expfolder)
+
 
 if __name__ == '__main__':
     unittest.main()
