@@ -1,5 +1,5 @@
 import unittest
-import neromum
+import neronet.neromum
 import socket
 import os
 
@@ -12,3 +12,6 @@ class Create_neromum(unittest.TestCase):
     self.assertTrue(mum.host == 'localhost')
     self.assertTrue(mum.open_incoming_connections == [mum.sock])
     self.assertTrue(mum.open_outgoing_connections == [])
+
+if __name__ == '__main__':
+	unittest.main()
