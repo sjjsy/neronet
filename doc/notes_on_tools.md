@@ -33,6 +33,7 @@ python3.5 -m venv ./venv --without-pip
 source ./venv/bin/activate
 wget https://bootstrap.pypa.io/get-pip.py
 venv/bin/python3.5 get-pip.py
+venv/bin/pip3.5 install -r requirements.txt
 ```
 
 ## Documentation

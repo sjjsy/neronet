@@ -80,7 +80,7 @@ Agenda:
 
 ## 10-28 180m Wedshop
 
-Participants: team (team - Juho)
+Participants: team - Juho
 
 Agenda:
 
@@ -90,13 +90,13 @@ Agenda:
 
 ## 10-30 300m Frifury
 
-Participants: team (team - Juho)
+Participants: team - Juho
 
 Agenda:
 
 - Agilefant (time tracking)
-- Technical
-- Vision
+- Technical overview
+- Product vision
 - Other artifacts
 
 ## 10-30 120m First meeting with PO
@@ -211,7 +211,7 @@ Agenda:
 - Aalto-student contract
 - Time tracking & Agilefant
 - Evaluation criteria
-- Technical Overview (Simo's input)
+- Technical overview (Simo's input)
 - EES participation
 
 ## 11-04 105m EES 01: Adopting scrum
@@ -264,12 +264,12 @@ Participants: team
 
 Agenda:
 
-- 6x15m Scrum
-- 6x20m General discussion
-- 6x40m Agilefant
-- 6x20m Schedule
-- 3x100m Market research (matute)
-- 2x100m Prototype design (iijo)
+- 15m Scrum
+- 20m General discussion
+- 40m Agilefant
+- 20m Schedule
+- 100m Market research (matute)
+- 100m Prototype design (iijo)
 
 ### Scrum:
 
@@ -330,11 +330,11 @@ Participants: team
 
 Agenda:
 
-- 6x10m Scrum
-- 6x30m Discussing results
-- 4x120m Prototype development (iitutejo)
-- 1x80m Prototype development (ma)
-- 6x20m Discussing results
+- 10m Scrum
+- 30m Discussing results
+- 120m Prototype development (iitutejo)
+- 80m Prototype development (ma)
+- 20m Discussing results
 
 Tasks:
 
@@ -370,12 +370,12 @@ Participants: team + PO
 
 Agenda:
 
-- 20:00: 7x10m Discussing agenda
-- 20:10: 7x10m Summary of past weeks
-- 20:20: 7x20m Discussing existing tools
-- 20:40: 7x20m Updating the product vision
-- 21:00: 7x20m Discussing backlog management
-- 21:20: 7x10m Discussing contacting other researchers
+- 20:00: 10m Discussing agenda
+- 20:10: 10m Summary of past weeks
+- 20:20: 20m Discussing existing tools
+- 20:40: 20m Updating the product vision
+- 21:00: 20m Discussing backlog management
+- 21:20: 10m Discussing contacting other researchers
 
 Links:
 
@@ -430,27 +430,24 @@ Participants: team
 
 Agenda:
 
-- 13:00: 6x15m Scrum (Python 3.5 environment setup homework)
-- 13:15: 6x45m Team spirit recap
-- 14:00: 2x15m Updating process & vision artifacts (jote)
-- 14:00: 3x15m Updating technical & dod artifacts (tuma)
-- 14:35: 6x110m Backlog item planning poker
-- 17:20: 2x40m Neroman development (iite)
-- 17:20: 3x40m Nerokid and Neromum development (tuma)
-- 18:00: 6x15m Discussing results and making decisions
-- 18:15: 5x35m Preparing prototype demo
-- 18:50: 6x10m Updating agilefant
+- 13:00: 15m Scrum (Python 3.5 environment setup homework)
+- 13:15: 45m Team spirit recap
+- 14:00: 15m Updating process & vision artifacts (jote)
+- 14:00: 15m Updating technical & dod artifacts (tuma)
+- 14:35: 185m Backlog item planning poker
+- 17:40: 50m Neroman development (iite)
+- 17:40: 50m Nerokid and Neromum development (tuma)
+- 18:30: 20m Discussing results and making decisions
+- 18:50: 10m Updating agilefant
 - 19:00: Going home!
-
-- 16:20: 3x60m Tests developement (iimatu)
 
 ### Team spirit recap
 
 - Mission: Why we exist
     - Create useful software for Pyry (and others)
-    - We are doing this project to learn: software development, re,
-      architecture, project management, quality assurance, Scrum,
-      communication with client
+    - We are doing this project to learn: software development, requirements
+      engineering, architecture, project management, quality assurance,
+      Scrum, communication with client
     - We want grade five, quality award
 - Values: What we believe in and how we will behave
     - Superior quality
@@ -470,8 +467,9 @@ Agenda:
 - Strategy: What our competitive game plan will be
     - Objective: Ace the course and develop a very useful and popular tool
     - Scope: See product vision
-    - Advantage: We have high motivation, we meet in person every week, active and responsible Scrum Master
-- Balanced scorecard
+    - Advantage: We have high motivation, we meet in person every week,
+      active and responsible Scrum Master
+- Balanced scorecard: TBD
 
 ### Neroman development
 
@@ -483,9 +481,9 @@ Participants: team
 
 Agenda:
 
-- 13:00 6x10m Agree demo presentation tasks
-- 13:10 6x40m Practice presentation
-- 13:55 6x5m Pause
+- 13:00 10m Agree demo presentation tasks
+- 13:10 40m Practice presentation
+- 13:55 5m Pause
 
 ## 11-13 60m Sprint retrospective
 
@@ -493,11 +491,11 @@ Participants: team
 
 Agenda:
 
-- 14:00 6x10m Sketch retrospective structure
-- 14:10 6x30m Discussion
-- 14:40 6x10m Review
-- 14:50 6x5m Get everyone's aalto account id (username), send them to Simo
-- 14:50 6x10m Pause
+- 14:00 10m Sketch retrospective structure
+- 14:10 30m Discussion
+- 14:40 10m Review
+- 14:50 5m Get everyone's aalto account id (username), send them to Simo
+- 14:50 10m Pause
 
 ### Evaluate and rank teamwork practices
 
@@ -553,7 +551,9 @@ Tools:
 - People should be more on time.
 - hard to think on improvements on sprint 0
 
-Usernames: smarisa, perat1, marjakj1, pitkanl5, blomqvt1, tahkai1
+### Aalto usernames
+
+smarisa, perat1, marjakj1, pitkanl5, blomqvt1, tahkai1
 
 ## 11-13 120m Sprint 0 demo
 
@@ -561,15 +561,15 @@ Participants: team + coach
 
 Agenda:
 
-- 15:00 7x10m Discussing agenda -Samuel
-- 15:05 7x20m Process overview -Joona
-- 15:25 7x20m Retrospective results -Teemu
-- 15:45 7x10m Product vision -Matias
-- 15:55 7x15m Technical overview -Tuomo
-- 16:10 7x10m Definition of done -Iiro
-- 16:20 7x10m Backlogs -Iiro
-- 16:30 7x15m Prototype demo -Samuel
-- 16:45 7x15m Post review discussion
+- 15:00 10m Discussing agenda -Samuel
+- 15:05 20m Process overview -Joona
+- 15:25 20m Retrospective results -Teemu
+- 15:45 10m Product vision -Matias
+- 15:55 15m Technical overview -Tuomo
+- 16:10 10m Definition of done -Iiro
+- 16:20 10m Backlogs -Iiro
+- 16:30 15m Prototype demo -Samuel
+- 16:45 15m Post review discussion
 
 ## 11-16 120m Sprint 1 planning
 
@@ -665,17 +665,17 @@ Quotes:
 
 - *Sprint Goals are a high level summary of the business and technical goals
   that the team and Product Owner agree to accomplish in a sprint.*
-- *Sprint Goal: a short expression of the purpose of a Sprint, often a business
-  problem that is addressed. Functionality might be adjusted during the Sprint
-  in order to achieve the Sprint Goal.*
+- *Sprint Goal: a short expression of the purpose of a Sprint, often a
+  business problem that is addressed. Functionality might be adjusted during
+  the Sprint in order to achieve the Sprint Goal.*
 - *The Sprint Goal, or mission objective, is not repeated over the course of
   many sprints. Each sprint should have its own unique mission.*
-- *Setting the Sprint Goal is the Product Owner’s responsibility, but crafting
-  it is a shared responsibility of the Scrum Team, including PO.*
+- *Setting the Sprint Goal is the Product Owner’s responsibility, but
+  crafting it is a shared responsibility of the Scrum Team, including PO.*
 - *The Sprint Goal encourages initiative in multiple areas – teamwork,
-  technology, quality, and mindset. However, while improving those areas, make
-  sure that you are creating a potentially releasable increment by the end of
-  the Sprint.*
+  technology, quality, and mindset. However, while improving those areas,
+  make sure that you are creating a potentially releasable increment by the
+  end of the Sprint.*
 
 Benefits:
 
@@ -701,7 +701,7 @@ Candidates:
 - Sprint goal: Develop a prototype that offers the most basic functionality
   via a CLI
 
-## 11-17 60m Team leader mentoring session
+## 11-17 90m Team leader mentoring session
 
 Participants: Joona + Samuel
 
@@ -709,7 +709,7 @@ Agenda:
 
 - 19:00 Schedule
 - 19:10 Work plan
-- 19:40 Architecture, interfaces, databases, work instructions
+- 19:50 Architecture, interfaces, databases, work instructions
 
 ## 11-18 360m Wedshop
 
@@ -717,18 +717,20 @@ Participants: team
 
 Agenda:
 
-- 13.00: Daily scrum
+- 13.00: Discussing agenda
+- 13.05: Daily scrum
 - 13.15: Discussing work distribution (f.ex tuma: submit experiments to
   unmanaged nodes (5 pts) jo: user guide (3 pts) iite: the rest (5 pts)
-  reviewers: tuma-> jo, jo->iite, iite->tuma)
-- 13.30: Dividing user stories to subtasks and estimating work
-- 13.45: Updating user guide
-- 14:15: Defining component interfaces (DBs, configs, nero daemons,
-  individual functions)
-- 15.00: Break (Someone might want to eat)
-- 15.30: Reviewing results and redistributing the work in case the original
-  work distribution turns out to be unfair
-- 15.50: Pair programming
+  sa: sphinx reviewers: tuma-> jo, jo->iite, iite->tuma)
+- 13.20: Quick discussion of tools (sphinx, unittest, coverage.py?, PEP 8,
+  autopep)
+- 14.00: Dividing user stories to subtasks, estimating work, Updating user
+  guide and
+  Defining component interfaces (DBs, configs, nero daemons, individual
+  functions) x6
+- 16.00: Pair programming x4
+- 16.00: EES2 josa
+- 18.30: Sphinx demo, PEP 8, autoPep
 - 18:50: Update agilefant (time tracking)
 
 User guide:
@@ -746,9 +748,71 @@ Submit experiments to unmanaged nodes:
 - documentation 2h
 - peer review 3h
 
+Specify clusters by address and type to specify my computing resources: (4h)
+
+- planning 40min
+- neroman 90min
+- testing 40min
+- documentation 40min 
+- peer review 30min
+
+Specify experiments by name, files and parameters and edit and delete them:
+(8h)
+
+- setup 40min
+- planning 110min
+- neroman 150min
+- testing 60min
+- documentation 60min
+- peer review 60min
+
+Want an experiment status report so that I can review experiment status
+details: (8h)
+
+- planning 
+- neroman 
+- neromum 
+- nerokid 
+- testing 
+- documentation 
+- peer review 
+
+Daily scrum:
+
+Iiro:
+
+- Didn't participate
+
+Tuomo:
+
+- Has listened at a boring sprint planning
+- No preferences as to what to do next
+- No problems, too much time used on defining file hierarchy
+
+Matias:
+
+- The same as Tuomo
+- Wants to install tools
+- Too little time for the first sprint planning
+
+Teemu:
+
+- The same
+- Wants to start working
+- Didn't have time to plan setting clusters well enough at the sprint
+  planning
+
+Joona:
+
+- Participated at the sprint planning
+- Has planned the team meeting with Samuel
+- Wants to start working
+- Others don't know enough compared to Samuel
+
 ### Notes
 
-- http://sphinx-doc.org/
+- [Sphinx documentation](http://sphinx-doc.org/)
+- [Google style guide](http://sphinx-doc.org/latest/ext/example_google.html)
 
 ## 11-18 105m EES 02: Requirements engineering
 
@@ -758,8 +822,13 @@ PO and requirements:
 
 - Methods to elicit/gather requirements from potential users, other than
   interviews, maybe via web communities? -Samuel
+    - stranger editable mind map of feature ideas posted for others to edit
+    - quick briefing + invitation for a meeting or skype
 - Developing a User guide as a kind of product prototype to boost discussion
   and understanding of user stories. -Samuel
+    - good idea
+- documentation: levels, minimalism, uptodateness, usefulness, keep the code
+  clean and self evident
 
 ## 11-20 300m Story skype & Frifury
 
@@ -767,9 +836,60 @@ Participants: team + PO (90m)
 
 Agenda:
 
-- 14:00 Scrum with Pyry on Skype
-- 14:15 Sketch CLI user guide to understand user stories (Joona, Pyry, ?)
-- 14:15 Development (others)
-- 16:30 Testing & documentation workshop
-- 17:00 Development
+- 14:00 Development
+- 14:40 Scrum
+- 15:00 Development
+- 15:45 Discuss user guide (JoIiTe)
+- 16:15 Discuss user guide (JoMaTu)
+- 17:00 Pyry on Skype
+- 18:20 Testing & documentation workshop
+- 18:50 Time tracking
+
+## 11-25 360m Wedshop
+
+Participants: team
+
+Agenda:
+
+- 13:00 Scrum
+- 13:20 Development
+- 13:35 Discussing peer review and GUI user guide and user stories
+- 18:00 Status review
+- 18:20 Estimating remaining tasks
+- 18:50 Time tracking
+
+### Scrum
+
+Iiro & Teemu:
+- Trying to make tests work
+- Trying to figure out if functions should return exceptions (Iiro: yes)
+- hdf5 requires numpy
+- Will succeed in implementing user stories by next week
+- Will finish specify experiments and start specify clusters
+
+Tuomo & Matias:
+- Make neromum code better
+- Made one-to-many connection from mum to kids
+- Documenting
+- Trying to get sphinx to work
+- Potential problems: parsing packages
+- Will make better communication between mum and kids
+- Will make communication happen between neromanand neromum
+
+Joona:
+- Skype PO to get input to user guide
+- Writing user guide
+- No problems
+- Will finish CLI user guide
+
+## 11-27 300m Frifury
+
+Participants: team
+
+Agenda:
+
+- 14:00 Scrum
+- 14:20 Development
+- 17:50 Testing & documentation workshop
+- 18:30 Estimating remaining tasks
 - 18:50 Time tracking

@@ -21,14 +21,19 @@ neroman --monitor sleep2
 #### clusters.yaml
 
 ```
-triton:
-  ssh_address: triton.aalto.fi
-  type: slurm
-  queue_max: 20
-  special_attr1: foobar
-gpu1:
-  ssh_address: gpu1
-  type: unmanaged
+any:
+  triton:
+    ssh_address: triton.aalto.fi
+    type: slurm
+    queue_max: 20
+    special_attr1: foobar
+  gpu:
+    gpu1:
+      ssh_address: gpu1
+      type: unmanaged
+    gpu2:
+      ssh_address: gpu2
+      type: unmanaged
 ```
 
 #### preferences.yaml
@@ -154,6 +159,7 @@ parameters:
   hyperparamz: 2
 ```
 
+
 ```
 # lang_exp_x/results/batch1/run2/config.yaml
 run_command_prefix: python3
@@ -170,6 +176,25 @@ parameters:
 parent: lang_exp
 parameters:
   hyperparamz: [2, 3, 1, 7]
+```
+
+### Format
+```
+# lang_exp_x/results/batch1/run1/config.yaml
+run_command_prefix: python3
+main_code_file: main.py
+parameters:
+  hyperparamx: 1
+  hyperparamy: 4
+  data_file: data/1.txt
+  hyperparamz: 2
+parameter_format: '--hyperparamx %s{hyperparamx} %hyperparamy
+
+parameter_format.format(**parameters)
+parameter_names: 'attr1', 'attr2'
+variables:
+  hyperparamx: [1,2,3,4]
+  hyperparamy: 2
 ```
 
 neronet --csv-edit lang_exp --children
