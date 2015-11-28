@@ -62,8 +62,9 @@ class Neroman():
 
     def get_experiment_results(self):
         """Get the experiment results from neromum"""
+        experiment = "stdout"
         experiment_source = Path.cwd()
-        experiment_destination = Path('/tmp/stdout')  # get from experiment name
+        experiment_destination = Path('/tmp')  # get from experiment name
         cluster_address = 'localhost'
         cluster_port = 22
         os.system(
@@ -85,7 +86,7 @@ class Neroman():
             'rsync -avz --progress -e "ssh -p%s" "%s" "%s:%s"'
             % (cluster_port, experiment_source, cluster_address,
                 experiment_destination))
-        os.system('ssh -p%s %s "cd %s/neronet; python3.5 neromum.py %s 10 0.5"'  # parse arguments
+        os.system('ssh -p%s %s "cd %s/neronet; neromum %s 10 0.5"'  # parse arguments
                   % (cluster_port, cluster_address, experiment_destination, experiment))
         time.sleep(10)
         self.get_experiment_results()
