@@ -12,9 +12,6 @@ class TestSpecifyExperiments(unittest.TestCase):
         sock.bind(('localhost', 0))
         sock.listen(1)
         host, port = sock.getsockname()
-        #self.testKid.host = host
-        #self.testKid.port = str(port)
-        #self.testKid.experiment = "sleep.py 1 1"
         sys.argv = ["nerokid.py", host, str(port), "sleep.py", "1", "1"]
         testKid = neronet.nerokid.NeroKid()
         testKid.run()

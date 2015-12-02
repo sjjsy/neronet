@@ -63,31 +63,34 @@ class Neroman():
     def get_experiment_results(self):
         """Get the experiment results from neromum"""
         experiment = "stdout"
-        experiment_source = Path.cwd()
-        experiment_destination = Path('/tmp')  # get from experiment name
+        experiment_source = Path('/tmp/neronet')
+        experiment_destination = Path('/home/tukez/neronet/test/results')
         cluster_address = 'localhost'
         cluster_port = 22
         os.system(
-            'rsync -avz --progress -e "ssh -p%s" "%s:%s" "%s"'
+            'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
-                experiment_destination, experiment_source))
+                experiment_source, experiment_destination))
 
     def run(self):
         """Main loop of neroman
 
         rsync the experiment data and neromum + kid to the remote server with ssh
         start the experiment in the cluster using ssh"""
-        experiment = "sleep.py"
-        experiment_source = Path.cwd()
-        experiment_destination = Path('/tmp')  # get from experiment name
+        neronet_root = Path('/home/tukez/neronet')
+        tmp_dir = Path('/tmp/neronet-tmp')
+        experiment = "main.py"
+        experiment_source = neronet_root / 'test/experiments/sleep'
+        experiment_destination = Path('/tmp/neronet')  # get from experiment name'
+        os.system('rsync -az --delete "%s/" "%s"' % (experiment_source, tmp_dir))
+        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir))
+        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'bin', tmp_dir))
         cluster_address = 'localhost'
         cluster_port = 22
-        os.system(
-            'rsync -avz --progress -e "ssh -p%s" "%s" "%s:%s"'
-            % (cluster_port, experiment_source, cluster_address,
-                experiment_destination))
-        os.system('ssh -p%s %s "cd %s/neronet; neromum %s 10 0.5"'  # parse arguments
-                  % (cluster_port, cluster_address, experiment_destination, experiment))
+        os.system('rsync -az --delete -e "ssh -p%s" "%s/" "%s:%s"'
+            % (cluster_port, tmp_dir, cluster_address, experiment_destination))
+        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"'
+                  % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment))
         time.sleep(10)
         self.get_experiment_results()
 def main():

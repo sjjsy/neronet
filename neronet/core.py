@@ -8,7 +8,7 @@ import datetime
 import socket
 import pickle
 import time
-import psutil
+#import psutil
 from signal import signal, SIGTERM, SIGQUIT
 from traceback import print_exc
 from pathlib import Path
