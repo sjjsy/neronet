@@ -193,7 +193,7 @@ class Neroman():
             for experiment in self.experiments:
                 print(experiment + ': ' + self.experiments[experiment]['status'])
 
-    def send_files(self, experiment_folder, experiment_destination='/tmp/default', neronet_root=Path(os.getcwd()), cluster_address='localhost', cluster_port='22'):
+    def send_files(self, experiment_folder, experiment_destination,  cluster_address, cluster_port, neronet_root=Path(os.getcwd()),):
         """Send experiment files to the cluster
 
         Args:
@@ -225,7 +225,7 @@ class Neroman():
             cluster_port (int) : ssh port number of the cluster.
 
         """
-        self.send_files(experiment_folder)
+        self.send_files(experiment_folder, experiment_destination, cluster_address, cluster_port)
         os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"' #magic do NOT touch
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment))
         time.sleep(10) #will be unnecessary as soon as daemon works
