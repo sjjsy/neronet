@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 import sys
 
-import neronet.neroman as neroman
+import neroman
 
 def create_parser():
     parser = ArgumentParser()
@@ -24,8 +24,8 @@ def create_parser():
             action='store_true',
             help='Displays neronet status information')
     parser.add_argument('--run',
-            help='Runs neroman',
-            nargs=1)
+            nargs=1,
+            help='Runs neroman')
     return parser
             
 def main():
