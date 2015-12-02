@@ -171,7 +171,7 @@ class Neroman():
         os.system(
             'rsync -avz -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
-                experiment_source, experiment_destination))
+                remote_results, local_results))
 
 
     def status(self):
