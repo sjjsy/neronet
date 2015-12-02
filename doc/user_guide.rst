@@ -45,7 +45,7 @@ Neronet can be used either via command-line interface or via GUI.
 Installation
 ------------
 
-All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 3.5, so before installation please check that you have the right version of python installed on your local machine and the computing clusters you intend to use. Using older python versions may cause complications and is therefore no recommended. Then download neronet folder and proceed by setting up up your initial cluster setup, setting up your preferences, and then running setup.py.
+All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 3.5, so before installation please check that you have the right version of python installed on your local machine and the computing clusters you intend to use. Using older python versions may cause complications and is therefore not recommended. Then download neronet folder and proceed by setting up up your initial cluster setup, setting up your preferences, and then running setup.py.
 
 **1. The Initial cluster setup:**
 
@@ -98,7 +98,7 @@ To complete the installation, run setup.py on your local machine's command line.
 
 *Example:*
 ::
-	python3.5 setup.py
+	python3 setup.py
 
 
 If you followed the instructions clearly, your neronet application should be ready to run now. Proceed by starting neronet.
@@ -114,7 +114,7 @@ To start your Neronet CLI application, run neroman.py on your local machine's co
 
 *Example:*
 ::
-	python3.5 neroman.py
+	python3 neroman.py
 
 
 Specifying and Configuring Experiments in Neronet CLI
