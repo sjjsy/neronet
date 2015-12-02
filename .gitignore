@@ -62,3 +62,6 @@ target/
 # Python virtual environments
 .venv
 venv
+
+# Backup files
+*~
