@@ -125,8 +125,8 @@ class Neroman():
             parameters: The definition of the experiment parameters
             parameters_format: The format of the experiment parameters
             logoutput: The location the experiment outputs its output
-            state: The experiment state which is set to 'defined' by this
-                function
+            state: A tuple of the experiment state which is set to 'defined' by this
+                function and the time changed
             cluster: The cluster that the experiment is running on. Set to
                 None by this function
             time_created: Sets the current time as the creation time
@@ -165,7 +165,7 @@ class Neroman():
         experiment['cluster'] = None
         experiment['time_created'] = \
             datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
-        experiment['state'] = [('defined', experiment['time_created'])]
+        experiment['state'] = [['defined', experiment['time_created']]]
         experiment['time_modified'] = experiment['time_created']
         experiment['path'] = os.path.abspath(folder)
         if 'experiment_id' not in experiment_data:
@@ -173,6 +173,17 @@ class Neroman():
         else:
             self.experiments[experiment_data['experiment_id']] = experiment
         self.save_database()
+
+    def _create_experiment_callstring(self, experiment_id):
+        if experiment_id not in self.experiments:
+            raise IOError('No experiment named %s' % experiment_id)
+        experiment = self.experiments[experiment_id]
+        rcmd = experiment['run_command_prefix']
+        code_file = experiment['main_code_file']
+        params = experiment['parameters']
+        pformat = experiment['parameters_format']
+        pstr = pformat.format(**params)
+        return ' '.join([rcmd, code_file, pstr])
 
     def specify_user(self, name, email):
         """ Updates user data
@@ -204,12 +215,10 @@ class Neroman():
             if arg in self.experiments:
                 experiment = self.experiments[arg]
                 parameters = experiment['parameters']
-                parameters_format = experiment['parameters_format']
                 time_modified = experiment['time_modified']
                 state, state_change_time = experiment['state'].pop()
                 parameters_string = \
-                                ' '.join('%s: %s' % (key, parameters[key]) \
-                                    for key in parameters_format.split())
+                    ' '.join(["%s: %s" % (k,v) for k, v in parameters.items()])
                 print(arg, parameters_string)
                 print('Last modified: %s' % time_modified)
                 if state == 'defined':
