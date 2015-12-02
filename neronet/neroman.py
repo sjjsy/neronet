@@ -208,7 +208,7 @@ class Neroman():
         #os.system('rsync -az --delete "%s/" "%s"' % (experiment_folder, tmp_dir)) #clear the tmp folder
         os.system('rsync -avz          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir)) #rsync the neronet files to tmp
         os.system('rsync -avz          "%s" "%s"' % (neronet_root / 'bin', tmp_dir)) #rsync bin files to tmp
-        os.system('rsync -avz --delete -e "ssh -p%s" "%s/" "%s:%s"'
+        os.system('rsync -avz          -e "ssh -p%s" "%s/" "%s:%s"'
             % (cluster_port, tmp_dir, cluster_address, experiment_destination))
         #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
 
