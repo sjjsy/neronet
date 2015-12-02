@@ -205,28 +205,23 @@ class Neroman():
             % (cluster_port, tmp_dir, cluster_address, experiment_destination))
         #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
 
-    def run(self):
+    def run(self, experiment_destination, cluster_address, cluster_port, experiment):
         """Main loop of neroman
 
         rsync the experiment data and neromum + kid to the remote server with ssh
-        start the experiment in the cluster using ssh"""
-        neronet_root = Path('/home/tukez/neronet')
-        tmp_dir = Path('/tmp/neronet-tmp')
-        experiment = "main.py"
-        experiment_source = neronet_root / 'test/experiments/sleep'
-        experiment_destination = Path('/tmp/neronet')  # get from experiment name'
-        """os.system('rsync -az --delete "%s/" "%s"' % (experiment_source, tmp_dir))
-        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir))
-        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'bin', tmp_dir))
+        start the experiment in the cluster using ssh
+
+        Args:
+            experiment_destination (str) : the file path to experiment folder on the remote cluster.
+            cluster_address (str) : the address of the cluster.
+            cluster_port (int) : ssh port number of the cluster.
+            experiment (str) : the name of the experiment.
         """
-        cluster_address = 'localhost'
-        cluster_port = 22
-        #os.system('rsync -az --delete -e "ssh -p%s" "%s/" "%s:%s"'
-        #    % (cluster_port, tmp_dir, cluster_address, experiment_destination))
+
         os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"'
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment))
-        time.sleep(10)
-        self.get_experiment_results()
+        time.sleep(10) #will be unnecessary as soon as daemon works
+        self.get_experiment_results() #returns the results, should be called from cli
 
 
 class FormatError(Exception):
