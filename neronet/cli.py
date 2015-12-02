@@ -7,7 +7,6 @@ import neroman
 
 def create_config_parser():
     parser = ArgumentParser()
-    subparsers = parser.add_subparsers()
     parser.add_argument('--experiment',
             metavar='folder',
             nargs=1,
@@ -25,6 +24,7 @@ def create_config_parser():
             nargs="+",
             help='Runs neroman')
     parser.add_argument('--status',
+            metavar='experiment_id',
             nargs='?',
             const='all',
             help='Displays neronet status information')
