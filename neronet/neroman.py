@@ -144,7 +144,11 @@ class Neroman():
                 raise FormatError('No %s field in experiment' % field)
             experiment[field] = experiment_data[field]
         experiment['status'] = 'defined'
-        self.experiments[folder] = experiment
+        experiment['path'] = folder
+        if 'experiment_id' not in experiment_data:
+            raise FormatError('No experiment_id field in experiment')
+        else:
+            self.experiments[experiment_data['experiment_id']] = experiment
         self.save_database()
 
     def specify_user(self, name, email):
