@@ -1,9 +1,8 @@
-experiment_id: sleep_demo
-run_command_prefix: python
-main_code_file: sleep.py
-logoutput: output_folder
+experiment_id: 'sleep'
+run_command_prefix: 'python'
+main_code_file: 'sleep.py'
+logoutput: 'outputfile'
 parameters:
-    count: 5
-    interval: 5
-parameters_format:
-    "{count} {interval}"
+    count: 10
+    interval: 0.5
+parameters_format: '{count} {interval}'
