@@ -30,7 +30,7 @@ def create_parser():
             nargs=1,
             help='Move files to cluster')
     return parser
-            
+
 def main():
     """Parses the command line arguments and starts Neroman
     """
@@ -52,13 +52,10 @@ def main():
         nero.specify_user(name, email)
     if args.status:
         nero.status()
-    if args.run:
-        experiment_id = args.run[0]
-        nero.run(experiment_id)
-    if args.movefiles:
-        experiment_folder = args.movefiles[0]
-        nero.send_files(experiment_folder)
+    if args.submit:
+        experiment_id = args.submit[0]
+        nero.submit(experiment_folder)
+
 
 if __name__ == '__main__':
     main()
-

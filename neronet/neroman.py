@@ -212,18 +212,20 @@ class Neroman():
             % (cluster_port, tmp_dir, cluster_address, experiment_destination))
         #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
 
-    def run(self, experiment_destination="/tmp/default/", cluster_address="localhost", cluster_port=22, experiment="/tmp/default/neronet/sleep.py"):
+    def submit(self, experiment_folder, experiment_destination="/tmp/default/",experiment="/tmp/default/neronet/sleep.py", cluster_address="localhost", cluster_port=22):
         """Main loop of neroman
 
         Start the experiment in the cluster using ssh
 
         Args:
+            experiment_folder (str) : the file path to experiment folder in local machine.
             experiment_destination (str) : the file path to experiment folder on the remote cluster.
+            experiment (str) : the name of the experiment.
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
-            experiment (str) : the name of the experiment.
-        """
 
+        """
+        self.send_files(experiment_folder)
         os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"'
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment))
         time.sleep(10) #will be unnecessary as soon as daemon works
