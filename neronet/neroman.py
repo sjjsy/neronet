@@ -90,7 +90,7 @@ class Neroman():
             f.write(yaml.dump(self.experiments,
                 default_flow_style=False))
 
-    def specify_cluster(self, cluster_name, ssh_address, cluster_type):
+    def specify_cluster(self, cluster_name, ssh_address, cluster_type, portnumber = 22):
         """Specify clusters so that Neroman is aware of them.
 
         Writes cluster name, address and type to the clusters config file
@@ -108,7 +108,8 @@ class Neroman():
             raise FormatError("Cluster type should be slurm or unmanaged")
 
         self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address,
-                                                    'type': cluster_type}
+                                                    'type': cluster_type,
+                                                    'port': portnumber}
         with open(self.clusters_file, 'w') as f:
             f.write(yaml.dump(self.clusters, default_flow_style=False))
 
@@ -122,6 +123,8 @@ class Neroman():
             experiment_id: The unique identifier for the experiment
             run_command_prefix: The run command of the experiment
             main_code_file: The code file to be run
+            destination_folder: Folder that the experiment is run in on
+                                the cluster.
             parameters: The definition of the experiment parameters
             parameters_format: The format of the experiment parameters
             logoutput: The location the experiment outputs its output
