@@ -23,6 +23,9 @@ def create_parser():
     parser.add_argument('--status',
             action='store_true',
             help='Displays neronet status information')
+    parser.add_argument('--run',
+            help='Runs neroman',
+            nargs=1)
     return parser
             
 def main():
@@ -46,6 +49,9 @@ def main():
         nero.specify_user(name, email)
     if args.status:
         nero.status()
+    if args.run:
+        neroman.run()    
 
 if __name__ == '__main__':
     main()
+
