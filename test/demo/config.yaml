@@ -1,0 +1,8 @@
+experiment_id: 'sleep'
+run_command_prefix: 'python'
+main_code_file: 'sleep.py'
+parameters:
+    count: 10
+    interval: 0.5
+parameters_format: '{count} {interval}'
+
