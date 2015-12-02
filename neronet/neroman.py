@@ -119,7 +119,7 @@ class Neroman():
         Reads the contents of the experiment from a config file inside the
         specified folder.
 
-        Each experiment has: 
+        Each experiment has:
             experiment_id: The unique identifier for the experiment
             run_command_prefix: The run command of the experiment
             main_code_file: The code file to be run
@@ -221,14 +221,14 @@ class Neroman():
                 time_modified = experiment['time_modified']
                 state, state_change_time = experiment['state'].pop()
                 parameters_string = \
-                    ' '.join(["%s: %s" % (k,v) for k, v in parameters.items()])
-                print(arg, parameters_string)
-                print('Last modified: %s' % time_modified)
+                    ', '.join(["%s: %s" % (k,v) for k, v in parameters.items()])
+                print('Experiment: %s\nParameters: %s' % (arg, parameters_string))
                 if state == 'defined':
-                    print(state, state_change_time)
+                    print('State: %s - %s' % (state, state_change_time))
                 else:
                     cluster = experiment['cluster']
-                    print('%s %s' % (state, cluster))
+                    print('State: %s - %s - %s' % (state, cluster, state_change_time))
+                print('Last modified: %s' % time_modified)
                 return
             else:
                 raise IOError('No experiment named %s' % arg)
@@ -268,7 +268,7 @@ class Neroman():
             % (cluster_port, tmp_dir, cluster_address, experiment_destination))
         #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
 
-    def submit(self, experiment_folder, experiment_destination="/tmp/default/",experiment="/tmp/default/neronet/sleep.py", cluster_address="localhost", cluster_port=22):
+    def submit(self, exp_id):
         """Main loop of neroman
 
         Start the experiment in the cluster using ssh
@@ -281,11 +281,20 @@ class Neroman():
             cluster_port (int) : ssh port number of the cluster.
 
         """
+        experiment_destination = "/tmp/default"
+        experiment_folder = self.experiments[exp_id]["path"]
+        experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
+        experiment_parameters=self._create_experiment_callstring(exp_id)
+        cluster_port = self.clusters["clusters"]["local"]["port"]
+        cluster_address = self.clusters["clusters"]["local"]["ssh_address"]
+
+
+
         self.send_files(experiment_folder, experiment_destination, cluster_address, cluster_port)
-        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"' #magic do NOT touch
-                  % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment))
+        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s %s"' #magic do NOT touch
+                  % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment, experiment_parameters))
         time.sleep(10) #will be unnecessary as soon as daemon works
-        self.get_experiment_results() #returns the results, should be called from cli
+        #self.get_experiment_results() #returns the results, should be called from cli
 
 
 class FormatError(Exception):
