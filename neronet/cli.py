@@ -23,7 +23,7 @@ def create_parser():
     parser.add_argument('--status',
             action='store_true',
             help='Displays neronet status information')
-    parser.add_argument('--run',
+    parser.add_argument('--submit',
             nargs=1,
             help='Runs neroman')
     parser.add_argument('--movefiles',
