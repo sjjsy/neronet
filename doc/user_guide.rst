@@ -46,11 +46,21 @@ Neronet can be used either via command-line interface or via GUI.
 Installation
 ------------
 
-All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 3.5, so before installation please check that you have the right version of python installed on your local machine and the computing clusters you intend to use. Using older python versions may cause complications and is therefore not recommended. Then download neronet folder and proceed by setting up up your initial cluster setup, setting up your preferences, and then running setup.py.
+All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 3.5, so before installation please check that you have the right version of python installed on your local machine and the computing clusters you intend to use. Using older python versions may cause complications and is therefore not recommended. Then download neronet folder and proceed by setting up up your initial cluster setup, setting up your preferences.
 
-**1. The Initial cluster setup:**
+**1. Pip Installation**
 
-Start by opening clusters.yaml file using your favorite text editor and filling in the following information.
+Start by running the command below on your local machine's command line.
+
+*Example:*
+::
+	pip3 install Neronet
+
+The command will load all components related to neronet and install them to new folder 'neronet'. Proceed by opening the folder and defining your initial cluster setup and preferences.
+
+**2. Setting up the Initial cluster setup:**
+
+Open neronet/clusters.yaml file using your favorite text editor and fill in the following information.
 
 The format of clusters.yaml is as follows. From here on out we will explain the formats of important files by first showing an example file and then explaining the important points.
 
@@ -82,9 +92,9 @@ It is also possible to group some of your clusters or unmanaged nodes under a si
 
 After specifying your initial cluster setup fill in your personal information and preferences.
 
-**2. Personal Information and preferences:**
+**3. Setting up personal Information and preferences:**
 
-Open the file preferences.yaml and fill in your name, email and default cluster using the following format.
+Open the file neronet/preferences.yaml and fill in your name, email and default cluster using the following format.
 
 *Example:*
 ::
@@ -93,16 +103,7 @@ Open the file preferences.yaml and fill in your name, email and default cluster 
 	default_cluster: triton
 
 
-**3. Installation**
-
-To complete the installation, run setup.py on your local machine's command line.
-
-*Example:*
-::
-	python3 setup.py
-
-
-If you followed the instructions clearly, your neronet application should be ready to run now. Proceed by starting neronet.
+If you followed the instructions clearly, your neronet application should be ready to run now. Proceed by starting neronet. The program will notify you if the installation failed for one reason or another.
 
 ======================
 Command Line Interface
