@@ -159,13 +159,15 @@ class Neroman():
         with open(self.preferences_file, 'w') as f:
             f.write(yaml.dump(self.preferences, default_flow_style=False))
 
-    def get_experiment_results(self):
-        """Get the experiment results from neromum"""
-        experiment = "stdout"
-        experiment_source = Path('/tmp/default')
-        experiment_destination = Path('/home/tukez/neronet/test/results')
-        cluster_address = 'localhost'
-        cluster_port = 22
+    def get_experiment_results(self, remote_results = Path('/tmp/default'), local_results = Path('/home/tukez/neronet/test/results'), cluster_address='localhost', cluster_port=22):
+        """Get the experiment results from neromum
+
+        Args:
+            remote_results (str) : the file path to results folder on the remote cluster.
+            local_results (str) : the file path to results folder on the local machine.
+            cluster_address (str) : the address of the cluster.
+            cluster_port (int) : ssh port number of the cluster.
+        """
         os.system(
             'rsync -avz -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
