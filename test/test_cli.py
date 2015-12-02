@@ -5,7 +5,7 @@ import neronet.cli as cli
 class TestCLI(unittest.TestCase):
     
     def setUp(self):
-        self.parser = cli.create_parser()
+        self.parser = cli.create_config_parser()
 
     def test_specify_experiment(self):
         folder_name = 'test_folder'

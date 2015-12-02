@@ -22,8 +22,11 @@ class TestSpecifyExperiments(unittest.TestCase):
                     "   main_code_file: party.py\n"
                     "   parameters:\n"
                     "        when: now\n"
-                    "   parameters_format:\n"
-                    "       'when'")
+                    "   parameters_format: 'when'\n"
+                    "logoutput: logfile\n"
+                    "state: defined\n"
+                    "cluster:\n"
+                    "time_created: 15:12:01 12-12-2014")
         
         #Initialize Neroman with database
         self.testman = neroman.Neroman(self.database_file,
@@ -33,8 +36,10 @@ class TestSpecifyExperiments(unittest.TestCase):
         self.expfolder = tempfile.mkdtemp(dir = self.testfolder)
         self.path = os.path.join(self.expfolder, neroman.CONFIG_FILENAME)
         with open(self.path, 'w') as f:
-            f.write("run_command_prefix: python\n"
+            f.write("experiment_id: sleep_demo\n"
+                    "run_command_prefix: python\n"
                     "main_code_file: sleep.py\n"
+                    "logoutput: output_file\n"
                     "parameters:\n"
                     "   count: 5\n"
                     "   interval: 5\n"
@@ -68,7 +73,7 @@ class TestSpecifyExperiments(unittest.TestCase):
         for i, field in enumerate(fields):
             with self.subTest(field=field):
                 self.assertEqual(values[i], 
-                                self.testman.experiments[self.expfolder][field])
+                                self.testman.experiments['sleep_demo'][field])
 
     def test_badly_formatted_config_file(self):
         with open(self.path, 'w') as f:

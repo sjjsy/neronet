@@ -4,6 +4,8 @@ from pathlib import Path
 from argparse import ArgumentParser
 import time
 import os
+import datetime
+
 import yaml
 
 CONFIG_FILENAME = 'config.yaml'
@@ -116,6 +118,23 @@ class Neroman():
         Reads the contents of the experiment from a config file inside the
         specified folder.
 
+        Each experiment has: 
+            experiment_id: The unique identifier for the experiment
+            run_command_prefix: The run command of the experiment
+            main_code_file: The code file to be run
+            parameters: The definition of the experiment parameters
+            parameters_format: The format of the experiment parameters
+            logoutput: The location the experiment outputs its output
+            state: The experiment state which is set to 'defined' by this
+                function
+            cluster: The cluster that the experiment is running on. Set to
+                None by this function
+            time_created: Sets the current time as the creation time
+            time_modified: The time the experiment was last modified. Sets
+                this time to the same as the time created
+            path: The absolute path to the folder
+
+
         Args:
             folder (str): The path of the folder that includes
                 the experiment that's being specified.
@@ -139,12 +158,16 @@ class Neroman():
             experiment_data = yaml.load(file.read())
         experiment = {}
         for field in ['run_command_prefix', 'main_code_file',
-                        'parameters', 'parameters_format']:
+                        'parameters', 'parameters_format', 'logoutput']:
             if field not in experiment_data:
                 raise FormatError('No %s field in experiment' % field)
             experiment[field] = experiment_data[field]
-        experiment['status'] = 'defined'
-        experiment['path'] = folder
+        experiment['cluster'] = None
+        experiment['time_created'] = \
+            datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+        experiment['state'] = [('defined', experiment['time_created'])]
+        experiment['time_modified'] = experiment['time_created']
+        experiment['path'] = os.path.abspath(folder)
         if 'experiment_id' not in experiment_data:
             raise FormatError('No experiment_id field in experiment')
         else:
@@ -174,9 +197,29 @@ class Neroman():
                 remote_results, local_results))
 
 
-    def status(self):
+    def status(self, arg):
         """ Displays Neroman data on into stdstream
         """
+        if arg != 'all':
+            if arg in self.experiments:
+                experiment = self.experiments[arg]
+                parameters = experiment['parameters']
+                parameters_format = experiment['parameters_format']
+                time_modified = experiment['time_modified']
+                state, state_change_time = experiment['state'].pop()
+                parameters_string = \
+                                ' '.join('%s: %s' % (key, parameters[key]) \
+                                    for key in parameters_format.split())
+                print(arg, parameters_string)
+                print('Last modified: %s' % time_modified)
+                if state == 'defined':
+                    print(state, state_change_time)
+                else:
+                    cluster = experiment['cluster']
+                    print('%s %s' % (state, cluster))
+                return
+            else:
+                raise IOError('No experiment named %s' % arg)
         print("================Neroman=================")
         print("\n================Clusters================")
         if not self.clusters['clusters']:
@@ -191,7 +234,8 @@ class Neroman():
             print("No experiments defined")
         else:
             for experiment in self.experiments:
-                print(experiment + ': ' + self.experiments[experiment]['status'])
+                print(experiment + ': ' +
+                self.experiments[experiment]['state'].pop()[0])
 
     def send_files(self, experiment_folder, experiment_destination,  cluster_address, cluster_port, neronet_root=Path(os.getcwd()),):
         """Send experiment files to the cluster
@@ -238,4 +282,4 @@ class FormatError(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value)
+        return self.value

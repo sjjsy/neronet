@@ -33,8 +33,10 @@ class TestStatusReport(unittest.TestCase):
         self.expfolder = tempfile.mkdtemp(dir = self.testfolder)
         self.path = os.path.join(self.expfolder, neroman.CONFIG_FILENAME)
         with open(self.path, 'w') as f:
-            f.write("run_command_prefix: python\n"
+            f.write("experiment_id: sleep_demo\n"
+                    "run_command_prefix: python\n"
                     "main_code_file: sleep.py\n"
+                    "logoutput: logfile\n"
                     "parameters:\n"
                     "   count: 5\n"
                     "   interval: 5\n"
@@ -46,7 +48,9 @@ class TestStatusReport(unittest.TestCase):
         shutil.rmtree(self.testfolder)
 
     def test_experiment_is_defined(self):
-        self.assertEqual(self.testman.experiments[self.expfolder]['status'], 'defined')
+        self.assertEqual(
+            self.testman.experiments['sleep_demo']['state'].pop()[0], 
+            'defined')
 
 if __name__ == '__main__':
     unittest.main()
