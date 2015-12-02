@@ -5,8 +5,9 @@ import sys
 
 import neroman
 
-def create_parser():
+def create_config_parser():
     parser = ArgumentParser()
+    subparsers = parser.add_subparsers()
     parser.add_argument('--experiment',
             metavar='folder',
             nargs=1,
@@ -20,24 +21,27 @@ def create_parser():
             metavar=('name', 'email'),
             nargs=2,
             help='Updates user information')
-    parser.add_argument('--status',
-            action='store_true',
-            help='Displays neronet status information')
     parser.add_argument('--run',
             nargs=1,
             help='Runs neroman')
+    parser.add_argument('--status',
+            nargs='?',
+            const='all')
     return parser
             
 def main():
     """Parses the command line arguments and starts Neroman
     """
-    parser = create_parser()
+    parser = create_config_parser()
     args = parser.parse_args()
     nero = neroman.Neroman()
     if args.experiment:
         experiment_folder = args.experiment[0]
-        nero.specify_experiments(experiment_folder)
-        nero.save_database()
+        try:
+            nero.specify_experiments(experiment_folder)
+            nero.save_database()
+        except (FileNotFoundError, neroman.FormatError) as e:
+            print(e)
     if args.cluster:
         cluster_id = args.cluster[0]
         address = args.cluster[1]
@@ -48,7 +52,10 @@ def main():
         email = args.user[1]
         nero.specify_user(name, email)
     if args.status:
-        nero.status()
+        try:
+            nero.status(args.status)
+        except IOError as e:
+            print(e)
     if args.run:
         neroman.run()    
 
