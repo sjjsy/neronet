@@ -24,11 +24,8 @@ def create_parser():
             action='store_true',
             help='Displays neronet status information')
     parser.add_argument('--submit',
-            nargs=1,
+            nargs="+",
             help='Runs neroman')
-    parser.add_argument('--movefiles',
-            nargs=1,
-            help='Move files to cluster')
     return parser
 
 def main():
@@ -54,6 +51,10 @@ def main():
         nero.status()
     if args.submit:
         experiment_folder = args.submit[0]
+        experiment_destination = args.submit[1]
+        experiment = args.submit[2]
+        cluster_address = args.submit[3]
+        cluster_port = args.submit[4]
         nero.submit(experiment_folder)
 
 
