@@ -5,8 +5,9 @@ Neronet User Guide
 Contents
 --------
 
-- **Introduction**
+
 - **Contents**
+- **Introduction**
 - **Installation**
 - Command Line Interface:
 	- Starting Neronet CLI
