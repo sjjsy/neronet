@@ -6,8 +6,9 @@ Contents
 --------
 
 - **Introduction**
+- **Contents**
+- **Installation**
 - Command Line Interface:
-	- Installation
 	- Starting Neronet CLI
 	- Specifying and Configuring Experiments in Neronet CLI
 	- Deleting Defined Experiments from Neronet
@@ -16,7 +17,6 @@ Contents
 	- Monitoring Log Output in Neronet CLI
 	- Status report in Neronet CLI
 - GUI:
-	- Installation
 	- Starting Neronet GUI
 	- Specifying and Configuring Experiments in Neronet GUI
 	- Deleting Defined Experiments from Neronet
@@ -24,6 +24,7 @@ Contents
 	- Specifying Clusters in Neronet GUI
 	- Monitoring Log Output in Neronet GUI
 	- Status report in Neronet GUI
+
 
 Introduction
 ------------
@@ -40,14 +41,11 @@ Neronet is a python-based, framework agnostic tool for computational researchers
 
 Neronet can be used either via command-line interface or via GUI.
 
-======================
-Command Line Interface
-======================
 
 Installation
 ------------
 
-All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 3.5, so before installation please check that you have the right version of python installed on your local machine and the computing clusters you intend to use. Then download neronet folder and proceed by setting up up your initial cluster setup.
+All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 3.5, so before installation please check that you have the right version of python installed on your local machine and the computing clusters you intend to use. Using older python versions may cause complications and is therefore no recommended. Then download neronet folder and proceed by setting up up your initial cluster setup, setting up your preferences, and then running setup.py.
 
 **1. The Initial cluster setup:**
 
@@ -94,7 +92,20 @@ Open the file preferences.yaml and fill in your name, email and default cluster 
 	default_cluster: triton
 
 
-If you followed the instructions clearly, your neronet application should be ready to run now. Proceed by starting neronet. The program will notify you if the installation failed for some reason or another.
+**3. Installation**
+
+To complete the installation, run setup.py on your local machine's command line.
+
+*Example:*
+::
+	python3.5 setup.py
+
+
+If you followed the instructions clearly, your neronet application should be ready to run now. Proceed by starting neronet.
+
+======================
+Command Line Interface
+====================== 
 
 Starting Neronet CLI
 --------------------
