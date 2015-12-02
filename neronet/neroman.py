@@ -27,14 +27,14 @@ class Neroman():
         preferences (Dict): A dictionary containing the preferences
     """
 
-    def __init__(self, database = 'default.yaml', 
-                        preferences_file = 'preferences.yaml', 
+    def __init__(self, database = 'default.yaml',
+                        preferences_file = 'preferences.yaml',
                         clusters_file = 'clusters.yaml'):
         """Initializes Neroman
 
         Reads the contents of its attributes from a database (currently just
         a .yaml file).
-        
+
         Args:
             database (str): The path to the database file as a string, the
                 rest of the attributes will be parsed from the database.
@@ -50,7 +50,7 @@ class Neroman():
     def _load_configurations(self, database, clusters, preferences):
         """Load the configurations from the yaml files or creates them if they
         don't exist
-        
+
         Args:
             database (str): The filepath of the database file
             clusters (str): The filepath of the clusters file
@@ -72,7 +72,7 @@ class Neroman():
                 self.clusters = yaml.load(f.read())
         if not self.clusters: self.clusters = {'clusters': None }
         if not self.clusters['clusters']: self.clusters['clusters'] = {}
-        
+
         if not os.path.exists(database):
             with open(database, 'w') as f:
                 f.write('')
@@ -80,7 +80,7 @@ class Neroman():
             with open(database, 'r') as f:
                 self.experiments = yaml.load(f.read())
         if not self.experiments: self.experiments = {}
-    
+
     def save_database(self):
         """Save the contents of Neroman's attributes in the database
         """
@@ -90,9 +90,9 @@ class Neroman():
 
     def specify_cluster(self, cluster_name, ssh_address, cluster_type):
         """Specify clusters so that Neroman is aware of them.
-        
+
         Writes cluster name, address and type to the clusters config file
-    
+
         Args:
             cluster_name (str): The name of the cluster, should be unique
             ssh_address (str): SSH address of the cluster
@@ -105,7 +105,7 @@ class Neroman():
         if cluster_type != 'slurm' and cluster_type != 'unmanaged':
             raise FormatError("Cluster type should be slurm or unmanaged")
 
-        self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address, 
+        self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address,
                                                     'type': cluster_type}
         with open(self.clusters_file, 'w') as f:
             f.write(yaml.dump(self.clusters, default_flow_style=False))
@@ -114,10 +114,10 @@ class Neroman():
         """Specify experiments so that Neroman is aware of them.
 
         Reads the contents of the experiment from a config file inside the
-        specified folder. 
+        specified folder.
 
         Args:
-            folder (str): The path of the folder that includes 
+            folder (str): The path of the folder that includes
                 the experiment that's being specified.
 
         Raises:
@@ -127,7 +127,7 @@ class Neroman():
         """
         if not os.path.isdir(folder):
             raise FileNotFoundError('No such folder')
-        
+
         file_path = os.path.join(folder, CONFIG_FILENAME)
         if not os.path.exists(file_path):
             raise FileNotFoundError('No config file in folder')
@@ -170,7 +170,7 @@ class Neroman():
             'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
                 experiment_source, experiment_destination))
-        
+
 
     def status(self):
         """ Displays Neroman data on into stdstream
@@ -190,7 +190,25 @@ class Neroman():
         else:
             for experiment in self.experiments:
                 print(experiment + ': ' + self.experiments[experiment]['status'])
-                
+
+    def send_files(self, experiment_folder, experiment_destination, neronet_root, cluster_address, cluster_port):
+        """Send experiment files to the cluster
+
+        Args:
+            experiment_folder (str) : the file path to experiment folder on the local machine.
+            experiment_destination (str) : the file path to experiment folder on the remote cluster.
+            neronet_root (str) : the file path to neronet folder.
+            cluster_address (str) : the address of the cluster.
+            cluster_port (int) : ssh port number of the cluster.
+        """
+        tmp_dir = Path('/tmp/neronet-tmp')
+        #os.system('rsync -az --delete "%s/" "%s"' % (experiment_folder, tmp_dir)) #clear the tmp folder
+        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir)) #rsync the neronet files to tmp
+        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'bin', tmp_dir)) #rsync bin files to tmp
+        os.system('rsync -az --delete -e "ssh -p%s" "%s/" "%s:%s"'
+            % (cluster_port, tmp_dir, cluster_address, experiment_destination))
+        #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
+
     def run(self):
         """Main loop of neroman
 
@@ -201,13 +219,14 @@ class Neroman():
         experiment = "main.py"
         experiment_source = neronet_root / 'test/experiments/sleep'
         experiment_destination = Path('/tmp/neronet')  # get from experiment name'
-        os.system('rsync -az --delete "%s/" "%s"' % (experiment_source, tmp_dir))
+        """os.system('rsync -az --delete "%s/" "%s"' % (experiment_source, tmp_dir))
         os.system('rsync -az          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir))
         os.system('rsync -az          "%s" "%s"' % (neronet_root / 'bin', tmp_dir))
+        """
         cluster_address = 'localhost'
         cluster_port = 22
-        os.system('rsync -az --delete -e "ssh -p%s" "%s/" "%s:%s"'
-            % (cluster_port, tmp_dir, cluster_address, experiment_destination))
+        #os.system('rsync -az --delete -e "ssh -p%s" "%s/" "%s:%s"'
+        #    % (cluster_port, tmp_dir, cluster_address, experiment_destination))
         os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"'
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment))
         time.sleep(10)
