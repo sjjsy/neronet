@@ -91,6 +91,7 @@ Open the file preferences.yaml and fill in your name, email and default cluster 
 ::
 	name: John Doe
 	email: john.doe@gmail.com
+	default_cluster: triton
 
 
 If you followed the instructions clearly, your neronet application should be ready to run now. Proceed by starting neronet. The program will notify you if the installation failed for some reason or another.
@@ -156,7 +157,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
 
 - The information on the config.yaml file is divided to blocks that have the same indentation.
 - ID-attribute must be specified on the topmost row and it must be unique.
-- Each experiment specification must begin with a row containing the experiment id (f.ex in the example above three experiments are specified: lang_exp1, lang_exp2 and lang_exp3) and be followed by a block containing all the experiment's attributes. Do not use the reserved words list of which can be found at the end of this section. The experiment ids must be unique within the same config file.
+- Each experiment specification must begin with a row containing the experiment id (f.ex in the example above three experiments are specified: lang_exp1, lang_exp2 and lang_exp3) and be followed by a block containing all the experiment's attributes. Do not use the reserved words, list of which can be found at the end of this section. The experiment ids must be unique within the same config file.
 - Each different experiment specification must have the following attributes
 	- main_code_file: The path to the code file that is to be run when executing the experiment
 	- run_command_prefix: The prefix of the run command f.ex 'python3'
@@ -166,7 +167,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
 	- Your experiments should be runnable with a command of the form 'RUN_COMMAND_PREFIX MAIN_CODE_FILE PARAMETER_STRING' F.ex in the example above lang_exp2 must be runnable with the command 'python2 main2.py kh nyt data/2.txt 400'**
 
 - Additionally, if you want neronet to autoterminate an experiment or give you a warning under certain circumstances you can use the warning-attribute. Neronet supports warnings and autotermination based on a variable exceeding, falling below or reaching a predetermined value. The warning-attribute must be followed by a block containing the specifications of the warning conditions and actions to perform
-	- Start by giving a unique ID to your warning. f.ex in the example above 'lang_exp1' has two warnings set: 'error_rate_over_50' and 'error_rate_over_35'. Do not use the reserved words list of which can be found at the end of this section. Then specify the following attributes on the following block.
+	- Start by giving a unique ID to your warning. f.ex in the example above 'lang_exp1' has two warnings set: 'error_rate_over_50' and 'error_rate_over_35'. Do not use the reserved words, list of which can be found at the end of this section. Then specify the following attributes on the following block.
 	- variablename: This is the name of the variable you want to monitor
 	- killvalue: This is the value to which you want neronet to compare the monitored variable
 	- comparator: Either 'gt' (greater that), 'lt' (less than), 'eq' (equal to), 'geq' (greater than or equal to) or 'leq' (less than or equal to). Use 'gt' if you want a warning when the value of the variable monitored exceeds killvalue, 'lt' if you want a warning when the variable falls below killvalue and 'eq' if you want a warning when the variable reaches killvalue.
