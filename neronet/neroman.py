@@ -212,7 +212,6 @@ class Neroman():
     def run(self, experiment_destination, cluster_address, cluster_port, experiment):
         """Main loop of neroman
 
-        rsync the experiment data and neromum + kid to the remote server with ssh
         start the experiment in the cluster using ssh
 
         Args:
