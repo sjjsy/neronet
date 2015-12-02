@@ -172,7 +172,7 @@ class Neroman():
             print("No experiments defined")
         else:
             for experiment in self.experiments:
-                print(experiment, self.experiments[experiment]['status'])
+                print(experiment + ': ' + self.experiments[experiment]['status'])
                 
 
 class FormatError(Exception):

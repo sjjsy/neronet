@@ -35,3 +35,7 @@ class TestCLI(unittest.TestCase):
     def test_status(self):
         parsed = self.parser.parse_args(['--status'])
         self.assertTrue(parsed.status)
+
+if __name__ == '__main__': 
+        unittest.main()
+

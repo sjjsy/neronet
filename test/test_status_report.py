@@ -16,15 +16,6 @@ class TestStatusReport(unittest.TestCase):
         self.preferences_file = "preferences.yaml"
         self.clusters_file = "clusters.yaml"
         #Create test config files
-        with open(self.database_file, 'w') as f:
-            f.write("experiment1:\n"
-                    "   run_command_prefix: python\n"
-                    "   main_code_file: sleep.py\n"
-                    "       parameters:\n"
-                    "       count: 5\n"
-                    "       interval: 5\n" 
-                    "   parameters_format:\n"
-                    "       'count interval'\n")
         with open(self.clusters_file, 'w') as f:
             f.write("clusters:\n"
                     "   triton:\n"
@@ -34,11 +25,11 @@ class TestStatusReport(unittest.TestCase):
                     "groups: null\n")
         
         
-        #Initialize Neroman with database
+        #Initialize Neroman
         self.testman = neroman.Neroman(self.database_file,
                                         self.preferences_file, 
                                         self.clusters_file)
-        #Create an experiment folder
+        #Create an experiment folder and submit it to Neroman
         self.expfolder = tempfile.mkdtemp(dir = self.testfolder)
         self.path = os.path.join(self.expfolder, neroman.CONFIG_FILENAME)
         with open(self.path, 'w') as f:
@@ -49,9 +40,13 @@ class TestStatusReport(unittest.TestCase):
                     "   interval: 5\n"
                     "parameters_format:\n"
                     "   'count interval'")
+        self.testman.specify_experiments(self.expfolder)
     
     def tearDown(self):
         shutil.rmtree(self.testfolder)
+
+    def test_experiment_is_defined(self):
+        self.assertEqual(self.testman.experiments[self.expfolder]['status'], 'defined')
 
 if __name__ == '__main__':
     unittest.main()
