@@ -218,14 +218,14 @@ class Neroman():
                 time_modified = experiment['time_modified']
                 state, state_change_time = experiment['state'].pop()
                 parameters_string = \
-                    ' '.join(["%s: %s" % (k,v) for k, v in parameters.items()])
-                print(arg, parameters_string)
-                print('Last modified: %s' % time_modified)
+                    ', '.join(["%s: %s" % (k,v) for k, v in parameters.items()])
+                print('Experiment: %s\nParameters: %s' % (arg, parameters_string))
                 if state == 'defined':
-                    print(state, state_change_time)
+                    print('State: %s - %s' % (state, state_change_time))
                 else:
                     cluster = experiment['cluster']
-                    print('%s %s' % (state, cluster))
+                    print('State: %s - %s - %s' % (state, cluster, state_change_time))
+                print('Last modified: %s' % time_modified)
                 return
             else:
                 raise IOError('No experiment named %s' % arg)
