@@ -21,19 +21,21 @@ neroman --monitor sleep2
 #### clusters.yaml
 
 ```
-any:
+clusters:
   triton:
     ssh_address: triton.aalto.fi
     type: slurm
     queue_max: 20
     special_attr1: foobar
-  gpu:
-    gpu1:
-      ssh_address: gpu1
-      type: unmanaged
-    gpu2:
-      ssh_address: gpu2
-      type: unmanaged
+  gpu1:
+    ssh_address: gpu1
+    type: unmanaged
+  gpu2:
+    ssh_address: gpu2
+    type: unmanaged
+  
+groups:
+  gpu: [gpu1, gpu2]
 ```
 
 #### preferences.yaml
@@ -244,4 +246,5 @@ Example: neroman --monitor lang_exp3
 ```
 
 ## GUI
+
 

@@ -750,10 +750,10 @@ Submit experiments to unmanaged nodes:
 
 Specify clusters by address and type to specify my computing resources: (4h)
 
-- planning 40min
-- neroman 90min
-- testing 40min
-- documentation 40min 
+- planning 30min
+- neroman 120min
+- testing 30min
+- documentation 30min 
 - peer review 30min
 
 Specify experiments by name, files and parameters and edit and delete them:
@@ -769,13 +769,13 @@ Specify experiments by name, files and parameters and edit and delete them:
 Want an experiment status report so that I can review experiment status
 details: (8h)
 
-- planning 
-- neroman 
+- planning 30min
+- neroman 120min
 - neromum 
 - nerokid 
-- testing 
-- documentation 
-- peer review 
+- testing 90min
+- documentation 90min
+- peer review 90min
 
 Daily scrum:
 
@@ -854,6 +854,7 @@ Agenda:
 - 13:00 Scrum
 - 13:20 Development
 - 13:35 Discussing peer review and GUI user guide and user stories
+- 13.50 Development
 - 18:00 Status review
 - 18:20 Estimating remaining tasks
 - 18:50 Time tracking
@@ -888,8 +889,138 @@ Participants: team
 
 Agenda:
 
-- 14:00 Scrum
-- 14:20 Development
-- 17:50 Testing & documentation workshop
+- 14:00 Team programming
+- 14:15 Scrum
+- 14:30 Checking the user guide https://github.com/smarisa/neronet/blob/us1_user_guide/doc/user_guide.rst 
+- 15:00 Development
 - 18:30 Estimating remaining tasks
 - 18:50 Time tracking
+
+### Scrum
+
+Samuel:
+- Getting familiar with the current daemon library and TCP servers
+- Coding python-daemon
+- Will finish the daemon
+
+Tuomo:
+- Socked connection
+- Thought about test cases
+- No problems
+- Will start making tests
+
+Matias:
+- Flow from man to kid works
+- No problems
+- Will make tests and documentation
+
+Teemu:
+- Specifying clusters
+- Will make experiment status
+
+Joona:
+- Finished CLI user guide and fixed syntax errors
+- Will start making artifacts
+- Should be no problems
+
+## 12-02 360m Wedshop
+
+Participants: team + PO(60min)
+
+Agenda:
+
+- 13:00 Development
+- 13:15 Scrum
+- 13:30 Unit testing + documentation
+- 14:00 Skype with PO on user guide and backlog (jo)
+- 14:30 Preparing demo (iimatutejo)
+- 17:00 Peer review (iimatu) + Artifacts (tejo)
+- 18:00 Retrospective?
+
+Daily Scrum:
+
+Teemu:
+- Made experiment status report to print the experiment's current state
+- Potential problems: Maybe too much to do
+- Will finish experiment status report
+
+Samuel:
+- Planned things to do
+- Consulted people
+- Potential problems: A lot to do, still hopeful
+- Will test triton
+
+Tuomo & Matias:
+- Made unit tests for submitting experiments
+- Made connection between neroman and neromum work better
+- Problems: Code structuring changes has slowed down development
+- Will make rsync work
+
+Joona:
+- Started making Progress report
+- Planned things to do
+- Finished CLI user guide
+- Potential problems: Maybe too much work
+- Will skype with PO
+
+### Progress review
+
+Notes:
+- Product backlog updated in the previous session
+- Check thet the user stories follow some specified user
+  story template
+- Retrospective before project progress review? On wednesday?
+- The coach appreciates trying new work practices and tools,
+  and evaluating their usefulness in the Sprint retros.
+
+The required artifacts:
+- Product vision (see Template)
+- Product backlog
+- Sprint goals of the current and completed Sprints
+- Sprint backlog of the current Sprint
+- Definition of Done
+- Test session charter(s) for peer testing (see Template)
+- Allocated and spent effort per person per Sprint
+- Process overview (see Template)
+- Technical overview
+- Progress report / Final report slides (see Template)
+- Learning Diaries
+
+Learning diary:
+- The diary must contain a new entry with 
+  1) at least three educational observations related to the use of Scrum or other work methods 
+  2) a summary of one's main contributions to the project since the previous entry
+ 
+The progress report slideset:
+- project results
+  - realization of the 1) Sprint goals, 2) Product backlog items and 3) other results
+  - a script and screenshots of the software demo that the team will show in the review
+- Project status
+  - evaluation of software quality
+  - spent and remaining effort per person per Sprint
+  - results of the Sprint Retros
+
+## 12-04 120m Frifury
+
+Participants: team
+
+Agenda:
+
+- 14:00 Practice presentation of progress report
+- 15:00 Estimating Story points for the new BI:s
+
+## 12-04 120m Sprint 1 review & sprint 2 planning
+
+Participants: team + PO + Coach
+
+Agenda:
+
+- 16:00 Presentation of progress report (35 minutes)
+- 16:35 Feedback and questions (10 minutes)
+- 17:00 Sprint planning
+- 17:05 Sprint team leader's word
+- 17:10 Discussing the budget and product backlog
+- 17:20 Definition of the sprint backlog and goal
+- 17:50 Committing to the sprint
+- 18:00 Sprint 2 backlog refinement (team)
+
