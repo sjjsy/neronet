@@ -53,7 +53,7 @@ def main():
     if args.status:
         nero.status()
     if args.submit:
-        experiment_id = args.submit[0]
+        experiment_folder = args.submit[0]
         nero.submit(experiment_folder)
 
 
