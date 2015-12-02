@@ -21,14 +21,15 @@ def create_config_parser():
             metavar=('name', 'email'),
             nargs=2,
             help='Updates user information')
-    parser.add_argument('--run',
-            nargs=1,
+    parser.add_argument('--submit',
+            nargs="+",
             help='Runs neroman')
     parser.add_argument('--status',
             nargs='?',
-            const='all')
+            const='all',
+            help='Displays neronet status information')
     return parser
-            
+
 def main():
     """Parses the command line arguments and starts Neroman
     """
@@ -56,9 +57,14 @@ def main():
             nero.status(args.status)
         except IOError as e:
             print(e)
-    if args.run:
-        neroman.run()    
+    if args.submit:
+        experiment_folder = args.submit[0]
+        experiment_destination = args.submit[1]
+        experiment = args.submit[2]
+        cluster_address = args.submit[3]
+        cluster_port = args.submit[4]
+        nero.submit(experiment_folder)
+
 
 if __name__ == '__main__':
     main()
-

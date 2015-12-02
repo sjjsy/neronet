@@ -182,17 +182,19 @@ class Neroman():
         with open(self.preferences_file, 'w') as f:
             f.write(yaml.dump(self.preferences, default_flow_style=False))
 
-    def get_experiment_results(self):
-        """Get the experiment results from neromum"""
-        experiment = "stdout"
-        experiment_source = Path('/tmp/neronet')
-        experiment_destination = Path('/home/tukez/neronet/test/results')
-        cluster_address = 'localhost'
-        cluster_port = 22
+    def get_experiment_results(self, remote_results = Path('/tmp/default'), local_results = Path('/home/tukez/neronet/test/results'), cluster_address='localhost', cluster_port=22):
+        """Get the experiment results from neromum
+
+        Args:
+            remote_results (str) : the file path to results folder on the remote cluster.
+            local_results (str) : the file path to results folder on the local machine.
+            cluster_address (str) : the address of the cluster.
+            cluster_port (int) : ssh port number of the cluster.
+        """
         os.system(
-            'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
+            'rsync -avz -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
-                experiment_source, experiment_destination))
+                remote_results, local_results))
 
 
     def status(self, arg):
@@ -235,7 +237,7 @@ class Neroman():
                 print(experiment + ': ' +
                 self.experiments[experiment]['state'].pop()[0])
 
-    def send_files(self, experiment_folder, experiment_destination, neronet_root, cluster_address, cluster_port):
+    def send_files(self, experiment_folder, experiment_destination,  cluster_address, cluster_port, neronet_root=Path(os.getcwd()),):
         """Send experiment files to the cluster
 
         Args:
@@ -245,36 +247,33 @@ class Neroman():
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
         """
+
         tmp_dir = Path('/tmp/neronet-tmp')
         #os.system('rsync -az --delete "%s/" "%s"' % (experiment_folder, tmp_dir)) #clear the tmp folder
-        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir)) #rsync the neronet files to tmp
-        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'bin', tmp_dir)) #rsync bin files to tmp
-        os.system('rsync -az --delete -e "ssh -p%s" "%s/" "%s:%s"'
+        os.system('rsync -avz          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir)) #rsync the neronet files to tmp
+        os.system('rsync -avz          "%s" "%s"' % (neronet_root / 'bin', tmp_dir)) #rsync bin files to tmp
+        os.system('rsync -avz --delete -e "ssh -p%s" "%s/" "%s:%s"'
             % (cluster_port, tmp_dir, cluster_address, experiment_destination))
         #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
 
-    def run(self):
+    def submit(self, experiment_folder, experiment_destination="/tmp/default/",experiment="/tmp/default/neronet/sleep.py", cluster_address="localhost", cluster_port=22):
         """Main loop of neroman
 
-        rsync the experiment data and neromum + kid to the remote server with ssh
-        start the experiment in the cluster using ssh"""
-        neronet_root = Path('/home/tukez/neronet')
-        tmp_dir = Path('/tmp/neronet-tmp')
-        experiment = "main.py"
-        experiment_source = neronet_root / 'test/experiments/sleep'
-        experiment_destination = Path('/tmp/neronet')  # get from experiment name'
-        """os.system('rsync -az --delete "%s/" "%s"' % (experiment_source, tmp_dir))
-        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir))
-        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'bin', tmp_dir))
+        Start the experiment in the cluster using ssh
+
+        Args:
+            experiment_folder (str) : the file path to experiment folder in local machine.
+            experiment_destination (str) : the file path to experiment folder on the remote cluster.
+            experiment (str) : the name of the experiment.
+            cluster_address (str) : the address of the cluster.
+            cluster_port (int) : ssh port number of the cluster.
+
         """
-        cluster_address = 'localhost'
-        cluster_port = 22
-        #os.system('rsync -az --delete -e "ssh -p%s" "%s/" "%s:%s"'
-        #    % (cluster_port, tmp_dir, cluster_address, experiment_destination))
-        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"'
+        self.send_files(experiment_folder, experiment_destination, cluster_address, cluster_port)
+        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"' #magic do NOT touch
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment))
-        time.sleep(10)
-        self.get_experiment_results()
+        time.sleep(10) #will be unnecessary as soon as daemon works
+        self.get_experiment_results() #returns the results, should be called from cli
 
 
 class FormatError(Exception):
