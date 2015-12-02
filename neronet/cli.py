@@ -59,10 +59,6 @@ def main():
             print(e)
     if args.submit:
         experiment_folder = args.submit[0]
-        experiment_destination = args.submit[1]
-        experiment = args.submit[2]
-        cluster_address = args.submit[3]
-        cluster_port = args.submit[4]
         nero.submit(experiment_folder)
 
 
