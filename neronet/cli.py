@@ -26,6 +26,9 @@ def create_parser():
     parser.add_argument('--run',
             nargs=1,
             help='Runs neroman')
+    parser.add_argument('--movefiles',
+            nargs=1,
+            help='Move files to cluster')
     return parser
             
 def main():
@@ -50,7 +53,11 @@ def main():
     if args.status:
         nero.status()
     if args.run:
-        neroman.run()    
+        experiment_id = args.run[0]
+        nero.run(experiment_id)
+    if args.movefiles:
+        experiment_folder = args.movefiles[0]
+        nero.send_files(experiment_folder)
 
 if __name__ == '__main__':
     main()

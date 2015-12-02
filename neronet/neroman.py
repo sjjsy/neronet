@@ -191,7 +191,7 @@ class Neroman():
             for experiment in self.experiments:
                 print(experiment + ': ' + self.experiments[experiment]['status'])
 
-    def send_files(self, experiment_folder, experiment_destination, neronet_root, cluster_address, cluster_port):
+    def send_files(self, experiment_folder, experiment_destination='/tmp/default', neronet_root=Path(os.getcwd()), cluster_address='localhost', cluster_port='22'):
         """Send experiment files to the cluster
 
         Args:
@@ -212,7 +212,7 @@ class Neroman():
     def run(self, experiment_destination, cluster_address, cluster_port, experiment):
         """Main loop of neroman
 
-        start the experiment in the cluster using ssh
+        Start the experiment in the cluster using ssh
 
         Args:
             experiment_destination (str) : the file path to experiment folder on the remote cluster.
