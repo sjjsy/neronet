@@ -61,6 +61,7 @@ class Neromum(object):
     def start_nerokid(self):
         """Starts the nerokid in the node"""
         self.logger.log('Launching kids')
+        self.logger.log(sys.argv)
         os.system(
             'nerokid %s %d %s &' %
             (self.host, self.port, self.experiment))
