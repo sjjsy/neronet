@@ -166,8 +166,7 @@ class Neroman():
                 raise FormatError('No %s field in experiment' % field)
             experiment[field] = experiment_data[field]
         experiment['cluster'] = None
-        experiment['time_created'] = \
-            datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+        experiment['time_created'] = self._time_now()
         experiment['state'] = [['defined', experiment['time_created']]]
         experiment['time_modified'] = experiment['time_created']
         experiment['path'] = os.path.abspath(folder)
@@ -176,6 +175,12 @@ class Neroman():
         else:
             self.experiments[experiment_data['experiment_id']] = experiment
         self.save_database()
+    def _time_now(self):
+        return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+    
+    def update_state(self, experiment_id, state):
+        self.experiments[experiment_id]['state'].append([state, 
+                                                    self._time_now()])
 
     def _create_experiment_callstring(self, experiment_id):
         if experiment_id not in self.experiments:
@@ -206,9 +211,9 @@ class Neroman():
             cluster_port (int) : ssh port number of the cluster.
         """
         experiment = self.experiments[experiment_id]
-        cluster_port = 22
-        cluster_address = "localhost"
-        remote_results = self.experiments[experiment_id]['path'] +"/"
+        clusterID = experiment['cluster']
+        cluster_address = self.clusters['clusters'][clusterID]
+        remote_results = experiment['path'] +"/"
         local_results =  os.getcwd()
         os.system(
             'rsync -avz -e "ssh -p%s" "%s:%s" "%s"'
@@ -290,12 +295,15 @@ class Neroman():
         experiment_folder = self.experiments[exp_id]["path"]
         #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
         experiment_parameters=self._create_experiment_callstring(exp_id)
-        cluster_port = self.clusters["clusters"]["local"]["port"]
-        cluster_address = self.clusters["clusters"]["local"]["ssh_address"]
+        clusterID = self.experiments[exp_id]['cluster']
+        cluster_port = self.clusters['clusters'][clusterID]["port"]
+        cluster_address = self.clusters["clusters"][clusterID]["ssh_address"]
 
         self.send_files(experiment_folder, experiment_destination, cluster_address, cluster_port)
         os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' #magic do NOT touch
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment_parameters))
+        self.experiments[exp_id]['cluster'] = clusterID
+        self.update_status(exp_id, 'running')
         time.sleep(10) #will be unnecessary as soon as daemon works
         self.get_experiment_results(exp_id) #returns the results, should be called from cli
 
