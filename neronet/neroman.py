@@ -278,7 +278,7 @@ class Neroman():
             % (cluster_port, tmp_dir, cluster_address, experiment_destination))
         #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
 
-    def submit(self, exp_id):
+    def submit(self, exp_id, cluster_ID):
         """Main loop of neroman
 
         Start the experiment in the cluster using ssh
@@ -295,14 +295,14 @@ class Neroman():
         experiment_folder = self.experiments[exp_id]["path"]
         #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
         experiment_parameters=self._create_experiment_callstring(exp_id)
-        clusterID = self.experiments[exp_id]['cluster']
-        cluster_port = self.clusters['clusters'][clusterID]["port"]
-        cluster_address = self.clusters["clusters"][clusterID]["ssh_address"]
+        self.experiments[exp_id]['cluster'] = cluster_ID
+        cluster_port = self.clusters['clusters'][cluster_ID]["port"]
+        cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
 
         self.send_files(experiment_folder, experiment_destination, cluster_address, cluster_port)
         os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' #magic do NOT touch
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment_parameters))
-        self.experiments[exp_id]['cluster'] = clusterID
+        self.experiments[exp_id]['cluster'] = cluster_ID
         self.update_status(exp_id, 'running')
         time.sleep(10) #will be unnecessary as soon as daemon works
         self.get_experiment_results(exp_id) #returns the results, should be called from cli
