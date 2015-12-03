@@ -963,6 +963,41 @@ Joona:
 - Potential problems: Maybe too much work
 - Will skype with PO
 
+### Retrospective
+
+- Improvements since sprint 0
+  - Replaced six tactics with Team spirit recap
+  - Balanced our team's power structure by selecting a team leader for each sprint
+- Practices
+  - Developing user guide first Will see
+  - Team leader per sprint Matias: Great to not give samuel all responsibility
+  - Pair programming matias: Works fine, a lot of time used for coordination within the pair
+  - Sprint planning Matias: Doesn't remember
+  - Daily Scrums Matias: Worked fine this time, not of much use
+  - Teamwork sessions Matias: times fine, people are away too often, peer reviews should be distributed evenly throughout the sprint
+- Tools:
+  - user guide
+  - flowdock Matias: Hasn't used much Iiro: doesn't like the idea of PO reading the messages
+  - skype Matias: Hasn't used much
+  - whatsapp Matias: reads often
+  - agilefant Matias: No complaints
+  - team spirit
+  - sphinx Matias: not used
+  - sharelatex
+  - google calendar Matias: works fine
+  - github Matias: works fine
+  - floobits Matias: Hasn't used much
+  - Top 3 Tools Matias: not of use
+  - Worst 3 Tools
+- Improvements to Teamwork Matias:
+  - people are away too often
+  - peer reviews should be distributed evenly throughout the sprint
+  - The pace is not always the best
+- Planning Implementation of Improvements
+- Feedback to the sprint leader
+  - Matias: Works fine, synchronisation problems may occur, should read and understand the code before the next sprint
+
+
 ### Progress review
 
 Notes:
@@ -972,6 +1007,7 @@ Notes:
 - Retrospective before project progress review? On wednesday?
 - The coach appreciates trying new work practices and tools,
   and evaluating their usefulness in the Sprint retros.
+
 
 The required artifacts:
 - Product vision (see Template)
@@ -1024,3 +1060,11 @@ Agenda:
 - 17:50 Committing to the sprint
 - 18:00 Sprint 2 backlog refinement (team)
 
+### Presentation of progress report
+
+- Intro -Joona & Samuel
+- Results -Samuel & Joona
+- Demo -Iiro & Teemu
+- Quality -Matias & Tuomo
+- Effort -Matias & Tuomo
+- Retros -Joona & Samuel
