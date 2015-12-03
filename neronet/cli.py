@@ -22,7 +22,7 @@ def create_config_parser():
             help='Updates user information')
     parser.add_argument('--submit',
             nargs="+",
-            help='Runs neroman')
+            help='Submits an experiment to be run')
     parser.add_argument('--status',
             metavar='experiment_id',
             nargs='?',
@@ -59,7 +59,8 @@ def main():
             print(e)
     if args.submit:
         experiment_folder = args.submit[0]
-        nero.submit(experiment_folder)
+        cluster_ID = args.submit[1]
+        nero.submit(experiment_folder, cluster_ID)
 
 
 if __name__ == '__main__':
