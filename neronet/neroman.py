@@ -211,8 +211,9 @@ class Neroman():
             cluster_port (int) : ssh port number of the cluster.
         """
         experiment = self.experiments[experiment_id]
-        clusterID = experiment['cluster']
-        cluster_address = self.clusters['clusters'][clusterID]
+        cluster_ID = experiment['cluster']
+        cluster_port = self.clusters['clusters'][clusterID]['port']
+        cluster_address = self.clusters['clusters'][clusterID]['ssh_address']
         remote_results = experiment['path'] +"/"
         local_results =  os.getcwd()
         os.system(
