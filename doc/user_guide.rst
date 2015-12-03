@@ -116,7 +116,7 @@ To start your Neronet CLI application, run neroman.py on your local machine's co
 
 *Example:*
 ::
-	python3 neroman.py
+	python3 cli.py
 
 
 Specifying and Configuring Experiments in Neronet CLI
