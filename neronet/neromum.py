@@ -103,7 +103,6 @@ class Neromum(object):
                 if s == self.sock:
                     client, address = s.accept()
                     self.open_incoming_connections.append(client)
-                    print('new client added%s' % str(address))
                 else:
                     self.data = s.recv(4096)
                     if self.data:

@@ -90,7 +90,6 @@ class NeroKid(object):
 
     def launch_child_process(self):
         """Launches received script"""
-        self.logger.log(shlex.split(self.experiment))
         self.process = subprocess.Popen(shlex.split(self.experiment), universal_newlines=True,
                                         stdout=open('stdout.log', 'w'), stderr=open('stderr.log', 'w'),
                                         close_fds=True, bufsize=1)
