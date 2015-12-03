@@ -1,0 +1,57 @@
+%% Package Imports
+\usepackage{lmodern} % specify Latin Modern as the font
+\usepackage[T1]{fontenc}
+\usepackage{textcomp} % fixes problems with some non ASCII chars like € \usepackage{pxfonts}
+\usepackage[utf8]{inputenc} % enhanced UTF8 support (check also: utf8x)
+\usepackage[english]{babel} % provides language specific hyphenation
+\usepackage[headtopline=2pt,headsepline=1pt,footsepline=1pt]{scrlayer-scrpage} % provides footer/header and con­fig­urable page styles
+\usepackage[protrusion=true,expansion=true,tracking=true,factor=1000,shrink=50]{microtype} % enhance the general appearance of the text
+\usepackage[pdftex]{graphicx} % extends the graphics package (f. ex. key-values to \in­clude­graph­ics)
+\usepackage[svgnames,x11names,hyperref]{xcolor} % provides enhanced color functionality (see http://www.latextemplates.com/svgnames-colors)
+\usepackage{hyperref} % for enhanced referencing and \hypersetup for PDF metadata
+\usepackage{enumerate} % enhanced list enumeration styling
+\usepackage{lastpage} % for \pageref{LastPage}
+\usepackage{listings} % provides source code listing cabability
+\usepackage{enumitem} % enhanced customization for itemize, enumerate and description environments (\setlist)
+%% Variables
+\title{Learning diary}
+\author{\student}
+\date{\today{}}
+\makeatletter
+%% Headers & Footers
+\setkomafont{pagehead}{\normalfont\small} % normalsize, small, footnotesize, scriptsize, tiny
+\setkomafont{pagefoot}{\normalfont\small}
+\chead{}
+\ihead{\@title}
+\ohead{\@author / \@date}
+\cfoot{\thepage{} (\pageref{LastPage})}
+\ifoot{}
+\ofoot{}
+%% Hyperref Settings
+\hypersetup{
+  unicode = true, % non-Latin characters in Acrobat?s bookmarks
+  pdfstartview = {FitH}, % fits the width of the page to the window
+  pdftitle = {\@title},
+  pdfauthor = {\@author},
+  pdfsubject = {\@title},
+  pdfcreator = {LaTeX},
+  pdfproducer = {\@author},
+  pdfkeywords = {diary} {software development} {scrum},
+  pdfnewwindow = true, % links in new window
+  colorlinks = true, % false: boxed links; true: colored links
+  linkcolor = MidnightBlue, % color of internal links
+  citecolor = MidnightBlue, % color of links to bibliography
+  filecolor = MidnightBlue, % color of file links
+  urlcolor = MidnightBlue % color of external links
+}
+%% Other Settings
+% Fonts, text flow and characters
+% linespread{1.25} \KOMAoptions{DIV=last} % to alter line spacing
+\setkomafont{disposition}{\bfseries}
+\DeclareUnicodeCharacter{20AC}{\texteuro{}}
+\DeclareUnicodeCharacter{00A0}{\texteuro{}}
+\DeclareUnicodeCharacter{B0}{\textdegree}
+\setlist{nosep} % eliminate vertical spacing between itemize elements
+%% The Document
+\pagestyle{scrheadings}
+\begin{document}

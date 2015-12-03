@@ -166,8 +166,7 @@ class Neroman():
                 raise FormatError('No %s field in experiment' % field)
             experiment[field] = experiment_data[field]
         experiment['cluster'] = None
-        experiment['time_created'] = \
-            datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+        experiment['time_created'] = self._time_now()
         experiment['state'] = [['defined', experiment['time_created']]]
         experiment['time_modified'] = experiment['time_created']
         experiment['path'] = os.path.abspath(folder)
@@ -176,6 +175,12 @@ class Neroman():
         else:
             self.experiments[experiment_data['experiment_id']] = experiment
         self.save_database()
+    def _time_now(self):
+        return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+    
+    def update_state(self, experiment_id, state):
+        self.experiments[experiment_id]['state'].append([state, 
+                                                    self._time_now()])
 
     def _create_experiment_callstring(self, experiment_id):
         if experiment_id not in self.experiments:

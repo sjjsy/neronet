@@ -22,7 +22,7 @@ def create_config_parser():
             help='Updates user information')
     parser.add_argument('--submit',
             nargs="+",
-            help='Runs neroman')
+            help='Submits a experiment to be run')
     parser.add_argument('--status',
             metavar='experiment_id',
             nargs='?',
