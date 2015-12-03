@@ -162,12 +162,12 @@ class Neroman():
     def get_experiment_results(self):
         """Get the experiment results from neromum"""
         experiment = "stdout"
-        experiment_source = Path('/tmp/neronet')
+        experiment_source = Path('/tmp/default')
         experiment_destination = Path('/home/tukez/neronet/test/results')
         cluster_address = 'localhost'
         cluster_port = 22
         os.system(
-            'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
+            'rsync -avz -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
                 experiment_source, experiment_destination))
 
@@ -201,15 +201,16 @@ class Neroman():
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
         """
+
         tmp_dir = Path('/tmp/neronet-tmp')
         #os.system('rsync -az --delete "%s/" "%s"' % (experiment_folder, tmp_dir)) #clear the tmp folder
-        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir)) #rsync the neronet files to tmp
-        os.system('rsync -az          "%s" "%s"' % (neronet_root / 'bin', tmp_dir)) #rsync bin files to tmp
-        os.system('rsync -az --delete -e "ssh -p%s" "%s/" "%s:%s"'
+        os.system('rsync -avz          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir)) #rsync the neronet files to tmp
+        os.system('rsync -avz          "%s" "%s"' % (neronet_root / 'bin', tmp_dir)) #rsync bin files to tmp
+        os.system('rsync -avz --delete -e "ssh -p%s" "%s/" "%s:%s"'
             % (cluster_port, tmp_dir, cluster_address, experiment_destination))
         #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
 
-    def run(self, experiment_destination, cluster_address, cluster_port, experiment):
+    def run(self, experiment_destination="/tmp/default/", cluster_address="localhost", cluster_port=22, experiment="/tmp/default/neronet/sleep.py"):
         """Main loop of neroman
 
         Start the experiment in the cluster using ssh
