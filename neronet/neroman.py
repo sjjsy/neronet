@@ -177,6 +177,10 @@ class Neroman():
         self.save_database()
     def _time_now(self):
         return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+    
+    def update_state(self, experiment_id, state):
+        self.experiments[experiment_id]['state'].append([state, 
+                                                    self._time_now()])
 
     def _create_experiment_callstring(self, experiment_id):
         if experiment_id not in self.experiments:
