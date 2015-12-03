@@ -79,6 +79,7 @@ class Neromum(object):
         pass
 
     def parse_nerokid_data(self):
+        """Extract information from nerokid's data updates."""
         if self.data:
             self.data = pickle.loads(self.data)
             if isinstance(self.data, dict):

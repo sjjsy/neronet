@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 import sys
 
-import neroman
+import neronet.neroman
 
 def create_config_parser():
     parser = ArgumentParser()
@@ -35,13 +35,13 @@ def main():
     """
     parser = create_config_parser()
     args = parser.parse_args()
-    nero = neroman.Neroman()
+    nero = neronet.neroman.Neroman()
     if args.experiment:
         experiment_folder = args.experiment[0]
         try:
             nero.specify_experiments(experiment_folder)
             nero.save_database()
-        except (FileNotFoundError, neroman.FormatError) as e:
+        except (FileNotFoundError, neronet.neroman.FormatError) as e:
             print(e)
     if args.cluster:
         cluster_id = args.cluster[0]
