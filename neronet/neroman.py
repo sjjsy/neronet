@@ -186,7 +186,7 @@ class Neroman():
         params = experiment['parameters']
         pformat = experiment['parameters_format']
         pstr = pformat.format(**params)
-        return ' '.join([rcmd, code_file, pstr])
+        return ' '.join([rcmd,experiment['path']+'/'+code_file,pstr])
 
     def specify_user(self, name, email):
         """ Updates user data
@@ -240,7 +240,7 @@ class Neroman():
              for cluster in self.clusters['clusters']:
                 address = self.clusters['clusters'][cluster]['ssh_address']
                 type = self.clusters['clusters'][cluster]['type']
-                print("{} {} {}".format(cluster, address, type))
+                print("{} {} {}".format(cluster, address, type))
         print("\n================Experiments=============")
         if not len(self.experiments):
             print("No experiments defined")
@@ -283,16 +283,14 @@ class Neroman():
         """
         experiment_destination = "/tmp/default"
         experiment_folder = self.experiments[exp_id]["path"]
-        experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
+        #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
         experiment_parameters=self._create_experiment_callstring(exp_id)
         cluster_port = self.clusters["clusters"]["local"]["port"]
         cluster_address = self.clusters["clusters"]["local"]["ssh_address"]
 
-
-
         self.send_files(experiment_folder, experiment_destination, cluster_address, cluster_port)
-        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s %s"' #magic do NOT touch
-                  % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment, experiment_parameters))
+        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' #magic do NOT touch
+                  % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment_parameters))
         time.sleep(10) #will be unnecessary as soon as daemon works
         #self.get_experiment_results() #returns the results, should be called from cli
 
