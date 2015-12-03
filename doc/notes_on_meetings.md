@@ -971,7 +971,7 @@ Joona:
   - Balanced our team's power structure by selecting a team leader for each sprint
 - Practices
   - Developing user guide first: 
-    - Matias: We shall see, 
+    - Matias: We shall see
     - Iiro: I feel we have strayed from the reason we began to implement a user guide
   - Team leader per sprint 
     - Matias: Great to not give samuel all responsibility 
@@ -1021,7 +1021,6 @@ Joona:
     - The pace is not always the best
   - Iiro:
     - Pair programming needs to be streamlined
-    - 
 
 - Planning Implementation of Improvements
 - Feedback to the sprint leader
