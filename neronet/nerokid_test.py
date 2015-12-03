@@ -4,7 +4,6 @@ import neronet.nerokid
 import os
 import sys
 
-
 class TestSpecifyExperiments(unittest.TestCase):
 
     def test_server_gets_data(self):

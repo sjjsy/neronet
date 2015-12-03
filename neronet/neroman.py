@@ -1,27 +1,56 @@
 # -*- coding: utf-8 -*-
-"""The module that starts up Neroman
+"""This module defines Neroman.
 
-This module implements the Command Line Interface of Neroman.
+To work with Neroman each experiment must have the following attributes
+defined in its config:
+
+* experiment_id: The unique identifier for the experiment
+* run_command_prefix: The run command of the experiment
+* main_code_file: The code file to be run
+* destination_folder: Folder that the experiment is run in on the cluster.
+* parameters: The definition of the experiment parameters
+* parameters_format: The format of the experiment parameters
+* logoutput: The location the experiment outputs its output
+* state: A tuple of the experiment state which is set to 'defined' by this
+  function and the time changed
+* cluster: The cluster that the experiment is running on. Set to
+  None by this function
+* time_created: Sets the current time as the creation time
+* time_modified: The time the experiment was last modified. Sets
+  this time to the same as the time created
+* path: The absolute path to the folder
 
 Attributes:
-    CONFIG_FILENAME (str): The name of the config file inside the
-        experiment folder that specifies the experiment.
+  CONFIG_FILENAME (str): The name of the config file inside the
+    experiment folder that specifies the experiment.
 """
 
 import os
-from pathlib import Path
-from argparse import ArgumentParser
 import time
 import os
 import datetime
-from neronet.core import osrun
-
 import yaml
+import pathlib
+
+import neronet.core
 
 CONFIG_FILENAME = 'config.yaml'
 
 
+class FormatError(Exception):
+
+    """ Exception raised when experiment config file is poorly formatted
+    """
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return self.value
+
+
 class Neroman:
+
     """The part of Neronet that handles user side things.
 
     Attributes:
@@ -130,25 +159,6 @@ class Neroman:
         Reads the contents of the experiment from a config file inside the
         specified folder.
 
-        Each experiment has:
-            experiment_id: The unique identifier for the experiment
-            run_command_prefix: The run command of the experiment
-            main_code_file: The code file to be run
-            destination_folder: Folder that the experiment is run in on
-                                the cluster.
-            parameters: The definition of the experiment parameters
-            parameters_format: The format of the experiment parameters
-            logoutput: The location the experiment outputs its output
-            state: A tuple of the experiment state which is set to 'defined' by this
-                function and the time changed
-            cluster: The cluster that the experiment is running on. Set to
-                None by this function
-            time_created: Sets the current time as the creation time
-            time_modified: The time the experiment was last modified. Sets
-                this time to the same as the time created
-            path: The absolute path to the folder
-
-
         Args:
             folder (str): The path of the folder that includes
                 the experiment that's being specified.
@@ -216,8 +226,10 @@ class Neroman:
         """Get the experiment results from neromum
 
         Args:
-            remote_results (str): the file path to results folder on the remote cluster.
-            local_results (str): the file path to results folder on the local machine.
+            remote_results (str): the file path to results folder on the
+            remote cluster.
+            local_results (str): the file path to results folder on the local
+            machine.
             cluster_address (str): the address of the cluster.
             cluster_port (int): ssh port number of the cluster.
         """
@@ -227,8 +239,8 @@ class Neroman:
         cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
         remote_results = experiment['path'] + "/"
         local_results = os.getcwd()
-        osrun(
-            'rsync -avz -e "ssh -p%s" "%s:%s" "%s"'
+        neronet.core.osrun(
+            'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
                 remote_results, local_results))
 
@@ -279,8 +291,7 @@ class Neroman:
         experiment_destination,
         cluster_address,
         cluster_port,
-        neronet_root=Path(
-            os.getcwd()),
+        neronet_root=pathlib.Path.cwd(),
     ):
         """Send experiment files to the cluster
 
@@ -291,26 +302,21 @@ class Neroman:
             cluster_address (str): the address of the cluster.
             cluster_port (int): ssh port number of the cluster.
         """
-
-        tmp_dir = Path('/tmp/neronet-tmp')
-        # osrun('rsync -az --delete "%s/" "%s"' % (experiment_folder, tmp_dir))
-        # #clear the tmp folder
-        osrun(
-            'rsync -avz          "%s" "%s"' %
+        tmp_dir = pathlib.Path('/tmp/neronet-tmp')
+        neronet.core.osrun(
+            'rsync -az "%s" "%s"' %
             (neronet_root /
              'neronet',
              tmp_dir))  # rsync the neronet files to tmp
-        osrun(
-            'rsync -avz          "%s" "%s"' %
+        neronet.core.osrun(
+            'rsync -az "%s" "%s"' %
             (neronet_root / 'bin', tmp_dir))  # rsync bin files to tmp
-        osrun(
-            'rsync -avz          -e "ssh -p%s" "%s/" "%s:%s"' %
+        neronet.core.osrun(
+            'rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
             (cluster_port,
              tmp_dir,
              cluster_address,
              experiment_destination))
-        # osrun('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no
-        # longer needed
 
     def submit(self, exp_id, cluster_ID):
         """Main loop of neroman.
@@ -332,29 +338,23 @@ class Neroman:
         self.experiments[exp_id]['cluster'] = cluster_ID
         cluster_port = self.clusters['clusters'][cluster_ID]["port"]
         cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
-
         self.send_files(
             experiment_folder,
             experiment_destination,
             cluster_address,
             cluster_port)
-        osrun('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"'  # magic do NOT touch
-              % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment_parameters))
+        # Magic do NOT touch:
+        neronet.core.osrun(
+            'ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' %
+            (cluster_port,
+             cluster_address,
+             experiment_destination,
+             experiment_destination,
+             experiment_destination,
+             experiment_parameters))
         self.experiments[exp_id]['cluster'] = cluster_ID
         self.update_state(exp_id, 'submitted')
         self.save_database()
         time.sleep(10)  # will be unnecessary as soon as daemon works
         # returns the results, should be called from cli
         self.get_experiment_results(exp_id)
-
-
-class FormatError(Exception):
-
-    """ Exception raised when experiment config file is poorly formatted
-    """
-
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return self.value

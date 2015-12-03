@@ -3,39 +3,53 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Neronet's documentation!
-===================================
-
-Contents:
+Neronet documentation
+=====================
 
 .. toctree::
    :maxdepth: 2
-
-   intro
-
-
-Indices and tables
-==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 
+Introduction
+------------
+
+A good introduction and overview of the project is available at the
+`project's GitHub repository <https://github.com/smarisa/neronet>`_.
+
+Key modules
+-----------
+
+Nerocli
+.......
+
+.. automodule:: neronet.nerocli
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Neroman
-=======
+.......
 
 .. automodule:: neronet.neroman
-   :members:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Neromum
-=======
+.......
 
 .. automodule:: neronet.neromum
-   :members:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Nerokid
-=======
+.......
 
 .. automodule:: neronet.nerokid
-   :members:
+    :members:
+    :undoc-members:
+    :show-inheritance:

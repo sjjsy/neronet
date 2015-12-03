@@ -1,38 +1,41 @@
-# nerokid.py
-#
-# one line description
+# -*- coding: utf-8 -*-
+"""This module defines Nerokid.
+
+Attributes:
+  INTERVAL (float): interval for how long the kid waits until it rechecks
+    for changes in the log file
+  LOG_FILES (tuple): Log files for stdout and stderr
+"""
 import sys
 import os
 import time
 import subprocess
 import shlex
-from .core import Logger, Socket
+
+import neronet.core
 
 INTERVAL = 2.0
-"""float: interval for how long the kid waits until it rechecks for changes in the log file
-"""
 LOG_FILES = 'stdout.log', 'stderr.log'
-"""tuple: log files for stdout and stderr
-"""
 packet = {"running": True, "log_output": ""}
 commands = ("status")
 
 
 class LogFile(object):
 
-    """"""
+    """A class that facilitates efficient monitoring of logfile changes."""
 
     def __init__(self, path):
-        """
+        """Create a LogFile object to represent a log file.
+
         Args:
-            path (str) : the file path to the log file.
+            path (str): the file path to the log file.
         """
         self.path = path
         self.rtime = 0
         self.seek = 0
 
     def read_changes(self):
-        """Reads the changes made to the logfile"""
+        """Read changes made to the logfile."""
         mtime = os.stat(self.path).st_mtime
         if mtime > self.rtime:
             self.rtime = mtime
@@ -58,7 +61,7 @@ class NeroKid(object):
     def __init__(self):
         self.sock = None
         self.process = None
-        self.logger = Logger('KID')
+        self.logger = neronet.core.Logger('KID')
         self.experiment = ' '.join(sys.argv[3:])
         self.log_files = [LogFile(log_file_path)
                           for log_file_path in LOG_FILES]
@@ -80,7 +83,7 @@ class NeroKid(object):
         host, port = sys.argv[1:3]
         port = int(port)
         # Define a socket
-        self.sock = Socket(self.logger, host, port)
+        self.sock = neronet.core.Socket(self.logger, host, port)
         self.logger.log('- Mom address: (%s, %d)' % (host, port))
         self.logger.log('- Experiment: %s' % (self.experiment))
 
@@ -127,4 +130,5 @@ class NeroKid(object):
 
 
 def main():
+    """Create a Nerokid and call its run method."""
     NeroKid().run()

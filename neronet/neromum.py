@@ -1,6 +1,8 @@
-# neromum.py
-#
-# python3.5 neromum.py python3.5 sleep.py 20 0.5
+# -*- coding: utf-8 -*-
+"""This module defines Neromum.
+"""
+
+# TODO: need database parsing
 
 import sys
 import socket
@@ -8,10 +10,7 @@ import os
 import pickle
 import select
 
-from .core import Logger
-
-
-# need database parsing
+import neronet.core
 
 class Neromum(object):
 
@@ -20,13 +19,13 @@ class Neromum(object):
     Runs in the cluster and manages and monitors all the nodes.
 
     Gets the experiment as the 1st command line argument
-    Experiment parameters from 2nd onwards
+    Experiment parameters from 2nd onwards.
     """
 
     def __init__(self):
         self.sock = None
         self.experiment = ' '.join(sys.argv[1:])
-        self.logger = Logger('MUM')
+        self.logger = neronet.core.Logger('MUM')
         self.running = True
         self.open_incoming_connections = []
         self.open_outgoing_connections = []
@@ -62,7 +61,7 @@ class Neromum(object):
         """Starts the nerokid in the node"""
         self.logger.log('Launching kids')
         self.logger.log(sys.argv)
-        os.system(
+        neronet.core.osrun(
             'nerokid %s %d %s &' %
             (self.host, self.port, self.experiment))
 
@@ -114,4 +113,5 @@ class Neromum(object):
 
 
 def main():
+    """Create a Neromum and call its run method."""
     Neromum().run()

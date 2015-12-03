@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
+"""This module implements the Command Line Interface of Neroman.
+"""
 
-from argparse import ArgumentParser
+import argparse
 import sys
+import pathlib
 
 import neronet.neroman
 
-
-def create_config_parser():
-    parser = ArgumentParser()
+def create_argument_parser():
+    """Create and return an argument parser."""
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         '--experiment',
         metavar='folder',
@@ -34,11 +37,15 @@ def create_config_parser():
 
 
 def main():
-    """Parses the command line arguments and starts Neroman
-    """
-    parser = create_config_parser()
+    """Parses the command line arguments and starts Neroman."""
+    parser = create_argument_parser()
     args = parser.parse_args()
-    nero = neronet.neroman.Neroman()
+    neronet_dir = pathlib.Path.home() / '.neronet'
+    if not neronet_dir.exists():
+        neronet_dir.mkdir()
+    nero = neronet.neroman.Neroman(database=str(neronet_dir / 'default.yaml'),
+         preferences_file=str(neronet_dir / 'preferences.yaml'),
+         clusters_file=str(neronet_dir / 'clusters.yaml'))
     if args.experiment:
         experiment_folder = args.experiment[0]
         try:
