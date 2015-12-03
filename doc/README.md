@@ -1,4 +1,8 @@
+# Documentation
+
 This folder contains all the documentation related to the project.
+
+## Required artifacts
 
 All artifacts required by the course staff are listed below:
 
