@@ -224,7 +224,7 @@ class Neroman():
             experiment (str) : the name of the experiment.
         """
 
-        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"'
+        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s 10 0.5"' #magic do NOT touch
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment))
         time.sleep(10) #will be unnecessary as soon as daemon works
         self.get_experiment_results() #returns the results, should be called from cli
