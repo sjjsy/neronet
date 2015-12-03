@@ -303,7 +303,7 @@ class Neroman():
         os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' #magic do NOT touch
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment_parameters))
         self.experiments[exp_id]['cluster'] = cluster_ID
-        self.update_status(exp_id, 'running')
+        self.update_state(exp_id, 'submitted')
         time.sleep(10) #will be unnecessary as soon as daemon works
         self.get_experiment_results(exp_id) #returns the results, should be called from cli
 
