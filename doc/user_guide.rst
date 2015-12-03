@@ -56,7 +56,7 @@ Start by running the command below on your local machine's command line.
 ::
 	pip3 install Neronet
 
-The command will load all components related to neronet and install them to new folder 'neronet'. Proceed by opening the folder and defining your initial cluster setup and preferences.
+The command will load all components related to neronet and install them to the system. It will also create the folder '~/.neronet' to contain your preferences and cluster setup. Proceed by opening the folder and defining your initial cluster setup and preferences there.
 
 **2. Setting up the Initial cluster setup:**
 
