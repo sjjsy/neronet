@@ -17,6 +17,9 @@ TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
 
+def osrun(cmd):
+    print('> %s' % (cmd))
+    os.system(cmd)
 
 class Logger:
 

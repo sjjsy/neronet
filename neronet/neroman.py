@@ -1,16 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
-from pathlib import Path
-from argparse import ArgumentParser
-import time
-import os
-import datetime
-
-import yaml
-
-CONFIG_FILENAME = 'config.yaml'
-
-
 """The module that starts up Neroman
 
 This module implements the Command Line Interface of Neroman.
@@ -19,6 +7,19 @@ Attributes:
     CONFIG_FILENAME (str): The name of the config file inside the
         experiment folder that specifies the experiment.
 """
+
+import os
+from pathlib import Path
+from argparse import ArgumentParser
+import time
+import os
+import datetime
+from neronet.core import osrun
+
+import yaml
+
+CONFIG_FILENAME = 'config.yaml'
+
 class Neroman():
     """The part of Neronet that handles user side things.
 
@@ -194,8 +195,7 @@ class Neroman():
         return ' '.join([rcmd,experiment['path']+'/'+code_file,pstr])
 
     def specify_user(self, name, email):
-        """ Updates user data
-        """
+        """Update user data"""
         self.preferences['name'] = name
         self.preferences['email'] = email
         with open(self.preferences_file, 'w') as f:
@@ -205,10 +205,10 @@ class Neroman():
         """Get the experiment results from neromum
 
         Args:
-            remote_results (str) : the file path to results folder on the remote cluster.
-            local_results (str) : the file path to results folder on the local machine.
-            cluster_address (str) : the address of the cluster.
-            cluster_port (int) : ssh port number of the cluster.
+            remote_results (str): the file path to results folder on the remote cluster.
+            local_results (str): the file path to results folder on the local machine.
+            cluster_address (str): the address of the cluster.
+            cluster_port (int): ssh port number of the cluster.
         """
         experiment = self.experiments[experiment_id]
         cluster_ID = experiment['cluster']
@@ -216,15 +216,14 @@ class Neroman():
         cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
         remote_results = experiment['path'] +"/"
         local_results =  os.getcwd()
-        os.system(
+        osrun(
             'rsync -avz -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
                 remote_results, local_results))
 
 
     def status(self, arg):
-        """ Displays Neroman data on into stdstream
-        """
+        """Display Neroman data on into stdstream"""
         if arg != 'all':
             if arg in self.experiments:
                 experiment = self.experiments[arg]
@@ -264,25 +263,25 @@ class Neroman():
         """Send experiment files to the cluster
 
         Args:
-            experiment_folder (str) : the file path to experiment folder on the local machine.
-            experiment_destination (str) : the file path to experiment folder on the remote cluster.
-            neronet_root (str) : the file path to neronet folder.
-            cluster_address (str) : the address of the cluster.
-            cluster_port (int) : ssh port number of the cluster.
+            experiment_folder (str): the file path to experiment folder on the local machine.
+            experiment_destination (str): the file path to experiment folder on the remote cluster.
+            neronet_root (str): the file path to neronet folder.
+            cluster_address (str): the address of the cluster.
+            cluster_port (int): ssh port number of the cluster.
         """
 
         tmp_dir = Path('/tmp/neronet-tmp')
-        #os.system('rsync -az --delete "%s/" "%s"' % (experiment_folder, tmp_dir)) #clear the tmp folder
-        os.system('rsync -avz          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir)) #rsync the neronet files to tmp
-        os.system('rsync -avz          "%s" "%s"' % (neronet_root / 'bin', tmp_dir)) #rsync bin files to tmp
-        os.system('rsync -avz          -e "ssh -p%s" "%s/" "%s:%s"'
+        #osrun('rsync -az --delete "%s/" "%s"' % (experiment_folder, tmp_dir)) #clear the tmp folder
+        osrun('rsync -avz          "%s" "%s"' % (neronet_root / 'neronet', tmp_dir)) #rsync the neronet files to tmp
+        osrun('rsync -avz          "%s" "%s"' % (neronet_root / 'bin', tmp_dir)) #rsync bin files to tmp
+        osrun('rsync -avz          -e "ssh -p%s" "%s/" "%s:%s"'
             % (cluster_port, tmp_dir, cluster_address, experiment_destination))
-        #os.system('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
+        #osrun('rm -r "%s"' % (tmp_dir)) # remove the tmp folder as it is no longer needed
 
     def submit(self, exp_id, cluster_ID):
-        """Main loop of neroman
+        """Main loop of neroman.
 
-        Start the experiment in the cluster using ssh
+        Start the experiment in the cluster using ssh.
 
         Args:
             experiment_folder (str) : the file path to experiment folder in local machine.
@@ -290,7 +289,6 @@ class Neroman():
             experiment (str) : the name of the experiment.
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
-
         """
         experiment_destination = self.experiments[exp_id]['path'] +"/"+ self.experiments[exp_id]['logoutput'] 
         experiment_folder = self.experiments[exp_id]["path"]
@@ -301,7 +299,7 @@ class Neroman():
         cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
 
         self.send_files(experiment_folder, experiment_destination, cluster_address, cluster_port)
-        os.system('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' #magic do NOT touch
+        osrun('ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' #magic do NOT touch
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment_parameters))
         self.experiments[exp_id]['cluster'] = cluster_ID
         self.update_state(exp_id, 'submitted')

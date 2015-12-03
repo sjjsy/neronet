@@ -965,34 +965,64 @@ Joona:
 
 ### Retrospective
 
+
 - Improvements since sprint 0
   - Replaced six tactics with Team spirit recap
   - Balanced our team's power structure by selecting a team leader for each sprint
 - Practices
-  - Developing user guide first Will see
-  - Team leader per sprint Matias: Great to not give samuel all responsibility
-  - Pair programming matias: Works fine, a lot of time used for coordination within the pair
-  - Sprint planning Matias: Doesn't remember
-  - Daily Scrums Matias: Worked fine this time, not of much use
-  - Teamwork sessions Matias: times fine, people are away too often, peer reviews should be distributed evenly throughout the sprint
+  - Developing user guide first: 
+    - Matias: We shall see, 
+    - Iiro: I feel we have strayed from the reason we began to implement a user guide
+  - Team leader per sprint 
+    - Matias: Great to not give samuel all responsibility 
+    - Iiro: Might be a bit confusing for the PO and I'm not sure how I'll manage it in the next sprint
+  - Pair programming 
+    - Matias: Works fine, a lot of time used for coordination within the pair
+    - Iiro: I feel that our pair programming might have been bit inefficient in development and testing, but it helped a lot in planning and documentation
+  - Sprint planning 
+    - Matias: Doesn't remember
+  - Daily Scrums 
+    - Matias: Worked fine this time, not of much use
+    - Iiro: Need to attend more of them...
+  - Teamwork sessions 
+    - Matias: times fine, people are away too often, peer reviews should be distributed evenly throughout the sprint
 - Tools:
   - user guide
-  - flowdock Matias: Hasn't used much Iiro: doesn't like the idea of PO reading the messages
-  - skype Matias: Hasn't used much
-  - whatsapp Matias: reads often
-  - agilefant Matias: No complaints
+  - flowdock 
+    - Matias: Hasn't used much 
+    - Iiro: doesn't like the idea of PO reading the messages
+  - skype 
+    - Matias: Wasn't used much
+  - whatsapp 
+    - Matias: reads often
+    - Iiro: I don't keep my phones internet always on so it hasn't been optimal
+  - agilefant 
+    - Matias: No complaints
+    - Iiro: Still feels bit rigid
   - team spirit
-  - sphinx Matias: not used
+  - sphinx 
+    - Matias: not used
   - sharelatex
-  - google calendar Matias: works fine
-  - github Matias: works fine
-  - floobits Matias: Hasn't used much
+  - google calendar 
+    - Matias: works fine
+    - Iiro: Haven't used it much after we scheduled regular times
+  - github 
+    - Matias: works fine
+    - Iiro: The usage still needs some working. There are some files that shouldn't have been pushed to the remote
+  - floobits 
+    - Matias: Hasn't used much
+    - Iiro: Good for meetings
   - Top 3 Tools Matias: not of use
   - Worst 3 Tools
-- Improvements to Teamwork Matias:
-  - people are away too often
-  - peer reviews should be distributed evenly throughout the sprint
-  - The pace is not always the best
+- Improvements to Teamwork 
+  - Matias:
+    - people are away too often
+    - peer reviews should be distributed evenly throughout the sprint
+    - The pace is not always the best
+  - Iiro:
+    - Pair programming needs to be streamlined
+    - 
+
 - Planning Implementation of Improvements
 - Feedback to the sprint leader
   - Matias: Works fine, synchronisation problems may occur, should read and understand the code before the next sprint

@@ -1,0 +1,171 @@
+%% Define document class, variables and frontmatter
+\documentclass{beamer}
+\title{Progress report}
+\input{tex/beamer.tex}
+\def\Done{\textcolor{green}{Done}}
+%% Content pages
+\section{Introduction}
+\begin{frame}{Introduction}{Goals} % Joona
+  Our goal is to develop a tool for computational researchers to enable easy
+  \begin{itemize}
+  \item specification and management of experiment queues
+  \pause \item batch submission of experiment jobs to computing clusters
+  \pause \item monitoring of ongoing experiments' logs and parameter values
+  \pause \item access to experiment information during and after the run
+  \pause \item configurable notifications on experiment state and progress
+  \pause \item configurable criteria for experiment autotermination
+  \pause \item logging of experiment history
+  \end{itemize}
+\end{frame}
+\begin{frame}{Introduction}{What} % Samuel
+  In essence the product is a Python-based tool that enables computational researchers to conduct their research more effectively.
+  \begin{itemize}
+  \item \pause It utilizes SSH and TCP sockets to distribute the computational workload into computer clusters. It supports the Slurm job and resource manager but can function without it as well.
+  \item \pause It is framework agnostic in that it permits the use of a very wide variety of tools to actually conduct the computing.
+  \end{itemize}
+\end{frame}
+\section{Results} % Samuel & Joona
+\begin{frame}{Results}{Sprint 0}
+  Goal: Team building and preparing for sprint 1 \pause \Done{}
+  
+  \pause Product Backlog Items: \emph{None}
+
+  \pause Sprint 0 took a lot of effort from us since the project topic was very challenging to dive into. Also none of us had done this course before. Interviews with Jelena \& Simo helped us to understand the project.
+  
+  \pause We were proud of our efforts in the sprint.
+\end{frame}
+\begin{frame}{Results}{Sprint 1}
+  Goal: Develop a prototype that offers the most basic functionality via a CLI \pause \Done
+  
+  \pause Product Backlog Items: 
+  \begin{itemize}
+  \pause \item US1: As a user, I want a basic user guide that would cover the installation of Neronet and its use via CLI. \pause \Done{}
+  \pause \item US2: As a user, I want to specify clusters by address and type to specify my computing resources. \pause \Done{}
+  \pause \item US3: As a user, I want to specify experiments by name, files and parameters and edit and delete them. \pause \Done{}
+  \pause \item US4: As a user, I want to submit experiments to unmanaged nodes. \pause \Done
+  \pause \item US5: As a user, I want an experiment status report so that I can review experiment status details. \pause \Done{}
+  \end{itemize}
+
+  \pause Just a prototype, a lot of work to do before user testing.
+\end{frame}
+\section{Demo}
+\begin{frame}{Demo} % Iiro & Teemu
+  Demo script:
+  \begin{enumerate}
+  \item Presentation of Neronet's CLI user guide
+  \item Neronet Installation, preferences and initial setup of clusters
+  \item Specification of clusters via CLI
+  \item Specification of an experiment
+  \item Submission of the specified experiment to an unmanaged node
+  \item Retrieval of experiment status report
+  \item Experiment status report
+  \end{enumerate}
+\end{frame}
+\section{Quality}
+\begin{frame}{Quality} % Matias & Tuomo
+  Definition of done:
+  \begin{itemize}
+  \item We defined \Done{} in three levels: BI, sprint and project
+  \item BI level: unit test coverage 90\%, functional test coverage 80\%, conformity (PEP-8), commented, documented, peer reviewed
+  \item Sprint level: BI:s are \Done{}, increment is tested and reviewed, sprint goal is achieved
+  \item We have followed our DoD almost as planned.
+  \end{itemize}
+\end{frame}
+\begin{frame}{Quality} % Matias & Tuomo
+\begin{table} \small
+  \begin{tabular}{l|rrrrrrrrrrr}
+    US & UTC & FTC & Com & Doc & Rev  \\ \hline
+     1 &   - & 0\% & 0\% & 0\% & 0\%  \\
+     2 & 0\% & 0\% & 0\% & 0\% & 0\%  \\
+     3 & 0\% & 0\% & 0\% & 0\% & 0\%  \\
+     4 & 0\% & 0\% & 0\% & 0\% & 0\%  \\
+     5 & 0\% & 0\% & 0\% & 0\% & 0\%  \\ \hline
+       & 0\% & 0\% & 0\% & 0\% & 0\%  \\
+  \end{tabular}
+  \end{table}
+  Qualitatively we achieved our standards only partially:
+  \begin{itemize}
+  \item Unit and functional test coverage -- only satisfactory
+  \item Quality of comments and documentation -- mediocre
+  \item Peer review -- done quickly
+  \end{itemize}
+\end{frame}
+\begin{frame}{Quality} % Matias & Tuomo
+  Used QA practices and tools:
+  \begin{itemize}
+  \item Python standard unittest framework
+  \item Peer review
+  \end{itemize}
+
+  Relevant quality attributes:
+  \begin{itemize}
+  \item Usability
+  \item Reliability
+  \item Extendability
+  \item Performance
+  \end{itemize}
+\end{frame}
+\section{Effort}
+\begin{frame}{Effort} % Matias & Tuomo
+\begin{table} \small
+  \begin{tabular}{l|rrrrrrrrrrr}
+    S &      Sa &      Te &      Tu &      Jo &      Ii &      Ma  \\ \hline
+    0 &  140/50 &   36/35 &   45/35 &   40/35 &   36/35 &   43/35  \\
+    1 &   28/30 &   22/33 &   25/33 &   30/33 &   20/33 &   25/33  \\
+    2 &    0/30 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
+    3 &    0/15 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
+    4 &    0/15 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
+    5 &    0/15 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
+    6 &    0/20 &    0/25 &    0/25 &    0/25 &    0/25 &    0/25  \\ \hline
+      & 168/175 &  58/225 &  70/225 &  70/225 &  56/225 &  68/225  \\
+  \end{tabular}
+  \end{table}
+\end{frame}
+\section{Retros}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  Sprint planning:
+  \begin{itemize}
+  \item backlog items must be clear and simple -teemu
+  \item backlog items have been unclear, but the user guide probably helps
+  \item it would have been better if the PO had created the stories from scratch -matias, tuomo
+  \item the PO should give input when developing the user guide
+  \item we should make sure we reserve enough time for the actual story selection on Monday -matias
+  \end{itemize}
+\end{frame}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  Daily scrums:
+  \begin{itemize}
+  \item we have mostly been doing teamwork, so there has been little new info in the scrums -Matias -Joona -Teemu
+  \item they have been overly long and they have extended due to inexperience.
+  \item people are late.
+  \end{itemize}
+\end{frame}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  Teamwork sessions:
+  \begin{itemize}
+  \item sessions are too long and sometimes people get hungry.
+  \item generally someone has to leave early or comes late
+  \end{itemize}
+\end{frame}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  Tools:
+  \begin{itemize}
+  \item flowdock is good x6
+  \item for remote work we have been using google hangout and skype. Skype has proven to be the most stable.
+  \item for faster communication we are using whatsapp.
+  \item agilefant has a steep learning curve. -Iiro
+  \item people tend to forget to log their time at agilefant.
+  \item hope to use more github during sprints
+  \item floobits ain't very good. Doesn't seem to work in its intended purpose.
+  \item Top 3 tools: 1) GitHub 2) Flowdock 3) Agilefant
+  \item Worst 3 tools: 1) Floobits 2) Six tactics 3) Agilefant
+  \end{itemize}
+\end{frame}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  How teamwork could be improved:
+  \begin{itemize}
+  \item People should be more on time.
+  \item hard to think on improvements on sprint 0
+  \end{itemize}
+\end{frame}
+\end{document}
