@@ -305,6 +305,7 @@ class Neroman():
                   % (cluster_port, cluster_address, experiment_destination, experiment_destination, experiment_destination, experiment_parameters))
         self.experiments[exp_id]['cluster'] = cluster_ID
         self.update_state(exp_id, 'submitted')
+        self.save_database()
         time.sleep(10) #will be unnecessary as soon as daemon works
         self.get_experiment_results(exp_id) #returns the results, should be called from cli
 
