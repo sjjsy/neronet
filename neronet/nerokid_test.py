@@ -4,6 +4,7 @@ import neronet.nerokid
 import os
 import sys
 
+
 class TestSpecifyExperiments(unittest.TestCase):
 
     def test_server_gets_data(self):
@@ -21,11 +22,10 @@ class TestSpecifyExperiments(unittest.TestCase):
         newsock.close()
         self.assertTrue(data)
 
-
     def test_socket_initialize_success(self):
         sys.argv = ["nerokid.py", "localhost", "0"]
         testKid = neronet.nerokid.NeroKid()
         testKid.initialize_socket()
 
 if __name__ == '__main__':
-        unittest.main()
+    unittest.main()

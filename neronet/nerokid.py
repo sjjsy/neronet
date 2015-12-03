@@ -90,9 +90,11 @@ class NeroKid(object):
 
     def launch_child_process(self):
         """Launches received script"""
-        self.process = subprocess.Popen(shlex.split(self.experiment), universal_newlines=True,
-                                        stdout=open('stdout.log', 'w'), stderr=open('stderr.log', 'w'),
-                                        close_fds=True, bufsize=1)
+        self.process = subprocess.Popen(
+            shlex.split(
+                self.experiment), universal_newlines=True, stdout=open(
+                'stdout.log', 'w'), stderr=open(
+                'stderr.log', 'w'), close_fds=True, bufsize=1)
 
     def monitor_process(self):
         """Writes information about the process into a log file on set intervals"""
@@ -122,6 +124,7 @@ class NeroKid(object):
         """Terminate the experiment"""
         self.process.kill()
         self.logger.log('- Experiment PID: %s terminated' % (self.process.pid))
+
 
 def main():
     NeroKid().run()

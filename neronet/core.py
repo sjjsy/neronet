@@ -17,9 +17,11 @@ TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
 
+
 def osrun(cmd):
     print('> %s' % (cmd))
     os.system(cmd)
+
 
 class Logger:
 
@@ -100,7 +102,7 @@ class Daemon(object):
 
     def err(self, message, err=None):
         output = self.log_form('ERR', message)
-        #sys.stdout.write(output)
+        # sys.stdout.write(output)
         if err:
             sys.stderr.write(output)
             print_exc()
@@ -125,7 +127,7 @@ class Daemon(object):
     def get_process(self):
         # Get the pid from the pfpid
         pid = self.rpfpid()
-        if pid == None:
+        if pid is None:
             return None
         try:
             proc = psutil.Process(pid)
@@ -265,7 +267,7 @@ class Daemon(object):
         # The Loop
         r = 0
         self.log('run: listening port %d (to: %s, pid: %d)...' %
-                (self.port, self.tdo, self.pid))
+                 (self.port, self.tdo, self.pid))
         while True:
             out = None
             try:

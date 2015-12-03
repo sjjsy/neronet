@@ -5,30 +5,33 @@ import sys
 
 import neronet.neroman
 
+
 def create_config_parser():
     parser = ArgumentParser()
-    parser.add_argument('--experiment',
-            metavar='folder',
-            nargs=1,
-            help='Creates experiments according to the config file found in'
-            'the folder')
+    parser.add_argument(
+        '--experiment',
+        metavar='folder',
+        nargs=1,
+        help='Creates experiments according to the config file found in'
+        'the folder')
     parser.add_argument('--cluster',
-            metavar=('id', 'address', 'type'),
-            nargs=3,
-            help='Specify a new cluster for computing')
+                        metavar=('id', 'address', 'type'),
+                        nargs=3,
+                        help='Specify a new cluster for computing')
     parser.add_argument('--user',
-            metavar=('name', 'email'),
-            nargs=2,
-            help='Updates user information')
+                        metavar=('name', 'email'),
+                        nargs=2,
+                        help='Updates user information')
     parser.add_argument('--submit',
-            nargs="+",
-            help='Submits an experiment to be run')
+                        nargs="+",
+                        help='Submits an experiment to be run')
     parser.add_argument('--status',
-            metavar='experiment_id',
-            nargs='?',
-            const='all',
-            help='Displays neronet status information')
+                        metavar='experiment_id',
+                        nargs='?',
+                        const='all',
+                        help='Displays neronet status information')
     return parser
+
 
 def main():
     """Parses the command line arguments and starts Neroman
