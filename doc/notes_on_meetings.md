@@ -598,8 +598,8 @@ Leaders:
 
 - S0: Samuel
 - S1: Joona
-- S2: Iiro
-- S3: Tuomo
+- S2: Tuomo
+- S3: Iiro
 - S4: Matias
 - S5: Teemu
 - S6: Samuel
@@ -725,12 +725,11 @@ Agenda:
 - 13.20: Quick discussion of tools (sphinx, unittest, coverage.py?, PEP 8,
   autopep)
 - 14.00: Dividing user stories to subtasks, estimating work, Updating user
-  guide and
-  Defining component interfaces (DBs, configs, nero daemons, individual
-  functions) x6
-- 16.00: Pair programming x4
-- 16.00: EES2 josa
-- 18.30: Sphinx demo, PEP 8, autoPep
+  guide and Defining component interfaces (DBs, configs, nero daemons,
+  individual functions)
+- 16.00: Pair programming (iimatute)
+- 16.00: EES2 (josa)
+- 18.30: Sphinx demo, PEP 8, autopep
 - 18:50: Update agilefant (time tracking)
 
 User guide:
@@ -862,6 +861,7 @@ Agenda:
 ### Scrum
 
 Iiro & Teemu:
+
 - Trying to make tests work
 - Trying to figure out if functions should return exceptions (Iiro: yes)
 - hdf5 requires numpy
@@ -869,6 +869,7 @@ Iiro & Teemu:
 - Will finish specify experiments and start specify clusters
 
 Tuomo & Matias:
+
 - Make neromum code better
 - Made one-to-many connection from mum to kids
 - Documenting
@@ -878,6 +879,7 @@ Tuomo & Matias:
 - Will make communication happen between neromanand neromum
 
 Joona:
+
 - Skype PO to get input to user guide
 - Writing user guide
 - No problems
@@ -899,26 +901,31 @@ Agenda:
 ### Scrum
 
 Samuel:
+
 - Getting familiar with the current daemon library and TCP servers
 - Coding python-daemon
 - Will finish the daemon
 
 Tuomo:
+
 - Socked connection
 - Thought about test cases
 - No problems
 - Will start making tests
 
 Matias:
+
 - Flow from man to kid works
 - No problems
 - Will make tests and documentation
 
 Teemu:
+
 - Specifying clusters
 - Will make experiment status
 
 Joona:
+
 - Finished CLI user guide and fixed syntax errors
 - Will start making artifacts
 - Should be no problems
@@ -940,23 +947,27 @@ Agenda:
 Daily Scrum:
 
 Teemu:
+
 - Made experiment status report to print the experiment's current state
 - Potential problems: Maybe too much to do
 - Will finish experiment status report
 
 Samuel:
+
 - Planned things to do
 - Consulted people
 - Potential problems: A lot to do, still hopeful
 - Will test triton
 
 Tuomo & Matias:
+
 - Made unit tests for submitting experiments
 - Made connection between neroman and neromum work better
 - Problems: Code structuring changes has slowed down development
 - Will make rsync work
 
 Joona:
+
 - Started making Progress report
 - Planned things to do
 - Finished CLI user guide
@@ -1058,15 +1069,22 @@ Joona:
   sprint.
 - Let's design all interfaces at the start of the sprint.
 
-Planning Implementation of Improvements
+Feedback to the sprint leader:
 
-Feedback to the sprint leader
 - Matias: Works fine, synchronisation problems may occur, should read and
   understand the code before the next sprint
 - Iiro: I don't really know what team leader did other than user guide
+
+### Implementation of improvements
+
+- Team review in the beginning of January
+- More whole team reviews of matters and changes
+- Samuel tries to be less of a lead developer
+
 ### Progress review
 
 Notes:
+
 - Product backlog updated in the previous session
 - Check 
 - thet the user stories follow some specified user
@@ -1075,8 +1093,8 @@ Notes:
 - The coach appreciates trying new work practices and tools,
   and evaluating their usefulness in the Sprint retros.
 
-
 The required artifacts:
+
 - Product vision (see Template)
 - Product backlog
 - Sprint goals of the current and completed Sprints
@@ -1090,11 +1108,13 @@ The required artifacts:
 - Learning Diaries
 
 Learning diary:
+
 - The diary must contain a new entry with 
   1) at least three educational observations related to the use of Scrum or other work methods 
   2) a summary of one's main contributions to the project since the previous entry
  
 The progress report slideset:
+
 - project results
   - realization of the 1) Sprint goals, 2) Product backlog items and 3) other results
   - a script and screenshots of the software demo that the team will show in the review
@@ -1159,3 +1179,32 @@ nerocli --status
 nerocli --submit sleep kosh
 nerocli --status
 ```
+### Sprint planning
+
+Sprint goal: *Develop a stable version for end user testing*
+
+### Decisions
+
+- Team leader: Tuomo
+- Scheduling Skype on 2015-12-21 10:00-12:00
+
+## 12-21 60m Scheduling (team)
+
+Participants: team (Skype)
+
+Agenda:
+
+- Choice of regular teamwork sessions during period III
+- Discuss distribution of work and todo for first post-Christmas meeting
+
+## 12-21 60m Scheduling (teamPO)
+
+Participants: team + PO (Skype)
+
+Agenda:
+
+- Scheduling sprint 2 review
+- Scheduling sprint 3 planning
+- Scheduling sprint 3 review
+- Scheduling sprint 4 planning
+- Discussing user testing
