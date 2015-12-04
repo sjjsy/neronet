@@ -935,7 +935,7 @@ Agenda:
 - 14:00 Skype with PO on user guide and backlog (jo)
 - 14:30 Preparing demo (iimatutejo)
 - 17:00 Peer review (iimatu) + Artifacts (tejo)
-- 18:00 Retrospective?
+- 18:00 Retrospective with Matias
 
 Daily Scrum:
 
@@ -964,7 +964,6 @@ Joona:
 - Will skype with PO
 
 ### Retrospective
-
 
 - Improvements since sprint 0
   - Replaced six tactics with Team spirit recap
@@ -1026,7 +1025,6 @@ Joona:
 - Feedback to the sprint leader
   - Matias: Works fine, synchronisation problems may occur, should read and understand the code before the next sprint
 
-
 ### Progress review
 
 Notes:
@@ -1065,6 +1063,15 @@ The progress report slideset:
   - spent and remaining effort per person per Sprint
   - results of the Sprint Retros
 
+## 12-03 300m Thurage
+
+Participants: team (-Matias)
+
+Agenda:
+
+- 12:00 Finishing user stories, artifacts and report
+- 14:00 Peer reviewing all work
+
 ## 12-04 120m Frifury
 
 Participants: team
@@ -1072,7 +1079,7 @@ Participants: team
 Agenda:
 
 - 14:00 Practice presentation of progress report
-- 15:00 Estimating Story points for the new BI:s
+- 15:00 Estimating story points for new BIs
 
 ## 12-04 120m Sprint 1 review & sprint 2 planning
 

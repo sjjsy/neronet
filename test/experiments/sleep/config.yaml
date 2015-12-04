@@ -4,5 +4,5 @@ main_code_file: 'main.py'
 logoutput: 'results'
 parameters:
     count: 10
-    interval: 0.5
+    interval: 2.0
 parameters_format: '{count} {interval}'
