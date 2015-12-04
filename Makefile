@@ -1,10 +1,16 @@
 # Neronet makefile
 #
+# This makefile facilitates compilation of source code documentation and
+# artifact files. The artifacts compilation function requires Samuel's
+# custom `cpdfs` script.
+
 # Variables
 SPHINXOPTS = -d ./doc/build/doctrees ./doc/source
 
+# User commands
 .PHONY: help clean codedoc artifacts
 
+## Functions
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
 	@echo "  codedoc       to generate HTML code documentation"
@@ -29,4 +35,5 @@ artifacts:
 	  ./definition_of_done.pdf \
 	  ./progress_report.pdf \
 	  ./test_session_charter.pdf
+	cd -
 	@echo "Compilation finished."
