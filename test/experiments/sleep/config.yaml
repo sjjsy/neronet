@@ -3,6 +3,6 @@ run_command_prefix: 'python3'
 main_code_file: 'main.py'
 logoutput: 'results'
 parameters:
-    count: 10
+    count: 6
     interval: 2.0
 parameters_format: '{count} {interval}'

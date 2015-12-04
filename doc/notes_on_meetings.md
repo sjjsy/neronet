@@ -965,71 +965,111 @@ Joona:
 
 ### Retrospective
 
-- Improvements since sprint 0
-  - Replaced six tactics with Team spirit recap
-  - Balanced our team's power structure by selecting a team leader for each sprint
-- Practices
-  - Developing user guide first: 
-    - Matias: We shall see
-    - Iiro: I feel we have strayed from the reason we began to implement a user guide
-  - Team leader per sprint 
-    - Matias: Great to not give samuel all responsibility 
-    - Iiro: Might be a bit confusing for the PO and I'm not sure how I'll manage it in the next sprint
-  - Pair programming 
+#### Improvements since sprint 0
+
+- Replaced six tactics with Team spirit recap
+- Balanced our team's power structure by selecting a team leader for each
+  sprint
+- Punctuality: Many have improved, Iiro hasn't. Samuel has also been more
+  absent. Everybody should try to be more punctual or at least inform early
+  about being late.
+- Ambiguity in user stories got less of an issue due to the user guide
+
+#### Practices
+
+- Team leader per sprint
+    - Matias: Great not to give Samuel all responsibility
+    - Iiro: Might be a bit confusing for the PO and I'm not sure how I'll
+      manage it in the next sprint
+    - Tuomo, Teemu, Joona and Samuel like the idea
+- Pair programming
     - Matias: Works fine, a lot of time used for coordination within the pair
-    - Iiro: I feel that our pair programming might have been bit inefficient in development and testing, but it helped a lot in planning and documentation
-  - Sprint planning 
-    - Matias: Doesn't remember
-  - Daily Scrums 
+    - Iiro: I feel that our pair work might have been a bit inefficient in
+      development and testing, but it helped a lot in planning and
+      documentation
+    - Teemu: Difficult to share work. Otherwise works well.
+    - Samuel: In sprint 2 I suggest we program in pairs but do not employ
+      pair programming, work together as they best see fit.
+- Developing user guide first:
+    - Matias: We shall see
+    - Iiro: I feel we have strayed from the reason we began to implement a
+      user guide. Now it feels to be restrictive rather than descriptive.
+    - Joona: I feel that it is very good as it reflects the requirements of
+      the PO.
+    - Samuel: It should be considered as a sort of prototype. It is not useful
+      to hang ourselves to it.
+- Sprint planning
+    - Matias: Difficult to break user stories into useful and small tasks
+    - Iiro: Our stories were already small, they were difficult to break even
+      smaller.
+    - There was slight contradictions in understanding user stories
+    - Integration work took a lot more time than expected
+- Daily Scrums
     - Matias: Worked fine this time, not of much use
     - Iiro: Need to attend more of them...
-  - Teamwork sessions 
-    - Matias: times fine, people are away too often, peer reviews should be distributed evenly throughout the sprint
-- Tools:
-  - user guide
-  - flowdock 
+    - Teemu: They could have been used more in integration and inter pair
+      coordination
+- Teamwork sessions 
+    - Matias: times fine, people are away too often, peer reviews should be
+      distributed evenly throughout the sprint
+    - Iiro: Sometimes too much commotion
+- Peer review
+    - Done in a big hurry, we should reserve more time for it
+    - We should study more about how it should be done
+
+#### Tools
+
+- user guide
+- flowdock
     - Matias: Hasn't used much 
     - Iiro: doesn't like the idea of PO reading the messages
-  - skype 
+- skype
     - Matias: Wasn't used much
-  - whatsapp 
+- whatsapp
     - Matias: reads often
     - Iiro: I don't keep my phones internet always on so it hasn't been optimal
-  - agilefant 
+- agilefant
     - Matias: No complaints
     - Iiro: Still feels bit rigid
-  - team spirit
-  - sphinx 
+- team spirit
+- sphinx
     - Matias: not used
-  - sharelatex
-  - google calendar 
+- sharelatex
+- google calendar
     - Matias: works fine
     - Iiro: Haven't used it much after we scheduled regular times
-  - github 
+- github
     - Matias: works fine
-    - Iiro: The usage still needs some working. There are some files that shouldn't have been pushed to the remote
-  - floobits 
+    - Iiro: The usage still needs some working. There are some files that
+      shouldn't have been pushed to the remote
+- floobits
     - Matias: Hasn't used much
     - Iiro: Good for meetings
-  - Top 3 Tools Matias: not of use
-  - Worst 3 Tools
-- Improvements to Teamwork 
-  - Matias:
-    - people are away too often
-    - peer reviews should be distributed evenly throughout the sprint
-    - The pace is not always the best
-  - Iiro:
-    - Pair programming needs to be streamlined
+- Top 3 Tools Matias: not of use
+- Worst 3 Tools
 
-- Planning Implementation of Improvements
-- Feedback to the sprint leader
-  - Matias: Works fine, synchronisation problems may occur, should read and understand the code before the next sprint
+#### Improvement to teamwork
 
+- people are away too often -Matias
+- peer reviews should be distributed evenly throughout the sprint -Matias
+- The pace is not always the best -Matias
+- Pair programming needs to be streamlined -Iiro
+- Let's have a team review of the whole project at the beginning of next
+  sprint.
+- Let's design all interfaces at the start of the sprint.
+
+Planning Implementation of Improvements
+
+Feedback to the sprint leader
+- Matias: Works fine, synchronisation problems may occur, should read and
+  understand the code before the next sprint
+- Iiro: I don't really know what team leader did other than user guide
 ### Progress review
 
 Notes:
 - Product backlog updated in the previous session
-- Check thet the user stories follow some specified user
+- Check 
+- thet the user stories follow some specified user
   story template
 - Retrospective before project progress review? On wednesday?
 - The coach appreciates trying new work practices and tools,
@@ -1100,7 +1140,22 @@ Agenda:
 
 - Intro -Joona & Samuel
 - Results -Samuel & Joona
-- Demo -Iiro & Teemu
-- Quality -Matias & Tuomo
-- Effort -Matias & Tuomo
+- Demo -Tuomo & Teemu
+- Quality -Matias & Iiro
+- Effort -Matias & Iiro
 - Retros -Joona & Samuel
+
+### Demo
+
+```
+nerocli --status
+nerocli --user "Samuel Marisa" "samuel.marisa@aalto.fi"
+nerocli --cluster local localhost unmanaged
+nerocli --cluster kosh kosh.aalto.fi unmanaged
+vim ~/.neronet/clusters.yaml
+vim ./test/experiments/sleep/config.yaml
+nerocli --experiment ./test/experiments/sleep
+nerocli --status
+nerocli --submit sleep kosh
+nerocli --status
+```
