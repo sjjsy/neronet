@@ -27,9 +27,8 @@ The project repo contains two main branches:
 - [sprint](https://github.com/smarisa/neronet/tree/sprint) -- the work
   in progress of the currently ongoing increment (sprint).
 
-Since we have only just started sprint 1 we have no product code ready in the
-`stable` branch. The `sprint` branch is under active development and will be
-merged to `stable` once the sprint increment is done.
+The `sprint` branch is under active development and will be merged to
+`stable` once the current sprint increment is done.
 
 ## General information
 
@@ -46,6 +45,8 @@ The files listed below offer lots of project related information:
   (architecture, etc.)
 - [Definition of Done](./doc/definition_of_done.pdf) -- a Scrum tool to help
   us ensure high quality
+- [Progress report](./doc/progress_report.pdf) -- our latest project progress
+  overview
 
 ## Notes on related themes
 
