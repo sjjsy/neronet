@@ -1183,6 +1183,24 @@ nerocli --status
 
 Sprint goal: *Develop a stable version for end user testing*
 
+Stories with business value and story points:
+
+- As a user, I want to set my preferences (name, email, default cluster): 5, 2
+- As a user, I want my experiment config attributes to support generation of value combinations: 6, 1
+- As a user, I want my experiment specifications to be able to inherit properties: 6, 2
+- As a user, I want the program enable easy setup: 6, 4
+
+Storyless tasks with effort estimate:
+
+- Setup readthedocs documentation: 3h
+- Sprint retrospective: 6h
+- General discussion, planning and coordination: 20h
+- Sprint planning: 10h
+- Sprint review: 12h
+- Asynchronous daemon system: 20h
+- Developing a robust database system: 4h
+- Full review of the previous increment: 12h
+
 ### Decisions
 
 - Team leader: Tuomo

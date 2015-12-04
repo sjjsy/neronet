@@ -69,7 +69,7 @@
   \begin{tikzpicture}[every node/.append style={align=center}]
     \begin{scope}[every path/.append style={opacity=0.6}] % [blend group = soft light]
       \fill[blue]   ( 90:1.8) circle (2.3);
-      \fill[red] (210:1.8) circle (2.3);
+      \fill[red]    (210:1.8) circle (2.3);
       \fill[green]  (330:1.8) circle (2.3);
     \end{scope}
     \node at ( 90:2.8)                {planning \\ \& analysis};
@@ -139,95 +139,6 @@
     fashion
   \end{itemize}
 \end{frame}
-% \begin{columns}
-% \column{0.5\textwidth}
-% This is a text in first column.
-% $$E=mc^2$$
-% \begin{itemize}
-% \item First item
-% \item Second item
-% \end{itemize}
-% \column{0.5\textwidth}
-% This text will be in the second column
-% and on a second tought this is a nice looking
-% layout in some cases.
-% \end{columns}
-% \begin{frame}{\texttt{neroman}}
-%   \begin{figure}
-%   \begin{tikzpicture}[sibling distance=8em,
-%     every node/.style = {rounded corners, draw, align=center,
-%       top color=white, bottom color=blue!20}]]
-%     \node {neroman}
-%       child{node{specification}}
-%       child{node{monitoring}
-%         child{node{logs}}
-%         child{node{files}}
-%         child{node{variables}}
-%         child{node{autotermination}}
-%       }
-%       child{node{analysis}};
-%   \end{tikzpicture}
-%   \end{figure}
-% \end{frame}
-% \begin{frame}{\texttt{neroman}}
-%   \begin{figure}
-%   \begin{tikzpicture}
-%   \tikzset{edge from parent/.style={draw,edge from parent path={(\tikzparentnode.south)-- +(0,-8pt) -| (\tikzchildnode)}}}
-%   \Tree [.neroman
-%     [.Planning Specification ]
-%     [.Distribution Jobman ]
-%     [.Communication Specification ] ]
-%   \end{tikzpicture}
-%   \end{figure}
-% \end{frame}
-% \begin{frame}{\texttt{neroman}}
-%   \begin{figure}
-%   \tikzstyle{every node}=[draw=black,thick,anchor=west]
-%   \tikzstyle{selected}=[draw=red,fill=red!30]
-%   \begin{tikzpicture}[%
-%   grow via three points={one child at (0.5,-0.7) and
-%   two children at (0.5,-0.7) and (0.5,-1.4)},
-%   edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
-%   \node {texmf}
-%     child { node {doc}}   
-%     child { node [selected] {tex}
-%       child { node {generic}}
-%       child { node {plain}}
-%     }
-%     child [missing] {}
-%     child [missing] {}
-%     child { node {texdoc}};
-%   \node at {foo}
-%     child { node {bar}};
-%   \end{tikzpicture}
-%   \end{figure}
-% \end{frame}
-% \begin{frame}{Job management}
-%   \tikzstyle{format} = [draw, thin, fill=blue!20]
-%   \tikzstyle{medium} = [ellipse, draw, thin, fill=green!20, minimum height=2.5em]
-%   \begin{figure}
-%   \begin{tikzpicture}[node distance=3cm, auto,>=latex', thick]
-%       % We need to set at bounding box first. Otherwise the diagram
-%       % will change position for each frame.
-%       \path[use as bounding box] (-1,0) rectangle (10,-2);
-%       \path[->]<1-> node[format] (tex) {.tex file};
-%       \path[->]<2-> node[format, right of=tex] (dvi) {.dvi file}
-%                     (tex) edge node {\TeX} (dvi);
-%       \path[->]<3-> node[format, right of=dvi] (ps) {.ps file}
-%                     node[medium, below of=dvi] (screen) {screen}
-%                     (dvi) edge node {dvips} (ps)
-%                           edge node[swap] {xdvi} (screen);
-%       \path[->]<4-> node[format, right of=ps] (pdf) {.pdf file}
-%                     node[medium, below of=ps] (print) {printer}
-%                     (ps) edge node {ps2pdf} (pdf)
-%                          edge node[swap] {gs} (screen)
-%                          edge (print);
-%       \path[->]<5-> (pdf) edge (screen)
-%                           edge (print);
-%       \path[->, draw]<6-> (tex) -- +(0,1) -| node[near start] {pdf\TeX} (pdf);
-%   \end{tikzpicture}
-%   \end{figure}
-% \end{frame}
 \section{Components}
 \begin{frame}{Components}
   \begin{itemize}

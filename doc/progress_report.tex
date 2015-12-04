@@ -26,8 +26,8 @@
 \end{frame}
 \section{Results} % Samuel & Joona
 \begin{frame}{Results}{Sprint 0} \bgset{gfx/neural3__bgmod.jpg}
-  Goal: Team building and preparing for sprint 1 \pause \Done{}
-  
+  Goal: \emph{Team building and preparing for sprint 1} \pause \Done{}
+
   \pause Product Backlog Items: \emph{None}
 
   \pause Sprint 0 took a lot of effort from us since the project topic was very challenging to dive into. Also none of us had done this course before. Interviews with Jelena \& Simo helped us to understand the project.
@@ -46,7 +46,7 @@
   \pause \item US5: As a user, I want an experiment status report so that I can review experiment status details. \pause \Done{}
   \end{itemize}
 
-  \pause Just a prototype, a lot of work to do before user testing.
+  \pause Just a prototype, not ready for release to users.
 \end{frame}
 \section{Demo}
 \begin{frame}{Demo} % Tuomo & Teemu
@@ -69,7 +69,7 @@
     documented, peer reviewed
   \item Sprint level: BI:s are \Done{}, increment is tested and reviewed,
     sprint goal is achieved
-  \item Updates to DoD:
+  \pause \item Updates to DoD:
     \begin{itemize}
     \item We replaced \emph{unit test coverage 90\%} with \emph{unit tests
       are written where applicable} -- the old metric was not useful for all
@@ -79,18 +79,29 @@
   \end{itemize}
 \end{frame}
 \begin{frame}{Quality} % Matias & Iiro
-\begin{table} \small
+  Used QA practices and tools:
+  \begin{itemize}
+  \item Commenting \& documentation -- forces to rethink from another
+    perspective, facilitates peer review
+  \item Python standard unittest framework -- white-box test automation
+  \item Functional testing -- manual black-box testing based on specs
+  \item Peer review -- quality assurance
+  \end{itemize}
+\end{frame}
+\begin{frame}{Quality} % Matias & Iiro
+  Performance in quality assurance practices peer-graded with scale 0-3:
+  \begin{table} \small
   \begin{tabular}{l|rrrrrrrrrrr}
-    US &   UTC &   FTC &   Com &   Doc &   Rev  \\ \hline
-     1 &     3 &     3 &     3 &     3 &     3  \\
-     2 &     2 &     2 &     3 &     2 &     3  \\
-     3 &     3 &     3 &     3 &     3 &     3  \\
-     4 &     3 &     3 &     3 &     3 &     1  \\
-     5 &     1 &     3 &     2 &     1 &     1  \\ \hline
-       &     2 &     3 &     3 &     2 &     2
+    US &   UT &   FT &  Com &  Doc & Peer  \\ \hline
+     1 &    3 &    3 &    3 &    3 &    3  \\
+     2 &    2 &    2 &    3 &    2 &    3  \\
+     3 &    3 &    3 &    3 &    3 &    3  \\
+     4 &    3 &    3 &    3 &    3 &    1  \\
+     5 &    1 &    3 &    2 &    1 &    1  \\ \hline
+       &    2 &    3 &    3 &    2 &    2
   \end{tabular}
   \end{table}
-  Qualitatively we achieved our standards only partially:
+  \pause Qualitatively we achieved our standards only partially:
   \begin{itemize}
   \item Unit and functional test coverage -- good
   \item Quality of comments and documentation -- good
@@ -98,44 +109,43 @@
   \end{itemize}
 \end{frame}
 \begin{frame}{Quality} % Matias & Iiro
-  Used QA practices and tools:
-  \begin{itemize}
-  \item Commenting \& documentation -- forces to rethink from another
-    perspective, facilitates peer review
-  \item Python standard unittest framework -- test automation
-  \item Peer review -- quality assurance
-  \end{itemize}
-\end{frame}
-\begin{frame}{Quality} % Matias & Iiro
   Relevant quality attributes:
   \begin{itemize}
-  \item Usability -- We developed a basic user guide in the first sprint
+  \pause \item \alert{Usability} -- We developed a basic user guide in the first sprint
     which will help even newbies understand our software $\rightarrow$ The
     usability of our software should be good
-  \item Reliability -- Unfortunately, we didn't have as much time to test our
+  \pause \item \alert{Reliability} -- Unfortunately, we didn't have as much time to test our
     software in the first sprint as we'd hoped. We will make up for this by
     using more of our second sprint for testing and less for making new
     features
-  \item Extendability -- At the moment our software's extendability is ok,
+  \pause \item \alert{Extendability} -- At the moment our software's extendability is ok,
     difficult to say anything about the final product
-  \item Performance -- At the moment, our software's performance is ok
+  \pause \item \alert{Performance} -- At the moment, our software's performance is ok
   \end{itemize}
 \end{frame}
 \section{Effort}
 \begin{frame}{Effort} % Matias & Iiro
+Spent and budgeted effort in hours by team member and sprint:
 \begin{table} \small
   \begin{tabular}{l|rrrrrrrrrrr}
-    S &      Sa &      Te &      Tu &      Jo &      Ii &      Ma  \\ \hline
+    S &  Samuel &   Teemu &   Tuomo &   Joona &    Iiro &  Matias  \\ \hline
     0 &  140/50 &   36/35 &   45/35 &   40/35 &   36/35 &   43/35  \\
-    1 &   48/30 &   36/33 &   39/33 &   45/33 &   31/33 &   36/33  \\
+    1 &   51/30 &   37/33 &   42/33 &   46/33 &   32/33 &   37/33  \\
     2 &    0/30 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
     3 &    0/15 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
     4 &    0/15 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
     5 &    0/15 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
     6 &    0/20 &    0/25 &    0/25 &    0/25 &    0/25 &    0/25  \\ \hline
-      & 188/175 &  72/225 &  84/225 &  85/225 &  67/225 &  79/225  \\
+      & 191/175 &  73/225 &  87/225 &  86/225 &  68/225 &  80/225  \\
   \end{tabular}
   \end{table}
+  \pause \begin{itemize}
+  \item Our team members were very inexperienced
+  \item The project's problem domain was challenging to understand
+  \item Studying existing products and technologies took a lot of time
+  \item The scrum master has been forced to spend a lot of effort also as
+    team leader as well as lead developer.
+  \end{itemize}
 \end{frame}
 \section{Retros} \bgset{gfx/neural3__bgmod.jpg}
 \begin{frame}{Retros: Sprint 0} % Joona & Samuel
