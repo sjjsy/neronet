@@ -20,12 +20,13 @@ codedoc:
 
 artifacts:
 	@echo "Compiling all updated artifacts."
-	cpdfs ./doc/*.md ./doc/*.tex ./doc/diaries/*.tex
-	zip ./doc/required_artifacts.zip \
-	  ./doc/product_vision.pdf \
-	  ./doc/process_overview.pdf \
-	  ./doc/technical_overview.pdf \
-	  ./doc/definition_of_done.pdf \
-	  ./doc/progress_report.pdf \
-	  ./doc/test_session_charter.pdf
+	cd ./doc
+	cpdfs ./*.md ./*.tex
+	zip ./required_artifacts.zip \
+	  ./product_vision.pdf \
+	  ./process_overview.pdf \
+	  ./technical_overview.pdf \
+	  ./definition_of_done.pdf \
+	  ./progress_report.pdf \
+	  ./test_session_charter.pdf
 	@echo "Compilation finished."
