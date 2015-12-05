@@ -14,16 +14,15 @@
 \usepackage{listings} % provides source code listing cabability
 \usepackage{enumitem} % enhanced customization for itemize, enumerate and description environments (\setlist)
 %% Variables
-\title{Learning diary}
-\author{\student}
+\title{CSE-C2610, Learning diary, \lastname{}}
+\author{\firstname{} \lastname{}}
 \date{\today{}}
-\makeatletter
 %% Headers & Footers
 \setkomafont{pagehead}{\normalfont\small} % normalsize, small, footnotesize, scriptsize, tiny
 \setkomafont{pagefoot}{\normalfont\small}
 \chead{}
-\ihead{\@title}
-\ohead{\@author / Team 11 / \@date}
+\ihead{CSE-C2610, Learning diary}
+\ohead{\lastname{} ~ \studentid{} ~ Team 11, ~ \today{}}
 \cfoot{\thepage{} (\pageref{LastPage})}
 \ifoot{}
 \ofoot{}
@@ -36,7 +35,7 @@
   pdfsubject = {\@title},
   pdfcreator = {LaTeX},
   pdfproducer = {\@author},
-  pdfkeywords = {diary} {software development} {scrum},
+  pdfkeywords = {learning diary} {software development} {scrum} {neronet},
   pdfnewwindow = true, % links in new window
   colorlinks = true, % false: boxed links; true: colored links
   linkcolor = MidnightBlue, % color of internal links
@@ -53,5 +52,23 @@
 \DeclareUnicodeCharacter{B0}{\textdegree}
 \setlist{nosep} % eliminate vertical spacing between itemize elements
 %% The Document
+\renewcommand*{\chapterpagestyle}{scrheadings}
 \pagestyle{scrheadings}
 \begin{document}
+%% The cover page
+\begin{titlepage}
+\includegraphics[height=4cm]{../gfx/logo_aalto.png}
+\vspace*{3cm}
+\begin{center}
+\large CSE-C2610 \\ Software Project \\[.6cm]
+\textbf{\Large Learning diary} \\[0.4cm]
+\huge \lastname{} \\[1cm]
+\large \firstname{} \lastname{} ~ \studentid{} \\
+\large Neronet ~ Team 11 \\[0.3cm]
+\large \today{} \\
+\end{center}
+\end{titlepage}
+%% The table of contents page
+\tableofcontents
+%% Main content part
+\newpage

@@ -11,6 +11,13 @@ for effective inspection. Learning by careful inspection in turn is a
 prerequisite for productive adaptation. Adaptation is how the system improves
 itself in order to employ its resources more productively.
 
+Scrum involves a scheme of several practices and artifacts which incorporate
+its philosophy into a practical procedure. Most of the important artifacts
+and practices are discussed in the links below.
+
+According to some, Scrum is lightweight, simple to understand but difficult
+to master.
+
 Resources:
 
 - [Scrum Guide](http://www.scrumguides.org/scrum-guide.html)

@@ -251,7 +251,7 @@ Notes:
 - parameter combinations can be numerous
 - SSH can be slow + file system unreliable + can crash unexpectedly
 - http could be a better protocol
-- SSH-Stdout-payload-scp
+- SSH-stdout-payload-scp
 - Refresh/real time data
 - Neroman could be http server application
 - Possible implementing order nerokid-neromum-neroman
