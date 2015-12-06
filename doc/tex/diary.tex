@@ -17,6 +17,11 @@
 \title{CSE-C2610, Learning diary, \lastname{}}
 \author{\firstname{} \lastname{}}
 \date{\today{}}
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
 %% Headers & Footers
 \setkomafont{pagehead}{\normalfont\small} % normalsize, small, footnotesize, scriptsize, tiny
 \setkomafont{pagefoot}{\normalfont\small}
@@ -30,12 +35,12 @@
 \hypersetup{
   unicode = true, % non-Latin characters in Acrobat?s bookmarks
   pdfstartview = {FitH}, % fits the width of the page to the window
-  pdftitle = {\@title},
-  pdfauthor = {\@author},
-  pdfsubject = {\@title},
+  pdftitle = {\thetitle{}},
+  pdfauthor = {\theauthor{}},
+  pdfsubject = {\thetitle{}},
   pdfcreator = {LaTeX},
-  pdfproducer = {\@author},
-  pdfkeywords = {learning diary} {software development} {scrum} {neronet},
+  pdfproducer = {\theauthor{}},
+  pdfkeywords = {learning diary} {software development} {scrum} {neronet} {\theauthor{}},
   pdfnewwindow = true, % links in new window
   colorlinks = true, % false: boxed links; true: colored links
   linkcolor = MidnightBlue, % color of internal links
@@ -61,9 +66,9 @@
 \vspace*{3cm}
 \begin{center}
 \large CSE-C2610 \\ Software Project \\[.6cm]
-\textbf{\Large Learning diary} \\[0.4cm]
+\textbf{\Large Learning Diary} \\[0.4cm]
 \huge \lastname{} \\[1cm]
-\large \firstname{} \lastname{} ~ \studentid{} \\
+\large \theauthor{} ~ \studentid{} \\
 \large Neronet ~ Team 11 \\[0.3cm]
 \large \today{} \\
 \end{center}
