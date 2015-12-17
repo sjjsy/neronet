@@ -1206,6 +1206,22 @@ Storyless tasks with effort estimate:
 - Team leader: Tuomo
 - Scheduling Skype on 2015-12-21 10:00-12:00
 
+## 12-16 180m Functional architecture
+
+Participants: Samuel + ?
+
+Agenda:
+
+- Study functional architecture
+- Plan the work
+- Do the work
+
+### Modelling methods
+
+- Use cases
+- Domain model
+- Functional architecture
+
 ## 12-21 60m Scheduling (team)
 
 Participants: team (Skype)
@@ -1226,3 +1242,12 @@ Agenda:
 - Scheduling sprint 3 review
 - Scheduling sprint 4 planning
 - Discussing user testing
+
+## 01-XX 60m Full review
+
+### Could we use these?
+
+- Minimum Viable Product
+- The [MoSCoW method](https://en.wikipedia.org/wiki/MoSCoW_method)
+- Value Proposition Canvas
+- https://www.zenhub.io/
