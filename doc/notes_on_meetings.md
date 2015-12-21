@@ -1222,7 +1222,7 @@ Agenda:
 - Domain model
 - Functional architecture
 
-## 12-21 60m Scheduling (team)
+## 12-21 30m Scheduling (team)
 
 Participants: team (Skype)
 
@@ -1231,16 +1231,16 @@ Agenda:
 - Choice of regular teamwork sessions during period III
 - Discuss distribution of work and todo for first post-Christmas meeting
 
-## 12-21 60m Scheduling (teamPO)
+## 12-21 30m Scheduling (teamPO)
 
 Participants: team + PO (Skype)
 
 Agenda:
 
-- Scheduling sprint 2 review
-- Scheduling sprint 3 planning
-- Scheduling sprint 3 review
-- Scheduling sprint 4 planning
+- Scheduling sprint 2 review, 11.1.
+- Scheduling sprint 3 planning, 11.1.
+- Scheduling sprint 3 review, 1.2.
+- Scheduling sprint 4 planning, 1.2.
 - Discussing user testing
 
 ## 01-XX 60m Full review
