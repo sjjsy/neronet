@@ -1237,10 +1237,9 @@ Participants: team + PO (Skype)
 
 Agenda:
 
-- Scheduling sprint 2 review, 11.1.
-- Scheduling sprint 3 planning, 11.1.
-- Scheduling sprint 3 review, 1.2.
-- Scheduling sprint 4 planning, 1.2.
+- Sprint change 2-3: 2016-01-13 19:00-20:00 (Skype)
+- Sprint change 3-4: 2016-02-01 14:00-16:00
+- Progress review 2 2016-02-29 - 2016-03-02
 - Discussing user testing
 
 ## 01-XX 60m Full review
