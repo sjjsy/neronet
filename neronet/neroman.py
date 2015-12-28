@@ -32,21 +32,7 @@ import yaml
 import pathlib
 
 import neronet.core
-
-CONFIG_FILENAME = 'config.yaml'
-
-
-class FormatError(Exception):
-
-    """ Exception raised when experiment config file is poorly formatted
-    """
-
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return self.value
-
+import neronet.config_parser
 
 class Neroman:
 
@@ -74,6 +60,7 @@ class Neroman:
         self.database = database
         self.clusters_file = clusters_file
         self.preferences_file = preferences_file
+        self.config_parser = config_parser.ConfigParser()
         self.clusters = {}
         self.experiments = {}
         self.preferences = {}
@@ -167,33 +154,14 @@ class Neroman:
                 doesn't exists
             FormatError: If the config file is badly formated
         """
-        if not os.path.isdir(folder):
-            raise FileNotFoundError('No such folder')
 
-        file_path = os.path.join(folder, CONFIG_FILENAME)
-        if not os.path.exists(file_path):
-            raise FileNotFoundError('No config file in folder')
 
-        if os.stat(file_path).st_size == 0:
-            raise FormatError('Empty config file')
-
-        with open(file_path, 'r') as file:
-            experiment_data = yaml.load(file.read())
-        experiment = {}
-        for field in ['run_command_prefix', 'main_code_file',
-                      'parameters', 'parameters_format', 'logoutput']:
-            if field not in experiment_data:
-                raise FormatError('No %s field in experiment' % field)
-            experiment[field] = experiment_data[field]
-        experiment['cluster'] = None
-        experiment['time_created'] = self._time_now()
-        experiment['state'] = [['defined', experiment['time_created']]]
-        experiment['time_modified'] = experiment['time_created']
-        experiment['path'] = os.path.abspath(folder)
-        if 'experiment_id' not in experiment_data:
-            raise FormatError('No experiment_id field in experiment')
-        else:
-            self.experiments[experiment_data['experiment_id']] = experiment
+        experiments = self.config_parser.parse_experiments(folder, file_path)
+        for experiment_id in experiments:
+            if experiment_id in self.experiments:
+                raise IOError("Experiment named %s already in the database" \
+                                % experiment_id)
+            else: self.experiments[experiment_id] = experiments[experiment_id]
         self.save_database()
 
     def _time_now(self):

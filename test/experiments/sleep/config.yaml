@@ -1,4 +1,4 @@
-experiment_id: 'sleep'
+collection: 'sleep'
 run_command_prefix: 'python3'
 main_code_file: 'main.py'
 logoutput: 'results'
@@ -6,3 +6,19 @@ parameters:
     count: 6
     interval: 2.0
 parameters_format: '{count} {interval}'
+sleep1:
+    parameters:
+        count: 4
+        interval: 3
+    sleep2:
+        parameters_format: '{interval} {count}'
+sleep3:
+    sleep5:
+        logoutput: 'output'
+sleep4:
+    run_command_prefix: 'python'
+    sleep6:
+        sleep7:
+            parameters:
+                count: 7
+                interval: 1
