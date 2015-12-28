@@ -95,7 +95,9 @@ class Neroman:
             with open(preferences, 'r') as f:
                 self.preferences = yaml.load(f.read())
         if not self.preferences:
-            self.preferences = {}
+            self.specify_user("","")
+        if 'default_cluster' not in self.preferences:
+            self.preferences['default_cluster'] = ""
 
         if not os.path.exists(clusters):
             with open(clusters, 'w') as f:
@@ -214,10 +216,11 @@ class Neroman:
         pstr = pformat.format(**params)
         return ' '.join([rcmd, code_file, pstr])
 
-    def specify_user(self, name, email):
+    def specify_user(self, name, email, default_cluster = ""):
         """Update user data"""
         self.preferences['name'] = name
         self.preferences['email'] = email
+        self.preferences['default_cluster'] = default_cluster
         with open(self.preferences_file, 'w') as f:
             f.write(yaml.dump(self.preferences, default_flow_style=False))
 
@@ -320,7 +323,7 @@ class Neroman:
              cluster_address,
              remote_dir))
 
-    def submit(self, exp_id, cluster_ID):
+    def submit(self, exp_id, cluster_ID = self.preferences['default_cluster']):
         """Main loop of neroman.
 
         Start the experiment in the cluster using ssh.
@@ -332,6 +335,9 @@ class Neroman:
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
         """
+        if cluster_ID not in self.clusters['clusters']:
+            raise FormatError('The given cluster ID or default cluster is not valid')
+        
         remote_dir = pathlib.Path('/tmp/neronet-%d' % (time.time()))
         experiment_destination = self.experiments[exp_id][
             'path'] + "/" + self.experiments[exp_id]['logoutput']
@@ -355,7 +361,6 @@ class Neroman:
              remote_dir,
              remote_dir,
              experiment_parameters))
-        self.experiments[exp_id]['cluster'] = cluster_ID
         self.update_state(exp_id, 'submitted')
         self.save_database()
         time.sleep(2)  # will be unnecessary as soon as daemon works
