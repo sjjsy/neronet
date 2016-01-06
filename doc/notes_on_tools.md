@@ -305,7 +305,7 @@ Resources
 
 ### Floobits & Sublime
 
-- Provides realtime simultaneous file editing collaboration cababilities.
+- Provides realtime simultaneous file editing collaboration cababilitie.s
 - Can be setup with a repo such that changes are easy to reflect back in
   GitHub.
 

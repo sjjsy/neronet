@@ -1208,7 +1208,7 @@ Storyless tasks with effort estimate:
 
 ## 12-16 180m Functional architecture
 
-Participants: Samuel + ?
+Participants: Samuel?
 
 Agenda:
 
@@ -1242,7 +1242,35 @@ Agenda:
 - Progress review 2 2016-02-29 - 2016-03-02
 - Discussing user testing
 
-## 01-XX 60m Full review
+## 12-28 360m Full review
+
+Participants: team - Tuomo (came 1 hour late)
+
+Agenda:
+
+- Full review (code, backlog)
+- Planning the refactoring work
+- Planning the new user stories
+
+### Planning work
+
+#### Iiro & Joona
+
+- Goal: As a user, I want my experiment config attributes to support generation of value combinations: 6, 1
+- Goal: As a user, I want my experiment specifications to be able to inherit properties: 6, 2
+- Support for all status report variants (defined, submitted, enqueued,
+  finished, terminated)
+- Goal: As a user, I want to set my preferences (name, email, default cluster): 5, 2
+
+#### Matias & Teemu
+
+- Setup readthedocs documentation: http://neronet.readthedocs.org/en/latest/
+- Goal: As a user, I want the program enable easy setup: 6, 4
+
+#### Tuomo & Samuel
+
+- Asynchronous daemon system (multimum & multikid support)
+- Developing a robust database system
 
 ### Could we use these?
 
@@ -1250,3 +1278,45 @@ Agenda:
 - The [MoSCoW method](https://en.wikipedia.org/wiki/MoSCoW_method)
 - Value Proposition Canvas
 - https://www.zenhub.io/
+
+## 01-06 360m Wedshop (team)
+
+Participants: team (-Teemu)
+
+Agenda:
+
+- Daily scrum 15min
+- Developement 5h
+- Integration 1h 45min
+
+### Daily scrum
+
+Matias:
+
+- Matias doesn't thinks working over skype does not work
+- Doesn't have linux and cannot install it to his computer, making his testing harder.
+- Starts to develop easy-to-use install
+
+Samuel:
+
+- Communicated with the team about this sprints developement
+- Started to do daemon
+- Didn't have time to finish daemon
+- continues with daemon
+
+Joona:
+
+- Had skype with Iiro
+- started to do experiment inheritance
+- no linux so can't test well.
+- limited Python knowledge
+- continues with "set my preferences" and unit tests
+
+Tuomo:
+
+- Didn't do anything because there was no prerequrements were met
+- got bored
+
+Iiro and Teemu didn't attend.
+
+## 01-27 120m EES: Testing (Tu)

@@ -54,7 +54,6 @@ class Neromum(object):
         self.open_incoming_connections.append(self.sock)
 
     def save_to_file(self, data, file):
-
         pass
 
     def start_nerokid(self):
@@ -77,11 +76,11 @@ class Neromum(object):
     def ask_slurm_for_free_node(self):
         pass
 
-    def parse_nerokid_data(self):
+    def parse_nerokid_data(self, data):
         """Extract information from nerokid's data updates."""
-        if self.data:
-            self.data = pickle.loads(self.data)
-            if isinstance(self.data, dict):
+        if data:
+            data = pickle.loads(data)
+            if isinstance(data, dict):
                 for log_path, new_text in self.data['log_output'].items():
                     self.logger.log('New output in %s:' % (log_path))
                     for ln in new_text.split('\n'):
@@ -101,12 +100,14 @@ class Neromum(object):
                 self.open_incoming_connections, [], [])
             for s in inRdy:
                 if s == self.sock:
+                    self.logger.log('Hämärää!')
                     client, address = s.accept()
                     self.open_incoming_connections.append(client)
                 else:
-                    self.data = s.recv(4096)
-                    if self.data:
-                        self.parse_nerokid_data()
+                    self.logger.log('Normisettiä!')
+                    data = s.recv(4096)
+                    if data:
+                        self.parse_nerokid_data(data)
                     else:
                         s.close()
                         self.open_incoming_connections.remove(s)

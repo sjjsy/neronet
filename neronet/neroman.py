@@ -221,27 +221,9 @@ class Neroman:
         with open(self.preferences_file, 'w') as f:
             f.write(yaml.dump(self.preferences, default_flow_style=False))
 
-    def get_experiment_results(self, experiment_id, remote_dir, local_dir):
-        """Get the experiment results from neromum
-
-        Args:
-            experiment_id (str): the experiment ID.
-            remote_dir (str): the file path to results folder on the remote
-                machine.
-            local_dir (str): the file path to results folder on the local
-                machine.
-        """
-        experiment = self.experiments[experiment_id]
-        cluster_ID = experiment['cluster']
-        cluster_port = self.clusters['clusters'][cluster_ID]['port']
-        cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
-        neronet.core.osrun(
-            'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
-            % (cluster_port, cluster_address,
-                remote_dir, local_dir))
-
     def status(self, arg):
         """Display Neroman data on into stdstream"""
+        
         if arg != 'all':
             if arg in self.experiments:
                 experiment = self.experiments[arg]
@@ -264,6 +246,7 @@ class Neroman:
                 return
             else:
                 raise IOError('No experiment named %s' % arg)
+        
         print("================Neroman=================")
         print("\n================Clusters================")
         if not self.clusters['clusters']:
@@ -299,7 +282,7 @@ class Neroman:
             cluster_port (int): ssh port number of the cluster.
         """
         tmp_dir = pathlib.Path('/tmp/neronet-tmp')
-        # rsync the neronet files to tmp
+        # rsync the neronet source files to tmp
         neronet.core.osrun(
             'rsync -az "%s" "%s"' %
             (neronet_root /
@@ -313,6 +296,7 @@ class Neroman:
         neronet.core.osrun(
             'rsync -az "%s/" "%s"' %
             (experiment_folder, tmp_dir))
+        # rsync tmp dir contents to the remote node
         neronet.core.osrun(
             'rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
             (cluster_port,
@@ -320,29 +304,45 @@ class Neroman:
              cluster_address,
              remote_dir))
 
-    def submit(self, exp_id, cluster_ID):
-        """Main loop of neroman.
-
-        Start the experiment in the cluster using ssh.
+    def get_experiment_results(self, experiment_id, remote_dir, local_dir):
+        """Get the experiment results from neromum
 
         Args:
-            experiment_folder (str) : the file path to experiment folder in local machine.
+            experiment_id (str): the experiment ID.
+            remote_dir (str): the file path to results folder on the remote
+                machine.
+            local_dir (str): the file path to results folder on the local
+                machine.
+        """
+        experiment = self.experiments[experiment_id]
+        cluster_ID = experiment['cluster']
+        cluster_port = self.clusters['clusters'][cluster_ID]['port']
+        cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
+        neronet.core.osrun(
+            'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
+            % (cluster_port, cluster_address,
+                remote_dir, local_dir))
+
+    def submit(self, exp_id, cluster_ID):
+        """Submit and start the experiment in the cluster using ssh.
+
+        Args:
+            experiment_dir (str) : the file path to experiment folder in local machine.
             experiment_destination (str) : the file path to experiment folder on the remote cluster.
             experiment (str) : the name of the experiment.
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
         """
+        # TODO: Verify exp_id and cluster_ID
         remote_dir = pathlib.Path('/tmp/neronet-%d' % (time.time()))
-        experiment_destination = self.experiments[exp_id][
-            'path'] + "/" + self.experiments[exp_id]['logoutput']
-        experiment_folder = self.experiments[exp_id]["path"]
-        #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
-        experiment_parameters = self._create_experiment_callstring(exp_id)
+        experiment_dir = self.experiments[exp_id]['path']
+        experiment_results_dir = experiment_dir + "/" + self.experiments[exp_id]['logoutput']
+        experiment_callstring = self._create_experiment_callstring(exp_id)
         self.experiments[exp_id]['cluster'] = cluster_ID
-        cluster_port = self.clusters['clusters'][cluster_ID]["port"]
-        cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
+        cluster_port = self.clusters['clusters'][cluster_ID]['port']
+        cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
         self.send_files(
-            experiment_folder,
+            experiment_dir,
             remote_dir,
             cluster_address,
             cluster_port)
@@ -354,10 +354,9 @@ class Neroman:
              remote_dir,
              remote_dir,
              remote_dir,
-             experiment_parameters))
-        self.experiments[exp_id]['cluster'] = cluster_ID
+             experiment_callstring))
         self.update_state(exp_id, 'submitted')
         self.save_database()
         time.sleep(2)  # will be unnecessary as soon as daemon works
         # returns the results, should be called from cli
-        self.get_experiment_results(exp_id, remote_dir, experiment_destination)
+        self.get_experiment_results(exp_id, remote_dir, experiment_results_dir)

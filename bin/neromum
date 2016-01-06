@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from sys import path
-print(path)
+# print(path)
 from neronet.neromum import main
 if __name__ == '__main__':
     main()

@@ -1,10 +1,35 @@
-# dmntest.py
+# nerotest.py
 
-#from .core import Daemon
+import socketserver
 
-#class TestDmn(Daemon):
-#    pass
+class Handler(socketserver.BaseRequestHandler):
+    """
+    The TCP RequestHandler class for our server.
 
-#def main():
-#    td = TestDmn('testd')
-#    td.start()
+    It is instantiated once per connection to the server, and must
+    override the handle() method to implement communication to the
+    client.
+    """
+
+    def setup(self):
+        self.mcnt = 0
+
+    def handle(self):
+        # self.request is the TCP socket connected to the client
+        self.data = self.request.recv(1024).strip()
+        print("%s wrote [%d]:" % (self.client_address[0], self.mcnt))
+        print(self.data)
+        # just send back the same data, but upper-cased
+        self.request.sendall(self.data.upper())
+
+    def service_actions(self):
+        print('Service is nice.')
+
+
+def main():
+    HOST, PORT = 'localhost', 9999
+    # Create the server, binding to localhost on port 9999
+    server = socketserver.TCPServer((HOST, PORT), Handler)
+    # Activate the server; this will keep running until you
+    # interrupt the program with Ctrl-C
+    server.serve_forever()

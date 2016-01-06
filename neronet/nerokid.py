@@ -57,7 +57,6 @@ class NeroKid(object):
     Experiment as the 3rd
     Experiment parameters from 4th argument onwards
     """
-
     def __init__(self):
         self.sock = None
         self.process = None
@@ -94,10 +93,11 @@ class NeroKid(object):
     def launch_child_process(self):
         """Launches received script"""
         self.process = subprocess.Popen(
-            shlex.split(
-                self.experiment), universal_newlines=True, stdout=open(
-                'stdout.log', 'w'), stderr=open(
-                'stderr.log', 'w'), close_fds=True, bufsize=1)
+            shlex.split(self.experiment),
+            universal_newlines=True,
+            stdout=open('stdout.log', 'w'),
+            stderr=open('stderr.log', 'w'),
+            close_fds=True, bufsize=1)
 
     def monitor_process(self):
         """Writes information about the process into a log file on set intervals"""
