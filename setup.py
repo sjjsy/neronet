@@ -44,7 +44,6 @@ setup(
     #package_data={'sandman': ['templates/**', 'static/*/*']},
     classifiers = [
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
         'Development Status :: 2 - Pre-Alpha',
         'Natural Language :: English',
