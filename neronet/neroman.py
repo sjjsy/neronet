@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """This module defines Neroman.
 
 To work with Neroman each experiment must have the following attributes
@@ -30,6 +30,7 @@ import time
 import datetime
 import yaml
 import pathlib
+import sys
 
 import neronet.core
 
@@ -77,7 +78,11 @@ class Neroman:
         self.clusters = {}
         self.experiments = {}
         self.preferences = {}
-        self._load_configurations(database, clusters_file, preferences_file)
+        try:
+            self._load_configurations(database, clusters_file, preferences_file)
+        except neronet.neroman.FormatError as e:
+            print(e)
+            sys.exit()
 
     def _load_configurations(self, database, clusters, preferences):
         """Load the configurations from the yaml files or creates them if they
@@ -98,6 +103,10 @@ class Neroman:
             self.specify_user("","")
         if 'default_cluster' not in self.preferences:
             self.preferences['default_cluster'] = ""
+        if 'email' not in self.preferences:
+            raise FormatError('The user\'s email is not specified')
+        if 'name' not in self.preferences:
+            raise FormatError('The user\'s name is not specified')
 
         if not os.path.exists(clusters):
             with open(clusters, 'w') as f:
@@ -109,6 +118,28 @@ class Neroman:
             self.clusters = {'clusters': None}
         if not self.clusters['clusters']:
             self.clusters['clusters'] = {}
+        
+        # This checks the format of the clusters file            
+        for key in self.clusters['clusters']:
+            if 'type' not in self.clusters['clusters'][key]:
+                self.clusters['clusters'][key]['type'] = 'unmanaged'
+            else:
+                if self.clusters['clusters'][key]['type'] != 'unmanaged':
+                    if self.clusters['clusters'][key]['type'] != 'slurm':
+                        raise FormatError('The cluster type for the cluster ' +
+                        key + ' is not valid.')
+            if 'port' not in self.clusters['clusters'][key]:
+                self.clusters['clusters'][key]['port'] = 22
+            if 'ssh_address' not in self.clusters['clusters'][key]:
+                raise FormatError('The ssh address for the cluster ' + key + 
+                ' is not defined.')
+        if self.preferences['default_cluster']:
+            if self.preferences['default_cluster'] not in self.clusters['clusters']:
+                raise FormatError('The specified default cluster ' + 
+                self.preferences['default_cluster'] +' is not found')
+                
+        with open(self.clusters_file, 'w') as f:
+            f.write(yaml.dump(self.clusters, default_flow_style=False))
 
         if not os.path.exists(database):
             with open(database, 'w') as f:
@@ -268,6 +299,11 @@ class Neroman:
             else:
                 raise IOError('No experiment named %s' % arg)
         print("================Neroman=================")
+        print("\n================User=================")
+        print("Name: " + self.preferences['name'])
+        print("Email: " + self.preferences['email'])
+        if self.preferences['default_cluster']:
+            print("Default Cluster: " + self.preferences['default_cluster'])
         print("\n================Clusters================")
         if not self.clusters['clusters']:
             print("No clusters defined")
@@ -323,7 +359,7 @@ class Neroman:
              cluster_address,
              remote_dir))
 
-    def submit(self, exp_id, cluster_ID = self.preferences['default_cluster']):
+    def submit(self, exp_id, cluster_ID = ""):
         """Main loop of neroman.
 
         Start the experiment in the cluster using ssh.
@@ -335,6 +371,9 @@ class Neroman:
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
         """
+        if not cluster_ID:
+            cluster_ID = self.preferences['default_cluster']
+            
         if cluster_ID not in self.clusters['clusters']:
             raise FormatError('The given cluster ID or default cluster is not valid')
         

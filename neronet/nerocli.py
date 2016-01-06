@@ -2,6 +2,8 @@
 """This module implements the Command Line Interface of Neroman.
 """
 
+
+import os.path
 import argparse
 import sys
 import pathlib
@@ -40,7 +42,7 @@ def main():
     """Parses the command line arguments and starts Neroman."""
     parser = create_argument_parser()
     args = parser.parse_args()
-    neronet_dir = pathlib.Path.home() / '.neronet'
+    neronet_dir = pathlib.Path(os.path.expanduser('~')) / '.neronet'
     if not neronet_dir.exists():
         neronet_dir.mkdir()
     nero = neronet.neroman.Neroman(database=str(neronet_dir / 'default.yaml'),

@@ -1,0 +1,47 @@
+6.1.2016 Tested following things:
+
+Changes to the clusters.yaml file and testing the specification of clusters.
+- Changing the order of the cluster properties in clusters.yaml - the 
+  program works fine
+- Used 'unmanaged' as the cluster id - No errors when specifying the cluster 
+  or showing the status after specifying the cluster. Yet to test whether
+  or not trying to submit to this cluster works.
+- Did not specify cluster type for a certain cluster - Generated key error.
+  Fixed so that if the cluster type is not specified, it is initialized to 
+  'unmanaged'. After that, specifying the cluster without giving type worked 
+  fine.
+- Did not specify port number for a certain cluster - Generates key error when
+  submitting the experiment. Fixed so that the port is initialized to 22 if it 
+  is not specified. After fixing, no problems occurred.
+- Did not specify ssh address for a certain cluster. - Generated key error.
+  Fixed so that a user friendly error message is displayed. After fixing no 
+  unexpected problems.
+- Made intentional grammar mistakes in the cluster attributes. - The user 
+  friendly error message was shown as expected.
+- Tried a cluster type that is neither 'unmanaged' or 'slurm'. - No error
+  message was shown. Fixed so that an error message is displayed. No problems
+  after fixing.
+- Tried to use the same cluster name twice. - No errors. One of them was simply 
+  removed.
+- Specifying clusters via CLI works as expected.
+  
+Changes to the preferences.yaml file and testing status report.
+- The user's information is not shown in the overall status report. - Fixed so
+  that it is.
+- Did not specify a default cluster. - No errors were found. The default cluster
+  simply wasn't specified. Yet to test whether errors are found when trying to
+  submit the experiment to default cluster.
+- Made an intentional grammar mistake to the default cluster parameter. - The
+  same result as above
+- Did not specify an email in the preferences.yaml or email was written wrong. -
+  Key error was raised. Fixed so that a user friendly error message is displayed
+  instead. No problems after fixing.
+- Did not specify the user's name in the preferences.yaml. - Key error was
+  raised. Fixed so that a user friendly error message is displayed instead. No
+  problems after fixing.
+- Tried to use a default cluster that is not specified in the clusters.yaml. -
+  No error message was shown to the user. Fixed so that a user friendly error
+  message is shown. After fixing tested that no error message is shown if the
+  default cluster field is left blank. No problems found.
+
+
