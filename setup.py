@@ -22,7 +22,7 @@ long_description = 'TODO'
 
 setup(
     name='neronet',
-    version=1,
+    version=1.01,
     url='http://github.com/smarisa/neronet',
     license='None',
     author='Samuel Marisa & CO.',
