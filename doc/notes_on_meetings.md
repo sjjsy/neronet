@@ -1005,7 +1005,7 @@ Joona:
     - Matias: We shall see
     - Iiro: I feel we have strayed from the reason we began to implement a
       user guide. Now it feels to be restrictive rather than descriptive.
-    - Joona: I feel that it is very good as it reflects the requirements of
+-    - Joona: I feel that it is very good as it reflects the requirements of
       the PO.
     - Samuel: It should be considered as a sort of prototype. It is not useful
       to hang ourselves to it.
@@ -1281,7 +1281,7 @@ Agenda:
 
 ## 01-06 360m Wedshop (team)
 
-Participants: team (-Teemu)
+Participants: team -Teemu -Iiro
 
 Agenda:
 
@@ -1319,4 +1319,38 @@ Tuomo:
 
 Iiro and Teemu didn't attend.
 
+## 01-08 Frifury
+
+Participants: team -Iiro
+
+Agenda:
+
+- Daily scrum 15min
+- Developement 5h
+- Integration 1h 45min
+
+### Daily scrum
+
+Samuel
+
+- continued with daemon
+- tries to get daemon communication working
+- maybe not enought time, may need overtime
+
+Teemu & Matias
+
+- Worked with pypi
+- No problems
+- Continues with pypi and rewrites setup.py and writes readme
+
+Joona
+- Started with neroman refactoring and fixing some problems
+- Starts to test submits
+- No problems
+
+Tuomo
+-
+
 ## 01-27 120m EES: Testing (Tu)
+
+Participants: Tuomo + ???

@@ -14,6 +14,8 @@ import traceback
 import socket
 import pickle
 
+TIMEOUT = 3.0
+
 class Query():
   """A daemon query class."""
 
@@ -24,9 +26,9 @@ class Query():
     self.scsc = 0
     self.errc = 0
 
-  def process(self, args):
+  def process(self, kwargs):
     try:
-      rv = self.callback(**args)
+      rv = self.callback(**kwargs)
       self.scsc += 1
       self.tprocess = time.time()
       return rv
@@ -47,6 +49,13 @@ class DaemonA(object):
         self.port = 0
         self.doquit = False
         self.trun = 0
+        self.queries = {}
+        self._add_query('uptime', self.qry_uptime)
+        self._add_query('status', self.qry_status)
+        self._add_query('stop', self.qry_stop)
+
+    def _add_query(self, name, callback):
+        self.queries[name] = Query(name, callback)
 
     def log_form(self, prefix, message):
         return '%s %s  %s\n' % (prefix,
@@ -61,7 +70,7 @@ class DaemonA(object):
 
     def err(self, message, err=None):
         output = self.log_form('ERR', message)
-        #sys.stdout.write(output)
+        sys.stdout.write(output)
         if err:
             sys.stderr.write(output)
             traceback.print_exc()
@@ -71,9 +80,10 @@ class DaemonA(object):
 
     def cleanup(self, outfiles=False):
         """Remove daemon instance related files."""
-        self.log("cleanup(): Removing instance related files...")
+        self.log('cleanup(): Removing instance related files...')
         files = [self.pfpid, self.pfport] + \
-            [self.pfout, self.pferr] if outfiles else []
+            ([self.pfout, self.pferr] if outfiles else [])
+        self.log('cleanup(): Files: %s' % (files))
         for pf in files:
             if pf.exists():
                 self.log('cleanup(): Removing "%s"...' % (pf))
@@ -83,9 +93,6 @@ class DaemonA(object):
         self.cleanup()
         self.log("quit(): Exiting... Bye!")
         sys.exit(0)
-
-    def reload(self):
-        pass
 
     def run(self):
         self.trun = time.time()
@@ -101,19 +108,20 @@ class DaemonA(object):
             signal.SIGTERM: self.quit,
             signal.SIGHUP: self.quit,
             signal.SIGQUIT: self.quit,
-            signal.SIGUSR1: self.reload,
+            signal.SIGUSR1: self.quit, # reload
         }
         self.log('run(): Entering daemon context...')
         with context:
             # Create a socket with a timeout and bind it to any available port on
             # localhost
             sckt = socket.socket()
-            sckt.settimeout(5.0)
+            sckt.settimeout(TIMEOUT)
             sckt.bind(('localhost', 0))
             # Put the socket into server mode and retrieve the chosen port number
             sckt.listen(1)
             port = sckt.getsockname()[1]
             self.pfport.write_text(str(port))
+            self.log('run(): Starting to listen at %s...' % (str(sckt.getsockname())))
             sckt.listen(1)
             while not self.doquit:
                 self.log('run(): Looping...')
@@ -121,7 +129,6 @@ class DaemonA(object):
                     conn, addr = sckt.accept()
                     self.log('run(): Handling...')
                     self.handle(conn)
-                    sckt.sendto(pickle.dumps({'name': 'reply', 'kwargs': {'rv': 0}}, -1), addr)
                 except socket.timeout:
                     self.log('run(): Timeout...')
                 except socket.error as err:
@@ -132,34 +139,70 @@ class DaemonA(object):
             self.quit()
 
     def handle(self, sckt):
-        with sckt.makefile() as f:
-            sckt.close()
-            for line in f:
-                f.writeline(line)
-        """query, args = data
-        if query in self.queries:
-          queryo = self.queries[query]
+        self.log(str(sckt.getsockname()))
+        byts = sckt.recv(4096)
+        data = pickle.loads(byts)
+        self.log('Received %s' % (data))
+        self.uptime = time.time() - self.trun
+        self.reply = {'rv': 9, 'uptime': self.uptime}
+        if data and 'name' in data and 'kwargs' in data:
+            name = data['name']
+            kwargs = data['kwargs']
+            if name in self.queries:
+                self.queries[name].process(kwargs)
+            else:
+                self.reply['msgbody'] = 'Unsupported query "%s"!' % (name)
+        sckt.sendall(pickle.dumps({'name': 'reply', 'kwargs': self.reply}, -1))
+
+    def qry_uptime(self):
+        self.reply['rv'] = 0
+
+    def qry_status(self):
+        self.reply['msgbody'] = 'Hi! I\'m alive since %d secs!' % (self.uptime)
+        self.reply['rv'] = 0
+
+    def qry_stop(self):
+        self.reply['msgbody'] = 'Ok but I\'m sad to say good bye!'
+        self.reply['rv'] = 0
+        self.doquit = True
+
+    def query(self, name, **kwargs):
+        self.log('Query(%s, %s)...' % (name, kwargs))
+        host = '127.0.0.1'
+        port = int(self.pfport.read_text())
+        # Create a TCP/IP socket
+        sckt = socket.socket()
+        sckt.settimeout(TIMEOUT)
+        # Connect to the daemon
+        self.log('Connecting to (%s, %d)...' % (host, port))
+        sckt.connect((host, port))
+        sckt.sendall(pickle.dumps({'name': name, 'kwargs': kwargs}, -1))
+        self.log('Listening for a reply...')
+        try:
+            byts = sckt.recv(4096)
+            data = pickle.loads(byts) if byts else None
+            self.log('Received %s' % (data))
+        except socket.timeout:
+            self.log('No reply received.')
+            data = None
+        self.log('Closing socket.')
+        sckt.close()
+        return data
+
+    def is_alive(self):
+      if self.pfport.exists():
           try:
-            self.log(
-                'WD::onreceive: Processing query %s with %s...' %
-                (queryo.name, str(args)))
-            reply, rargs = queryo.process(args)
-            self.log(
-                'WD::onreceive: Responding to query %s #%d with %s (%s)...' %
-                (queryo.name, queryo.scsc, reply, rargs))
-            self.respond(ip, port, reply, rargs)
-          except Exception as err:
-            self.loge(
-                'WD::onreceive: Processing query %s failed (err# %d): %s!' %
-                (queryo.name, queryo.errc, err), err)
-            self.onrecerrc += 1"""
-        self.doquit = False
+              uptime = self.query('uptime')['kwargs']['uptime']
+              return uptime > 0 if uptime != None else False
+          except ConnectionRefusedError:
+              self.err('Unable to connect to the daemon.')
+      return False
 
     def start(self):
         """Start the daemon."""
         self.log('start(): Starting the daemon...')
         # Remove old files...
-        if self.pfport.exists() and self.is_alive():
+        if self.is_alive():
             self.err('start(): Already running!')
             return
         self.cleanup(outfiles=True)
@@ -167,42 +210,24 @@ class DaemonA(object):
         self.log('start(): Executing run...')
         self.run()
 
-    def query(self, name, **kwargs):
-        port = int(self.pfport.read_text())
-        sckt = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sckt.sendto(pickle.dumps({'name': name, 'kwargs': kwargs}, -1), ("", port))
-        try:
-            sckt.settimeout(8.0)
-            byts, addr = sckt.recv(4096)
-            data = pickle.loads(byts)
-        except socket.timeout:
-            data = None
-        sckt.close()
-        return data
-
-    def is_alive(self):
-      uptime = self.query('uptime')
-      return uptime > 0 if uptime != None else False
-
     def stop(self):
         """Stop the daemon."""
         self.log('stop(): Stopping the daemon...')
-        proc = self.get_process()
-        if proc:
-            proc.send_signal(SIGQUIT)
-            time.sleep(0.4)
-            self.log("stop(): Daemon terminated!")
-        if self.pfpid.exists():
+        if not self.is_alive():
+            self.err('stop(): The daemon is not running!')
+            return
+        self.query('stop')
+        time.sleep(TIMEOUT*0.5)
+        if self.pfport.exists():
             self.err("stop(): The daemon failed to cleanup!")
             self.cleanup()
+        else:
+            self.log("stop(): The daemon exited cleanly.")
 
     def restart(self):
         """Restart the daemon."""
         self.log("restart(): Restarting the daemon...")
-        try:
-            self.stop()
-        except self.NoPidFileError:
-            pass
+        self.stop()
         self.start()
 
 ## Fully custom daemon (option B)
