@@ -18,26 +18,22 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-long_description = 'TODO'
+long_description = read('README.md')
 
 setup(
     name='neronet',
-    version=1.02,
+    version=1.000003,
     url='http://github.com/smarisa/neronet',
     license='None',
     author='Samuel Marisa & CO.',
-    #install_requires=[
-    #                  'pyyaml>=3.11',
-    #                  ],
+    install_requires=['pyyaml>=3.11'],
     author_email='teemu.blomqvist@aalto.fi',
     description='A tool for managing computational experiments.',
     long_description=long_description,
-    #entry_points={},
+    scripts=['bin/nerocli'],
     packages=['neronet'],
-    include_package_data=True,
-    platforms='any',
-    zip_safe=False,
-    #package_data={'sandman': ['templates/**', 'static/*/*']},
+    platforms='unix',
+    zip_safe=True,
     classifiers = [
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
@@ -48,8 +44,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: Unix',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        ],
-    #extras_require={
-    #'testing': ['pytest'],
-    #}
+        ]
 )
