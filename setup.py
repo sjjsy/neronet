@@ -22,17 +22,13 @@ long_description = 'TODO'
 
 setup(
     name='neronet',
-    version=1.01,
+    version=1.02,
     url='http://github.com/smarisa/neronet',
     license='None',
     author='Samuel Marisa & CO.',
-    install_requires=['Babel>=2.1.1',
-                      'pytz>=2015.7',
-                      'six>=1.10.0',
-                      'snowballstemmer>=1.2.0',
-                      'wheel>=0.26.0',
-                      'pyyaml>=3.11',
-                      ],
+    #install_requires=[
+    #                  'pyyaml>=3.11',
+    #                  ],
     author_email='teemu.blomqvist@aalto.fi',
     description='A tool for managing computational experiments.',
     long_description=long_description,
