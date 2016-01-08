@@ -1,7 +1,7 @@
 import sys
 from PyQt4 import QtGui
 import design
-import neroman
+import neronet.neroman
 
 class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
     def __init__(self, parent=None):
