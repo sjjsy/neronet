@@ -221,12 +221,29 @@ class Neroman:
         experiment['cluster'] = None
         experiment['time_created'] = self._time_now()
         experiment['state'] = [['defined', experiment['time_created']]]
-        experiment['time_modified'] = experiment['time_created']
+        experiment['time_modified'] = self._time_now() 
         experiment['path'] = os.path.abspath(folder)
         if 'experiment_id' not in experiment_data:
             raise FormatError('No experiment_id field in experiment')
         else:
-            self.experiments[experiment_data['experiment_id']] = experiment
+            if experiment_data['experiment_id'] in self.experiments:
+                inp = 'perkele'
+                while inp not in ['y', 'n']:
+                    inp = input('An experiment with the same id already exists.'
+                     + ' Do you want to modify the existing experiment? (y/n)')
+                if inp == 'y':
+                    experiment['time_created'] = self.experiments[experiment_data['experiment_id']]['time_created']
+                    experiment['state'] = [['defined', experiment['time_created']]]
+                    self.experiments[experiment_data['experiment_id']] = experiment
+                    print('The experiment \'' + experiment_data['experiment_id']
+                     + '\' modified successfully')
+                else:
+                    print('Modify the experiment_id field in the config file' +
+                    ' and try again')
+            else:
+                self.experiments[experiment_data['experiment_id']] = experiment
+                print('A new experiment \'' + experiment_data['experiment_id'] +
+                '\' created successfully')
         self.save_database()
 
     def _time_now(self):

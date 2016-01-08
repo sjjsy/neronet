@@ -70,9 +70,12 @@ def main():
         except IOError as e:
             print(e)
     if args.submit:
-        experiment_folder = args.submit[0]
-        cluster_ID = args.submit[1]
-        nero.submit(experiment_folder, cluster_ID)
+        experiment_ID = args.submit[0]
+        if len(args.submit) > 1:
+            cluster_ID = args.submit[1]
+            nero.submit(experiment_ID, cluster_ID)
+        else:
+            nero.submit(experiment_ID)
 
 
 if __name__ == '__main__':
