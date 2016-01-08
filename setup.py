@@ -18,16 +18,16 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-long_description = read('README.md')
+long_description = 'Neronet is going to be a framework designed to facilitate the specification, submission, monitoring, control, analysis and management of many different computational experiments in collaboration with computing cluster resource managers and job schedulers such as Slurm'
 
 setup(
     name='neronet',
-    version=1.000003,
+    version=0.1.0,
     url='http://github.com/smarisa/neronet',
-    license='None',
-    author='Samuel Marisa & CO.',
+    license='MIT',
+    author='The neronet team',
     install_requires=['pyyaml>=3.11'],
-    author_email='teemu.blomqvist@aalto.fi',
+    author_email='samuel.marisa@aalto.fi',
     description='A tool for managing computational experiments.',
     long_description=long_description,
     scripts=['bin/nerocli'],
