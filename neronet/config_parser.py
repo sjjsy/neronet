@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
+import itertools
 
 import yaml
 
@@ -71,6 +72,7 @@ class ConfigParser():
                 
                 experiment = {}
                 if not errors:
+                    params = []
                     for field in fields:
                         experiment[field] = new_scope[field]
                     experiment['cluster'] = None
@@ -81,40 +83,23 @@ class ConfigParser():
                     experiments[experiment_id] = experiment
                 _read_experiments(new_scope)
         
-        """ A worse iteration of parse code
-        def __read_experiments(d, scope, scope_no):
-            fields = ['run_command_prefix', 'main_code_file',
-                'parameters', 'parameters_format', 'logoutput',
-                'collection']
-            #Populate the scope
-            print("Depth:", scope_no, "data:", data)
-            for field in fields:
-                if field in d:
-                    old_scope = scope.get(field, [])
-                    old_scope.append((scope_no, d[field]))
-                    scope[field] = old_scope
-            #Find the experiment ids
-            experiment_ids = set(d) - set(fields)
-            for experiment_id in experiment_ids:
-                __read_experiments(d[experiment_id], scope, scope_no + 1)
-                experiment = {}
-                print(experiment, scope)
-                for field in fields:
-                    if field in scope:
-                        experiment[field] = scope[field][-1][1]
-                        if scope[field][-1][0] > scope_no: scope[field].pop()
-                    else: errors.append('No %s field in experiment %s' % \
-                                        (field, experiment_id))
-                if not errors:
-                    experiment['cluster'] = None
-                    experiment['time_created'] = self._time_now()
-                    experiment['state'] = [['defined', experiment['time_created']]]
-                    experiment['time_modified'] = experiment['time_created']
-                    experiment['path'] = os.path.abspath(folder)
-                    experiments[experiment_id] = experiment
-        """            
         _read_experiments(data)
 
         if errors:
             raise FormatError(errors)
         return experiments
+
+    def _param_combinations(params):
+        values = params.values()
+        
+        #Horrific, type checking!
+        values = [[value] if isinstance(value, int) else value \
+                        for value in values]
+        keys = params.keys()
+        #Creates all the combinatorial subsets
+        value_combinations = list(itertools.product(*values))
+        
+        #Maps the values to the keys
+        param_combinations = [dict(zip(keys, values)) \
+                                for values for values in value_combinations]
+        return param_combinations

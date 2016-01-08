@@ -3,14 +3,18 @@ import tempfile
 import os
 import shutil
 
+import yaml
+
 import neronet.config_parser as cp
 
 class TestConfigParser(unittest.TestCase):
-    fields = ['collection', 'run_command_prefix', 'main_code_file',
-            'logoutput', 'parameters', 'parameters_format']
-    values = ['test_collection', 'test_runner', 'main_code', 'output', 
-                {'n': 1, 'x': 7}, '{n} {x}']
     def setUp(self):
+        self.fields = ['collection', 'run_command_prefix', 'main_code_file',
+            'logoutput', 'parameters', 'parameters_format']
+        self.values = ['test_collection', 'test_runner', 'main_code', 'output', 
+                {'n': 1, 'x': 7}, '{n} {x}']
+        self.testExperiment = {'test1': 
+            {field: value for field, value in zip(self.fields, self.values)}}
         self.parser = cp.ConfigParser()
         self.testfolder = tempfile.mkdtemp()
         os.chdir(self.testfolder)
@@ -22,11 +26,10 @@ class TestConfigParser(unittest.TestCase):
                     run_command_prefix: test_runner
                     main_code_file: main_code
                     logoutput: output
-                    parameters:
-                        n: 1
+                    parameters: 
+                        n: 1 
                         x: 7
-                    parameters_format:
-                        '{n} {x}'
+                    parameters_format: '{n} {x}'
                     test1:
                     """)
 
@@ -35,7 +38,14 @@ class TestConfigParser(unittest.TestCase):
 
     def testParseExperimentsSuccess(self):
         experiments = self.parser.parse_experiments(self.expfolder)
+        for field, value in zip(self.fields, self.values):
+            with self.subTest(value=value):
+                self.assertEqual(experiments['test1'][field],
+                self.testExperiment['test1'][field])
+
+    def testRaisesFormatError(self):
         
+    
 
 def print_experiments(experiments):
     for experiment_id in sorted(experiments.keys()):
