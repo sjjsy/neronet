@@ -5,6 +5,7 @@
 import argparse
 import sys
 import pathlib
+import shutil
 
 import neronet.neroman
 
@@ -33,6 +34,9 @@ def create_argument_parser():
                         nargs='?',
                         const='all',
                         help='Displays neronet status information')
+    parser.add_argument('--clean',
+                        action='store_true',
+                        help='Removes files created by neroman')
     return parser
 
 
@@ -51,7 +55,7 @@ def main():
         try:
             nero.specify_experiments(experiment_folder)
             nero.save_database()
-        except (FileNotFoundError, neronet.neroman.FormatError) as e:
+        except (FileNotFoundError, neronet.config_parser.FormatError) as e:
             print(e)
     if args.cluster:
         cluster_id = args.cluster[0]
@@ -71,6 +75,9 @@ def main():
         experiment_folder = args.submit[0]
         cluster_ID = args.submit[1]
         nero.submit(experiment_folder, cluster_ID)
+    if args.clean:
+        if neronet_dir.exists():
+            shutil.rmtree(neronet_dir, ignore_errors=True)
 
 
 if __name__ == '__main__':

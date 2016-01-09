@@ -60,7 +60,7 @@ class Neroman:
         self.database = database
         self.clusters_file = clusters_file
         self.preferences_file = preferences_file
-        self.config_parser = config_parser.ConfigParser()
+        self.config_parser = neronet.config_parser.ConfigParser()
         self.clusters = {}
         self.experiments = {}
         self.preferences = {}
@@ -156,9 +156,10 @@ class Neroman:
         """
 
 
-        experiments = self.config_parser.parse_experiments(folder, file_path)
+        experiments = self.config_parser.parse_experiments(folder)
         for experiment_id in experiments:
             if experiment_id in self.experiments:
+                continue
                 raise IOError("Experiment named %s already in the database" \
                                 % experiment_id)
             else: self.experiments[experiment_id] = experiments[experiment_id]
@@ -215,7 +216,7 @@ class Neroman:
                 experiment = self.experiments[arg]
                 parameters = experiment['parameters']
                 time_modified = experiment['time_modified']
-                state, state_change_time = experiment['state'].pop()
+                state, state_change_time = experiment['state'][-1]
                 parameters_string = ', '.join(
                     ["%s: %s" % (k, v) for k, v in parameters.items()])
                 print(
@@ -245,9 +246,9 @@ class Neroman:
         if not len(self.experiments):
             print("No experiments defined")
         else:
-            for experiment in self.experiments:
-                print(experiment + ': ' +
-                      self.experiments[experiment]['state'].pop()[0])
+            for experiment_id in sorted(self.experiments):
+                print(experiment_id + ': ' +
+                      self.experiments[experiment_id]['state'][-1][0])
 
     def send_files(
         self,

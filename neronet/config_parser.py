@@ -23,10 +23,13 @@ class FormatError(Exception):
 
 class ConfigParser():
     def _time_now(self):
+        """
+        """
         return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
 
     def parse_experiments(self, folder):
-        
+        """
+        """
         if not os.path.isdir(folder):
             raise FileNotFoundError('No such folder')
 
@@ -46,6 +49,8 @@ class ConfigParser():
 
 
         def _read_experiments(old_scope):
+            """
+            """
             fields = ['run_command_prefix', 'main_code_file',
                 'parameters', 'parameters_format', 'logoutput',
                 'collection']
@@ -53,9 +58,16 @@ class ConfigParser():
             #Get the experiment ids from the scope
             experiment_ids = set(old_scope) - set(fields)
             for experiment_id in experiment_ids:
-                #Initialize the new scope with all under the experiment id
+                #Initialize the new scope
                 new_scope = old_scope[experiment_id]
                 
+                #Allows nested experiments to only update certain parameters
+                if 'parameters' in new_scope and 'parameters' in old_scope:
+                    not_updated = set(old_scope['parameters']) - \
+                                    set(new_scope['parameters'])
+                    for param in not_updated:
+                        new_scope['parameters'][param] = \
+                                    old_scope['parameters'][param]
                 if new_scope:
                     #Check what fields are missing in the next scope
                     missing_fields = set(fields) - set(old_scope[experiment_id])
@@ -74,13 +86,26 @@ class ConfigParser():
                 if not errors:
                     params = []
                     for field in fields:
-                        experiment[field] = new_scope[field]
+                        if field == 'parameters':
+                            params = \
+                                self._param_combinations(new_scope[field])
+                        else:
+                            experiment[field] = new_scope[field]
                     experiment['cluster'] = None
                     experiment['time_created'] = self._time_now()
-                    experiment['state'] = [['defined', experiment['time_created']]]
+                    experiment['state'] = \
+                                [['defined', experiment['time_created']]]
                     experiment['time_modified'] = experiment['time_created']
                     experiment['path'] = os.path.abspath(folder)
-                    experiments[experiment_id] = experiment
+                    for param in params:
+                        experiment['parameters'] = param
+                        if len(params) > 1:
+                            keys = sorted(param)
+                            param_strings = [key + '-' + str(param[key]) for key in keys]
+                            name = '_'.join([experiment_id] + param_strings)
+                            experiments[name] = dict(experiment)
+                        else:
+                            experiments[experiment_id] = dict(experiment)
                 _read_experiments(new_scope)
         
         _read_experiments(data)
@@ -89,11 +114,13 @@ class ConfigParser():
             raise FormatError(errors)
         return experiments
 
-    def _param_combinations(params):
+    def _param_combinations(self,params):
+        """
+        """
         values = params.values()
         
         #Horrific, type checking!
-        values = [[value] if isinstance(value, int) else value \
+        values = [value if isinstance(value, list) else [value] \
                         for value in values]
         keys = params.keys()
         #Creates all the combinatorial subsets
@@ -101,5 +128,6 @@ class ConfigParser():
         
         #Maps the values to the keys
         param_combinations = [dict(zip(keys, values)) \
-                                for values for values in value_combinations]
+                                for values in value_combinations]
         return param_combinations
+
