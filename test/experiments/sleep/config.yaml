@@ -11,6 +11,8 @@ sleep1:
         count: [4, 5, 6, 7]
         interval: 3
     sleep2:
+        parameters:
+            interval: [100,200]
         parameters_format: '{interval} {count}'
 sleep3:
     sleep5:

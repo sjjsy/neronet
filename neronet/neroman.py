@@ -28,8 +28,9 @@ Attributes:
 import os
 import time
 import datetime
-import yaml
 import pathlib
+
+import yaml
 
 import neronet.core
 import neronet.config_parser
