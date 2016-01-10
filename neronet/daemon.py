@@ -18,6 +18,8 @@ import socket
 import pickle
 import re
 
+import neronet.core
+
 TIMEOUT = 4.0
 
 class Query():
@@ -50,7 +52,6 @@ class Daemon():
         self._ferr = self._dir / 'err'
         self._fpid = self._dir / 'pid'
         self._fport = self._dir / 'port'
-        self._dir.mkdir(parents=True, exist_ok=True)
         self._doquit = False
         self._trun = 0
         self._queries = {}
@@ -58,7 +59,7 @@ class Daemon():
         self.add_query('status', self.qry_status)
         self.add_query('stop', self.qry_stop)
         self.port = 0
-        self.host = pathlib.Path('/etc/hostname').read_text().strip()
+        self.host = neronet.core.get_hostname()
 
     def add_query(self, name, callback):
         self._queries[name] = Query(name, callback)
@@ -102,6 +103,8 @@ class Daemon():
 
     def _run(self):
         self._trun = time.time()
+        self._dir.mkdir(parents=True, exist_ok=True)
+        self._cleanup(outfiles=True)
         context = daemon.DaemonContext(
             working_directory=str(self._dir),
             umask=0o002,
@@ -161,8 +164,7 @@ class Daemon():
                 self._queries[name].process(*args, **kwargs)
             else:
                 self._reply['msgbody'] = 'Unsupported query "%s"!' % (name)
-        data = {'name': 'reply', 'kwargs': self._reply}
-        sckt.sendall(pickle.dumps(data, -1))
+        sckt.sendall(pickle.dumps(self._reply, -1))
 
     def qry_uptime(self):
         self._reply['rv'] = 0
@@ -181,49 +183,74 @@ class Daemon():
 
 class QueryInterface():
 
-    def __init__(self, daemon):
-        self.daemon = daemon
+    class NoPortFileError(RuntimeError): pass
+    class NoPortNumberError(RuntimeError): pass
 
-    def query(self, name, *pargs, **kwargs):
-        if not self.daemon._fport.exists():
-            self.err(10, 'No daemon port file found! Is it running?')
-        self.inf('Query(%s, %s, %s)...' % (name, pargs, kwargs))
-        host = '127.0.0.1'
-        port = int(self.daemon._fport.read_text())
+    def __init__(self, daemon, port=None, host='127.0.0.1'):
+        self.daemon = daemon
+        self.port = port
+        self.host = host
+        try:
+            self.determine_port()
+        except self.NoPortFileError:
+            pass
+
+    def determine_port(self):
+        if self.port:
+            return
+        localhost = neronet.core.get_hostname()
+        if self.host in ('127.0.0.1', 'localhost', localhost):
+            if self.daemon._fport.exists():
+                self.port = int(self.daemon._fport.read_text())
+            else:
+                raise self.NoPortFileError('No daemon port file!')
+                #self.abort(10, 'No daemon port file found! Is it running?')
+        else:
+            raise self.NoPortNumberError('No daemon port number!')
+            #self.abort(10, 'No daemon port number defined!')
+
+    def query(self, name, *pargs, trials=4, **kwargs):
+        #self.inf('Query(%s, %s, %s)...' % (name, pargs, kwargs))
+        self.determine_port()
+        if name not in self.daemon._queries:
+            raise RuntimeError('No such query "%s"!' % (name))
+            #self.abort(11, 'No such query "%s"!' % (name))
         # Create a TCP/IP socket
         sckt = socket.socket()
         sckt.settimeout(TIMEOUT)
         # Connect to the daemon
-        self.inf('Connecting to (%s, %d)...' % (host, port))
-        sckt.connect((host, port))
-        data = {'name': name, 'args': pargs, 'kwargs': kwargs}
-        sckt.sendall(pickle.dumps(data, -1))
-        self.inf('Listening for a reply...')
-        try:
-            byts = sckt.recv(4096)
-            data = pickle.loads(byts) if byts else None
-            self.inf('Received %s' % (data))
-        except socket.timeout:
-            self.inf('No reply received.')
-            data = None
-        self.inf('Closing socket.')
-        sckt.close()
-        return data
+        #self.inf('Connecting to (%s, %d)...' % (self.host, self.port))
+        for i in range(trials):
+            try:
+                sckt.connect((self.host, self.port))
+                data = {'name': name, 'args': pargs, 'kwargs': kwargs}
+                #self.inf('Sending data...')
+                sckt.sendall(pickle.dumps(data, -1))
+                #self.inf('Listening for a reply...')
+                try:
+                    byts = sckt.recv(4096)
+                    data = pickle.loads(byts) if byts else None
+                    #self.inf('Received %s' % (data))
+                except socket.timeout:
+                    #self.inf('No reply received.')
+                    data = None
+                #self.inf('Closing socket.')
+                sckt.close()
+                return data
+            except ConnectionRefusedError:
+                time.sleep(0.3)
+        raise RuntimeError('Unable to connect to the daemon!')
+        #self.abort(11, 'Unable to connect to the daemon.')
 
-    def daemon_is_alive(self, trials=4):
-      if self.daemon._fport.exists():
-          for i in range(trials):
-              try:
-                  data = self.query('uptime')
-                  if not data:
-                      self.wrn('Unable to query the daemon.')
-                      return False
-                  uptime = data['kwargs']['uptime']
-                  return uptime > 0 if uptime != None else False
-              except ConnectionRefusedError:
-                  time.sleep(0.3)
-          self.wrn('Unable to connect to the daemon.')
-      return False
+    def daemon_is_alive(self):
+        try:
+            reply = self.query('uptime')
+            if not reply or 'uptime' not in reply:
+                return False
+            uptime = reply['uptime']
+            return uptime > 0 if uptime != None else False
+        except self.NoPortFileError:
+            return False
 
 class Cli(QueryInterface):
     """A base class for easy control of daemons."""
@@ -237,8 +264,8 @@ class Cli(QueryInterface):
     # Positional argument
     RE_PARG = re.compile(r'(.*)')
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __init__(self, daemon):
+        super().__init__(daemon)
         self.funcs = {
             'default': self.func_default,
             'cleanup': self.func_cleanup,
@@ -246,7 +273,6 @@ class Cli(QueryInterface):
             'stop': self.func_stop,
             'restart': self.func_restart,
             'query': self.func_query,
-            'status': self.func_status,
         }
 
     def inf(self, msg):
@@ -255,8 +281,11 @@ class Cli(QueryInterface):
     def wrn(self, msg):
         print('WRN: %s' % (msg))
 
-    def err(self, code, msg):
+    def err(self, msg):
         print('ERR: %s' % (msg))
+
+    def abort(self, code, msg):
+        print('ABORT: %s' % (msg))
         sys.exit(code)
 
     def parse_arguments(self, cli_args=None):
@@ -285,7 +314,7 @@ class Cli(QueryInterface):
             if mtch:
                 pargs.append(mtch.group(1))
                 continue
-            self.err(1, 'Unrecognized argument: "%s"' % (arg))
+            self.abort(1, 'Unrecognized argument: "%s"' % (arg))
         work_queue.append((func, pargs, kargs))
         for work in work_queue:
             func, pargs, kargs = work
@@ -294,7 +323,7 @@ class Cli(QueryInterface):
                     % (func, pargs, kargs))
                 self.funcs[func](*pargs, **kargs)
             else:
-                self.err(2, 'Unrecognized function: "%s"' % (func))
+                self.abort(2, 'Unrecognized function: "%s"' % (func))
 
     def func_default(self):
         pass
@@ -307,10 +336,10 @@ class Cli(QueryInterface):
         """Start the daemon."""
         self.inf('start(): Starting the daemon...')
         # Remove old files...
-        if self.daemon_is_alive():
-            self.err(12, 'start(): Already running!')
-            return
-        self.daemon._cleanup(outfiles=True)
+        #if self.daemon_is_alive():
+        #    self.abort(12, 'start(): Already running!')
+        #    return
+        #self.daemon._cleanup(outfiles=True)
         # Start the daemon
         self.inf('start(): Executing run...')
         self.daemon._run()
@@ -336,10 +365,10 @@ class Cli(QueryInterface):
         self.func_start()
 
     def func_query(self, name, *pargs, **kwargs):
-        data = self.query(name, *pargs, **kwargs)['kwargs']
-        self.inf('Received a reply with code %d.' % (data['rv']))
-        if 'msgbody' in data:
-          self.inf('Message:\n%s' % (data['msgbody']))
-
-    def func_status(self):
-        self.func_query('status')
+        reply = self.query(name, *pargs, **kwargs)
+        if not reply:
+            self.err('No reply received!')
+        else:
+            self.inf('Received a reply with code %d.' % (reply['rv']))
+            if 'msgbody' in reply:
+              self.inf('Message:\n%s' % (reply['msgbody']))

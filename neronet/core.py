@@ -8,10 +8,8 @@ import datetime
 import socket
 import pickle
 import time
+import pathlib
 #import psutil
-from signal import signal, SIGTERM, SIGQUIT
-from traceback import print_exc
-from pathlib import Path
 
 TIMEOUT = 5.0
 """float: how long the socket waits before failing when sending data
@@ -22,6 +20,8 @@ def osrun(cmd):
     print('> %s' % (cmd))
     os.system(cmd)
 
+def get_hostname():
+    return pathlib.Path('/etc/hostname').read_text().strip()
 
 class Logger:
 
@@ -61,8 +61,9 @@ class Socket:
         sock.close()
 
 class Experiment():
-    def __init__(self, experiment_id, path, runcmd):
+    def __init__(self, experiment_id, path=None, runcmd=None):
         self.experiment_id = experiment_id
         self.path = path
         self.runcmd = runcmd
         self.state = None
+        self.log_output = {}

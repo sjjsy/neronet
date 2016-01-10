@@ -14,6 +14,7 @@ import shlex
 
 import neronet.core
 import neronet.daemon
+import neronet.neromum
 
 INTERVAL = 2.0
 LOG_FILES = 'stdout.log', 'stderr.log'
@@ -59,7 +60,8 @@ class Nerokid(neronet.daemon.Daemon):
     """
     def __init__(self):
         super().__init__('nerokid')
-        self.sock = None
+        self.neromum = None
+        self.experiment = None
         self.process = None
         self.add_query('launch', self.qry_launch)
 
@@ -68,18 +70,24 @@ class Nerokid(neronet.daemon.Daemon):
 
         Initializes the socket, launches the child process and starts to monitor the child process
         """
-        self.log('Kid launched!')
-        self.experiment_id = experiment_id
+        self.neromum = neronet.daemon.QueryInterface(
+                neronet.neromum.Neromum(), host=host, port=int(port))
+        self.experiment = neronet.core.Experiment(experiment_id)
+        self.log('Launching a kid...')
+        self.log('- Mom address: (%s, %d)' % (self.neromum.host, self.neromum.port))
+        self.log('- Experiment ID: "%s"' % (self.experiment.experiment_id))
         self.log_files = [LogFile(log_file_path)
                           for log_file_path in LOG_FILES]
-        # Define a socket
-        self.sock = neronet.core.Socket(host, int(port))
-        self.log('- Mom address: (%s, %d)' % (self.sock.host, self.sock.port))
-        self.log('- Experiment ID: %s' % (self.experiment_id))
         self.log('Launching the experiment...')
-        self.launch_child_process()
-        self.monitor_process()
-        self.log('Process finished!')
+        """Launches received script"""
+        self.process = subprocess.Popen(
+            shlex.split('sleep 30'),
+            universal_newlines=True,
+            stdout=open('stdout.log', 'w'),
+            stderr=open('stderr.log', 'w'),
+            close_fds=True, bufsize=1)
+        self.log('- Experiment PID: %s' % (self.process.pid))
+        self.experiment.state = 'running'
 
     def qry_stop(self):
         """Terminate the experiment"""
@@ -88,29 +96,16 @@ class Nerokid(neronet.daemon.Daemon):
             self.log('- Experiment PID: %s terminated' % (self.process.pid))
         super().qry_stop()
 
-    def launch_child_process(self):
-        """Launches received script"""
-        self.process = subprocess.Popen(
-            shlex.split('sleep 30'),
-            universal_newlines=True,
-            stdout=open('stdout.log', 'w'),
-            stderr=open('stderr.log', 'w'),
-            close_fds=True, bufsize=1)
-
-    def monitor_process(self):
+    def ontimeout(self):
         """Writes information about the process into a log file on set intervals"""
-        self.log('- Experiment PID: %s' % (self.process.pid))
-        packet["running"] = True
-        while self.process.poll() == None:
-            # Sleep to wait for changes
-            time.sleep(INTERVAL)
+        if not self.experiment or self.experiment.state != 'running':
+            return
+        if self.process.poll() == None:
             self.collect_new_file_data()
-        packet["running"] = False
-        self.send_data_to_neromum(packet)
-
-    def send_data_to_neromum(self, text):
-        """Send status data to Neromum."""
-        self.sock.send_data(text)
+        else:
+            self.experiment.state = 'finished'
+            self.refresh_neromum()
+            self.qry_stop()
 
     def collect_new_file_data(self):
         """Collect any data that the child process outputs and send them to neromum"""
@@ -122,20 +117,14 @@ class Nerokid(neronet.daemon.Daemon):
                 log_output[log_file.path] = changes
         # Send any new log output to Mum
         if log_output:
-            packet["log_output"] = log_output
-            self.send_data_to_neromum(packet)
+            self.experiment.log_output = log_output
+            self.refresh_neromum()
 
-class NerokidCli(neronet.daemon.Cli):
-    def __init__(self):
-        super().__init__(Nerokid())
-        self.funcs.update({
-            'launch': self.func_launch,
-        })
-
-    def func_launch(self, *pargs, **kwargs):
-        self.query('launch', *pargs, **kwargs)
+    def refresh_neromum(self):
+        """Send data to Neromum."""
+        self.neromum.query('nerokid_update', self.experiment)
 
 def main():
     """Create a Nerokid and call its run method."""
-    cli = NerokidCli()
+    cli = neronet.daemon.Cli(Nerokid())
     cli.parse_arguments()

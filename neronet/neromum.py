@@ -44,16 +44,16 @@ class Neromum(neronet.daemon.Daemon):
         self._reply['msgbody'] = msg
         self._reply['rv'] = 0
 
-    def qry_nerokid_update(self, experiment_id, state, log_output):
+    def qry_nerokid_update(self, experiment):
         """Extract information from nerokid's data updates."""
-        nerokid = self.nerokid_dict[experiment_id]
-        for log_path, new_text in log_output.items():
+        nerokid = self.nerokid_dict[experiment.experiment_id]
+        for log_path, new_text in experiment.log_output.items():
             self.log('New output in %s:' % (log_path))
             for ln in new_text.split('\n'):
                 if not ln:
                     continue
                 self.log('    %s' % (ln.strip()))
-        nerokid.state = state
+        nerokid.state = experiment.state
         if nerokid.state == 'finished':
             self.log('Kid %s has finished!' % (nerokid.experiment_id))
         self._reply['rv'] = 0
@@ -68,15 +68,11 @@ class Neromum(neronet.daemon.Daemon):
         """Starts the nerokid in the node"""
         self.log('Launching kid %s...' % (nerokid.experiment_id))
         neronet.core.osrun('nerokid --start')
-        neronet.core.osrun('nerokid --launch %s %d %s'
+        neronet.core.osrun('nerokid --query launch %s %d %s'
             % (self.host, self.port, nerokid.experiment_id))
         nerokid.state = 'running'
 
-class NeromumCli(neronet.daemon.Cli):
-    def __init__(self):
-        super().__init__(Neromum())
-
 def main():
     """Create a Neromum and call its run method."""
-    cli = NeromumCli()
+    cli = neronet.daemon.Cli(Neromum())
     cli.parse_arguments()
