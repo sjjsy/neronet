@@ -20,9 +20,6 @@ defined in its config:
   this time to the same as the time created
 * path: The absolute path to the folder
 
-Attributes:
-  CONFIG_FILENAME (str): The name of the config file inside the
-    experiment folder that specifies the experiment.
 """
 
 import os
@@ -159,12 +156,11 @@ class Neroman:
 
 
         experiments = self.config_parser.parse_experiments(folder)
-        for experiment_id in experiments:
-            if experiment_id in self.experiments:
-                continue
+        for experiment in experiments:
+            if experiment.experiment_id in self.experiments:
                 raise IOError("Experiment named %s already in the database" \
-                                % experiment_id)
-            else: self.experiments[experiment_id] = experiments[experiment_id]
+                                % experiment.experiment_id)
+            else: self.experiments[experiment.experiment_id] = experiment
         self.save_database()
 
     def _time_now(self):
@@ -216,9 +212,9 @@ class Neroman:
         if arg != 'all':
             if arg in self.experiments:
                 experiment = self.experiments[arg]
-                parameters = experiment['parameters']
-                time_modified = experiment['time_modified']
-                state, state_change_time = experiment['state'][-1]
+                parameters = experiment.fields['parameters']
+                time_modified = experiment.fields['time_modified']
+                state, state_change_time = experiment.fields['state'][-1]
                 parameters_string = ', '.join(
                     ["%s: %s" % (k, v) for k, v in parameters.items()])
                 print(
@@ -248,10 +244,8 @@ class Neroman:
         if not len(self.experiments):
             print("No experiments defined")
         else:
-            for experiment_id in sorted(self.experiments):
-                print(experiment_id + ': ' +
-                      self.experiments[experiment_id]['state'][-1][0])
-
+            for experiment in sorted(self.experiments):
+                print(self.experiments[experiment])
     def send_files(
         self,
         experiment_folder,

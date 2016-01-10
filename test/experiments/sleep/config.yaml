@@ -1,4 +1,4 @@
-collection: 'sleep'
+collection: None
 run_command_prefix: 'python3'
 main_code_file: 'main.py'
 logoutput: 'results'
@@ -26,3 +26,4 @@ sleep4:
             parameters:
                 count: 7
                 interval: 1
+sleep8:
