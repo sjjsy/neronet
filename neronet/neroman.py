@@ -48,7 +48,7 @@ class FormatError(Exception):
         return self.value
 
 
-class Neroman:
+class Neroman(neronet.daemon.Daemon):
 
     """The part of Neronet that handles user side things.
 
@@ -361,4 +361,44 @@ class Neroman:
         time.sleep(2)  # will be unnecessary as soon as daemon works
         # returns the results, should be called from cli
         self.get_experiment_results(exp_id, remote_dir, experiment_results_dir)
+  
+class NeroManCli(neronet.daemon.Cli):
+    def __init__(self):
+        super().__init__(NeroKid())
+        self.funcs.update({
+            'submit' : self.func_submit,
+            'status' : self.func_status,
+            'experiment' : self.func_experiment,
+            'cluster' : self.func_cluster,
+            'user' : self.func_user
+        })
         
+    def func_submit(self):
+        pass
+      
+    def func_status(self):
+        pass
+      
+    def func_experiment(self):
+        pass
+    
+    def func_cluster(self):
+        pass
+      
+    def func_user(self):
+        pass
+      
+      
+      
+    
+        
+def main():
+    cli = NeroManCli()
+    cli.parse_arguments()
+
+
+
+
+
+
+    

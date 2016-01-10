@@ -59,3 +59,10 @@ class Socket:
         # Close socket
         #self.logger.log('Closing socket...')
         sock.close()
+
+class Experiment():
+    def __init__(self, experiment_id, path, runcmd):
+        self.experiment_id = experiment_id
+        self.path = path
+        self.runcmd = runcmd
+        self.state = None

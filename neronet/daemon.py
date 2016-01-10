@@ -18,7 +18,7 @@ import socket
 import pickle
 import re
 
-TIMEOUT = 3.0
+TIMEOUT = 4.0
 
 class Query():
   """A daemon query class."""
@@ -51,13 +51,14 @@ class Daemon():
         self._fpid = self._dir / 'pid'
         self._fport = self._dir / 'port'
         self._dir.mkdir(parents=True, exist_ok=True)
-        self._port = 0
         self._doquit = False
         self._trun = 0
         self._queries = {}
         self.add_query('uptime', self.qry_uptime)
         self.add_query('status', self.qry_status)
         self.add_query('stop', self.qry_stop)
+        self.port = 0
+        self.host = pathlib.Path('/etc/hostname').read_text().strip()
 
     def add_query(self, name, callback):
         self._queries[name] = Query(name, callback)
@@ -121,12 +122,12 @@ class Daemon():
             # localhost
             sckt = socket.socket()
             sckt.settimeout(TIMEOUT)
-            sckt.bind(('localhost', self._port))
+            sckt.bind(('localhost', self.port))
             # Put the socket into server mode and retrieve the chosen port number
             sckt.listen(1)
-            port = sckt.getsockname()[1]
-            self._fport.write_text(str(port))
-            self.log('run(): Starting to listen at %s...' % (str(sckt.getsockname())))
+            host, self.port = sckt.getsockname()
+            self._fport.write_text(str(self.port))
+            self.log('run(): Starting to listen at %s %d...' % (host, self.port))
             sckt.listen(1)
             while not self._doquit:
                 self.log('run(): Looping...')
@@ -136,6 +137,7 @@ class Daemon():
                     self._handle(conn)
                 except socket.timeout:
                     self.log('run(): Timeout...')
+                    self.ontimeout()
                 except socket.error as err:
                     self.err('run(): Socket error: %s' % (socket.error), err)
                 #thread = threading.Thread(target=self.handle, args=[conn])
@@ -174,39 +176,13 @@ class Daemon():
         self._reply['rv'] = 0
         self._doquit = True
 
-class Cli():
-    """A base class for easy control of daemons."""
+    def ontimeout(self):
+        pass
 
-    #RE_ARG = re.compile(r'--(\w+) (\w+)* (\w+=\w+)*')
-    ## Command line argument parser regexes
-    # Function name identifier
-    RE_FUNC = re.compile(r'--([\w .]+)')
-    # Positional argument
-    RE_PARG = re.compile(r'([\w .]+)')
-    # Keyword argument
-    RE_KARG = re.compile(r'([\w.]+=[\w .]+)')
+class QueryInterface():
 
     def __init__(self, daemon):
         self.daemon = daemon
-        self.funcs = {
-            'default': self.func_default,
-            'cleanup': self.func_cleanup,
-            'start': self.func_start,
-            'stop': self.func_stop,
-            'restart': self.func_restart,
-            'query': self.func_query,
-            'status': self.func_status,
-        }
-
-    def inf(self, msg):
-        print(msg)
-
-    def wrn(self, msg):
-        print('WRN: %s' % (msg))
-
-    def err(self, code, msg):
-        print('ERR: %s' % (msg))
-        sys.exit(code)
 
     def query(self, name, *pargs, **kwargs):
         if not self.daemon._fport.exists():
@@ -249,6 +225,40 @@ class Cli():
           self.wrn('Unable to connect to the daemon.')
       return False
 
+class Cli(QueryInterface):
+    """A base class for easy control of daemons."""
+
+    #RE_ARG = re.compile(r'--(\w+) (\w+)* (\w+=\w+)*')
+    ## Command line argument parser regexes
+    # Function name identifier
+    RE_FUNC = re.compile(r'--([\w.]+)')
+    # Keyword argument
+    RE_KARG = re.compile(r'([\w.]+=.*)')
+    # Positional argument
+    RE_PARG = re.compile(r'(.*)')
+
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.funcs = {
+            'default': self.func_default,
+            'cleanup': self.func_cleanup,
+            'start': self.func_start,
+            'stop': self.func_stop,
+            'restart': self.func_restart,
+            'query': self.func_query,
+            'status': self.func_status,
+        }
+
+    def inf(self, msg):
+        print(msg)
+
+    def wrn(self, msg):
+        print('WRN: %s' % (msg))
+
+    def err(self, code, msg):
+        print('ERR: %s' % (msg))
+        sys.exit(code)
+
     def parse_arguments(self, cli_args=None):
         """
           --func parg kwarg=kwvalue
@@ -267,20 +277,20 @@ class Cli():
                 pargs = []
                 kargs = {}
                 continue
-            mtch = self.RE_PARG.fullmatch(arg)
-            if mtch:
-                pargs.append(mtch.group(1))
-                continue
             mtch = self.RE_KARG.fullmatch(arg)
             if mtch:
                 kargs[mtch.group(1)] = mtch.group(2)
+                continue
+            mtch = self.RE_PARG.fullmatch(arg)
+            if mtch:
+                pargs.append(mtch.group(1))
                 continue
             self.err(1, 'Unrecognized argument: "%s"' % (arg))
         work_queue.append((func, pargs, kargs))
         for work in work_queue:
             func, pargs, kargs = work
             if func in self.funcs:
-                self.inf('Executing function %s with %s %s...' 
+                self.inf('Executing function "%s" with %s %s...' 
                     % (func, pargs, kargs))
                 self.funcs[func](*pargs, **kargs)
             else:
@@ -327,8 +337,9 @@ class Cli():
 
     def func_query(self, name, *pargs, **kwargs):
         data = self.query(name, *pargs, **kwargs)['kwargs']
-        self.inf('Received a reply with code %d and message:\n%s' \
-            % (data['rv'], data['msgbody']))
+        self.inf('Received a reply with code %d.' % (data['rv']))
+        if 'msgbody' in data:
+          self.inf('Message:\n%s' % (data['msgbody']))
 
     def func_status(self):
         self.func_query('status')

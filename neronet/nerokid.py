@@ -46,7 +46,7 @@ class LogFile(object):
                 return changes
 
 
-class NeroKid(neronet.daemon.Daemon):
+class Nerokid(neronet.daemon.Daemon):
 
     """A class to specify the Nerokid object.
 
@@ -63,19 +63,19 @@ class NeroKid(neronet.daemon.Daemon):
         self.process = None
         self.add_query('launch', self.qry_launch)
 
-    def qry_launch(self, host, port, experiment):
+    def qry_launch(self, host, port, experiment_id):
         """The Nerokid main.
 
         Initializes the socket, launches the child process and starts to monitor the child process
         """
         self.log('Kid launched!')
-        self.experiment = experiment
+        self.experiment_id = experiment_id
         self.log_files = [LogFile(log_file_path)
                           for log_file_path in LOG_FILES]
         # Define a socket
         self.sock = neronet.core.Socket(host, int(port))
-        self.log('- Mom address: (%s, %s)' % (host, port))
-        self.log('- Experiment: %s' % (self.experiment))
+        self.log('- Mom address: (%s, %d)' % (self.sock.host, self.sock.port))
+        self.log('- Experiment ID: %s' % (self.experiment_id))
         self.log('Launching the experiment...')
         self.launch_child_process()
         self.monitor_process()
@@ -91,7 +91,7 @@ class NeroKid(neronet.daemon.Daemon):
     def launch_child_process(self):
         """Launches received script"""
         self.process = subprocess.Popen(
-            shlex.split(self.experiment),
+            shlex.split('sleep 30'),
             universal_newlines=True,
             stdout=open('stdout.log', 'w'),
             stderr=open('stderr.log', 'w'),
@@ -125,21 +125,17 @@ class NeroKid(neronet.daemon.Daemon):
             packet["log_output"] = log_output
             self.send_data_to_neromum(packet)
 
-class NeroKidCli(neronet.daemon.Cli):
+class NerokidCli(neronet.daemon.Cli):
     def __init__(self):
-        super().__init__(NeroKid())
+        super().__init__(Nerokid())
         self.funcs.update({
-            'start': self.func_start,
             'launch': self.func_launch,
         })
-
-    def func_start(self):
-        super().func_start()
 
     def func_launch(self, *pargs, **kwargs):
         self.query('launch', *pargs, **kwargs)
 
 def main():
     """Create a Nerokid and call its run method."""
-    cli = NeroKidCli()
+    cli = NerokidCli()
     cli.parse_arguments()
