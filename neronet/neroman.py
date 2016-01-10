@@ -71,6 +71,7 @@ class Neroman:
             database (str): The path to the database file as a string, the
                 rest of the attributes will be parsed from the database.
         """
+        super().__init__('neroman')
         self.database = database
         self.clusters_file = clusters_file
         self.preferences_file = preferences_file
@@ -360,3 +361,4 @@ class Neroman:
         time.sleep(2)  # will be unnecessary as soon as daemon works
         # returns the results, should be called from cli
         self.get_experiment_results(exp_id, remote_dir, experiment_results_dir)
+        

@@ -13,7 +13,7 @@ from signal import signal, SIGTERM, SIGQUIT
 from traceback import print_exc
 from pathlib import Path
 
-TIME_OUT = 5.0
+TIMEOUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
 
@@ -40,9 +40,8 @@ class Socket:
 
     """A class to simplify socket usage."""
 
-    def __init__(self, logger, host, port):
+    def __init__(self, host, port):
         # Save key attributes
-        self.logger = logger
         self.host = host
         self.port = port
 
@@ -50,7 +49,7 @@ class Socket:
         """Create a socket, send data over it, and close it"""
         # Create a TCP/IP socket
         sock = socket.socket()
-        sock.settimeout(TIME_OUT)
+        sock.settimeout(TIMEOUT)
         # Connect to the mother
         #self.logger.log('Connecting to (%s, %s)...' % (self.host, self.port))
         sock.connect((self.host, self.port))

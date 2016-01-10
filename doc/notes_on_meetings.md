@@ -1351,6 +1351,24 @@ Joona
 Tuomo
 -
 
+## 01-10 300m Sunfun (team)
+
+Participants: Samuel, Iiro, Matias + (Skype: Tuomo, Teemu)
+
+### Scrum
+
+- Tuomo: Fought with how to install PyQt. No idea how to proceed.
+- Teemu: Worked on making it possible to pip install neronet. Worries about
+  how the transfer of the software to clusters works after the pipification.
+- Matias: Worked on the same stuff as Teemu. No idea how to proceed.
+- Iiro: Finished inheritance in the experiment configs and the combinatorics
+  feature. It is tested and ready for peer review. Some finishing work could
+  still be done. Otherwise no plans.
+- Samuel: Finished a basic daemon framework implementation and started to
+  apply and test it with Nerokid. It should be finished along with doing the
+  same for Neromum and Neroman.
+
 ## 01-27 120m EES: Testing (Tu)
 
 Participants: Tuomo + ???
+

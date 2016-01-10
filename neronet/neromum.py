@@ -11,8 +11,9 @@ import pickle
 import select
 
 import neronet.core
+import neronet.daemon
 
-class Neromum(object):
+class Neromum(neronet.daemon.Daemon):
 
     """A class to specify the Neromum object.
 
@@ -112,7 +113,21 @@ class Neromum(object):
                         s.close()
                         self.open_incoming_connections.remove(s)
 
+class NeroMumCli(neronet.daemon.Cli):
+    def __init__(self):
+        super().__init__(NeroMum())
+        self.funcs.update({
+            'start': self.func_start,
+            'launch': self.func_launch,
+        })
+
+    def func_start(self):
+        super().func_start()
+
+    def func_launch(self, *pargs, **kwargs):
+        self.query('launch', *pargs, **kwargs)
 
 def main():
     """Create a Neromum and call its run method."""
-    Neromum().run()
+    cli = NeroMumCli()
+    cli.parse_arguments()
