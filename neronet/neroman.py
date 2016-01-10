@@ -28,8 +28,9 @@ Attributes:
 import os
 import time
 import datetime
-import yaml
 import pathlib
+
+import yaml
 
 import neronet.core
 import neronet.config_parser
@@ -131,7 +132,8 @@ class Neroman:
 
         """
         if cluster_type != 'slurm' and cluster_type != 'unmanaged':
-            raise FormatError("Cluster type should be slurm or unmanaged")
+            raise neronet.config_parser.FormatError( \
+                        "Cluster type should be slurm or unmanaged")
 
         self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address,
                                                    'type': cluster_type,

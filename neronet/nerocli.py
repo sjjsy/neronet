@@ -5,7 +5,6 @@
 import argparse
 import sys
 import pathlib
-import shutil
 
 import neronet.neroman
 
@@ -77,8 +76,12 @@ def main():
         nero.submit(experiment_folder, cluster_ID)
     if args.clean:
         if neronet_dir.exists():
-            shutil.rmtree(neronet_dir, ignore_errors=True)
+            remove_dir(neronet_dir)
 
-
+def remove_dir(path):
+    for sub in path.iterdir():
+        if sub.is_dir(): remove_dir(sub)
+        else: sub.unlink()
+    path.rmdir()
 if __name__ == '__main__':
     main()

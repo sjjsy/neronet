@@ -4,6 +4,7 @@ import os
 import shutil
 
 import neronet.neroman as neroman
+import neronet.config_parser as config_parser
 
 
 class TestStatusReport(unittest.TestCase):    
@@ -31,7 +32,7 @@ class TestStatusReport(unittest.TestCase):
                                         self.clusters_file)
         #Create an experiment folder and submit it to Neroman
         self.expfolder = tempfile.mkdtemp(dir = self.testfolder)
-        self.path = os.path.join(self.expfolder, neroman.CONFIG_FILENAME)
+        self.path = os.path.join(self.expfolder, config_parser.CONFIG_FILENAME)
         with open(self.path, 'w') as f:
             f.write("experiment_id: sleep_demo\n"
                     "run_command_prefix: python\n"

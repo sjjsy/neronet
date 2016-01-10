@@ -4,6 +4,7 @@ import os
 import shutil
 
 import neronet.neroman as neroman
+import neronet.config_parser as config_parser
 
 
 class TestSpecifyExperiments(unittest.TestCase):    
@@ -18,12 +19,14 @@ class TestSpecifyExperiments(unittest.TestCase):
         self.clusters_file = "clusters.yaml"
         with open(self.database_file, 'w') as f:
             f.write("experiment1:\n"
-                    "   run_command_prefix: python3\n"
+                    "   cluster: null\n"
+                    "   collection: exps\n"
+                    "   logoutput: logfile\n"
                     "   main_code_file: party.py\n"
                     "   parameters:\n"
                     "        when: now\n"
+                    "   run_command_prefix: python3\n"
                     "   parameters_format: 'when'\n"
-                    "logoutput: logfile\n"
                     "state: defined\n"
                     "cluster:\n"
                     "time_created: 15:12:01 12-12-2014")
@@ -34,17 +37,18 @@ class TestSpecifyExperiments(unittest.TestCase):
                                         self.clusters_file)
         #Create an experiment folder
         self.expfolder = tempfile.mkdtemp(dir = self.testfolder)
-        self.path = os.path.join(self.expfolder, neroman.CONFIG_FILENAME)
+        self.path = os.path.join(self.expfolder, config_parser.CONFIG_FILENAME)
         with open(self.path, 'w') as f:
-            f.write("experiment_id: sleep_demo\n"
-                    "run_command_prefix: python\n"
+            f.write("run_command_prefix: python\n"
                     "main_code_file: sleep.py\n"
                     "logoutput: output_file\n"
+                    "collection: test\n"
                     "parameters:\n"
                     "   count: 5\n"
                     "   interval: 5\n"
                     "parameters_format:\n"
-                    "   'count interval'")
+                    "   '{count} {interval}'\n"
+                    "sleep_demo:\n")
     
     def tearDown(self):
         shutil.rmtree(self.testfolder)
@@ -61,7 +65,7 @@ class TestSpecifyExperiments(unittest.TestCase):
 
     def test_empty_config_file(self):
         open(self.path, 'w').close()
-        with self.assertRaises(neroman.FormatError):
+        with self.assertRaises(config_parser.FormatError):
             self.testman.specify_experiments(self.expfolder)
 
     def test_read_experiment(self):
@@ -69,7 +73,7 @@ class TestSpecifyExperiments(unittest.TestCase):
         fields = ['run_command_prefix', 'main_code_file', 
                 'parameters', 'parameters_format']
         values = ['python', 'sleep.py', {'count': 5, 'interval': 5}, 
-                'count interval']
+                '{count} {interval}']
         for i, field in enumerate(fields):
             with self.subTest(field=field):
                 self.assertEqual(values[i], 
@@ -83,7 +87,7 @@ class TestSpecifyExperiments(unittest.TestCase):
                     "   interval: 5\n"
                     "parameters_format:\n"
                     "   'count interval'\n")
-        with self.assertRaises(neroman.FormatError):
+        with self.assertRaises(config_parser.FormatError):
             self.testman.specify_experiments(self.expfolder)
 
 
