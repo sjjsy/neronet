@@ -122,6 +122,12 @@ class ConfigParser():
                     for param in not_updated:
                         new_scope['parameters'][param] = \
                                     old_scope['parameters'][param]
+                if new_scope:
+                    #Check what fields are missing in the next scope
+                    missing_fields = set(fields) - set(old_scope[experiment_id])
+                else:
+                    new_scope = {}
+                    missing_fields = set(fields)
                 
                 #Add the missing values from the old scope to the new
                 for missing_field in missing_fields:
