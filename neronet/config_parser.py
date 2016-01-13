@@ -5,7 +5,7 @@ configuration files and the relating error class
 
 import os
 import itertools
-import core
+import neronet.core
 
 import yaml
 
