@@ -10,7 +10,7 @@ Contents
 - **Introduction**
 - **Installation**
 - Command Line Interface:
-	- Starting Neronet CLI
+	- Using Neronet CLI
 	- Specifying and Configuring Experiments in Neronet CLI
 	- Deleting Defined Experiments from Neronet
 	- Submitting Experiments and Batches of Experiments to Computing Clusters
@@ -50,11 +50,11 @@ All components of the neronet application, including both the parts run in clust
 
 **1. Pip Installation**
 
-Start by running the command below on your local machine's command line.
+Start by running the command below on your local machine's command line. Note: python 3.5 is required.
 
 *Example:*
 ::
-	pip3 install Neronet
+	sudo python 3.5 usr/bin/pip install neronet
 
 The command will load all components related to neronet and install them to the system. It will also create the folder '~/.neronet' to contain your preferences and cluster setup. Proceed by opening the folder and defining your initial cluster setup and preferences there.
 
@@ -68,15 +68,15 @@ The format of clusters.yaml is as follows. From here on out we will explain the 
 ::
 	triton:
 	  ssh_address: triton.aalto.fi
-	  type: slurm  
+	  type: slurm
 	  default_log_path:
 	  queue_max: 20
 	  hard_disk_space: 1000GB
-	  cpu: 
+	  cpu:
 	gpu1:
 	  ssh_address: gpu1
 	  type: unmanaged
-	  hardware: 
+	  hardware:
 	gpu2:
 	  ssh_address: gpu1
 	  type: unmanaged
@@ -107,16 +107,16 @@ If you followed the instructions clearly, your neronet application should be rea
 
 ======================
 Command Line Interface
-====================== 
+======================
 
-Starting Neronet CLI
+Using Neronet CLI
 --------------------
 
-To start your Neronet CLI application, run neroman.py on your local machine's command line.
+To start your Neronet CLI application, run nerocli on your local machine's command line.
 
 *Example:*
 ::
-	python3 cli.py
+	nerocli --status
 
 
 Specifying and Configuring Experiments in Neronet CLI
@@ -140,13 +140,13 @@ Start by writing your experiment code and save all experiments you deem somehow 
 			hyperparamz: 2
 		parameter_format: '{hyperparamx} {hyperparamy} {data_file} {hyperparamz}'
 		warning:
-			error_rate_over_50:			
+			error_rate_over_50:
 				variablename: error_rate
 				killvalue: 50
 				comparator: gt
 				when: time 6000
 				action: kill
-			error_rate_over_35:			
+			error_rate_over_35:
 				variablename: error_rate
 				killvalue: 35
 				comparator: geq
@@ -155,7 +155,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
 
 		lang_exp3:
 			parameters:
-				hyperparamz: 2 
+				hyperparamz: 2
 
 	lang_exp2:
 		run_command_prefix: python2
@@ -194,8 +194,8 @@ After your experiment folder contains the config file of the correct format and 
 
 *Example:*
 ::
-	Usage: neroman --experiment FOLDER
-	Example: neroman --experiment ~/experiments/lang_exp
+	Usage: nerocli --experiment FOLDER
+	Example: nerocli --experiment ~/experiments/lang_exp
 
 **Reserved Words:**
 ::
@@ -205,13 +205,13 @@ After your experiment folder contains the config file of the correct format and 
 	logoutput
 	parameters
 	parameter_format
-	warning:		
+	warning:
 	variablename
 	killvalue
 	comparator
 	when
 	action
-	
+
 
 
 Deleting Defined Experiments from Neronet
@@ -221,7 +221,7 @@ To delete a specified experiment from your Neronet application's database you ca
 
 *Example:*
 ::
-	neroman --delete EXPERIMENT_ID
+	nerocli --delete EXPERIMENT_ID
 
 EXPERIMENT_ID is the 'ID' attribute defined on the topmost row of the experiment folder's config.yaml. Alternatively, if you only want to delete a certain experiment within a folder, you can use the format 'ID/experiment_Id' (see *specifying experiments* to find out what these attributes are). Commands of the format 'delete ID/experiment_Id' don't affect the experiment's children or parents.
 
@@ -235,8 +235,8 @@ The following command will submit a batch of experiments to a specified cluster.
 
 *Example:*
 ::
-	Usage: neroman --submit CLUSTER_ID EXPERIMENT_ID
-	Example: neroman --submit triton lang_exp
+	Usage: nerocli --submit CLUSTER_ID EXPERIMENT_ID
+	Example: nerocli --submit triton lang_exp
 
 
 EXPERIMENT_ID is the 'ID' attribute defined on the topmost row of the experiment folder's config.yaml. Alternatively, if you only want to submit a certain experiment within a folder, you can use the format 'ID/experiment_Id' (see *specifying experiments* to find out what these attributes are)
@@ -248,19 +248,19 @@ If you have specified a default cluster in preferences.yaml (see *Installation*)
 
 **Tasks can be submitted also by logical arguments:**
 ::
-	Usage: neroman --submit CLUSTER_ID ARGUMENT
+	Usage: nerocli --submit CLUSTER_ID ARGUMENT
 
 	#Specify an experiment and submit it instantly
-	Example: neroman --submit triton ~/experiments/lang_exp x
+	Example: nerocli --submit triton ~/experiments/lang_exp x
 
 	#Submit all experiments that were modified since 2015-11-23
-	Example: neroman --submit triton tmod>2015-11-23
+	Example: nerocli --submit triton tmod>2015-11-23
 
 	#Submit all that have a specified parameter
-	Example: neroman --submit triton params=*data/1.txt*
+	Example: nerocli --submit triton params=*data/1.txt*
 
 	#Submit all defined but not submitted experiments
-	Example: neroman --submit any all
+	Example: nerocli --submit any all
 
 
 Specifying Clusters in Neronet CLI
@@ -270,8 +270,8 @@ You can specify clusters either via command line or by manually updating the clu
 
 *To add clusters via command line use the following format:*
 ::
-	Usage: neroman --cluster ID SSH_ADDRESS TYPE
-	Example: neroman --cluster triton triton.cs.hut.fi slurm
+	Usage: nerocli --cluster ID SSH_ADDRESS TYPE
+	Example: nerocli --cluster triton triton.cs.hut.fi slurm
 
 
 ID is a user defined id of the cluster, SSH_ADDRESS is the ssh address of the cluster, TYPE is either slurm or unmanaged
@@ -284,8 +284,8 @@ Monitoring log output
 
 *Example:*
 ::
-	Usage: neroman --monitor EXPERIMENT_ID
-	Example: neroman --monitor lang-exp/lang_exp3
+	Usage: nerocli --monitor EXPERIMENT_ID
+	Example: nerocli --monitor lang-exp/lang_exp3
 
 
 *The output will be of the following format:*
@@ -303,20 +303,20 @@ specified clusters and experiments.
 
 *Example:*
 ::
-	Usage: neroman --status [ARGS]
+	Usage: nerocli --status [ARGS]
 
 
 ARGS can refer to experiment or cluster IDs, or be collection specifiers.
 
 *Overall status:*
 ::
-	neroman --status 
+	nerocli --status
 
 The command above will print the overall status information. That is, printing the number of experiments with each of the different experiment states, the list of defined clusters and their current states and finally the list of experiments and their current states.
 
 *Experiment status:*
 ::
-	neroman --status lang_exp/lang_exp3
+	nerocli --status lang_exp/lang_exp3
 
 The experiment status report contains:
 
@@ -325,31 +325,31 @@ The experiment status report contains:
 - The experiment's current state and the times when the state has changed
 - The final output, if the experiment is finished
 
-The experiment state is either 'defined' (specified but not submitted to any cluster), 'submitted CLUSTER_ID' (submitted to a cluster but not yet running), 'running CLUSTER_ID', 'finished CLUSTER_ID' or 'terminated CLUSTER_ID'. CLUSTER_ID will be replaced with the correct cluster's id. 
+The experiment state is either 'defined' (specified but not submitted to any cluster), 'submitted CLUSTER_ID' (submitted to a cluster but not yet running), 'running CLUSTER_ID', 'finished CLUSTER_ID' or 'terminated CLUSTER_ID'. CLUSTER_ID will be replaced with the correct cluster's id.
 
 *Collection status:*
 ::
 	#All experiments that were modified since 2015-11-23
-	Example: neroman --status tmod>2015-11-23
+	Example: nerocli --status tmod>2015-11-23
 
 	#All experiments that have a specified parameter
-	Example: neroman --status params=*data/1.txt*
+	Example: nerocli --status params=*data/1.txt*
 
 	#All experiments that have the current state of 'defined'
-	Example: neroman --status defined
+	Example: nerocli --status defined
 
 The collection status will contain a list of experiments in that collection and their current states.
 
 *All cluster's statuses:*
 ::
-	neroman --status clusters
+	nerocli --status clusters
 
 Prints a list of all clusters and their current states. A cluster's current state is the number of experiments running in that cluster.
 
 *Single cluster status:*
 ::
-	Usage: neroman --status CLUSTER_ID
-	Example neroman --status triton
+	Usage: nerocli --status CLUSTER_ID
+	Example nerocli --status triton
 
 Prints:
 
