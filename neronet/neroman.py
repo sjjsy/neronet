@@ -216,7 +216,7 @@ class Neroman:
                 machine.
         """
         experiment = self.experiments[experiment_id]
-        cluster_ID = experiment['cluster']
+        cluster_ID = experiment.fields['cluster']
         cluster_port = self.clusters['clusters'][cluster_ID]['port']
         cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
         neronet.core.osrun(
