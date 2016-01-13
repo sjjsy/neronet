@@ -346,7 +346,7 @@ class NeromanCli(neronet.daemon.Cli):
     def func_submit(self):
         foo = {'nam': 13}
         process = subprocess.Popen(['neromum', '--input'],
-                stdout=subprocess.PIPE)
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         sout, serr = process.communicate(pickle.dumps(foo), timeout=5.0)
         print('Output:\n%s' % (sout))
         pass

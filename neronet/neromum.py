@@ -81,6 +81,8 @@ class NeromumCli(neronet.daemon.Cli):
         })
       
     def func_input(self):
+        #data = sys.stdin.readLine() # pickle.loads()
+        #print('Data:\n%s\n' % (data))
         nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
         nerokid_dqi.start()
         #nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
