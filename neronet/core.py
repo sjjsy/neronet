@@ -23,7 +23,7 @@ def osrun(cmd):
 def get_hostname():
     return pathlib.Path('/etc/hostname').read_text().strip()
 
-def neronet.core.time_now():
+def time_now():
     return datetime.datetime.now() #.strftime('%H:%M:%S %d-%m-%Y')
 
 class Logger:

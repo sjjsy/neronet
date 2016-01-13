@@ -5,10 +5,7 @@
 # TODO: need database parsing
 
 import sys
-import socket
-import os
 import pickle
-import select
 
 import neronet.core
 import neronet.daemon
@@ -80,9 +77,10 @@ class NeromumCli(neronet.daemon.Cli):
         })
       
     def func_input(self):
-        pass
+        data = sys.stdin.read() # pickle.loads()
+        print('Data:\n%s\n' % (data))
 
 def main():
     """Create a CLI interface object and process CLI arguments."""
-    cli = NeromanCli()
+    cli = NeromumCli()
     cli.parse_arguments()

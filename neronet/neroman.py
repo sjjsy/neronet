@@ -30,6 +30,8 @@ import time
 import yaml
 import pathlib
 import sys
+import subprocess
+import pickle
 
 import neronet.core
 import neronet.daemon
@@ -138,13 +140,13 @@ class Neroman(neronet.daemon.Daemon):
             state, state_change_time = experiment['state'].pop()
             parameters_string = ', '.join(
                 ["%s: %s" % (k, v) for k, v in parameters.items()])
-            msg += 'Experiment: %s\nParameters: %s\n' %
+            msg += 'Experiment: %s\nParameters: %s\n' % \
                     (arg, parameters_string)
             if state == 'defined':
                 msg += 'State: %s - %s\n' % (state, state_change_time)
             else:
                 cluster = experiment['cluster']
-                msg += 'State: %s - %s - %s\n' %
+                msg += 'State: %s - %s - %s\n' % \
                     (state, cluster, state_change_time)
             msg += 'Last modified: %s\n' % (time_modified)
         else:
@@ -342,25 +344,30 @@ class NeromanCli(neronet.daemon.Cli):
     def __init__(self):
         super().__init__(Neroman())
         self.funcs.update({
-#            'submit' : self.func_submit,
+            'submit' : self.func_submit,
 #            'status' : self.func_status,
 #            'experiment' : self.func_experiment,
 #            'cluster' : self.func_cluster,
 #            'user' : self.func_user
         })
-        
+
     def func_submit(self):
+        foo = {'nam': 13}
+        process = subprocess.Popen(['neromum', '--input'],
+                stdout=subprocess.PIPE)
+        sout, serr = process.communicate(pickle.dumps(foo), timeout=5.0)
+        print('Output:\n%s' % (sout))
         pass
-      
+
     def func_status(self):
         pass
-      
+
     def func_experiment(self):
         pass
-    
+
     def func_cluster(self):
         pass
-      
+
     def func_user(self):
         pass
 

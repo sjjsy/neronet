@@ -6,9 +6,8 @@ Attributes:
     for changes in the log file
   LOG_FILES (tuple): Log files for stdout and stderr
 """
-import sys
+
 import os
-import time
 import subprocess
 import shlex
 
