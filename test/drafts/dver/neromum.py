@@ -81,12 +81,17 @@ class NeromumCli(neronet.daemon.Cli):
         })
       
     def func_input(self):
+        data = input()
+        print('Data:\n%s\n' % (data))
+        while(not ("***" in data)):
+            data = input("") # pickle.loads()
+            print('Data:\n%s\n' % (data))
         #data = sys.stdin.readLine() # pickle.loads()
         #print('Data:\n%s\n' % (data))
-        nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
-        nerokid_dqi.start()
         #nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
-        print(nerokid_dqi.query('status'))
+        #nerokid_dqi.start()
+        #nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
+        #print(nerokid_dqi.query('status'))
         #data = sys.stdin.read() # pickle.loads()
         #print('Data:\n%s\n' % (data))
 

@@ -111,7 +111,6 @@ class Neromum(object):
                         s.close()
                         self.open_incoming_connections.remove(s)
 
-
 def main():
     """Create a Neromum and call its run method."""
     Neromum().run()
