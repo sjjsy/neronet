@@ -62,12 +62,12 @@ class Experiment:
                     'cluster': None}
     
     def get_callstring(self):
-        rcmd = self.fieds['run_command_prefix']
+        rcmd = self.fields['run_command_prefix']
         code_file = self.fields['main_code_file']
         parameters = self.fields['parameters']
         param_format = self.fields['parameters_format']
-        parameters_string = param_format(**parameters)
-        callstring = ' '.join(rcmd, code_file, parameters_string)
+        parameters_string = param_format.format(**parameters)
+        callstring = ' '.join([rcmd, code_file, parameters_string])
         return callstring
 
     def update_state(self, state):
