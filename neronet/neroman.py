@@ -80,7 +80,13 @@ class Neroman:
             with open(preferences, 'r') as f:
                 self.preferences = yaml.load(f.read())
         if not self.preferences:
-            self.preferences = {}
+            self.specify_user("","")
+        if 'default_cluster' not in self.preferences:
+            self.preferences['default_cluster'] = ""
+        if 'email' not in self.preferences:
+            raise FormatError('The user\'s email is not specified')
+        if 'name' not in self.preferences:
+            raise FormatError('The user\'s name is not specified')
 
         if not os.path.exists(clusters):
             with open(clusters, 'w') as f:
@@ -92,6 +98,28 @@ class Neroman:
             self.clusters = {'clusters': None}
         if not self.clusters['clusters']:
             self.clusters['clusters'] = {}
+        
+        # This checks the format of the clusters file            
+        for key in self.clusters['clusters']:
+            if 'type' not in self.clusters['clusters'][key]:
+                self.clusters['clusters'][key]['type'] = 'unmanaged'
+            else:
+                if self.clusters['clusters'][key]['type'] != 'unmanaged':
+                    if self.clusters['clusters'][key]['type'] != 'slurm':
+                        raise FormatError('The cluster type for the cluster ' +
+                        key + ' is not valid.')
+            if 'port' not in self.clusters['clusters'][key]:
+                self.clusters['clusters'][key]['port'] = 22
+            if 'ssh_address' not in self.clusters['clusters'][key]:
+                raise FormatError('The ssh address for the cluster ' + key + 
+                ' is not defined.')
+        if self.preferences['default_cluster']:
+            if self.preferences['default_cluster'] not in self.clusters['clusters']:
+                raise FormatError('The specified default cluster ' + 
+                self.preferences['default_cluster'] +' is not found')
+                
+        with open(self.clusters_file, 'w') as f:
+            f.write(yaml.dump(self.clusters, default_flow_style=False))
 
         if not os.path.exists(database):
             with open(database, 'w') as f:
@@ -167,24 +195,13 @@ class Neroman:
         return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
 
     def update_state(self, experiment_id, state):
-        self.experiments[experiment_id]['state'].append([state,
-                                                         self._time_now()])
+        self.experiments[experiment_id].update_state(state)
 
-    def _create_experiment_callstring(self, experiment_id):
-        if experiment_id not in self.experiments:
-            raise IOError('No experiment named %s' % experiment_id)
-        experiment = self.experiments[experiment_id]
-        rcmd = experiment['run_command_prefix']
-        code_file = experiment['main_code_file']
-        params = experiment['parameters']
-        pformat = experiment['parameters_format']
-        pstr = pformat.format(**params)
-        return ' '.join([rcmd, code_file, pstr])
-
-    def specify_user(self, name, email):
+    def specify_user(self, name, email, default_cluster = ""):
         """Update user data"""
         self.preferences['name'] = name
         self.preferences['email'] = email
+        self.preferences['default_cluster'] = default_cluster
         with open(self.preferences_file, 'w') as f:
             f.write(yaml.dump(self.preferences, default_flow_style=False))
 
@@ -232,6 +249,11 @@ class Neroman:
             else:
                 raise IOError('No experiment named %s' % arg)
         print("================Neroman=================")
+        print("\n================User=================")
+        print("Name: " + self.preferences['name'])
+        print("Email: " + self.preferences['email'])
+        if self.preferences['default_cluster']:
+            print("Default Cluster: " + self.preferences['default_cluster'])
         print("\n================Clusters================")
         if not self.clusters['clusters']:
             print("No clusters defined")
@@ -246,6 +268,7 @@ class Neroman:
         else:
             for experiment in sorted(self.experiments):
                 print(self.experiments[experiment])
+
     def send_files(
         self,
         experiment_folder,
@@ -285,7 +308,7 @@ class Neroman:
              cluster_address,
              remote_dir))
 
-    def submit(self, exp_id, cluster_ID):
+    def submit(self, exp_id, cluster_ID = ""):
         """Main loop of neroman.
 
         Start the experiment in the cluster using ssh.
@@ -297,13 +320,18 @@ class Neroman:
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
         """
+        if not cluster_ID:
+            cluster_ID = self.preferences['default_cluster']
+            
+        if cluster_ID not in self.clusters['clusters']:
+            raise IOError('The given cluster ID or default cluster is not valid')
+        
         remote_dir = pathlib.Path('/tmp/neronet-%d' % (time.time()))
-        experiment_destination = self.experiments[exp_id][
-            'path'] + "/" + self.experiments[exp_id]['logoutput']
-        experiment_folder = self.experiments[exp_id]["path"]
+        experiment_destination = self.experiments[exp_id].fields[
+            'path'] + "/" + self.experiments[exp_id].fields['logoutput']
+        experiment_folder = self.experiments[exp_id].fields["path"]
         #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
-        experiment_parameters = self._create_experiment_callstring(exp_id)
-        self.experiments[exp_id]['cluster'] = cluster_ID
+        experiment_parameters = self.experiments[exp_id].get_callstring()
         cluster_port = self.clusters['clusters'][cluster_ID]["port"]
         cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
         self.send_files(
@@ -320,7 +348,7 @@ class Neroman:
              remote_dir,
              remote_dir,
              experiment_parameters))
-        self.experiments[exp_id]['cluster'] = cluster_ID
+        self.experiments[exp_id].fields['cluster'] = cluster_ID
         self.update_state(exp_id, 'submitted')
         self.save_database()
         time.sleep(2)  # will be unnecessary as soon as daemon works

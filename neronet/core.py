@@ -8,10 +8,12 @@ import datetime
 import socket
 import pickle
 import time
-import pathlib
 #import psutil
+from signal import signal, SIGTERM, SIGQUIT
+from traceback import print_exc
+from pathlib import Path
 
-TIMEOUT = 5.0
+TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
@@ -58,6 +60,15 @@ class Experiment:
                     'time_modified': now,
                     'state': [['defined', now]],
                     'cluster': None}
+    
+    def get_callstring(self):
+        rcmd = self.fieds['run_command_prefix']
+        code_file = self.fields['main_code_file']
+        parameters = self.fields['parameters']
+        param_format = self.fields['parameters_format']
+        parameters_string = param_format(**parameters)
+        callstring = ' '.join(rcmd, code_file, parameters_string)
+        return callstring
 
     def update_state(self, state):
         """ Updates the state
@@ -84,11 +95,6 @@ def osrun(cmd):
     print('> %s' % (cmd))
     os.system(cmd)
 
-def get_hostname():
-    return pathlib.Path('/etc/hostname').read_text().strip()
-
-def time_now():
-    return datetime.datetime.now() #.strftime('%H:%M:%S %d-%m-%Y')
 
 class Logger:
 
@@ -107,8 +113,9 @@ class Socket:
 
     """A class to simplify socket usage."""
 
-    def __init__(self, host, port):
+    def __init__(self, logger, host, port):
         # Save key attributes
+        self.logger = logger
         self.host = host
         self.port = port
 
@@ -116,7 +123,7 @@ class Socket:
         """Create a socket, send data over it, and close it"""
         # Create a TCP/IP socket
         sock = socket.socket()
-        sock.settimeout(TIMEOUT)
+        sock.settimeout(TIME_OUT)
         # Connect to the mother
         #self.logger.log('Connecting to (%s, %s)...' % (self.host, self.port))
         sock.connect((self.host, self.port))
