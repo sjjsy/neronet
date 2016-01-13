@@ -127,10 +127,3 @@ class Socket:
         #self.logger.log('Closing socket...')
         sock.close()
 
-class Experiment():
-    def __init__(self, experiment_id, path=None, runcmd=None):
-        self.experiment_id = experiment_id
-        self.path = path
-        self.runcmd = runcmd
-        self.state = None
-        self.log_output = {}
