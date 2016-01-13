@@ -44,7 +44,7 @@ class Experiment:
     """
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
                     parameters, parameters_format, path, required_files=[],
-                    logoutput='output.log', collection=None, warning=None):
+                    logoutput='output.log', collection=None, conditions=None):
         self.experiment_id = experiment_id
         now = self._time_now()
         self.fields = {'run_command_prefix': run_command_prefix,
@@ -54,7 +54,7 @@ class Experiment:
                     'parameters': parameters,
                     'parameters_format': parameters_format,
                     'collection': collection,
-                    'warning': warning,
+                    'conditions': conditions,
                     'path': path,
                     'time_created': now,
                     'time_modified': now,
@@ -62,7 +62,14 @@ class Experiment:
                     'cluster': None}
 
     def update_state(self, state):
+        """ Updates the state
+        """
         self.fields['state'].append([state, self._time_now()])
+
+    def as_dict(self):
+        """ Returns the experiment as a dictionary
+        """
+        return {self.experiment_id: self.fields}
 
     def _time_now(self):
         """ A helper function to save the current time in consistend format
