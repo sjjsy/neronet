@@ -193,14 +193,31 @@ class QueryInterface():
     class NoPortFileError(RuntimeError): pass
     class NoPortNumberError(RuntimeError): pass
 
-    def __init__(self, daemon, port=None, host='127.0.0.1'):
+    def __init__(self, daemon, port=None, host='127.0.0.1', verbose=False):
         self.daemon = daemon
         self.port = port
         self.host = host
+        self.verbose = verbose
         try:
             self.determine_port()
         except self.NoPortFileError:
             pass
+
+    def inf(self, msg):
+        if not self.verbose: return
+        print(msg)
+
+    def wrn(self, msg):
+        if not self.verbose: return
+        print('WRN: %s' % (msg))
+
+    def err(self, msg):
+        if not self.verbose: return
+        print('ERR: %s' % (msg))
+
+    def abort(self, code, msg):
+        print('ABORT: %s' % (msg))
+        sys.exit(code)
 
     def determine_port(self):
         if self.port:
@@ -217,7 +234,7 @@ class QueryInterface():
             #self.abort(10, 'No daemon port number defined!')
 
     def query(self, name, *pargs, trials=4, **kwargs):
-        #self.inf('Query(%s, %s, %s)...' % (name, pargs, kwargs))
+        self.inf('Query(%s, %s, %s)...' % (name, pargs, kwargs))
         self.determine_port()
         if name not in self.daemon._queries:
             raise RuntimeError('No such query "%s"!' % (name))
@@ -226,22 +243,22 @@ class QueryInterface():
         sckt = socket.socket()
         sckt.settimeout(TIMEOUT)
         # Connect to the daemon
-        #self.inf('Connecting to (%s, %d)...' % (self.host, self.port))
+        self.inf('Connecting to (%s, %d)...' % (self.host, self.port))
         for i in range(trials):
             try:
                 sckt.connect((self.host, self.port))
                 data = {'name': name, 'args': pargs, 'kwargs': kwargs}
-                #self.inf('Sending data...')
+                self.inf('Sending data...')
                 sckt.sendall(pickle.dumps(data, -1))
-                #self.inf('Listening for a reply...')
+                self.inf('Listening for a reply...')
                 try:
                     byts = sckt.recv(4096)
                     data = pickle.loads(byts) if byts else None
-                    #self.inf('Received %s' % (data))
+                    self.inf('Received %s' % (data))
                 except socket.timeout:
-                    #self.inf('No reply received.')
+                    self.inf('No reply received.')
                     data = None
-                #self.inf('Closing socket.')
+                self.inf('Closing socket.')
                 sckt.close()
                 return data
             except ConnectionRefusedError:
@@ -258,6 +275,40 @@ class QueryInterface():
             return uptime > 0 if uptime != None else False
         except self.NoPortFileError:
             return False
+
+    def cleanup(self):
+        """Erase daemon instance related files."""
+        self.daemon._cleanup(outfiles=True)
+
+    def start(self):
+        """Start the daemon."""
+        self.inf('start(): Starting the daemon...')
+        print('FORKING')
+        if os.fork() == 0:
+            print('FORKED')
+            self.daemon._run()
+        time.sleep(1.0)
+        print('FORK WENT')
+
+    def stop(self):
+        """Stop the daemon."""
+        self.inf('stop(): Stopping the daemon...')
+        if not self.daemon_is_alive():
+            self.wrn('stop(): The daemon is not running!')
+            return
+        self.query('stop')
+        time.sleep(TIMEOUT*0.5)
+        if self.daemon._fport.exists():
+            self.wrn('stop(): The daemon failed to cleanup!')
+            self.daemon._cleanup()
+        else:
+            self.inf("stop(): The daemon exited cleanly.")
+
+    def restart(self):
+        """Restart the daemon."""
+        self.inf("restart(): Restarting the daemon...")
+        self.stop()
+        self.start()
 
 class Cli(QueryInterface):
     """A base class for easy control of daemons."""
@@ -281,19 +332,6 @@ class Cli(QueryInterface):
             'restart': self.func_restart,
             'query': self.func_query,
         }
-
-    def inf(self, msg):
-        print(msg)
-
-    def wrn(self, msg):
-        print('WRN: %s' % (msg))
-
-    def err(self, msg):
-        print('ERR: %s' % (msg))
-
-    def abort(self, code, msg):
-        print('ABORT: %s' % (msg))
-        sys.exit(code)
 
     def parse_arguments(self, cli_args=None):
         """
@@ -337,39 +375,20 @@ class Cli(QueryInterface):
         #raise NotImplementedError('The default function is not implemented!')
 
     def func_cleanup(self):
-        self.daemon._cleanup(outfiles=True)
+        """Erase daemon instance related files."""
+        self.cleanup()
 
     def func_start(self):
         """Start the daemon."""
-        self.inf('start(): Starting the daemon...')
-        # Remove old files...
-        #if self.daemon_is_alive():
-        #    self.abort(12, 'start(): Already running!')
-        #    return
-        #self.daemon._cleanup(outfiles=True)
-        # Start the daemon
-        self.inf('start(): Executing run...')
-        self.daemon._run()
+        self.start()
 
     def func_stop(self):
         """Stop the daemon."""
-        self.inf('stop(): Stopping the daemon...')
-        if not self.daemon_is_alive():
-            self.wrn('stop(): The daemon is not running!')
-            return
-        self.query('stop')
-        time.sleep(TIMEOUT*0.5)
-        if self.daemon._fport.exists():
-            self.wrn('stop(): The daemon failed to cleanup!')
-            self.daemon._cleanup()
-        else:
-            self.inf("stop(): The daemon exited cleanly.")
+        self.stop()
 
     def func_restart(self):
         """Restart the daemon."""
-        self.inf("restart(): Restarting the daemon...")
-        self.func_stop()
-        self.func_start()
+        self.restart()
 
     def func_query(self, name, *pargs, **kwargs):
         reply = self.query(name, *pargs, **kwargs)

@@ -9,6 +9,7 @@ import pickle
 
 import neronet.core
 import neronet.daemon
+import neronet.nerokid
 
 class Neromum(neronet.daemon.Daemon):
 
@@ -64,9 +65,12 @@ class Neromum(neronet.daemon.Daemon):
     def start_nerokid(self, nerokid):
         """Starts the nerokid in the node"""
         self.log('Launching kid %s...' % (nerokid.experiment_id))
-        neronet.core.osrun('nerokid --start')
-        neronet.core.osrun('nerokid --query launch %s %d %s'
-            % (self.host, self.port, nerokid.experiment_id))
+        kid_daemon = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(nerokid.experiment_id))
+        kid_daemon.start()
+        kid_daemon.query('launch', self.host, self.port)
+        #neronet.core.osrun('nerokid --start')
+        #neronet.core.osrun('nerokid --query launch %s %d %s'
+        #    % (self.host, self.port, nerokid.experiment_id))
         nerokid.state = 'running'
 
 class NeromumCli(neronet.daemon.Cli):
@@ -77,8 +81,12 @@ class NeromumCli(neronet.daemon.Cli):
         })
       
     def func_input(self):
-        data = sys.stdin.read() # pickle.loads()
-        print('Data:\n%s\n' % (data))
+        nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
+        nerokid_dqi.start()
+        #nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
+        print(nerokid_dqi.query('status'))
+        #data = sys.stdin.read() # pickle.loads()
+        #print('Data:\n%s\n' % (data))
 
 def main():
     """Create a CLI interface object and process CLI arguments."""

@@ -10,6 +10,7 @@ Attributes:
 import os
 import subprocess
 import shlex
+import time
 
 import neronet.core
 import neronet.daemon
@@ -57,21 +58,20 @@ class Nerokid(neronet.daemon.Daemon):
     Experiment as the 3rd
     Experiment parameters from 4th argument onwards
     """
-    def __init__(self):
-        super().__init__('nerokid')
+    def __init__(self, experiment_id):
+        super().__init__('nerokid-%s' % (experiment_id))
         self.neromum = None
-        self.experiment = None
+        self.experiment = neronet.core.Experiment(experiment_id)
         self.process = None
         self.add_query('launch', self.qry_launch)
 
-    def qry_launch(self, host, port, experiment_id):
+    def qry_launch(self, host, port):
         """The Nerokid main.
 
         Initializes the socket, launches the child process and starts to monitor the child process
         """
         self.neromum = neronet.daemon.QueryInterface(
                 neronet.neromum.Neromum(), host=host, port=int(port))
-        self.experiment = neronet.core.Experiment(experiment_id)
         self.log('Launching a kid...')
         self.log('- Mom address: (%s, %d)' % (self.neromum.host, self.neromum.port))
         self.log('- Experiment ID: "%s"' % (self.experiment.experiment_id))
