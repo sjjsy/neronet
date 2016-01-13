@@ -1368,6 +1368,28 @@ Participants: Samuel, Iiro, Matias + (Skype: Tuomo, Teemu)
   apply and test it with Nerokid. It should be finished along with doing the
   same for Neromum and Neroman.
 
+## 01-13 360m Wedshop (team)
+
+Participants: team
+
+Agenda:
+
+- Cli help/usage
+- Neroman-mum SSH data transmission
+- Peer review
+- integration
+- merging
+ -
+
+### Scrum
+
+- Tuomo: 
+- Joona: 
+- Teemu: 
+- Matias: 
+- Iiro: 
+- Samuel: 
+
 ## 01-27 120m EES: Testing (Tu)
 
 Participants: Tuomo + ???

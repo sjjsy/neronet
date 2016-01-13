@@ -125,6 +125,6 @@ class Nerokid(neronet.daemon.Daemon):
         self.neromum.query('nerokid_update', self.experiment)
 
 def main():
-    """Create a Nerokid and call its run method."""
+    """Create a CLI interface object and process CLI arguments."""
     cli = neronet.daemon.Cli(Nerokid())
     cli.parse_arguments()

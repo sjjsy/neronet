@@ -27,12 +27,13 @@ Attributes:
 
 import os
 import time
-import datetime
 import yaml
 import pathlib
 
 import neronet.core
+import neronet.daemon
 
+CONFIG_FOLDER = pathlib.Path.home() / '.neronet'
 CONFIG_FILENAME = 'config.yaml'
 
 
@@ -53,107 +54,132 @@ class Neroman(neronet.daemon.Daemon):
     """The part of Neronet that handles user side things.
 
     Attributes:
-        database (str): Path to the database used, currently only .yaml
+        database_file (str): Path to the database used, currently only .yaml
         clusters (Dict): A dictionary containing the specified clusters
         experiments (Dict): A dictionary containing the specified experiments
         preferences (Dict): A dictionary containing the preferences
     """
 
-    def __init__(self, database='default.yaml',
-                 preferences_file='preferences.yaml',
-                 clusters_file='clusters.yaml'):
+    def __init__(self):
         """Initializes Neroman
 
         Reads the contents of its attributes from a database (currently just
         a .yaml file).
 
         Args:
-            database (str): The path to the database file as a string, the
-                rest of the attributes will be parsed from the database.
+            database_file (str): The path to the database file as a string,
+                the rest of the attributes will be parsed from the database.
         """
         super().__init__('neroman')
-        self.database = database
-        self.clusters_file = clusters_file
-        self.preferences_file = preferences_file
+        self.database_file = CONFIG_FOLDER / 'default.yaml'
+        self.clusters_file = CONFIG_FOLDER / 'clusters.yaml'
+        self.preferences_file = CONFIG_FOLDER / 'preferences.yaml'
         self.clusters = {}
         self.experiments = {}
         self.preferences = {}
-        self._load_configurations(database, clusters_file, preferences_file)
+        self._load_configurations()
+        self.add_query('status', self.qry_status)
+        self.add_query('specify_cluster', self.qry_specify_cluster)
 
-    def _load_configurations(self, database, clusters, preferences):
+    def _load_config(self, config_file, default=None):
+        return yaml.load(config_file.read_text()) if config_file.exists() \
+                else default
+
+    def _save_config(self, config_file, data):
+        """Save config data into the config file path."""
+        config_file.write_text(yaml.dump(data, default_flow_style=False))
+
+    def _load_configurations(self):
         """Load the configurations from the yaml files or creates them if they
         don't exist
-
-        Args:
-            database (str): The filepath of the database file
-            clusters (str): The filepath of the clusters file
-            preferences (str): The filepath of the preferences file
         """
-        if not os.path.exists(preferences):
-            with open(preferences, 'w') as f:
-                f.write("name:\nemail:\n")
-        else:
-            with open(preferences, 'r') as f:
-                self.preferences = yaml.load(f.read())
+        self.preferences = self._load_config(self.preferences_file)
         if not self.preferences:
-            self.preferences = {}
+            self.preferences = {'name': None, 'email': None}
+            self._save_config(self.preferences_file, self.preferences)
 
-        if not os.path.exists(clusters):
-            with open(clusters, 'w') as f:
-                f.write("clusters:\ngroups:\n")
-        else:
-            with open(clusters, 'r') as f:
-                self.clusters = yaml.load(f.read())
+        self.clusters = self._load_config(self.clusters_file)
         if not self.clusters:
-            self.clusters = {'clusters': None}
-        if not self.clusters['clusters']:
-            self.clusters['clusters'] = {}
+            self.clusters = {'clusters': {}, 'groups': None}
+            self._save_config(self.clusters_file, self.clusters)
 
-        if not os.path.exists(database):
-            with open(database, 'w') as f:
-                f.write('')
-        else:
-            with open(database, 'r') as f:
-                self.experiments = yaml.load(f.read())
+        self.experiments = self._load_config(self.database_file)
         if not self.experiments:
             self.experiments = {}
+            self._save_config(self.database_file, self.experiments)
 
-    def save_database(self):
-        """Save the contents of Neroman's attributes in the database
-        """
-        with open(self.database, 'w') as f:
-            f.write(yaml.dump(self.experiments,
-                              default_flow_style=False))
+    def qry_status(self, arg=None):
+        """Return status information."""
+        if arg == None or arg == 'all':
+            msg = '==> Neroman Status Report ==>\n'
+            msg += '--> Clusters -->\n'
+            if self.clusters['clusters']:
+                for name, cluster in self.clusters['clusters'].items():
+                    ssh_address = cluster['ssh_address']
+                    cluster_type = cluster['type']
+                    msg += '%s %s %s\n' % (name, ssh_address, cluster_type)
+            else:
+                msg += 'No clusters defined\n'
+            msg += '--> Experiments -->\n'
+            if self.experiments:
+                for name, experiment in self.experiments.items():
+                    msg += '%s: %s' % (name, experiment['state'].pop()[0])
+            else:
+                msg += 'No experiments defined\n'
+        elif arg in self.experiments:
+            msg = '==> Experiment Status Report ==>\n'
+            experiment = self.experiments[arg]
+            parameters = experiment['parameters']
+            time_modified = experiment['time_modified']
+            state, state_change_time = experiment['state'].pop()
+            parameters_string = ', '.join(
+                ["%s: %s" % (k, v) for k, v in parameters.items()])
+            msg += 'Experiment: %s\nParameters: %s\n' %
+                    (arg, parameters_string)
+            if state == 'defined':
+                msg += 'State: %s - %s\n' % (state, state_change_time)
+            else:
+                cluster = experiment['cluster']
+                msg += 'State: %s - %s - %s\n' %
+                    (state, cluster, state_change_time)
+            msg += 'Last modified: %s\n' % (time_modified)
+        else:
+            raise IOError('No experiment named "%s"!' % (arg))
+        self._reply['msgbody'] = msg
+        self._reply['rv'] = 0
 
-    def specify_cluster(
-            self,
-            cluster_name,
-            ssh_address,
-            cluster_type,
-            portnumber=22):
+    def qry_specify_user(self, name, email):
+        """Update user data."""
+        self.preferences['name'] = name
+        self.preferences['email'] = email
+        self._save_config(self.preferences_file, self.preferences)
+        self._reply['rv'] = 0
+
+    def qry_specify_cluster(self, name, ssh_address, cluster_type, port=22):
         """Specify clusters so that Neroman is aware of them.
 
         Writes cluster name, address and type to the clusters config file
 
         Args:
-            cluster_name (str): The name of the cluster, should be unique
+            name (str): The name of the cluster, should be unique
             ssh_address (str): SSH address of the cluster
-            cluster_type (str): Type of the cluster. Either slurm or unmanaged
+            cluster_type (str): Type of the cluster (slurm or unmanaged)
+            port (int): SSH port number
 
         Raises:
             FormatError: if the cluster type isn't unmanaged or slurm
-
         """
         if cluster_type != 'slurm' and cluster_type != 'unmanaged':
             raise FormatError("Cluster type should be slurm or unmanaged")
 
-        self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address,
-                                                   'type': cluster_type,
-                                                   'port': portnumber}
-        with open(self.clusters_file, 'w') as f:
-            f.write(yaml.dump(self.clusters, default_flow_style=False))
+        self.clusters['clusters'][name] = {
+                'ssh_address': ssh_address,
+                'type': cluster_type,
+                'port': port}
+        self._save_config(self.clusters_file, self.clusters)
+        self._reply['rv'] = 0
 
-    def specify_experiments(self, folder):
+    def qry_specify_experiments(self, folder):
         """Specify experiments so that Neroman is aware of them.
 
         Reads the contents of the experiment from a config file inside the
@@ -168,41 +194,73 @@ class Neroman(neronet.daemon.Daemon):
                 doesn't exists
             FormatError: If the config file is badly formated
         """
-        if not os.path.isdir(folder):
-            raise FileNotFoundError('No such folder')
-
-        file_path = os.path.join(folder, CONFIG_FILENAME)
-        if not os.path.exists(file_path):
-            raise FileNotFoundError('No config file in folder')
-
-        if os.stat(file_path).st_size == 0:
+        folder = pathlib.Path(folder)
+        if not folder.isdir():
+            raise FileNotFoundError('No such folder!')
+        config_file = folder / CONFIG_FILENAME
+        if not config_file.exists():
+            raise FileNotFoundError('No config file in folder!')
+        if config_file.stat().st_size == 0:
             raise FormatError('Empty config file')
-
-        with open(file_path, 'r') as file:
-            experiment_data = yaml.load(file.read())
+        experiment_data = self._load_config(config_file)
         experiment = {}
         for field in ['run_command_prefix', 'main_code_file',
                       'parameters', 'parameters_format', 'logoutput']:
             if field not in experiment_data:
-                raise FormatError('No %s field in experiment' % field)
+                raise FormatError('No %s field in experiment' % (field))
             experiment[field] = experiment_data[field]
         experiment['cluster'] = None
-        experiment['time_created'] = self._time_now()
-        experiment['state'] = [['defined', experiment['time_created']]]
+        experiment['time_created'] = neronet.core.time_now()
+        experiment['state'] = [('defined', experiment['time_created'])]
         experiment['time_modified'] = experiment['time_created']
-        experiment['path'] = os.path.abspath(folder)
+        experiment['path'] = folder.abspath()
         if 'experiment_id' not in experiment_data:
             raise FormatError('No experiment_id field in experiment')
         else:
             self.experiments[experiment_data['experiment_id']] = experiment
+        self._save_config(self.database_file, self.experiments)
+        self._reply['rv'] = 0
+
+    def qry_update_state(self, exp_id, state):
+        self.experiments[exp_id]['state'].append((state,
+                neronet.core.time_now()))
+        self._reply['rv'] = 0
+
+    def qry_submit(self, exp_id, cluster_id):
+        """Submit and start the experiment in the cluster using ssh.
+
+        Args:
+            exp_id (str): the experiment ID
+            cluster_id (str): the cluster ID
+        """
+        experiment = self.experiments[exp_id]
+        cluster = self.clusters[cluster_id]
+        remote_dir = pathlib.Path('/tmp/neronet-%d' % (time.time()))
+        experiment_dir = experiment['path']
+        experiment_results_dir = experiment_dir + "/" + experiment['logoutput']
+        experiment_callstring = self._create_experiment_callstring(exp_id)
+        experiment['cluster'] = cluster_id
+        cluster_port = cluster['port']
+        cluster_address = cluster['ssh_address']
+        self._send_files(
+            experiment_dir,
+            remote_dir,
+            cluster_address,
+            cluster_port)
+        # Magic do NOT touch:
+        neronet.core.osrun(
+            'ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' %
+            (cluster_port,
+             cluster_address,
+             remote_dir,
+             remote_dir,
+             remote_dir,
+             experiment_callstring))
+        self.update_state(exp_id, 'submitted')
         self.save_database()
-
-    def _time_now(self):
-        return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
-
-    def update_state(self, experiment_id, state):
-        self.experiments[experiment_id]['state'].append([state,
-                                                         self._time_now()])
+        time.sleep(2)  # will be unnecessary as soon as daemon works
+        # returns the results, should be called from cli
+        self._get_experiment_results(exp_id, remote_dir, experiment_results_dir)
 
     def _create_experiment_callstring(self, experiment_id):
         if experiment_id not in self.experiments:
@@ -215,57 +273,7 @@ class Neroman(neronet.daemon.Daemon):
         pstr = pformat.format(**params)
         return ' '.join([rcmd, code_file, pstr])
 
-    def specify_user(self, name, email):
-        """Update user data"""
-        self.preferences['name'] = name
-        self.preferences['email'] = email
-        with open(self.preferences_file, 'w') as f:
-            f.write(yaml.dump(self.preferences, default_flow_style=False))
-
-    def status(self, arg):
-        """Display Neroman data on into stdstream"""
-        
-        if arg != 'all':
-            if arg in self.experiments:
-                experiment = self.experiments[arg]
-                parameters = experiment['parameters']
-                time_modified = experiment['time_modified']
-                state, state_change_time = experiment['state'].pop()
-                parameters_string = ', '.join(
-                    ["%s: %s" % (k, v) for k, v in parameters.items()])
-                print(
-                    'Experiment: %s\nParameters: %s' %
-                    (arg, parameters_string))
-                if state == 'defined':
-                    print('State: %s - %s' % (state, state_change_time))
-                else:
-                    cluster = experiment['cluster']
-                    print(
-                        'State: %s - %s - %s' %
-                        (state, cluster, state_change_time))
-                print('Last modified: %s' % time_modified)
-                return
-            else:
-                raise IOError('No experiment named %s' % arg)
-        
-        print("================Neroman=================")
-        print("\n================Clusters================")
-        if not self.clusters['clusters']:
-            print("No clusters defined")
-        else:
-            for cluster in self.clusters['clusters']:
-                address = self.clusters['clusters'][cluster]['ssh_address']
-                type = self.clusters['clusters'][cluster]['type']
-                print("{} {} {}".format(cluster, address, type))
-        print("\n================Experiments=============")
-        if not len(self.experiments):
-            print("No experiments defined")
-        else:
-            for experiment in self.experiments:
-                print(experiment + ': ' +
-                      self.experiments[experiment]['state'].pop()[0])
-
-    def send_files(
+    def _send_files(
         self,
         experiment_folder,
         remote_dir,
@@ -305,7 +313,7 @@ class Neroman(neronet.daemon.Daemon):
              cluster_address,
              remote_dir))
 
-    def get_experiment_results(self, experiment_id, remote_dir, local_dir):
+    def _get_experiment_results(self, experiment_id, remote_dir, local_dir):
         """Get the experiment results from neromum
 
         Args:
@@ -316,61 +324,23 @@ class Neroman(neronet.daemon.Daemon):
                 machine.
         """
         experiment = self.experiments[experiment_id]
-        cluster_ID = experiment['cluster']
-        cluster_port = self.clusters['clusters'][cluster_ID]['port']
-        cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
+        cluster_id = experiment['cluster']
+        cluster_port = self.clusters['clusters'][cluster_id]['port']
+        cluster_address = self.clusters['clusters'][cluster_id]['ssh_address']
         neronet.core.osrun(
             'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
                 remote_dir, local_dir))
-
-    def submit(self, exp_id, cluster_ID):
-        """Submit and start the experiment in the cluster using ssh.
-
-        Args:
-            experiment_dir (str) : the file path to experiment folder in local machine.
-            experiment_destination (str) : the file path to experiment folder on the remote cluster.
-            experiment (str) : the name of the experiment.
-            cluster_address (str) : the address of the cluster.
-            cluster_port (int) : ssh port number of the cluster.
-        """
-        # TODO: Verify exp_id and cluster_ID
-        remote_dir = pathlib.Path('/tmp/neronet-%d' % (time.time()))
-        experiment_dir = self.experiments[exp_id]['path']
-        experiment_results_dir = experiment_dir + "/" + self.experiments[exp_id]['logoutput']
-        experiment_callstring = self._create_experiment_callstring(exp_id)
-        self.experiments[exp_id]['cluster'] = cluster_ID
-        cluster_port = self.clusters['clusters'][cluster_ID]['port']
-        cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
-        self.send_files(
-            experiment_dir,
-            remote_dir,
-            cluster_address,
-            cluster_port)
-        # Magic do NOT touch:
-        neronet.core.osrun(
-            'ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' %
-            (cluster_port,
-             cluster_address,
-             remote_dir,
-             remote_dir,
-             remote_dir,
-             experiment_callstring))
-        self.update_state(exp_id, 'submitted')
-        self.save_database()
-        time.sleep(2)  # will be unnecessary as soon as daemon works
-        # returns the results, should be called from cli
-        self.get_experiment_results(exp_id, remote_dir, experiment_results_dir)
   
-class NeroManCli(neronet.daemon.Cli):
+class NeromanCli(neronet.daemon.Cli):
     def __init__(self):
-        super().__init__(NeroKid())
+        super().__init__(Neroman())
         self.funcs.update({
-            'submit' : self.func_submit,
-            'status' : self.func_status,
-            'experiment' : self.func_experiment,
-            'cluster' : self.func_cluster,
-            'user' : self.func_user
+#            'submit' : self.func_submit,
+#            'status' : self.func_status,
+#            'experiment' : self.func_experiment,
+#            'cluster' : self.func_cluster,
+#            'user' : self.func_user
         })
         
     def func_submit(self):
@@ -387,18 +357,8 @@ class NeroManCli(neronet.daemon.Cli):
       
     def func_user(self):
         pass
-      
-      
-      
-    
-        
+
 def main():
-    cli = NeroManCli()
+    """Create a CLI interface object and process CLI arguments."""
+    cli = NeromanCli()
     cli.parse_arguments()
-
-
-
-
-
-
-    

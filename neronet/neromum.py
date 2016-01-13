@@ -73,6 +73,6 @@ class Neromum(neronet.daemon.Daemon):
         nerokid.state = 'running'
 
 def main():
-    """Create a Neromum and call its run method."""
+    """Create a CLI interface object and process CLI arguments."""
     cli = neronet.daemon.Cli(Neromum())
     cli.parse_arguments()

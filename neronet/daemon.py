@@ -146,6 +146,9 @@ class Daemon():
                 #thread = threading.Thread(target=self.handle, args=[conn])
                 #thread.daemon = True
                 #thread.start()
+                if not self._fport.exists():
+                    self.log('run(): Port file disappeared! Aborting...')
+                    self._doquit = True
             self._quit()
 
     def _handle(self, sckt):
