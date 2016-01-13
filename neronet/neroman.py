@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """This module defines Neroman.
 
 To work with Neroman each experiment must have the following attributes
@@ -29,6 +29,7 @@ import os
 import time
 import yaml
 import pathlib
+import sys
 
 import neronet.core
 import neronet.daemon
@@ -77,7 +78,10 @@ class Neroman(neronet.daemon.Daemon):
         self.clusters = {}
         self.experiments = {}
         self.preferences = {}
-        self._load_configurations()
+        try:
+            self._load_configurations()
+        except neronet.neroman.FormatError as e:
+            self.abort('Reading config files failed!', e)
         self.add_query('status', self.qry_status)
         self.add_query('specify_cluster', self.qry_specify_cluster)
 
@@ -95,7 +99,7 @@ class Neroman(neronet.daemon.Daemon):
         """
         self.preferences = self._load_config(self.preferences_file)
         if not self.preferences:
-            self.preferences = {'name': None, 'email': None}
+            self.preferences = {'name': None, 'email': None, 'default_cluster': None}
             self._save_config(self.preferences_file, self.preferences)
 
         self.clusters = self._load_config(self.clusters_file)
@@ -222,9 +226,12 @@ class Neroman(neronet.daemon.Daemon):
         self._reply['rv'] = 0
 
     def qry_update_state(self, exp_id, state):
+        self._update_state(exp_id, state)
+        self._reply['rv'] = 0
+
+    def _update_state(self, exp_id, state):
         self.experiments[exp_id]['state'].append((state,
                 neronet.core.time_now()))
-        self._reply['rv'] = 0
 
     def qry_submit(self, exp_id, cluster_id):
         """Submit and start the experiment in the cluster using ssh.
@@ -256,8 +263,8 @@ class Neroman(neronet.daemon.Daemon):
              remote_dir,
              remote_dir,
              experiment_callstring))
-        self.update_state(exp_id, 'submitted')
-        self.save_database()
+        self._update_state(exp_id, 'submitted')
+        self._save_config(self.database_file, self.experiments)
         time.sleep(2)  # will be unnecessary as soon as daemon works
         # returns the results, should be called from cli
         self._get_experiment_results(exp_id, remote_dir, experiment_results_dir)
@@ -315,7 +322,6 @@ class Neroman(neronet.daemon.Daemon):
 
     def _get_experiment_results(self, experiment_id, remote_dir, local_dir):
         """Get the experiment results from neromum
-
         Args:
             experiment_id (str): the experiment ID.
             remote_dir (str): the file path to results folder on the remote
@@ -331,7 +337,7 @@ class Neroman(neronet.daemon.Daemon):
             'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
                 remote_dir, local_dir))
-  
+
 class NeromanCli(neronet.daemon.Cli):
     def __init__(self):
         super().__init__(Neroman())

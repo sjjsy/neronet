@@ -72,7 +72,17 @@ class Neromum(neronet.daemon.Daemon):
             % (self.host, self.port, nerokid.experiment_id))
         nerokid.state = 'running'
 
+class NeromumCli(neronet.daemon.Cli):
+    def __init__(self):
+        super().__init__(Neromum())
+        self.funcs.update({
+            'input' : self.func_input,
+        })
+      
+    def func_input(self):
+        pass
+
 def main():
     """Create a CLI interface object and process CLI arguments."""
-    cli = neronet.daemon.Cli(Neromum())
+    cli = NeromanCli()
     cli.parse_arguments()

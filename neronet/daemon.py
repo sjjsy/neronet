@@ -85,6 +85,10 @@ class Daemon():
         else:
             sys.stderr.write(output)
 
+    def abort(self, message, err=None):
+        self.err(message, err)
+        self.quit()
+
     def _cleanup(self, outfiles=False):
         """Remove daemon instance related files."""
         self.log('cleanup(): Removing instance related files...')
