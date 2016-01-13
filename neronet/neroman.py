@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """This module defines Neroman.
 
 To work with Neroman each experiment must have the following attributes
@@ -30,6 +30,7 @@ import time
 import datetime
 import yaml
 import pathlib
+import sys
 
 import neronet.core
 
@@ -78,7 +79,11 @@ class Neroman(neronet.daemon.Daemon):
         self.clusters = {}
         self.experiments = {}
         self.preferences = {}
-        self._load_configurations(database, clusters_file, preferences_file)
+        try:
+            self._load_configurations(database, clusters_file, preferences_file)
+        except neronet.neroman.FormatError as e:
+            print(e)
+            sys.exit()
 
     def _load_configurations(self, database, clusters, preferences):
         """Load the configurations from the yaml files or creates them if they
@@ -96,7 +101,13 @@ class Neroman(neronet.daemon.Daemon):
             with open(preferences, 'r') as f:
                 self.preferences = yaml.load(f.read())
         if not self.preferences:
-            self.preferences = {}
+            self.specify_user("","")
+        if 'default_cluster' not in self.preferences:
+            self.preferences['default_cluster'] = ""
+        if 'email' not in self.preferences:
+            raise FormatError('The user\'s email is not specified')
+        if 'name' not in self.preferences:
+            raise FormatError('The user\'s name is not specified')
 
         if not os.path.exists(clusters):
             with open(clusters, 'w') as f:
@@ -108,6 +119,28 @@ class Neroman(neronet.daemon.Daemon):
             self.clusters = {'clusters': None}
         if not self.clusters['clusters']:
             self.clusters['clusters'] = {}
+        
+        # This checks the format of the clusters file            
+        for key in self.clusters['clusters']:
+            if 'type' not in self.clusters['clusters'][key]:
+                self.clusters['clusters'][key]['type'] = 'unmanaged'
+            else:
+                if self.clusters['clusters'][key]['type'] != 'unmanaged':
+                    if self.clusters['clusters'][key]['type'] != 'slurm':
+                        raise FormatError('The cluster type for the cluster ' +
+                        key + ' is not valid.')
+            if 'port' not in self.clusters['clusters'][key]:
+                self.clusters['clusters'][key]['port'] = 22
+            if 'ssh_address' not in self.clusters['clusters'][key]:
+                raise FormatError('The ssh address for the cluster ' + key + 
+                ' is not defined.')
+        if self.preferences['default_cluster']:
+            if self.preferences['default_cluster'] not in self.clusters['clusters']:
+                raise FormatError('The specified default cluster ' + 
+                self.preferences['default_cluster'] +' is not found')
+                
+        with open(self.clusters_file, 'w') as f:
+            f.write(yaml.dump(self.clusters, default_flow_style=False))
 
         if not os.path.exists(database):
             with open(database, 'w') as f:
@@ -189,12 +222,29 @@ class Neroman(neronet.daemon.Daemon):
         experiment['cluster'] = None
         experiment['time_created'] = self._time_now()
         experiment['state'] = [['defined', experiment['time_created']]]
-        experiment['time_modified'] = experiment['time_created']
+        experiment['time_modified'] = self._time_now() 
         experiment['path'] = os.path.abspath(folder)
         if 'experiment_id' not in experiment_data:
             raise FormatError('No experiment_id field in experiment')
         else:
-            self.experiments[experiment_data['experiment_id']] = experiment
+            if experiment_data['experiment_id'] in self.experiments:
+                inp = 'perkele'
+                while inp not in ['y', 'n']:
+                    inp = input('An experiment with the same id already exists.'
+                     + ' Do you want to modify the existing experiment? (y/n)')
+                if inp == 'y':
+                    experiment['time_created'] = self.experiments[experiment_data['experiment_id']]['time_created']
+                    experiment['state'] = [['defined', experiment['time_created']]]
+                    self.experiments[experiment_data['experiment_id']] = experiment
+                    print('The experiment \'' + experiment_data['experiment_id']
+                     + '\' modified successfully')
+                else:
+                    print('Modify the experiment_id field in the config file' +
+                    ' and try again')
+            else:
+                self.experiments[experiment_data['experiment_id']] = experiment
+                print('A new experiment \'' + experiment_data['experiment_id'] +
+                '\' created successfully')
         self.save_database()
 
     def _time_now(self):
@@ -215,10 +265,11 @@ class Neroman(neronet.daemon.Daemon):
         pstr = pformat.format(**params)
         return ' '.join([rcmd, code_file, pstr])
 
-    def specify_user(self, name, email):
+    def specify_user(self, name, email, default_cluster = ""):
         """Update user data"""
         self.preferences['name'] = name
         self.preferences['email'] = email
+        self.preferences['default_cluster'] = default_cluster
         with open(self.preferences_file, 'w') as f:
             f.write(yaml.dump(self.preferences, default_flow_style=False))
 
@@ -249,6 +300,11 @@ class Neroman(neronet.daemon.Daemon):
                 raise IOError('No experiment named %s' % arg)
         
         print("================Neroman=================")
+        print("\n================User=================")
+        print("Name: " + self.preferences['name'])
+        print("Email: " + self.preferences['email'])
+        if self.preferences['default_cluster']:
+            print("Default Cluster: " + self.preferences['default_cluster'])
         print("\n================Clusters================")
         if not self.clusters['clusters']:
             print("No clusters defined")
@@ -305,9 +361,9 @@ class Neroman(neronet.daemon.Daemon):
              cluster_address,
              remote_dir))
 
+
     def get_experiment_results(self, experiment_id, remote_dir, local_dir):
         """Get the experiment results from neromum
-
         Args:
             experiment_id (str): the experiment ID.
             remote_dir (str): the file path to results folder on the remote
@@ -323,10 +379,9 @@ class Neroman(neronet.daemon.Daemon):
             'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
             % (cluster_port, cluster_address,
                 remote_dir, local_dir))
-
-    def submit(self, exp_id, cluster_ID):
+    
+    def submit(self, exp_id, cluster_ID = ""):
         """Submit and start the experiment in the cluster using ssh.
-
         Args:
             experiment_dir (str) : the file path to experiment folder in local machine.
             experiment_destination (str) : the file path to experiment folder on the remote cluster.
@@ -334,7 +389,15 @@ class Neroman(neronet.daemon.Daemon):
             cluster_address (str) : the address of the cluster.
             cluster_port (int) : ssh port number of the cluster.
         """
-        # TODO: Verify exp_id and cluster_ID
+        if not cluster_ID:
+            cluster_ID = self.preferences['default_cluster']
+            
+        if cluster_ID not in self.clusters['clusters']:
+            raise FormatError('The given cluster ID or default cluster is not valid')
+        
+        if exp_id not in self.experiments:
+            raise FormatError('The given experiment ID is not valid')
+        
         remote_dir = pathlib.Path('/tmp/neronet-%d' % (time.time()))
         experiment_dir = self.experiments[exp_id]['path']
         experiment_results_dir = experiment_dir + "/" + self.experiments[exp_id]['logoutput']
@@ -401,4 +464,3 @@ def main():
 
 
 
-    

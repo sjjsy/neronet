@@ -1,0 +1,99 @@
+6.1.2016 Tested the following things:
+
+The testing computer didn't use python 3.5 but python 3.4 instead.
+
+Changes to the clusters.yaml file and testing the specification of clusters.
+- Changing the order of the cluster properties in clusters.yaml - the 
+  program works fine
+- Used 'unmanaged' as the cluster id - No errors when specifying the cluster 
+  or showing the status after specifying the cluster. Yet to test whether
+  or not trying to submit to this cluster works.
+- Did not specify cluster type for a certain cluster - Generated key error.
+  Fixed so that if the cluster type is not specified, it is initialized to 
+  'unmanaged'. After that, specifying the cluster without giving type worked 
+  fine.
+- Did not specify port number for a certain cluster - Generates key error when
+  submitting the experiment. Fixed so that the port is initialized to 22 if it 
+  is not specified. After fixing, no problems occurred.
+- Did not specify ssh address for a certain cluster. - Generated key error.
+  Fixed so that a user friendly error message is displayed. After fixing no 
+  unexpected problems.
+- Made intentional grammar mistakes in the cluster attributes. - A user 
+  friendly error message was shown as expected.
+- Tried a cluster type that is neither 'unmanaged' or 'slurm'. - No error
+  message was shown. Fixed so that an error message is displayed. No problems
+  after fixing.
+- Tried to use the same cluster name twice. - No errors. One of them was simply 
+  removed.
+- Specifying clusters via CLI works as expected.
+  
+Changes to the preferences.yaml file and testing status report.
+- The user's information is not shown in the overall status report. - Fixed so
+  that it is.
+- Did not specify a default cluster. - No errors were found. The default cluster
+  simply wasn't specified. Yet to test whether errors are found when trying to
+  submit the experiment to default cluster.
+- Made an intentional grammar mistake to the default cluster parameter. - The
+  same result as above
+- Did not specify an email in the preferences.yaml or email was written wrong. -
+  Key error was raised. Fixed so that a user friendly error message is displayed
+  instead. No problems after fixing.
+- Did not specify the user's name in the preferences.yaml. - Key error was
+  raised. Fixed so that a user friendly error message is displayed instead. No
+  problems after fixing.
+- Tried to use a default cluster that is not specified in the clusters.yaml. -
+  No error message was shown to the user. Fixed so that a user friendly error
+  message is shown. After fixing tested that no error message is shown if the
+  default cluster field is left blank. No problems found.
+  
+8.1.2016 Tested the following things:
+
+Specifying experiments:
+- Tried to specify an experiment with a config file of a correct format. - 
+  Specifying succeeded without problems, but no message indicating that was
+  shown. Fixed so that a message was shown. Tested again after fixing. - No
+  problems found.
+- Tried to specify multiple experiments via cli one at a time. - No problems 
+  found
+- Tried to specify a folder that didn't exist. - A user friendly error message
+  was displayed as expected.
+- Tried to specify a folder without a config file. A user friendly error message
+  was displayed as expected.
+- Tried to leave fields out from the config file. - A user friendly error 
+  message was displayed every time as expected.
+- Tried to specify multiple experiments with the same experiment id. - The
+  previous experiment was overwritten without notification. Fixed so that a
+  notification is shown and the user is asked whether they want to modify the
+  existing experiment or go back and modify the experiment_id in the 
+  experiment's config file. No problems after fixing.
+
+Submitting experiments:
+- Tried to submit a dummy experiment to localhost. - Works as expected, but the
+  results are returned synchronously.
+- Checked the status report after submitting. - So far works as expected, but
+  when the daemon system is introduced, drastic changes will occur and retesting
+  is required.
+- Tried to submit an experiment whose folder is moved to a new location. -Rsync 
+  error was raised. TODO: FIX THIS
+- Tried to submit an experiment after removing the required code files. - The
+  program didn't notice the removal. TODO: FIX THIS
+- Tried to submit an experiment to default cluster by leaving the cluster field
+  of the command empty. - An index error was raised. Fixed so that the cluster
+  field can be left empty. No problems after fixing.
+- All of the commands above were tested with three clusters: localhost, 
+  marjakj@kosh.aalto.fi and triton.aalto.fi. Triton doesn't have python3 so the
+  server side didn't work yet but the client side works as expected.
+
+General notes after testing session:
+- The files are synced each time an experiment is submitted. This can be very
+  slow. The results folder is always synced as well -> the size of the folder
+  increases after each submit very rapily.
+- Neromum and kids apparently contain some hardcoded python3-commands so they
+  don't work with earlier python versions.
+  
+  
+  
+  
+  
+  
+  
