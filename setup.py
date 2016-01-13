@@ -22,7 +22,7 @@ long_description = 'Neronet is going to be a framework designed to facilitate th
 
 setup(
     name='neronet',
-    version=0.1.0,
+    version='0.1.1',
     url='http://github.com/smarisa/neronet',
     license='MIT',
     author='The neronet team',
@@ -36,7 +36,7 @@ setup(
     zip_safe=True,
     classifiers = [
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
         'Development Status :: 2 - Pre-Alpha',
         'Natural Language :: English',
         'Environment :: Console',
