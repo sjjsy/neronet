@@ -5,9 +5,10 @@ configuration files and the relating error class
 
 import os
 import itertools
-import neronet.core
 
 import yaml
+
+import neronet.core
 
 CONFIG_FILENAME = 'config.yaml'
 
@@ -99,12 +100,13 @@ class ConfigParser():
             """
 
             #Get the experiment ids from the scope
-            definable_fields = core.MANDATORY_FIELDS | core.OPTIONAL_FIELDS
+            definable_fields = neronet.core.MANDATORY_FIELDS | \
+                                neronet.core.OPTIONAL_FIELDS
             experiment_ids = set(old_scope) - definable_fields
             for experiment_id in experiment_ids:
                 #Initialize the new scope
                 new_scope = old_scope[experiment_id]
-                missing_mandatory_fields = core.MANDATORY_FIELDS
+                missing_mandatory_fields = neronet.core.MANDATORY_FIELDS
                 if new_scope:
                     #Check what mandatory fields are missing in the next scope
                     missing_mandatory_fields = missing_mandatory_fields - \
@@ -128,7 +130,7 @@ class ConfigParser():
                         errors.append("Experiment %s missing %s" % \
                                     (experiment_id, missing_field))
 
-                optional_fields = set(old_scope) & core.OPTIONAL_FIELDS
+                optional_fields = set(old_scope) & neronet.core.OPTIONAL_FIELDS
                 for optional_field in optional_fields:
                     if optional_field not in new_scope:
                         new_scope[optional_field] = old_scope[optional_field]
@@ -138,7 +140,7 @@ class ConfigParser():
                     #Create the experiments
                     experiment = {}
                     params = []
-                    fields = core.MANDATORY_FIELDS | optional_fields
+                    fields = neronet.core.MANDATORY_FIELDS | optional_fields
                     for field in fields:
                         if field == 'parameters':
                             params = \
@@ -156,7 +158,7 @@ class ConfigParser():
                             experiment['experiment_id'] = name
                         else:
                             experiment['experiment_id'] = experiment_id
-                        experiments.append(core.Experiment(**experiment))
+                        experiments.append(neronet.core.Experiment(**experiment))
                 _read_experiments(new_scope)
         _read_experiments(data)
 

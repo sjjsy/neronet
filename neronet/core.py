@@ -48,7 +48,7 @@ class Experiment:
         self.experiment_id = experiment_id
         now = self._time_now()
         self.fields = {'run_command_prefix': run_command_prefix,
-                        'self.main_code_file': main_code_file,
+                        'main_code_file': main_code_file,
                     'required_files': required_files,
                     'logoutput': logoutput,
                     'parameters': parameters,

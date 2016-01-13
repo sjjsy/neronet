@@ -7,6 +7,12 @@ import yaml
 
 import neronet.config_parser as cp
 
+def ltd(l):
+    exps = {}
+    for exp in l:
+        exps[exp.experiment_id] = exp.fields
+    return exps
+
 class TestConfigParser(unittest.TestCase):
 
     def setUp(self):
@@ -16,10 +22,9 @@ class TestConfigParser(unittest.TestCase):
         self.expfolder = tempfile.mkdtemp(dir = self.testfolder)
         self.path = os.path.join(self.expfolder, cp.CONFIG_FILENAME)
 
-        self.fields = ['collection', 'run_command_prefix', 'main_code_file',
-            'logoutput', 'parameters', 'parameters_format']
-        self.values = ['test_collection', 'test_runner', 'main_code', 'output', 
-                {'n': 1}, '{n}']
+        self.fields = ['run_command_prefix', 'main_code_file', 'parameters', 
+                        'parameters_format']
+        self.values = ['test_runner', 'main_code', {'n': 1}, '{n}']
         with open(self.path, 'w') as f:
             f.write(yaml.dump(dict(zip(self.fields + ['test'],
                                         self.values + [None])), 
@@ -56,9 +61,10 @@ class TestConfigParser(unittest.TestCase):
             with self.subTest(missing_field=self.fields[err]):
                 with self.assertRaises(cp.FormatError):
                     self.parser.parse_experiments(self.expfolder)
-
+                    
     def test_parse_simple_experiment(self):
         experiments = self.parser.parse_experiments(self.expfolder)
+        experiments = ltd(experiments)
         for field, value in zip(self.fields, self.values):
             with self.subTest(value=value):
                 self.assertEqual(experiments['test'][field], value)
@@ -69,14 +75,14 @@ class TestConfigParser(unittest.TestCase):
                                         self.values + [{'test2': None}])), 
                                 default_flow_style=False))
         experiments = self.parser.parse_experiments(self.expfolder)
+        experiments = ltd(experiments)
         for experiment in ['test1', 'test2']:
             with self.subTest(experiment=experiment):
                 for field, value in zip(self.fields, self.values):
                     self.assertEqual(experiments[experiment][field], value)
 
     def test_parse_experiment_with_inheritance_overriding(self):
-        overrides = ['another_collection', 'other_test_runner',
-        'other_main_code', 'some_other_output', {'n': 3}, '{n} {n}']
+        overrides = ['other_test_runner', 'other_main_code', {'n': 3}, '{n} {n}']
         for field, override in zip(self.fields, overrides):
             with self.subTest(override=field):
                 with open(self.path, 'w') as f:
@@ -84,6 +90,7 @@ class TestConfigParser(unittest.TestCase):
                         self.values + [{'test2': {field: override}}])), 
                                 default_flow_style=False))
                 experiments = self.parser.parse_experiments(self.expfolder)
+                experiments = ltd(experiments)
                 for field2, value in zip(self.fields, self.values):
                     self.assertEqual(experiments['test1'][field2], value)
                     if field == field2:
@@ -101,6 +108,7 @@ class TestConfigParser(unittest.TestCase):
                                         self.values + [None])), 
                                 default_flow_style=False))
         experiments = self.parser.parse_experiments(self.expfolder)
+        experiments = ltd(experiments)
         experiment_ids = ['test_n-1_x-3', 'test_n-2_x-3',
                             'test_n-1_x-4', 'test_n-2_x-4']
         for i, experiment in enumerate(experiment_ids):
