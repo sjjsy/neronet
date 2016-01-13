@@ -77,7 +77,7 @@ class NeromumCli(neronet.daemon.Cli):
         })
       
     def func_input(self):
-        data = sys.stdin.read() # pickle.loads()
+        data = sys.stdin.readLine() # pickle.loads()
         print('Data:\n%s\n' % (data))
 
 def main():
