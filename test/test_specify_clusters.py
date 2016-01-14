@@ -4,6 +4,7 @@ import os
 import shutil
 
 import neronet.neroman as neroman
+import neronet.config_parser as config_parser
 
 
 class TestSpecifyClusters(unittest.TestCase):    
@@ -39,7 +40,7 @@ class TestSpecifyClusters(unittest.TestCase):
                         ['ssh_address'], 'testcluster.com')
 
     def test_specify_clusters_bad_cluster_type(self):
-        self.assertRaises(neroman.FormatError, 
+        self.assertRaises(config_parser.FormatError, 
                 self.testman.specify_cluster, 'testcluster',
                              'testcluster.com', 'badclustertype')
 
