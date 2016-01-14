@@ -77,8 +77,11 @@ class NeromumCli(neronet.daemon.Cli):
         })
       
     def func_input(self):
-        data = sys.stdin.readLine() # pickle.loads()
+        data = input()
         print('Data:\n%s\n' % (data))
+        while(not ("***" in data)):
+            data = input("") # pickle.loads()
+            print('Data:\n%s\n' % (data))
 
 def main():
     """Create a CLI interface object and process CLI arguments."""
