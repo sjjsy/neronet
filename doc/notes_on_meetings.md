@@ -1374,12 +1374,11 @@ Participants: team
 
 Agenda:
 
+- Merging
+- Integration
 - Cli help/usage
 - Neroman-mum SSH data transmission
 - Peer review
-- integration
-- merging
- -
 
 ### Scrum
 
@@ -1390,7 +1389,20 @@ Agenda:
 - Iiro: 
 - Samuel: 
 
+## Sprint 2 Retrospective 
+
+Agenda:
+- Visiting and updating the team's DoD
+- Visiting and reviewing the commitments
+  done in the last sprint retrospective
+- Identifying things the team should start doing
+- Identifying things the team should stop doing
+- Identifying things the team should continue doing
+- Listing actionable commitments (Actionable = has clear 
+  steps to completion and acceptance criteria. f.ex 
+  "Check in code at least twice per day: before lunch 
+  and before going home")
+
 ## 01-27 120m EES: Testing (Tu)
 
 Participants: Tuomo + ???
-
