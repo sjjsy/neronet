@@ -26,3 +26,10 @@ By Matias & Tuomo
 
 - Communication channels (pretty good atm)
 - Juho (honestly committed to project?)
+
+# Continuous integration
+
+- CruiseControl
+- "Continuous Integration assumes a high degree of tests which are automated into the software"
+
+http://www.martinfowler.com/articles/continuousIntegration.html

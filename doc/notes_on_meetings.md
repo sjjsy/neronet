@@ -1449,17 +1449,22 @@ Sprint goal:
 
 ## 01-15 60m Frifury
 
-Participants: team
+Participants: team + Coach
 
 Agenda:
 
-- 13:00 Retrospective
-- 13:00 CI brainstorming, http://www.martinfowler.com/articles/continuousIntegration.html
-- 13:00 Sprint 2 time logging, updating documents 
-- 13:00 Chat with coach
-- 13:00 Support for Python 2.7
-- 13:00 Finish asynchronous daemon logic
-- 13:00 XX
+- 13:00 General planning
+- 13:15 Sprint 2 time logging, updating documents 
+- 13:30 CI brainstorming (JoTe)
+- 14:00 Chat with coach (team + coach)
+- 14:30 Retrospective (team + coach)
+- 15:00 Support for Python 2.7 (TuMaJo)
+- 15:00 Finish asynchronous daemon logic (SaIiTe)
+- 17:00 Work review (explaining daemon logic)
+
+### Reversion work
+
+- Use the future: https://pypi.python.org/pypi/future
 
 ## 01-27 120m EES: Testing (Tu)
 
