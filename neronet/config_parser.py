@@ -10,6 +10,7 @@ import yaml
 
 import neronet.core
 
+CONFIG_FOLDER = os.path.expanduser('~/.neronet')
 CONFIG_FILENAME = 'config.yaml'
 
 class FormatError(Exception):
@@ -26,16 +27,82 @@ class FormatError(Exception):
     def __str__(self):
         return '\n'.join([''] + self.error_msgs)
 
-class ConfigParser():
+class ConfigManager():
     """ Configuration file parser for neronet configuration files
     """
-    def _time_now(self):
-        """ A helper function to save the current time in consistend format
+    def __init__(self, verbosity=0):
+        self._verbosity = verbosity
+        self._database_file = os.path.join(CONFIG_FOLDER, 'default.yaml')
+        self._clusters_file = os.path.join(CONFIG_FOLDER, 'clusters.yaml')
+        self._preferences_file = os.path.join(CONFIG_FOLDER, 'preferences.yaml')
+        self._load()
 
-        Return:
-            The current time as a string
+    def _load_config(self, config_file, default=None):
+        return yaml.load(config_file.read_text()) if config_file.exists() \
+                else default
+
+    def _config_loader(self, config_file, default_data):
+        data = self._load_config(config_file, default)
+        if not data:
+            data = default_data
+            self._save_config(config_file, data)
+        return data
+
+    def _save_config(self, config_file, data):
+        """Save config data into the config file path."""
+        config_file.write_text(yaml.dump(data, default_flow_style=False))
+
+    def _load(self):
         """
-        return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+        Load the configurations from the yaml files or creates them if they
+        don't exist
+        """
+        self._load_preferences()
+        self._load_clusters()
+        self._load_experiments()
+
+    def _load_preferences(self):
+        """
+        Load the preferences config.
+        """
+        self.preferences = self._config_loader(self.preferences_file,
+            {'name': None, 'email': None, 'default_cluster': None})
+        if self._verbosity > 3:
+            if 'name' not in self.preferences:
+                print('Warning: The user\'s name is not specified')
+            if 'email' not in self.preferences:
+                print('Warning: The user\'s email is not specified')
+
+    def _load_clusters(self):
+        """
+        Load the clusters config.
+        """
+        self.clusters = self._config_loader(self.clusters_file,
+            {'clusters': {}, 'groups': None})
+        # This checks the format of the clusters file            
+        for key, cluster in clusters['clusters'].items():
+            if 'type' not in cluster:
+                cluster['type'] = 'unmanaged'
+            else:
+                if cluster['type'] != 'unmanaged':
+                    if cluster['type'] != 'slurm':
+                        raise FormatError('The cluster type for the cluster ' +
+                        key + ' is not valid.')
+            if 'port' not in cluster:
+                cluster['port'] = 22
+            if 'ssh_address' not in cluster:
+                raise FormatError('The ssh address for the cluster ' + key + 
+                ' is not defined.')
+        if self.preferences['default_cluster']:
+            if self.preferences['default_cluster'] not in clusters['clusters']:
+                raise FormatError('The specified default cluster ' + 
+                self.preferences['default_cluster'] +' is not found')
+
+    def _load_experiments(self):
+        """
+        Load the experiments config.
+        """
+        self.experiments = self._config_loader(self.experiments_file, {})
 
     def parse_experiments(self, folder):
         """ Parses the configuration file found inside the given folder and

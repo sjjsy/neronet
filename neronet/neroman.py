@@ -38,14 +38,12 @@ class Neroman:
 
     Attributes:
         database (str): Path to the database used, currently only .yaml
-        clusters (Dict): A dictionary containing the specified clusters
-        experiments (Dict): A dictionary containing the specified experiments
-        preferences (Dict): A dictionary containing the preferences
+        clusters (dict): A dictionary containing the specified clusters
+        experiments (dict): A dictionary containing the specified experiments
+        preferences (dict): A dictionary containing the preferences
     """
 
-    def __init__(self, database='default.yaml',
-                 preferences_file='preferences.yaml',
-                 clusters_file='clusters.yaml'):
+    def __init__(self):
         """Initializes Neroman
 
         Reads the contents of its attributes from a database (currently just
@@ -55,80 +53,28 @@ class Neroman:
             database (str): The path to the database file as a string, the
                 rest of the attributes will be parsed from the database.
         """
-        self.database = database
-        self.clusters_file = clusters_file
-        self.preferences_file = preferences_file
-        self.config_parser = neronet.config_parser.ConfigParser()
-        self.clusters = {}
-        self.experiments = {}
-        self.preferences = {}
-        self._load_configurations(database, clusters_file, preferences_file)
+        self._config = neronet.config_parser.ConfigParser()
+        try:
+            self._clusters, self._experiments, self._preferences = \
+                    self._config._load()
+        except neronet.neroman.FormatError as e:
+            self.abort('Reading config files failed!', e)
 
-    def _load_configurations(self, database, clusters, preferences):
-        """Load the configurations from the yaml files or creates them if they
-        don't exist
+    def _load_config(self, config_file, default=None):
+        """Load a YAML based config file.
 
         Args:
-            database (str): The filepath of the database file
-            clusters (str): The filepath of the clusters file
-            preferences (str): The filepath of the preferences file
+            config_file (str): Path of config file
+            default (dict): A default value in case config file does not
+                exist.
         """
-        if not os.path.exists(preferences):
-            with open(preferences, 'w') as f:
-                f.write("name:\nemail:\n")
-        else:
-            with open(preferences, 'r') as f:
-                self.preferences = yaml.load(f.read())
-        if not self.preferences:
-            self.specify_user("","")
-        if 'default_cluster' not in self.preferences:
-            self.preferences['default_cluster'] = ""
-        if 'email' not in self.preferences:
-            raise FormatError('The user\'s email is not specified')
-        if 'name' not in self.preferences:
-            raise FormatError('The user\'s name is not specified')
+        return yaml.load(config_file.read_text()) if config_file.exists() \
+                else default
 
-        if not os.path.exists(clusters):
-            with open(clusters, 'w') as f:
-                f.write("clusters:\ngroups:\n")
-        else:
-            with open(clusters, 'r') as f:
-                self.clusters = yaml.load(f.read())
-        if not self.clusters:
-            self.clusters = {'clusters': None}
-        if not self.clusters['clusters']:
-            self.clusters['clusters'] = {}
-        
-        # This checks the format of the clusters file            
-        for key in self.clusters['clusters']:
-            if 'type' not in self.clusters['clusters'][key]:
-                self.clusters['clusters'][key]['type'] = 'unmanaged'
-            else:
-                if self.clusters['clusters'][key]['type'] != 'unmanaged':
-                    if self.clusters['clusters'][key]['type'] != 'slurm':
-                        raise FormatError('The cluster type for the cluster ' +
-                        key + ' is not valid.')
-            if 'port' not in self.clusters['clusters'][key]:
-                self.clusters['clusters'][key]['port'] = 22
-            if 'ssh_address' not in self.clusters['clusters'][key]:
-                raise FormatError('The ssh address for the cluster ' + key + 
-                ' is not defined.')
-        if self.preferences['default_cluster']:
-            if self.preferences['default_cluster'] not in self.clusters['clusters']:
-                raise FormatError('The specified default cluster ' + 
-                self.preferences['default_cluster'] +' is not found')
-                
-        with open(self.clusters_file, 'w') as f:
-            f.write(yaml.dump(self.clusters, default_flow_style=False))
+    def _save_config(self, config_file, data):
+        """Save config data into the config file path."""
+        config_file.write_text(yaml.dump(data, default_flow_style=False))
 
-        if not os.path.exists(database):
-            with open(database, 'w') as f:
-                f.write('')
-        else:
-            with open(database, 'r') as f:
-                self.experiments = yaml.load(f.read())
-        if not self.experiments:
-            self.experiments = {}
 
     def save_database(self):
         """Save the contents of Neroman's attributes in the database
