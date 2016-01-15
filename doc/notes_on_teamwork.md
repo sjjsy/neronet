@@ -29,7 +29,12 @@ By Matias & Tuomo
 
 # Continuous integration
 
-- CruiseControl
+- CruiseControl/other tools
 - "Continuous Integration assumes a high degree of tests which are automated into the software"
+- Integration every day/every week
+- Dividing tasks to smaller parts
+- Self testing code
+- Jenkins
+- Travis
 
 http://www.martinfowler.com/articles/continuousIntegration.html
