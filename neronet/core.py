@@ -12,10 +12,12 @@ import time
 from signal import signal, SIGTERM, SIGQUIT
 from traceback import print_exc
 from pathlib import Path
+from copy import deepcopy
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
+
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 OPTIONAL_FIELDS = set(['logoutput', 'collection', 'required_files',
@@ -40,14 +42,14 @@ class Experiment:
         time_created (str): Timestamp of when the experiment was created
         time_modified (str): Timestamp of when the experiment was modified
         last
-        _path (str): Path to the experiment folder
+        path (str): Path to the experiment folder
     """
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
                     parameters, parameters_format, path, required_files=[],
                     logoutput='output.log', collection=None, conditions=None):
-        self.experiment_id = experiment_id
-        now = self._time_now()
-        self.fields = {'run_command_prefix': run_command_prefix,
+        self._experiment_id = experiment_id
+        now = datetime.datetime.now()
+        self._fields = {'run_command_prefix': run_command_prefix,
                         'main_code_file': main_code_file,
                     'required_files': required_files,
                     'logoutput': logoutput,
@@ -61,11 +63,119 @@ class Experiment:
                     'state': [['defined', now]],
                     'cluster': None}
     
-    def get_callstring(self):
-        rcmd = self.fields['run_command_prefix']
-        code_file = self.fields['main_code_file']
-        parameters = self.fields['parameters']
-        param_format = self.fields['parameters_format']
+    @property
+    def id(self):
+        return self._experiment_id
+
+    @id.setter
+    def id(self, value):
+        self._experiment_id = value
+    
+    @property
+    def run_command_prefix(self):
+        self._fields['run_command_prefix']
+    
+    @run_command_prefix.setter
+    def run_command_prefix(self, value):
+        self._fields['run_command_prefix'] = value
+    @property
+    def main_code_file(self):
+        return self._fields['main_code_file']
+    
+    @main_code_file.setter
+    def main_code_file(self, value):
+        self._fields['main_code_file'] = value
+
+    @property
+    def parameters(self):
+        return self._fields['parameters']
+    
+    @parameters.setter
+    def parameters(self, value):
+        self._fields['parameters'] = value
+     
+    @property
+    def parameters_format(self):
+        return self._fields['parameters_format']
+    
+    @parameters_format.setter
+    def parameters_format(self, value):
+        self._fields['parameters_format'] = value
+ 
+    @property
+    def logoutput(self):
+        return self._fields['logoutput']
+    
+    @logoutput.setter
+    def logoutput(self, value):
+        self._fields['logoutput'] = value
+     
+    @property
+    def collection(self):
+        return self._fields['collection']
+    
+    @collection.setter
+    def collection(self, value):
+        self._fields['collection'] = value
+     
+    @property
+    def required_files(self):
+        return self._fields['required_files']
+    
+    @required_files.setter
+    def required_files(self, value):
+        self._fields['required_files'] = value
+     
+    @property
+    def conditions(self):
+        return self._fields['conditions']
+    
+    @conditions.setter
+    def conditions(self, value):
+        self._fields['conditions'] = value
+     
+    @property
+    def cluster(self):
+        return self._fields['cluster']
+    
+    @cluster.setter
+    def cluster(self, value):
+        self._fields['cluster'] = value
+     
+    @property
+    def path(self):
+        return self._fields['path']
+    
+    @path.setter
+    def path(self, value):
+        self._fields['path'] = value
+     
+    @property
+    def time_created(self):
+        return self._fields['time_created']
+    
+    @property
+    def time_modified(self):
+        return self._fields['time_modified']
+    
+    @time_modified.setter
+    def time_modified(self, value):
+        self._fields['time_modified'] = value
+     
+    @property
+    def state(self):
+        return self._fields['state'][-1]
+    
+    @property
+    def states(self):
+        return self._fields['state']
+
+    @property 
+    def callstring(self):
+        rcmd = self._fields['run_command_prefix']
+        code_file = self._fields['main_code_file']
+        parameters = self._fields['parameters']
+        param_format = self._fields['parameters_format']
         parameters_string = param_format.format(**parameters)
         callstring = ' '.join([rcmd, code_file, parameters_string])
         return callstring
@@ -73,23 +183,15 @@ class Experiment:
     def update_state(self, state):
         """ Updates the state
         """
-        self.fields['state'].append([state, self._time_now()])
+        self._fields['state'].append([state, datetime.datetime.now()])
 
     def as_dict(self):
         """ Returns the experiment as a dictionary
         """
-        return {self.experiment_id: self.fields}
-
-    def _time_now(self):
-        """ A helper function to save the current time in consistend format
-
-        Return:
-            The current time as a string
-        """
-        return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+        return {self._experiment_id: deepcopy(self._fields)}
 
     def __str__(self):
-        return "%s %s" % (self.experiment_id, self.fields['state'][-1][0])
+        return "%s %s" % (self._experiment_id, self._fields['state'][-1][0])
 
 def osrun(cmd):
     print('> %s' % (cmd))
