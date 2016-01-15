@@ -6,7 +6,7 @@
 import os.path
 import argparse
 import sys
-import pathlib
+from __future_ import print_function
 
 import neronet.neroman
 
@@ -45,12 +45,12 @@ def main():
     """Parses the command line arguments and starts Neroman."""
     parser = create_argument_parser()
     args = parser.parse_args()
-    neronet_dir = pathlib.Path(os.path.expanduser('~')) / '.neronet'
-    if not neronet_dir.exists():
-        neronet_dir.mkdir()
-    nero = neronet.neroman.Neroman(database=str(neronet_dir / 'default.yaml'),
-         preferences_file=str(neronet_dir / 'preferences.yaml'),
-         clusters_file=str(neronet_dir / 'clusters.yaml'))
+    neronet_dir = os.path.expanduser('~') + '/.neronet'
+    if not os.path.exists(neronet_dir):
+        os.makedirs(neronet_dir)
+    nero = neronet.neroman.Neroman(database= neronet_dir + '/default.yaml',
+         preferences_file=neronet_dir + '/preferences.yaml',
+         clusters_file=neronet_dir + '/clusters.yaml')
     if args.experiment:
         experiment_folder = args.experiment[0]
         try:
@@ -80,13 +80,10 @@ def main():
         else:
             nero.submit(experiment_ID)
     if args.clean:
-        if neronet_dir.exists():
+        if os.path.exists(neronet_dir):
             remove_dir(neronet_dir)
 
 def remove_dir(path):
-    for sub in path.iterdir():
-        if sub.is_dir(): remove_dir(sub)
-        else: sub.unlink()
-    path.rmdir()
+    os.system('rm -r ' + path)
 if __name__ == '__main__':
     main()
