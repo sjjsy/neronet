@@ -25,12 +25,13 @@ defined in its config:
 import os
 import time
 import datetime
-import pathlib
+import os.path
 
 import yaml
 
 import neronet.core
 import neronet.config_parser
+from __future_ import print_function
 
 class Neroman:
 
@@ -278,7 +279,7 @@ class Neroman:
         remote_dir,
         cluster_address,
         cluster_port,
-        neronet_root=pathlib.Path.cwd(),
+        neronet_root=os.getcwd(),
     ):
         """Send experiment files to the cluster
 
@@ -289,17 +290,17 @@ class Neroman:
             cluster_address (str): the address of the cluster.
             cluster_port (int): ssh port number of the cluster.
         """
-        tmp_dir = pathlib.Path('/tmp/neronet-tmp')
+        tmp_dir = '/tmp/neronet-tmp'
         # rsync the neronet files to tmp
         neronet.core.osrun(
             'rsync -az "%s" "%s"' %
-            (neronet_root /
-             'neronet',
+            (neronet_root +
+             '/neronet',
              tmp_dir))
         # rsync bin files to tmp
         neronet.core.osrun(
             'rsync -az "%s" "%s"' %
-            (neronet_root / 'bin', tmp_dir))
+            (neronet_root + '/bin', tmp_dir))
         # rsync the experiment files to tmp
         neronet.core.osrun(
             'rsync -az "%s/" "%s"' %
@@ -329,10 +330,10 @@ class Neroman:
         if cluster_ID not in self.clusters['clusters']:
             raise IOError('The given cluster ID or default cluster is not valid')
         
-        remote_dir = pathlib.Path('/tmp/neronet-%d' % (time.time()))
-        experiment_destination = self.experiments[exp_id].path + "/" + \
-                                self.experiments[exp_id].logoutput
-        experiment_folder = self.experiments[exp_id].path
+        remote_dir = '/tmp/neronet-%d' % (time.time())
+        experiment_destination = self.experiments[exp_id].fields[
+            'path'] + "/" + self.experiments[exp_id].fields['logoutput']
+        experiment_folder = self.experiments[exp_id].fields["path"]
         #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
         experiment_parameters = self.experiments[exp_id].callstring
         cluster_port = self.clusters['clusters'][cluster_ID]["port"]
