@@ -1403,6 +1403,64 @@ Agenda:
   "Check in code at least twice per day: before lunch 
   and before going home")
 
+## 01-13 60m Sprint change
+
+Participants: team + PO
+
+Agenda:
+
+- 19:00 Progress review 2
+- 19:05 Sprint review
+- 19:30 Sprint planning
+- 19:50 Sprint team leader's word
+- 19:55 Committing to the sprint
+
+Progress review 2: Pyry Skypen kautta, muuten kaikki fine
+
+### Sprint review
+
+User stories:
+
+- As a user, I want to set my preferences (name, email, default cluster), Joona
+- As a user, I want my experiment config attributes to support generation of value combinations
+- As a user, I want my experiment specifications to be able to inherit properties
+- As a user, I want the program enable easy setup, Matias & Teemu
+
+Sprint goal: *Develop a stable version for end user testing*
+
+### Sprint planning
+
+User stories:
+
+- As a user, I want to save important information about my clusters
+- As a user, I want to group my clusters
+- As a user, I want to delete obsolete versions of my experiments
+- As a user, I want configurable criteria for experiment warnings and autotermination
+- As a user, I want a status report so that I can get an overview.
+
+Storyless tasks:
+
+- Explore the possibilities and limitations of Qt and web based GUI solutions
+- Finish asychronous system update
+- Revert to python 2.7
+- Comprehensive system testing
+
+Sprint goal: 
+
+## 01-15 60m Frifury
+
+Participants: team
+
+Agenda:
+
+- 13:00 Retrospective
+- 13:00 CI brainstorming, http://www.martinfowler.com/articles/continuousIntegration.html
+- 13:00 Sprint 2 time logging, updating documents 
+- 13:00 Chat with coach
+- 13:00 Support for Python 2.7
+- 13:00 Finish asynchronous daemon logic
+- 13:00 XX
+
 ## 01-27 120m EES: Testing (Tu)
 
 Participants: Tuomo + ???
