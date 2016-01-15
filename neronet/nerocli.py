@@ -6,6 +6,7 @@
 import os.path
 import argparse
 import sys
+from __future_ import print_function
 
 import neronet.neroman
 

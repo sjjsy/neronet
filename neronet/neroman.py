@@ -31,6 +31,7 @@ import yaml
 
 import neronet.core
 import neronet.config_parser
+from __future_ import print_function
 
 class Neroman:
 
