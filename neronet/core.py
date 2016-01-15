@@ -11,7 +11,6 @@ import time
 #import psutil
 from signal import signal, SIGTERM, SIGQUIT
 from traceback import print_exc
-from pathlib import Path
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
