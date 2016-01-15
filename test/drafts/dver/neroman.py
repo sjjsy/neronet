@@ -28,7 +28,6 @@ Attributes:
 import os
 import time
 import yaml
-import pathlib
 import sys
 import subprocess
 import pickle
@@ -48,9 +47,6 @@ class FormatError(Exception):
 
     def __str__(self):
         return self.value
-
-
-class NeromanDataManager(neronet.daemon.Daemon):
 
 
 class Neroman(neronet.daemon.Daemon):

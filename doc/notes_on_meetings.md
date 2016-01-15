@@ -1389,20 +1389,6 @@ Agenda:
 - Iiro: 
 - Samuel: 
 
-## Sprint 2 Retrospective 
-
-Agenda:
-- Visiting and updating the team's DoD
-- Visiting and reviewing the commitments
-  done in the last sprint retrospective
-- Identifying things the team should start doing
-- Identifying things the team should stop doing
-- Identifying things the team should continue doing
-- Listing actionable commitments (Actionable = has clear 
-  steps to completion and acceptance criteria. f.ex 
-  "Check in code at least twice per day: before lunch 
-  and before going home")
-
 ## 01-13 60m Sprint change
 
 Participants: team + PO
@@ -1445,7 +1431,7 @@ Storyless tasks:
 - Revert to python 2.7
 - Comprehensive system testing
 
-Sprint goal: 
+Sprint goal:
 
 ## 01-15 60m Frifury
 
@@ -1457,15 +1443,69 @@ Agenda:
 - 13:15 Sprint 2 time logging, updating documents 
 - 13:30 CI brainstorming (JoTe)
 - 14:00 Chat with coach (team + coach)
-- 14:30 Retrospective (team + coach)
-- 15:00 Support for Python 2.7 (TuMaJo)
-- 15:00 Finish asynchronous daemon logic (SaIiTe)
-- 17:00 Work review (explaining daemon logic)
+- 14:15 Retrospective (team + coach)
+- 14:40 Planning work and reviewing daemon logic
+- 15:10 Support for Python 2.7 (TuMaJo)
+- 15:10 Finish asynchronous daemon logic (SaIiTe)
+
+## Sprint 2 Retrospective
+
+Agenda:
+
+- Visiting and updating the team's DoD
+- Visiting and reviewing the commitments
+  done in the last sprint retrospective
+- Identifying things the team should start doing
+- Identifying things the team should stop doing
+- Identifying things the team should continue doing
+- Listing actionable commitments (Actionable = has clear
+  steps to completion and acceptance criteria. f.ex
+  "Check in code at least twice per day: before lunch
+  and before going home")
+
+### Visiting and updating the team's DoD
+
+- Review and update DOD more often
+- Moved system tests from BI level to sprint level
+- Removed the percentage from system test coverage
+- Implement automated functional tests
+- Added specifics to guidelines (PEP8)
+
+### Visiting and reviewing the commitments done in the last sprint retrospective
+
+- We managed to do some more team reviews of tricky stuff
+- There was slight improvement in punctuality
+- Not all planned improvements were deemed important
+
+### Identifying things the team should start doing
+
+- Consider employing CI with Travis
+- System test automation
+- Iiro starts being early (and being a good team leader)
+
+### Identifying things the team should stop doing
+
+- Let's try not to mix too many topics everywhere all the time
+
+### Identifying things the team should continue doing
+
+- Periodic team reviews
+
+### Listing actionable commitments
+
+(Actionable = has clear steps to completion and acceptance criteria. f.ex
+"Check in code at least twice per day: before lunch and before going home")
+
+- Joona sets up and teaches CI with Travis
+- Write automated system test and run them daily
+- Iiro starts being early (and being a good team leader)
+- More experiments and trials, less debating on whether to do what
+- List items in sprint planning that should be worked on when time permits
 
 ### Reversion work
 
 - Use the future: https://pypi.python.org/pypi/future
 
-## 01-27 120m EES: Testing (Tu)
+## 01-27 120m EES: Testing (TuJo)
 
-Participants: Tuomo + ???
+Participants: Tuomo + Joona
