@@ -61,28 +61,8 @@ class Neroman:
         except neronet.neroman.FormatError as e:
             self.abort('Reading config files failed!', e)
 
-    def _load_config(self, config_file, default=None):
-        """Load a YAML based config file.
-
-        Args:
-            config_file (str): Path of config file
-            default (dict): A default value in case config file does not
-                exist.
-        """
-        return yaml.load(config_file.read_text()) if config_file.exists() \
-                else default
-
-    def _save_config(self, config_file, data):
-        """Save config data into the config file path."""
-        config_file.write_text(yaml.dump(data, default_flow_style=False))
-
-
-    def save_database(self):
-        """Save the contents of Neroman's attributes in the database
-        """
-        with open(self.database, 'w') as f:
-            f.write(yaml.dump(self.experiments,
-                              default_flow_style=False))
+    def get_experiment(self, experiment_id):
+        return self.experiments[experiment_id]
 
     def specify_cluster(
             self,
@@ -132,10 +112,10 @@ class Neroman:
 
         experiments = self.config_parser.parse_experiments(folder)
         for experiment in experiments:
-            if experiment.experiment_id in self.experiments:
+            if experiment.id in self.experiments:
                 raise IOError("Experiment named %s already in the database" \
                                 % experiment.experiment_id)
-            else: self.experiments[experiment.experiment_id] = experiment
+            else: self.experiments[experiment.id] = experiment
         self.save_database()
 
     def _time_now(self):
@@ -163,7 +143,7 @@ class Neroman:
                 machine.
         """
         experiment = self.experiments[experiment_id]
-        cluster_ID = experiment.fields['cluster']
+        cluster_ID = experiment.cluster
         cluster_port = self.clusters['clusters'][cluster_ID]['port']
         cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
         neronet.core.osrun(
@@ -176,9 +156,9 @@ class Neroman:
         if arg != 'all':
             if arg in self.experiments:
                 experiment = self.experiments[arg]
-                parameters = experiment.fields['parameters']
-                time_modified = experiment.fields['time_modified']
-                state, state_change_time = experiment.fields['state'][-1]
+                parameters = experiment.parameters
+                time_modified = experiment.time_modified
+                state, state_change_time = experiment.state
                 parameters_string = ', '.join(
                     ["%s: %s" % (k, v) for k, v in parameters.items()])
                 print(
@@ -187,7 +167,7 @@ class Neroman:
                 if state == 'defined':
                     print('State: %s - %s' % (state, state_change_time))
                 else:
-                    cluster = experiment['cluster']
+                    cluster = experiment.cluster
                     print(
                         'State: %s - %s - %s' %
                         (state, cluster, state_change_time))
@@ -278,7 +258,7 @@ class Neroman:
             'path'] + "/" + self.experiments[exp_id].fields['logoutput']
         experiment_folder = self.experiments[exp_id].fields["path"]
         #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
-        experiment_parameters = self.experiments[exp_id].get_callstring()
+        experiment_parameters = self.experiments[exp_id].callstring
         cluster_port = self.clusters['clusters'][cluster_ID]["port"]
         cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
         self.send_files(
@@ -295,8 +275,8 @@ class Neroman:
              remote_dir,
              remote_dir,
              experiment_parameters))
-        self.experiments[exp_id].fields['cluster'] = cluster_ID
-        self.update_state(exp_id, 'submitted')
+        self.experiments[exp_id].cluster = cluster_ID
+        self.experiments[exp_id].update_state('submitted')
         self.save_database()
         time.sleep(2)  # will be unnecessary as soon as daemon works
         # returns the results, should be called from cli
