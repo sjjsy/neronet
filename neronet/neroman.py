@@ -185,10 +185,10 @@ class Neroman:
 
         experiments = self.config_parser.parse_experiments(folder)
         for experiment in experiments:
-            if experiment.experiment_id in self.experiments:
+            if experiment.id in self.experiments:
                 raise IOError("Experiment named %s already in the database" \
-                                % experiment.experiment_id)
-            else: self.experiments[experiment.experiment_id] = experiment
+                                % experiment.id)
+            else: self.experiments[experiment.id] = experiment
         self.save_database()
 
     def _time_now(self):
@@ -216,7 +216,7 @@ class Neroman:
                 machine.
         """
         experiment = self.experiments[experiment_id]
-        cluster_ID = experiment.fields['cluster']
+        cluster_ID = experiment.cluster
         cluster_port = self.clusters['clusters'][cluster_ID]['port']
         cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
         neronet.core.osrun(
@@ -327,11 +327,11 @@ class Neroman:
             raise IOError('The given cluster ID or default cluster is not valid')
         
         remote_dir = pathlib.Path('/tmp/neronet-%d' % (time.time()))
-        experiment_destination = self.experiments[exp_id].fields[
-            'path'] + "/" + self.experiments[exp_id].fields['logoutput']
-        experiment_folder = self.experiments[exp_id].fields["path"]
+        experiment_destination = self.experiments[exp_id].path + \
+            "/" + self.experiments[exp_id].logoutput
+        experiment_folder = self.experiments[exp_id].path
         #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
-        experiment_parameters = self.experiments[exp_id].get_callstring()
+        experiment_parameters = self.experiments[exp_id].callstring
         cluster_port = self.clusters['clusters'][cluster_ID]["port"]
         cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
         self.send_files(
@@ -348,7 +348,7 @@ class Neroman:
              remote_dir,
              remote_dir,
              experiment_parameters))
-        self.experiments[exp_id].fields['cluster'] = cluster_ID
+        self.experiments[exp_id].cluster = cluster_ID
         self.update_state(exp_id, 'submitted')
         self.save_database()
         time.sleep(2)  # will be unnecessary as soon as daemon works
