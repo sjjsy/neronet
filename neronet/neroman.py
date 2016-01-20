@@ -204,6 +204,17 @@ class Neroman:
         with open(self.preferences_file, 'w') as f:
             f.write(yaml.dump(self.preferences, default_flow_style=False))
 
+    def delete_experiment(self, experiment_id):
+        """Deletes the experiment with the given experiment id
+
+        Parameters:
+            experiment_id (str): id of the experiment to be deleted
+        Raises:
+            KeyError: if the experiment with the given id doesn't exist
+        """
+        self.experiments.pop(experiment_id)
+        self.save_database()
+
     def get_experiment_results(self, experiment_id, remote_dir, local_dir):
         """Get the experiment results from neromum
 

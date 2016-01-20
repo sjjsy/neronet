@@ -12,12 +12,15 @@ import neronet.neroman
 def create_argument_parser():
     """Create and return an argument parser."""
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--experiment',
-        metavar='folder',
-        nargs=1,
-        help='Creates experiments according to the config file found in'
-        'the folder')
+    parser.add_argument('--experiment',
+                        metavar='folder',
+                        nargs=1,
+                        help='Creates experiments according to the config'
+                        'file found in the folder')
+    parser.add_argument('--delete',
+                        metavar='experiment id',
+                        nargs=1,
+                        help='Deletes the experiment with the given id')
     parser.add_argument('--cluster',
                         metavar=('id', 'address', 'type'),
                         nargs=3,
@@ -57,6 +60,12 @@ def main():
             nero.save_database()
         except (FileNotFoundError, neronet.config_parser.FormatError) as e:
             print(e)
+    if args.delete:
+        experiment_id = args.delete[0]
+        try:
+            nero.delete_experiment(experiment_id)
+        except KeyError:
+            print("No experiment named %s" % experiment_id)
     if args.cluster:
         cluster_id = args.cluster[0]
         address = args.cluster[1]
