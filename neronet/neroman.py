@@ -288,7 +288,7 @@ class Neroman:
         remote_dir,
         cluster_address,
         cluster_port,
-        neronet_root=os.getcwd(),
+        neronet_root=os.getcwd() + '/',
     ):
         """Send experiment files to the cluster
 
