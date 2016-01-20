@@ -11,7 +11,6 @@ import time
 #import psutil
 from signal import signal, SIGTERM, SIGQUIT
 from traceback import print_exc
-from pathlib import Path
 from copy import deepcopy
 
 TIME_OUT = 5.0
