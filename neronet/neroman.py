@@ -260,7 +260,10 @@ class Neroman:
             for cluster in self.clusters['clusters']:
                 address = self.clusters['clusters'][cluster]['ssh_address']
                 type = self.clusters['clusters'][cluster]['type']
-                print("{} {} {}".format(cluster, address, type))
+                print("{} {}\n  {} {}\n  {} {}".format("cluster:", cluster, "address:", address, "type:", type))
+                for key, value in self.clusters['clusters'][cluster].iteritems():
+                    if key != 'ssh_address' and key != 'type':
+                        print("  {}: {}".format(key, value))
         print("\n================Experiments=============")
         if not len(self.experiments):
             print("No experiments defined")
