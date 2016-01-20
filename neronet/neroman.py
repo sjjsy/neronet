@@ -176,7 +176,7 @@ class Neroman:
                 the experiment that's being specified.
 
         Raises:
-            FileNotFoundError: If the folder doesn't exists or the config file
+            IOError: If the folder doesn't exists or the config file
                 doesn't exists
             FormatError: If the config file is badly formated
         """
@@ -234,53 +234,64 @@ class Neroman:
             % (cluster_port, cluster_address,
                 remote_dir, local_dir))
 
-    def status(self, arg):
-        """Display Neroman data on into stdstream"""
+    def status_gen(self, arg):
+        """Creates a generator that generates the polled status
+
+        Yields:
+            str: A line of neroman status
+        """
         if arg != 'all':
             if arg in self.experiments:
                 experiment = self.experiments[arg]
-                parameters = experiment.fields['parameters']
-                time_modified = experiment.fields['time_modified']
-                state, state_change_time = experiment.fields['state'][-1]
+                parameters = experiment.parameters
+                time_modified = experiment.time_modified
+                state, state_change_time = experiment.state[-1]
                 parameters_string = ', '.join(
                     ["%s: %s" % (k, v) for k, v in parameters.items()])
-                print(
-                    'Experiment: %s\nParameters: %s' %
-                    (arg, parameters_string))
+                yield 'Experiment: %s\n' % arg
+                yield '  Parameters: %s\n' % parameters_string
                 if state == 'defined':
-                    print('State: %s - %s' % (state, state_change_time))
+                    yield '  State: %s - %s\n' % (state, state_change_time)
                 else:
-                    cluster = experiment['cluster']
-                    print(
-                        'State: %s - %s - %s' %
-                        (state, cluster, state_change_time))
-                print('Last modified: %s' % time_modified)
+                    cluster = experiment.cluster
+                    yield '  State: %s - %s - %s\n' % \
+                            (state, cluster, state_change_time)
+                yield '  Last modified: %s\n' % time_modified
                 return
             else:
                 raise IOError('No experiment named %s' % arg)
-        print("================Neroman=================")
-        print("\n================User=================")
-        print("Name: " + self.preferences['name'])
-        print("Email: " + self.preferences['email'])
+        yield "================Neroman=================\n"
+        yield "\n"
+        yield "================User====================\n"
+        yield "Name: %s\n" % self.preferences['name']
+        yield "Email: %s\n" % self.preferences['email']
         if self.preferences['default_cluster']:
-            print("Default Cluster: " + self.preferences['default_cluster'])
-        print("\n================Clusters================")
+            yield "Default Cluster: %s\n" % self.preferences['default_cluster']
+        yield "\n"
+        yield "================Clusters================\n"
         if not self.clusters['clusters']:
-            print("No clusters defined")
+            yield "No clusters defined\n"
         else:
-            for cluster in self.clusters['clusters']:
-                address = self.clusters['clusters'][cluster]['ssh_address']
-                type = self.clusters['clusters'][cluster]['type']
-                print("{} {}\n  {} {}\n  {} {}".format("cluster:", cluster, "address:", address, "type:", type))
-                for key, value in self.clusters['clusters'][cluster].iteritems():
+            clusters = self.clusters['clusters']
+            for cluster in clusters:
+                cluster_name = cluster
+                cluster = clusters[cluster]
+                address = cluster['ssh_address']
+                type = cluster['type']
+                yield "%s:\n" % cluster_name
+                yield "  Address: %s\n" % address
+                yield "  Type: %s\n" % type 
+                for key, value in cluster.iteritems():
                     if key != 'ssh_address' and key != 'type':
-                        print("  {}: {}".format(key, value))
-        print("\n================Experiments=============")
+                        yield "  %s: %s\n" % (key.capitalize(), value)
+        yield "\n"
+        yield "================Experiments=============\n"
         if not len(self.experiments):
-            print("No experiments defined")
+            yield "No experiments defined\n"
         else:
             for experiment in sorted(self.experiments):
-                print(self.experiments[experiment])
+                experiment = self.experiments[experiment]
+                yield "%s %s\n" % (experiment.id, experiment.state[-1][0])
 
     def send_files(
         self,

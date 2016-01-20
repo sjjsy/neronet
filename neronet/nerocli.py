@@ -58,14 +58,14 @@ def main():
         try:
             nero.specify_experiments(experiment_folder)
             nero.save_database()
-        except (FileNotFoundError, neronet.config_parser.FormatError) as e:
-            print(e)
+        except (IOError, neronet.config_parser.FormatError) as e:
+            print e
     if args.delete:
         experiment_id = args.delete[0]
         try:
             nero.delete_experiment(experiment_id)
         except KeyError:
-            print("No experiment named %s" % experiment_id)
+            print "No experiment named %s" % experiment_id
     if args.cluster:
         cluster_id = args.cluster[0]
         address = args.cluster[1]
@@ -77,9 +77,10 @@ def main():
         nero.specify_user(name, email)
     if args.status:
         try:
-            nero.status(args.status)
+            status_gen = nero.status_gen(args.status)
+            print ''.join(status_gen),
         except IOError as e:
-            print(e)
+            print e
     if args.submit:
         experiment_ID = args.submit[0]
         if len(args.submit) > 1:
