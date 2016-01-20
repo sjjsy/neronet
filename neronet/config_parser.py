@@ -49,7 +49,7 @@ class ConfigParser():
             according to the configuration file in the experiment folder
 
         Raises:
-            FileNotFoundError: If the folder or configuration file doesn't
+            IOError: If the folder or configuration file doesn't
             exists
 
             FormatError: If the configuration file isn't in the correct format
@@ -57,10 +57,10 @@ class ConfigParser():
 
         #Check that the input is valid
         if not os.path.isdir(folder):
-            raise FileNotFoundError('No such folder')
+            raise IOError('No such folder')
         config_file = os.path.join(folder, CONFIG_FILENAME)
         if not os.path.exists(config_file):
-            raise FileNotFoundError('No config file in folder')
+            raise IOError('No config file in folder')
         
         if os.stat(config_file).st_size == 0:
             raise FormatError(['Empty config file'])
