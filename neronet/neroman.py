@@ -243,21 +243,9 @@ class Neroman:
         if arg != 'all':
             if arg in self.experiments:
                 experiment = self.experiments[arg]
-                parameters = experiment.parameters
-                time_modified = experiment.time_modified
-                state, state_change_time = experiment.state[-1]
-                parameters_string = ', '.join(
-                    ["%s: %s" % (k, v) for k, v in parameters.items()])
-                yield 'Experiment: %s\n' % arg
-                yield '  Parameters: %s\n' % parameters_string
-                if state == 'defined':
-                    yield '  State: %s - %s\n' % (state, state_change_time)
-                else:
-                    cluster = experiment.cluster
-                    yield '  State: %s - %s - %s\n' % \
-                            (state, cluster, state_change_time)
-                yield '  Last modified: %s\n' % time_modified
-                return
+                for line in experiment.as_gen():
+                    yield line
+                raise StopIteration
             else:
                 raise IOError('No experiment named %s' % arg)
         yield "================Neroman=================\n"

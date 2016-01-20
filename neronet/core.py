@@ -89,7 +89,26 @@ class Experiment(object):
             fields[attr] = value
         else:
             raise AttributeError('Experiment has no attribute named %s' % attr)
-        
+       
+    def as_gen(self):
+        """Creates a generate that generates info about the experiment
+
+        Yields:
+            str: A line of experiment status
+        """
+        yield "%s\n" % self._experiment_id
+        yield "  Run command: %s\n" % self._fields['run_command_prefix']
+        yield "  Main code file: %s\n" % self._fields['main_code_file']
+        params = self._fields['parameters_format'].format( \
+            **self._fields['parameters'])
+        yield "  Parameters: %s\n" % params
+        yield "  Parameters format: %s\n" % self._fields['parameters_format']
+        if self._fields['collection']:
+            yield "  Collection: %s\n" % self._fields['collection']
+        yield "  State: %s\n" % self._fields['state'][-1][0]
+        yield "  Last modified: %s\n" % self._fields['time_modified']
+
+
     @property 
     def callstring(self):
         rcmd = self._fields['run_command_prefix']
