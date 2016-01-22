@@ -203,6 +203,21 @@ def get_hostname():
 def time_now():
     return datetime.datetime.now() #.strftime('%H:%M:%S %d-%m-%Y')
 
+def write_file(filepath, data):
+    text = str(data)
+    with open(filepath, 'w') as f:
+        f.write(text)
+
+def read_file(filepath, default=None):
+    result = default
+    try:
+        with open(filepath, 'r') as f:
+            result = ''
+            for line in f:
+                result += line
+    except IOError as e:
+        pass
+    return result
 
 class Logger:
 
