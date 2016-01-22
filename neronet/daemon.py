@@ -40,7 +40,7 @@ class Query():
       self.errc += 1
       raise err
 
-class DaemonNEW(object):
+class Daemon(object):
     """A generic daemon class.
 
     See:
@@ -168,9 +168,12 @@ class DaemonNEW(object):
             sys.exit(1)
 
         # Decouple from parent environment
+        os.umask(0)
+        if not os.path.exists(self._pdir):
+            os.mkdir(self._pdir)
+        self._cleanup(outfiles=True)
         os.chdir(self._pdir)
         os.setsid() # create a session and set the process group ID
-        os.umask(0)
 
         # Do second fork
         try:
@@ -212,8 +215,6 @@ class DaemonNEW(object):
     def _run(self):
         """The daemon process loop."""
         self._trun = time.time()
-        os.mkdir(self._pdir)
-        self._cleanup(outfiles=True)
         # Create a socket with a timeout and bind it to any available port on
         # localhost
         sckt = socket.socket()
@@ -281,7 +282,7 @@ class DaemonNEW(object):
         """
         pass
 
-class QueryInterface():
+class QueryInterface(object):
 
     class NoPortFileError(RuntimeError): pass
     class NoPortNumberError(RuntimeError): pass
@@ -317,7 +318,7 @@ class QueryInterface():
             return
         localhost = neronet.core.get_hostname()
         if self.host in ('127.0.0.1', 'localhost', localhost):
-            if self.daemon._pfport.exists():
+            if os.path.exists(self.daemon._pfport):
                 self.port = int(self.daemon._pfport.read_text())
             else:
                 raise self.NoPortFileError('No daemon port file!')
@@ -326,7 +327,7 @@ class QueryInterface():
             raise self.NoPortNumberError('No daemon port number!')
             #self.abort(10, 'No daemon port number defined!')
 
-    def query(self, name, *pargs, trials=4, **kwargs):
+    def query(self, name, trials=4, *pargs, **kwargs):
         self.inf('Query(%s, %s, %s)...' % (name, pargs, kwargs))
         self.determine_port()
         if name not in self.daemon._queries:
@@ -409,14 +410,14 @@ class Cli(QueryInterface):
     #RE_ARG = re.compile(r'--(\w+) (\w+)* (\w+=\w+)*')
     ## Command line argument parser regexes
     # Function name identifier
-    RE_pfUNC = re.compile(r'--([\w.]+)')
+    RE_FUNC = re.compile(r'--([\w.]+)')
     # Keyword argument
     RE_KARG = re.compile(r'([\w.]+=.*)')
     # Positional argument
     RE_PARG = re.compile(r'(.*)')
 
     def __init__(self, daemon):
-        super().__init__(daemon)
+        super(Cli, self).__init__(daemon, verbose=True)
         self.funcs = {
             'default': self.func_default,
             'cleanup': self.func_cleanup,
@@ -430,6 +431,7 @@ class Cli(QueryInterface):
         """
           --func parg kwarg=kwvalue
         """
+        #self.inf('Parse arguments: %s' % (sys.argv))
         cli_args = cli_args if cli_args else sys.argv[1:]
         work_queue = []
         func = 'default'
@@ -437,18 +439,18 @@ class Cli(QueryInterface):
         kargs = {}
         for arg in cli_args:
             self.inf('Parsing argument "%s"...' % (arg))
-            mtch = self.RE_pfUNC.fullmatch(arg)
+            mtch = self.RE_FUNC.match(arg)
             if mtch:
                 work_queue.append((func, pargs, kargs))
                 func = mtch.group(1)
                 pargs = []
                 kargs = {}
                 continue
-            mtch = self.RE_KARG.fullmatch(arg)
+            mtch = self.RE_KARG.match(arg)
             if mtch:
                 kargs[mtch.group(1)] = mtch.group(2)
                 continue
-            mtch = self.RE_PARG.fullmatch(arg)
+            mtch = self.RE_PARG.match(arg)
             if mtch:
                 pargs.append(mtch.group(1))
                 continue

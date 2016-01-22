@@ -6,19 +6,22 @@ Attributes:
     for changes in the log file
   LOG_FILES (tuple): Log files for stdout and stderr
 """
-import sys
+
+from __future__ import print_function
 import os
-import time
 import subprocess
 import shlex
+import time
+import sys
 
 import neronet.core
+import neronet.daemon
+import neronet.neromum
 
 INTERVAL = 2.0
 LOG_FILES = 'stdout.log', 'stderr.log'
 packet = {"running": True, "log_output": ""}
 commands = ("status")
-
 
 class LogFile(object):
 
@@ -46,7 +49,7 @@ class LogFile(object):
                 return changes
 
 
-class NeroKid(object):
+class Nerokid(neronet.daemon.Daemon):
 
     """A class to specify the Nerokid object.
 
@@ -57,58 +60,53 @@ class NeroKid(object):
     Experiment as the 3rd
     Experiment parameters from 4th argument onwards
     """
-
-    def __init__(self):
-        self.sock = None
+    def __init__(self, experiment_id):
+        super(Nerokid, self).__init__('nerokid-%s' % (experiment_id))
+        self.neromum = None
+        self.experiment = neronet.core.ExperimentOLD(experiment_id)
         self.process = None
-        self.logger = neronet.core.Logger('KID')
-        self.experiment = ' '.join(sys.argv[3:])
-        self.log_files = [LogFile(log_file_path)
-                          for log_file_path in LOG_FILES]
+        self.add_query('launch', self.qry_launch)
 
-    def run(self):
+    def qry_launch(self, host, port):
         """The Nerokid main.
 
         Initializes the socket, launches the child process and starts to monitor the child process
         """
-        self.logger.log('Kid launched!')
-        self.initialize_socket()
-        self.logger.log('Launching the experiment...')
-        self.launch_child_process()
-        self.monitor_process()
-        self.logger.log('Process finished!')
-
-    def initialize_socket(self):
-        """initialize socket with command line arguments for host and port"""
-        host, port = sys.argv[1:3]
-        port = int(port)
-        # Define a socket
-        self.sock = neronet.core.Socket(self.logger, host, port)
-        self.logger.log('- Mom address: (%s, %d)' % (host, port))
-        self.logger.log('- Experiment: %s' % (self.experiment))
-
-    def send_data_to_neromum(self, text):
-        """Send status data to Neromum."""
-        self.sock.send_data(text)
-
-    def launch_child_process(self):
+        self.neromum = neronet.daemon.QueryInterface(
+                neronet.neromum.Neromum(), host=host, port=int(port))
+        self.log('Launching a kid...')
+        self.log('- Mom address: (%s, %d)' % (self.neromum.host, self.neromum.port))
+        self.log('- Experiment ID: "%s"' % (self.experiment.experiment_id))
+        self.log_files = [LogFile(log_file_path)
+                          for log_file_path in LOG_FILES]
+        self.log('Launching the experiment...')
         """Launches received script"""
         self.process = subprocess.Popen(
-            shlex.split(
-                self.experiment), universal_newlines=True, stdout=open(
-                'stdout.log', 'w'), stderr=open(
-                'stderr.log', 'w'), close_fds=True, bufsize=1)
+            shlex.split('sleep 30'),
+            universal_newlines=True,
+            stdout=open('stdout.log', 'w'),
+            stderr=open('stderr.log', 'w'),
+            close_fds=True, bufsize=1)
+        self.log('- Experiment PID: %s' % (self.process.pid))
+        self.experiment.state = 'running'
 
-    def monitor_process(self):
+    def qry_stop(self):
+        """Terminate the experiment"""
+        if self.process:
+            self.process.kill()
+            self.log('- Experiment PID: %s terminated' % (self.process.pid))
+        super().qry_stop()
+
+    def ontimeout(self):
         """Writes information about the process into a log file on set intervals"""
-        self.logger.log('- Experiment PID: %s' % (self.process.pid))
-        packet["running"] = True
-        while self.process.poll() == None:
-            # Sleep to wait for changes
-            time.sleep(INTERVAL)
+        if not self.experiment or self.experiment.state != 'running':
+            return
+        if self.process.poll() == None:
             self.collect_new_file_data()
-        packet["running"] = False
-        self.send_data_to_neromum(packet)
+        else:
+            self.experiment.state = 'finished'
+            self.refresh_neromum()
+            self.qry_stop()
 
     def collect_new_file_data(self):
         """Collect any data that the child process outputs and send them to neromum"""
@@ -120,15 +118,20 @@ class NeroKid(object):
                 log_output[log_file.path] = changes
         # Send any new log output to Mum
         if log_output:
-            packet["log_output"] = log_output
-            self.send_data_to_neromum(packet)
+            self.experiment.log_output = log_output
+            self.refresh_neromum()
 
-    def terminate_process(self):
-        """Terminate the experiment"""
-        self.process.kill()
-        self.logger.log('- Experiment PID: %s terminated' % (self.process.pid))
-
+    def refresh_neromum(self):
+        """Send data to Neromum."""
+        self.neromum.query('nerokid_update', self.experiment)
 
 def main():
-    """Create a Nerokid and call its run method."""
-    NeroKid().run()
+    """Create a CLI interface object and process CLI arguments."""
+    if len(sys.argv) < 2:
+        print('Kid experiment ID required!')
+        sys.exit(1)
+    exp_id = sys.argv[1]
+    sys.argv.pop(1)
+    #sys.argv = [sys.argv[0]] + sys.argv[2:]
+    cli = neronet.daemon.Cli(Nerokid(exp_id))
+    cli.parse_arguments()

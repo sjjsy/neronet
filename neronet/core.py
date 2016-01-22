@@ -2,6 +2,7 @@
 #
 # Core class and function definitions
 
+from __future__ import print_function
 import os
 import sys
 import datetime
@@ -12,7 +13,6 @@ import time
 from signal import signal, SIGTERM, SIGQUIT
 from traceback import print_exc
 from copy import deepcopy
-from __future_ import print_function
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
@@ -198,7 +198,7 @@ def osrun(cmd):
     os.system(cmd)
 
 def get_hostname():
-    return pathlib.Path('/etc/hostname').read_text().strip()
+    return read_file('/etc/hostname').strip()
 
 def time_now():
     return datetime.datetime.now() #.strftime('%H:%M:%S %d-%m-%Y')

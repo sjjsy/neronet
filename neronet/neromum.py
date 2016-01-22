@@ -5,14 +5,13 @@
 # TODO: need database parsing
 
 import sys
-import socket
-import os
 import pickle
-import select
 
 import neronet.core
+import neronet.daemon
+import neronet.nerokid
 
-class Neromum(object):
+class Neromum(neronet.daemon.Daemon):
 
     """A class to specify the Neromum object.
 
@@ -23,94 +22,80 @@ class Neromum(object):
     """
 
     def __init__(self):
-        self.sock = None
-        self.experiment = ' '.join(sys.argv[1:])
-        self.logger = neronet.core.Logger('MUM')
-        self.running = True
-        self.open_incoming_connections = []
-        self.open_outgoing_connections = []
+        super().__init__('neromum')
+        self.nerokid_queue = []
+        self.nerokid_dict = {}
+        self.add_query('nerokid', self.qry_nerokid)
+        self.add_query('list_nerokids', self.qry_list_nerokids)
+        self.add_query('nerokid_update', self.qry_nerokid_update)
 
-    def run(self):
-        """The Neromum main."""
-        self.logger.log('Creating the socket')
-        self.initialize_socket()
-        # self.send_experiment_to_node()
-        self.start_nerokid()
-        # self.start_nerokid2()
-        self.listen_loop()
-        self.logger.log('Shutting down')
-        self.sock.shutdown(socket.SHUT_RDWR)
+    def qry_nerokid(self, experiment_id, path, runcmd):
+        nerokid = neronet.core.Experiment(experiment_id, path, runcmd)
+        self.nerokid_queue.append(nerokid)
+        self.nerokid_dict[experiment_id] = nerokid
+        self._reply['rv'] = 0
 
-    def initialize_socket(self):
-        """Creates the socket and sets it to listen"""
-        self.sock = socket.socket()
-        self.sock.settimeout(5.0)
-        # Bind the socket to localhost, auto choose port
-        self.sock.bind(('localhost', 0))
-        # Put the socket into server mode
-        self.sock.listen(1)
-        # Retrieve socket specs
-        self.host, self.port = self.sock.getsockname()
-        self.open_incoming_connections.append(self.sock)
+    def qry_list_nerokids(self):
+        msg = 'Nerokids:\n'
+        for nerokid in self.nerokid_queue:
+            msg += '- %s' % (nerokid.experiment_id)
+        self._reply['msgbody'] = msg
+        self._reply['rv'] = 0
 
-    def save_to_file(self, data, file):
-
-        pass
-
-    def start_nerokid(self):
-        """Starts the nerokid in the node"""
-        self.logger.log('Launching kids')
-        self.logger.log(sys.argv)
-        neronet.core.osrun(
-            'nerokid %s %d %s &' %
-            (self.host, self.port, self.experiment))
-
-    def send_data_to_neroman(self):
-        pass
-
-    def send_experiment_to_node(self):
-        pass
-
-    def kill_child(self):
-        pass
-
-    def ask_slurm_for_free_node(self):
-        pass
-
-    def parse_nerokid_data(self):
+    def qry_nerokid_update(self, experiment):
         """Extract information from nerokid's data updates."""
-        if self.data:
-            self.data = pickle.loads(self.data)
-            if isinstance(self.data, dict):
-                for log_path, new_text in self.data['log_output'].items():
-                    self.logger.log('New output in %s:' % (log_path))
-                    for ln in new_text.split('\n'):
-                        if not ln:
-                            continue
-                        self.logger.log('    %s' % (ln.strip()))
-                if not self.data["running"]:
-                    self.logger.log('Kid has finished!')
-                    # delete later when finished testing. (ie mom is working as
-                    # daemon)
-                    self.running = False
+        nerokid = self.nerokid_dict[experiment.experiment_id]
+        for log_path, new_text in experiment.log_output.items():
+            self.log('New output in %s:' % (log_path))
+            for ln in new_text.split('\n'):
+                if not ln:
+                    continue
+                self.log('    %s' % (ln.strip()))
+        nerokid.state = experiment.state
+        if nerokid.state == 'finished':
+            self.log('Kid %s has finished!' % (nerokid.experiment_id))
+        self._reply['rv'] = 0
 
-    def listen_loop(self):
-        """Listen to the socket from nerokid and receive data"""
-        while self.running:
-            inRdy, outRdy, excpRdy = select.select(
-                self.open_incoming_connections, [], [])
-            for s in inRdy:
-                if s == self.sock:
-                    client, address = s.accept()
-                    self.open_incoming_connections.append(client)
-                else:
-                    self.data = s.recv(4096)
-                    if self.data:
-                        self.parse_nerokid_data()
-                    else:
-                        s.close()
-                        self.open_incoming_connections.remove(s)
+    def ontimeout(self):
+        for nerokid in self.nerokid_queue:
+            if nerokid.state == None:
+                self.start_nerokid(nerokid)
+                return
+
+    def start_nerokid(self, nerokid):
+        """Starts the nerokid in the node"""
+        self.log('Launching kid %s...' % (nerokid.experiment_id))
+        kid_daemon = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(nerokid.experiment_id))
+        kid_daemon.start()
+        kid_daemon.query('launch', self.host, self.port)
+        #neronet.core.osrun('nerokid --start')
+        #neronet.core.osrun('nerokid --query launch %s %d %s'
+        #    % (self.host, self.port, nerokid.experiment_id))
+        nerokid.state = 'running'
+
+class NeromumCli(neronet.daemon.Cli):
+    def __init__(self):
+        super().__init__(Neromum())
+        self.funcs.update({
+            'input' : self.func_input,
+        })
+      
+    def func_input(self):
+        data = input()
+        print('Data:\n%s\n' % (data))
+        while(not ("***" in data)):
+            data = input("") # pickle.loads()
+            print('Data:\n%s\n' % (data))
+        #data = sys.stdin.readLine() # pickle.loads()
+        #print('Data:\n%s\n' % (data))
+        #nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
+        #nerokid_dqi.start()
+        #nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
+        #print(nerokid_dqi.query('status'))
+        #data = sys.stdin.read() # pickle.loads()
+        #print('Data:\n%s\n' % (data))
 
 def main():
-    """Create a Neromum and call its run method."""
-    Neromum().run()
+    """Create a CLI interface object and process CLI arguments."""
+    cli = NeromumCli()
+    cli.parse_arguments()
