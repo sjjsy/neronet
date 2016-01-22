@@ -47,17 +47,11 @@ def main():
     """Parses the command line arguments and starts Neroman."""
     parser = create_argument_parser()
     args = parser.parse_args()
-    neronet_dir = os.path.expanduser('~') + '/.neronet/'
-    if not os.path.exists(neronet_dir):
-        os.makedirs(neronet_dir)
-    nero = neronet.neroman.Neroman(database=str(neronet_dir + 'default.yaml'),
-         preferences_file=str(neronet_dir + 'preferences.yaml'),
-         clusters_file=str(neronet_dir + 'clusters.yaml'))
+    nero = neronet.neroman.Neroman()
     if args.experiment:
         experiment_folder = args.experiment[0]
         try:
             nero.specify_experiments(experiment_folder)
-            nero.save_database()
         except (IOError, neronet.config_parser.FormatError) as e:
             print e
     if args.delete:
@@ -89,8 +83,7 @@ def main():
         else:
             nero.submit(experiment_ID)
     if args.clean:
-        if os.path.exists(neronet_dir):
-            remove_dir(neronet_dir)
+        nero.clean()
 
 def remove_dir(path):
     os.system('rm -r ' + path)
