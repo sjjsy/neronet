@@ -11,7 +11,6 @@ import time
 import signal
 import daemon
 import lockfile
-import pathlib
 import traceback
 #import threading
 import socket
@@ -58,12 +57,12 @@ class DaemonNEW(object):
 
     def __init__(self, name):
         self._name = name
-        self._pdir = pathlib.Path.home() / '.neronet' / self._name
-        self._pfin = FIXME
-        self._pfout = self._pdir / 'out'
-        self._pferr = self._pdir / 'err'
-        self._pfpid = self._pdir / 'pid'
-        self._pfport = self._pdir / 'port'
+        self._pdir = os.path.expanduser('~/.neronet/') + self._name + '/'
+        self._pfin = self._pdir + 'in'
+        self._pfout = self._pdir + 'out'
+        self._pferr = self._pdir + 'err'
+        self._pfpid = self._pdir + 'pid'
+        self._pfport = self._pdir + 'port'
         self._queries = {}
         self.add_query('uptime', self.qry_uptime)
         self.add_query('status', self.qry_status)
@@ -104,7 +103,7 @@ class DaemonNEW(object):
 
     def _read_i_or_nan(self, pf):
         try:
-            return int(pf.read_text())
+            return int(neronet.core.read_file(pf))
         except:
             return None
 
@@ -137,6 +136,7 @@ class DaemonNEW(object):
 
     def _cleanup(self, outfiles=False):
         """Remove daemon instance related files."""
+<<<<<<< HEAD
         self.log('cleanup(): Removing instance related files...')
         files = [self._pfpid, self._pfport] + \
             ([self._pfout, self._pferr] if outfiles else [])
@@ -148,6 +148,18 @@ class DaemonNEW(object):
 
     def _quit(self):
         self._cleanup()
+=======
+        self.log("cleanup(): Removing instance related files...")
+        files = [self.pfpid, self.pfport] + \
+            [self.pfout, self.pferr] if outfiles else []
+        for pf in files:
+            if os.path.exists(pf):
+                self.log('cleanup(): Removing "%s"...' % (pf))
+                os.unlink(pf)
+
+    def quit(self):
+        self.cleanup()
+>>>>>>> 3b488f44b7ebf423e5824f29bf4686a5a4b7d368
         self.log("quit(): Exiting... Bye!")
         sys.exit(0)
 
@@ -177,8 +189,13 @@ class DaemonNEW(object):
             sys.exit(1)
 
         # Decouple from parent environment
+<<<<<<< HEAD
         os.chdir(str(self.pd))
         os.setsid() # create a session and set the process group ID
+=======
+        os.chdir(self.pd)
+        os.setsid()
+>>>>>>> 3b488f44b7ebf423e5824f29bf4686a5a4b7d368
         os.umask(0)
 
         # Do second fork
@@ -193,6 +210,7 @@ class DaemonNEW(object):
         # Redirect standard file descriptors
         sys.stdout.flush()
         sys.stderr.flush()
+<<<<<<< HEAD
         sys.stdin.close()
         sys.stdout.close()
         sys.stderr.close()
@@ -200,12 +218,16 @@ class DaemonNEW(object):
         so = self.pfout.open('w', encoding='utf-8')
         se = self.pferr.open('w', encoding='utf-8')
         os.dup2(si.fileno(), sys.stdin.fileno())
+=======
+        so = open(self.pfout, 'w', encoding='utf-8')
+        se = open(self.pferr, 'w', encoding='utf-8')
+>>>>>>> 3b488f44b7ebf423e5824f29bf4686a5a4b7d368
         os.dup2(so.fileno(), sys.stdout.fileno())
         os.dup2(se.fileno(), sys.stderr.fileno())
 
         # Update PID
         self.pid = os.getpid()
-        self.pfpid.write_text(str(self.pid))
+        neronet.core.write_file(self.pfpid, self.pid)
 
         # Add signal handlers
         self.log('daemonize(): Adding a signal handler...')
@@ -240,7 +262,7 @@ class DaemonNEW(object):
             proc.send_signal(SIGQUIT)
             time.sleep(0.4)
             self.log("stop(): Daemon terminated!")
-        if self.pfpid.exists():
+        if os.path.exists(self.pfpid):
             self.err("stop(): The daemon failed to cleanup!")
             self.cleanup()
 
@@ -253,14 +275,115 @@ class DaemonNEW(object):
             pass
         self.start()
 
+<<<<<<< HEAD
+=======
+    def run(self):
+        """The daemon process loop."""
+        # Socket Initialization
+        self.sckt = gsocket(self.port, self.tdo)
+        # Port
+        self.port = self.sckt.getsockname()[1]
+        neronet.core.write_file(self.pfport, self.port)
+        # Init callback
+        self.daemon_init()
+        # The Loop
+        r = 0
+        self.log('run: listening port %d (to: %s, pid: %d)...' %
+                (self.port, self.tdo, self.pid))
+        while True:
+            out = None
+            try:
+                out = listenfordata(self.sckt)
+            except Exception as err:
+                self.err("run: listen error:\n%s\n" % (err))
+            if out:
+                dta, address = out
+                ip, port = address
+                self.log("run: msg from %s:%s: |%s|" % (ip, port, dta))
+                self.onreceive(ip, port, dta)
+            else:
+                # Ontdo callback
+                self.ontdo()
+
+    def respond(self, ip, port, reply, args=()):
+        sndreply(port, reply, args, self.sckt)
+
+    def daemon_init(self):
+        """
+        You should override this method when you subclass the Daemon. It
+        can be used to init the daemon as it will be called before the process
+        enters the loop. It is executed also on restarts!
+        """
+        self.log("LD::init: WARNING: No init specified!!!")
+
+    def onreceive(self, adda, addb, sin):
+        """
+        You should override this method when you subclass Daemon. It will be called after the process receives input
+        """
+        self.log("LD::onreceive: ERROR: No onreceive specified!!!")
+        raise Exception("ERROR: No onreceive specified!!!")
+
+    def ontdo(self):
+        """
+        You should override this method when you subclass Daemon. It will be called if the process does not receive input
+        """
+        self.log("LD::ontdo: nothing received...")
+
+class DaemonOLD():
+
+    def add_query(self, name, callback):
+        self._queries[name] = Query(name, callback)
+
+    def log_pform(self, prefix, message):
+        return '%s %s  %s\n' % (prefix,
+            time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()),
+            message)
+
+    def log(self, message):
+        sys.stdout.write(self.log_pform('LOG', message))
+
+    def wrn(self, message):
+        sys.stdout.write(self.log_pform('WRN', message))
+
+    def err(self, message, err=None):
+        output = self.log_pform('ERR', message)
+        sys.stdout.write(output)
+        if err:
+            sys.stderr.write(output)
+            traceback.print_exc()
+            sys.stderr.write('\n')
+        else:
+            sys.stderr.write(output)
+
+    def abort(self, message, err=None):
+        self.err(message, err)
+        self.quit()
+
+    def _cleanup(self, outfiles=False):
+        """Remove daemon instance related files."""
+        self.log('cleanup(): Removing instance related files...')
+        files = [self._pfpid, self._pfport] + \
+            ([self._pfout, self._pferr] if outfiles else [])
+        self.log('cleanup(): Files: %s' % (files))
+        for f in files:
+            if f.exists():
+                self.log('cleanup(): Removing "%s"...' % (f))
+                f.unlink()
+
+    def _quit(self):
+        self._cleanup()
+        self.log("quit(): Exiting... Bye!")
+        sys.exit(0)
+
+>>>>>>> 3b488f44b7ebf423e5824f29bf4686a5a4b7d368
     def _run(self):
         self._trun = time.time()
-        self._pdir.mkdir(parents=True, exist_ok=True)
+        os.mkdir(self._pdir)
         self._cleanup(outfiles=True)
         context = daemon.DaemonContext(
-            working_pdirectory=str(self._pdir),
+            working_pdirectory=self._pdir,
             umask=0o002,
-            pidfile=lockfile.FileLock(str(self._pdir / 'pid')),
+            pidfile=lockfile.FileLock(self._pdir + 'pid'),
             stdout=self._pfout.open('w', encoding='utf-8'),
             stderr=self._pferr.open('w', encoding='utf-8'),
             files_preserve=[],
