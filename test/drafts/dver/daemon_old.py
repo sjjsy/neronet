@@ -1,78 +1,6 @@
-# daemon.py
+# daemon_old.py
 
-"""
-Classes to make it possible to create asynchronous processes that can be
-communicated with.
-"""
-
-import os
-import sys
-import time
-import signal
-import daemon
-import lockfile
-import pathlib
-import traceback
-#import threading
-import socket
-import pickle
-import re
-
-import neronet.core
-
-TIMEOUT = 4.0
-
-class Query():
-  """A daemon query class."""
-
-  def __init__(self, name, callback):
-    self.name = name
-    self.callback = callback
-    self.tprocess = 0
-    self.scsc = 0
-    self.errc = 0
-
-  def process(self, *args, **kwargs):
-    try:
-      #print('process:', self.callback, args, kwargs)
-      rv = self.callback(*args, **kwargs)
-      self.scsc += 1
-      self.tprocess = time.time()
-      return rv
-    except Exception as err:
-      self.errc += 1
-      raise err
-
-class DaemonNEW(object):
-
-    """A generic daemon class.
-
-    See:
-    - https://www.python.org/dev/peps/pep-3143/
-    - https://docs.python.org/3.5/library/socketserver.html
-    - http://stackoverflow.com/questions/15652791/how-to-create-a-python-socket-listner-deamon
-    """
-
-    class NoPidFileError(Exception):
-        pass
-
-    def __init__(self, name):
-        self._name = name
-        self._pdir = pathlib.Path.home() / '.neronet' / self._name
-        self._pfin = FIXME
-        self._pfout = self._pdir / 'out'
-        self._pferr = self._pdir / 'err'
-        self._pfpid = self._pdir / 'pid'
-        self._pfport = self._pdir / 'port'
-        self._queries = {}
-        self.add_query('uptime', self.qry_uptime)
-        self.add_query('status', self.qry_status)
-        self.add_query('stop', self.qry_stop)
-        self._trun = 0
-        self._port = 0
-        self._host = neronet.core.get_hostname()
-        self._tdo = 5
-        self._sckt = None
+class DaemonOLD():
 
     def add_query(self, name, callback):
         self._queries[name] = Query(name, callback)
@@ -102,39 +30,6 @@ class DaemonNEW(object):
         self.err(message, err)
         self.quit()
 
-    def _read_i_or_nan(self, pf):
-        try:
-            return int(pf.read_text())
-        except:
-            return None
-
-    def rpfpid(self):
-        self.pid = self._read_i_or_nan(self.pfpid)
-        return self.pid
-
-    def rpfport(self):
-        self.port = self._read_i_or_nan(self.pfport)
-        return self.port
-
-    def get_process(self):
-        # Get the pid from the pfpid
-        pid = self.rpfpid()
-        if pid == None:
-            return None
-        try:
-            proc = psutil.Process(pid)
-            if 'nero' not in proc.name():
-                raise psutil.NoSuchProcess
-        except psutil.NoSuchProcess:
-            self.err("is_running(): The pid file is deprecated!")
-            self.cleanup()
-            return None
-        if proc.is_running():
-            return proc
-
-    def is_running(self):
-        return self.get_process() != None
-
     def _cleanup(self, outfiles=False):
         """Remove daemon instance related files."""
         self.log('cleanup(): Removing instance related files...')
@@ -150,108 +45,6 @@ class DaemonNEW(object):
         self._cleanup()
         self.log("quit(): Exiting... Bye!")
         sys.exit(0)
-
-    def recv_signal(self, sign, frme):
-        self.log('recv_signal(): Received signal "%s"!' % (sign))
-        if sign in (SIGTERM, SIGQUIT):
-            self.quit()
-
-    def daemonize(self):
-        """Daemonize the process.
-
-        Essentially
-        - Daemonizes the process by double forking
-        - Redefines a few variables and a few handles to unix signals
-        - Defines stdout, stderr and logging streams
-        - Writes the pid file
-        """
-
-        # Exit first parent (first fork)
-        self.log("daemonize(): Daemonizing the process...")
-        try:
-            pid = os.fork()
-            if pid > 0:
-                sys.exit(0)
-        except OSError as err:
-            self.err('daemonize(): Fork #1 failed!', err=err)
-            sys.exit(1)
-
-        # Decouple from parent environment
-        os.chdir(str(self.pd))
-        os.setsid() # create a session and set the process group ID
-        os.umask(0)
-
-        # Do second fork
-        try:
-            pid = os.fork()
-            if pid > 0:
-                sys.exit(0)
-        except OSError as err:
-            self.err('daemonize(): Fork #2 failed!', err=err)
-            sys.exit(1)
-
-        # Redirect standard file descriptors
-        sys.stdout.flush()
-        sys.stderr.flush()
-        sys.stdin.close()
-        sys.stdout.close()
-        sys.stderr.close()
-        si = open(self._pfin, 'r', encoding='utf-8')
-        so = self.pfout.open('w', encoding='utf-8')
-        se = self.pferr.open('w', encoding='utf-8')
-        os.dup2(si.fileno(), sys.stdin.fileno())
-        os.dup2(so.fileno(), sys.stdout.fileno())
-        os.dup2(se.fileno(), sys.stderr.fileno())
-
-        # Update PID
-        self.pid = os.getpid()
-        self.pfpid.write_text(str(self.pid))
-
-        # Add signal handlers
-        self.log('daemonize(): Adding a signal handler...')
-        signal(SIGTERM, self.recv_signal)
-        signal(SIGQUIT, self.recv_signal)
-
-        # Print encoding info
-        import locale
-        self.log(
-            'daemonize(): Encodings: %s (system), %s (preferred)...' %
-            (sys.getfilesystemencoding(), locale.getpreferredencoding()))
-
-    def start(self):
-        """Start the daemon."""
-        # Check for a pfpid to see if the daemon already runs
-        if self.is_running():
-            self.err('start(): The daemon is already running!')
-            sys.exit(1)
-        self.log('start(): Starting the daemon...')
-        # Remove old files...
-        self.cleanup(outfiles=True)
-        # Start the daemon
-        self.daemonize()
-        self.log('start(): Executing run...')
-        self.run()
-
-    def stop(self):
-        """Stop the daemon."""
-        self.log('stop(): Stopping the daemon...')
-        proc = self.get_process()
-        if proc:
-            proc.send_signal(SIGQUIT)
-            time.sleep(0.4)
-            self.log("stop(): Daemon terminated!")
-        if self.pfpid.exists():
-            self.err("stop(): The daemon failed to cleanup!")
-            self.cleanup()
-
-    def restart(self):
-        """Restart the daemon."""
-        self.log("restart(): Restarting the daemon...")
-        try:
-            self.stop()
-        except self.NoPidFileError:
-            pass
-        self.start()
 
     def _run(self):
         self._trun = time.time()
@@ -303,34 +96,6 @@ class DaemonNEW(object):
                     self._doquit = True
             self._quit()
 
-    def run(self):
-        """The daemon process loop."""
-        # Socket Initialization
-        self.sckt = gsocket(self.port, self.tdo)
-        # Port
-        self.port = self.sckt.getsockname()[1]
-        self.pfport.write_text(str(self.port))
-        # Init callback
-        self.daemon_init()
-        # The Loop
-        r = 0
-        self.log('run: listening port %d (to: %s, pid: %d)...' %
-                (self.port, self.tdo, self.pid))
-        while True:
-            out = None
-            try:
-                out = listenfordata(self.sckt)
-            except Exception as err:
-                self.err("run: listen error:\n%s\n" % (err))
-            if out:
-                dta, address = out
-                ip, port = address
-                self.log("run: msg from %s:%s: |%s|" % (ip, port, dta))
-                self.onreceive(ip, port, dta)
-            else:
-                # Ontdo callback
-                self.ontdo()
-
     def _handle(self, sckt):
         self.log(str(sckt.getsockname()))
         byts = sckt.recv(4096)
@@ -362,10 +127,6 @@ class DaemonNEW(object):
         self._doquit = True
 
     def ontimeout(self):
-        """
-        You should override this method when you subclass Daemon. It will
-        be called if the process does not receive input.
-        """
         pass
 
 class QueryInterface():

@@ -197,6 +197,12 @@ def osrun(cmd):
     print('> %s' % (cmd))
     os.system(cmd)
 
+def get_hostname():
+    return pathlib.Path('/etc/hostname').read_text().strip()
+
+def time_now():
+    return datetime.datetime.now() #.strftime('%H:%M:%S %d-%m-%Y')
+
 
 class Logger:
 
@@ -215,9 +221,8 @@ class Socket:
 
     """A class to simplify socket usage."""
 
-    def __init__(self, logger, host, port):
+    def __init__(self, host, port):
         # Save key attributes
-        self.logger = logger
         self.host = host
         self.port = port
 
@@ -225,7 +230,7 @@ class Socket:
         """Create a socket, send data over it, and close it"""
         # Create a TCP/IP socket
         sock = socket.socket()
-        sock.settimeout(TIME_OUT)
+        sock.settimeout(TIMEOUT)
         # Connect to the mother
         #self.logger.log('Connecting to (%s, %s)...' % (self.host, self.port))
         sock.connect((self.host, self.port))
@@ -236,3 +241,10 @@ class Socket:
         #self.logger.log('Closing socket...')
         sock.close()
 
+class ExperimentOLD():
+    def __init__(self, experiment_id, path=None, runcmd=None):
+        self.experiment_id = experiment_id
+        self.path = path
+        self.runcmd = runcmd
+        self.state = None
+        self.log_output = {}
