@@ -11,7 +11,6 @@ import time
 import signal
 import daemon
 import lockfile
-import pathlib
 import traceback
 #import threading
 import socket
@@ -58,11 +57,11 @@ class DaemonNEW(object):
 
     def __init__(self, name):
         self._name = name
-        self._pdir = pathlib.Path.home() / '.neronet' / self._name
-        self._pfout = self._pdir / 'out'
-        self._pferr = self._pdir / 'err'
-        self._pfpid = self._pdir / 'pid'
-        self._pfport = self._pdir / 'port'
+        self._pdir = os.path.expanduser('~/.neronet/') + self._name + '/'
+        self._pfout = self._pdir + 'out'
+        self._pferr = self._pdir + 'err'
+        self._pfpid = self._pdir + 'pid'
+        self._pfport = self._pdir + 'port'
         self._queries = {}
         self.add_query('uptime', self.qry_uptime)
         self.add_query('status', self.qry_status)
@@ -133,9 +132,9 @@ class DaemonNEW(object):
         files = [self.pfpid, self.pfport] + \
             [self.pfout, self.pferr] if outfiles else []
         for pf in files:
-            if pf.exists():
+            if os.path.exists(pf):
                 self.log('cleanup(): Removing "%s"...' % (pf))
-                pf.unlink()
+                os.unlink(pf)
 
     def quit(self):
         self.cleanup()
@@ -168,7 +167,7 @@ class DaemonNEW(object):
             sys.exit(1)
 
         # Decouple from parent environment
-        os.chdir(str(self.pd))
+        os.chdir(self.pd)
         os.setsid()
         os.umask(0)
 
@@ -184,14 +183,14 @@ class DaemonNEW(object):
         # Redirect standard file descriptors
         sys.stdout.flush()
         sys.stderr.flush()
-        so = self.pfout.open('w', encoding='utf-8')
-        se = self.pferr.open('w', encoding='utf-8')
+        so = open(self.pfout, 'w', encoding='utf-8')
+        se = open(self.pferr, 'w', encoding='utf-8')
         os.dup2(so.fileno(), sys.stdout.fileno())
         os.dup2(se.fileno(), sys.stderr.fileno())
 
         # Update PID
         self.pid = os.getpid()
-        self.pfpid.write_text(str(self.pid))
+        neronet.core.write_file(self.pfpid, self.pid)
 
         # Add signal handlers
         self.log('daemonize(): Adding a signal handler...')
@@ -226,7 +225,7 @@ class DaemonNEW(object):
             proc.send_signal(SIGQUIT)
             time.sleep(0.4)
             self.log("stop(): Daemon terminated!")
-        if self.pfpid.exists():
+        if os.path.exists(self.pfpid):
             self.err("stop(): The daemon failed to cleanup!")
             self.cleanup()
 
@@ -245,7 +244,7 @@ class DaemonNEW(object):
         self.sckt = gsocket(self.port, self.tdo)
         # Port
         self.port = self.sckt.getsockname()[1]
-        self.pfport.write_text(str(self.port))
+        neronet.core.write_file(self.pfport, self.port)
         # Init callback
         self.daemon_init()
         # The Loop
@@ -339,12 +338,12 @@ class DaemonOLD():
 
     def _run(self):
         self._trun = time.time()
-        self._pdir.mkdir(parents=True, exist_ok=True)
+        os.mkdir(self._pdir)
         self._cleanup(outfiles=True)
         context = daemon.DaemonContext(
-            working_pdirectory=str(self._pdir),
+            working_pdirectory=self._pdir,
             umask=0o002,
-            pidfile=lockfile.FileLock(str(self._pdir / 'pid')),
+            pidfile=lockfile.FileLock(self._pdir + 'pid'),
             stdout=self._pfout.open('w', encoding='utf-8'),
             stderr=self._pferr.open('w', encoding='utf-8'),
             files_preserve=[],
