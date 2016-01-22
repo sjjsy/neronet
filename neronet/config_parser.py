@@ -52,7 +52,6 @@ class ConfigParser():
         if not os.path.exists(NERONET_DIR):
             os.makedirs(NERONET_DIR)
         if not os.path.exists(NERONET_DIR + filename):
-            print "Initializing", filename
             self.write_yaml(NERONET_DIR + filename, default)
             return default
         data = self.load_yaml(NERONET_DIR + filename)
@@ -191,6 +190,8 @@ class ConfigParser():
         return clusters, preferences, database
 
     def remove_data(self):
+        """Removes the neronet data files
+        """
         if os.path.exists(NERONET_DIR):
             os.system('rm -r ' + NERONET_DIR)
 
@@ -204,14 +205,14 @@ class ConfigParser():
         self.write_yaml(NERONET_DIR + clusters_filename, clusters)
 
     def load_yaml(self, filename):
-        print "Loading", filename
+        """Loads yaml file"""
         with open(filename, 'r') as f:
             data = yaml.load(f.read())
         if not data: data = {}
         return data
 
     def write_yaml(self, filename, data):
-        print "Writing", filename, data
+        """Writes a yaml file"""
         with open(filename, 'w') as f:
             f.write(yaml.dump(data, default_flow_style=False))
 

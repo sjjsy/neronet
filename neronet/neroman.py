@@ -57,8 +57,7 @@ class Neroman:
                             PREFERENCES_FILENAME, DATABASE_FILENAME)
 
     def clean(self):
-        """Removes all neronet related data
-        """
+        """Removes all neronet related data"""
         self.config_parser.remove_data()
 
     def specify_cluster(
@@ -206,6 +205,7 @@ class Neroman:
                     yield "  %s\n" % experiment.id
 
     def _partition_by_state(self, experiments):
+        """Partitions the experiments in the database by state"""
         experiments_by_state = collections.defaultdict(list)
         for experiment in experiments.values():
             experiments_by_state[experiment.state[-1][0]].append(experiment)
