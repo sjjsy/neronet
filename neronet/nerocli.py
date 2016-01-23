@@ -18,11 +18,11 @@ def create_argument_parser():
                         help='Creates experiments according to the config'
                         'file found in the folder')
     parser.add_argument('--delete',
-                        metavar='experiment id',
+                        metavar='experiment_id',
                         nargs=1,
                         help='Deletes the experiment with the given id')
     parser.add_argument('--cluster',
-                        metavar=('id', 'address', 'type'),
+                        metavar=('cluster_id', 'address', 'type'),
                         nargs=3,
                         help='Specify a new cluster for computing')
     parser.add_argument('--user',
