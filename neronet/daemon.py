@@ -439,22 +439,22 @@ class Cli(QueryInterface):
 
     def parse_arguments(self, cli_args=None):
         """
-          --func parg kwarg=kwvalue
+        Parses and executes arguments that are in the format:
+          '--func parg kwarg=kwvalue'
+        If no arguments are found, the default function is executed 
         """
         #self.inf('Parse arguments: %s' % (sys.argv))
         cli_args = cli_args if cli_args else sys.argv[1:]
         work_queue = []
-        func = 'default'
-        pargs = []
-        kargs = {}
+
         for arg in cli_args:
             self.inf('Parsing argument "%s"...' % (arg))
             mtch = self.RE_FUNC.match(arg)
             if mtch:
-                work_queue.append((func, pargs, kargs))
                 func = mtch.group(1)
                 pargs = []
                 kargs = {}
+                work_queue.append((func, pargs, kargs))
                 continue
             mtch = self.RE_KARG.match(arg)
             if mtch:
@@ -465,7 +465,10 @@ class Cli(QueryInterface):
                 pargs.append(mtch.group(1))
                 continue
             self.abort(1, 'Unrecognized argument: "%s"' % (arg))
-        work_queue.append((func, pargs, kargs))
+        
+        if not work_queue:
+            work_queue.append(('default', [], {}))
+
         for work in work_queue:
             func, pargs, kargs = work
             if func in self.funcs:
