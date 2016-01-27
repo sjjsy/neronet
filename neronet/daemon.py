@@ -446,6 +446,8 @@ class Cli(QueryInterface):
         #self.inf('Parse arguments: %s' % (sys.argv))
         cli_args = cli_args if cli_args else sys.argv[1:]
         work_queue = []
+        pargs = []
+        kargs = []
 
         for arg in cli_args:
             self.inf('Parsing argument "%s"...' % (arg))
@@ -465,9 +467,11 @@ class Cli(QueryInterface):
                 pargs.append(mtch.group(1))
                 continue
             self.abort(1, 'Unrecognized argument: "%s"' % (arg))
-        
+       
+        #If no '--func' arguments are found, feed the parsed positional
+        #and keyword arguments to the default function
         if not work_queue:
-            work_queue.append(('default', [], {}))
+            work_queue.append(('default', pargs, kargs))
 
         for work in work_queue:
             func, pargs, kargs = work
