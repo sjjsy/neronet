@@ -26,43 +26,38 @@ import os
 import time
 import datetime
 import os.path
-
-import yaml
+import collections
 
 import neronet.core
 import neronet.config_parser
-from __future_ import print_function
+
+DATABASE_FILENAME = 'default.yaml'
+PREFERENCES_FILENAME = 'preferences.yaml'
+CLUSTERS_FILENAME = 'clusters.yaml'
 
 class Neroman:
 
     """The part of Neronet that handles user side things.
 
     Attributes:
-        database (str): Path to the database used, currently only .yaml
-        clusters (dict): A dictionary containing the specified clusters
-        experiments (dict): A dictionary containing the specified experiments
-        preferences (dict): A dictionary containing the preferences
+        clusters (Dict): A dictionary containing the specified clusters
+        database (Dict): A dictionary containing the specified experiments
+        preferences (Dict): A dictionary containing the preferences
     """
 
     def __init__(self):
         """Initializes Neroman
 
-        Reads the contents of its attributes from a database (currently just
-        a .yaml file).
-
-        Args:
-            database (str): The path to the database file as a string, the
-                rest of the attributes will be parsed from the database.
+        Reads the contents of its attributes from yaml files or creates them
         """
-        self._config = neronet.config_parser.ConfigParser()
-        try:
-            self._clusters, self._experiments, self._preferences = \
-                    self._config._load()
-        except neronet.neroman.FormatError as e:
-            self.abort('Reading config files failed!', e)
+        self.config_parser = neronet.config_parser.ConfigParser()
+        self.clusters, self.preferences, self.database = \
+            self.config_parser.load_configurations(CLUSTERS_FILENAME, \
+                            PREFERENCES_FILENAME, DATABASE_FILENAME)
 
-    def get_experiment(self, experiment_id):
-        return self.experiments[experiment_id]
+    def clean(self):
+        """Removes all neronet related data"""
+        self.config_parser.remove_data()
 
     def specify_cluster(
             self,
@@ -90,8 +85,8 @@ class Neroman:
         self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address,
                                                    'type': cluster_type,
                                                    'port': portnumber}
-        with open(self.clusters_file, 'w') as f:
-            f.write(yaml.dump(self.clusters, default_flow_style=False))
+
+        self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
 
     def specify_experiments(self, folder):
         """Specify experiments so that Neroman is aware of them.
@@ -104,7 +99,7 @@ class Neroman:
                 the experiment that's being specified.
 
         Raises:
-            FileNotFoundError: If the folder doesn't exists or the config file
+            IOError: If the folder doesn't exists or the config file
                 doesn't exists
             FormatError: If the config file is badly formated
         """
@@ -112,25 +107,32 @@ class Neroman:
 
         experiments = self.config_parser.parse_experiments(folder)
         for experiment in experiments:
-            if experiment.id in self.experiments:
+            if experiment.id in self.database:
                 raise IOError("Experiment named %s already in the database" \
-                                % experiment.experiment_id)
-            else: self.experiments[experiment.id] = experiment
-        self.save_database()
-
-    def _time_now(self):
-        return datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
-
-    def update_state(self, experiment_id, state):
-        self.experiments[experiment_id].update_state(state)
+                                % experiment.id)
+            else: self.database[experiment.id] = experiment
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                        self.database)
 
     def specify_user(self, name, email, default_cluster = ""):
         """Update user data"""
         self.preferences['name'] = name
         self.preferences['email'] = email
         self.preferences['default_cluster'] = default_cluster
-        with open(self.preferences_file, 'w') as f:
-            f.write(yaml.dump(self.preferences, default_flow_style=False))
+        self.config_parser.save_preferences(PREFERENCES_FILENAME, \
+                                            self.preferences)
+
+    def delete_experiment(self, experiment_id):
+        """Deletes the experiment with the given experiment id
+
+        Parameters:
+            experiment_id (str): id of the experiment to be deleted
+        Raises:
+            KeyError: if the experiment with the given id doesn't exist
+        """
+        self.database.pop(experiment_id)
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                        self.database)
 
     def get_experiment_results(self, experiment_id, remote_dir, local_dir):
         """Get the experiment results from neromum
@@ -142,7 +144,7 @@ class Neroman:
             local_dir (str): the file path to results folder on the local
                 machine.
         """
-        experiment = self.experiments[experiment_id]
+        experiment = self.database[experiment_id]
         cluster_ID = experiment.cluster
         cluster_port = self.clusters['clusters'][cluster_ID]['port']
         cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
@@ -151,50 +153,62 @@ class Neroman:
             % (cluster_port, cluster_address,
                 remote_dir, local_dir))
 
-    def status(self, arg):
-        """Display Neroman data on into stdstream"""
+    def status_gen(self, arg):
+        """Creates a generator that generates the polled status
+
+        Yields:
+            str: A line of neroman status
+        """
         if arg != 'all':
-            if arg in self.experiments:
-                experiment = self.experiments[arg]
-                parameters = experiment.parameters
-                time_modified = experiment.time_modified
-                state, state_change_time = experiment.state
-                parameters_string = ', '.join(
-                    ["%s: %s" % (k, v) for k, v in parameters.items()])
-                print(
-                    'Experiment: %s\nParameters: %s' %
-                    (arg, parameters_string))
-                if state == 'defined':
-                    print('State: %s - %s' % (state, state_change_time))
-                else:
-                    cluster = experiment.cluster
-                    print(
-                        'State: %s - %s - %s' %
-                        (state, cluster, state_change_time))
-                print('Last modified: %s' % time_modified)
-                return
+            if arg in self.database:
+                experiment = self.database[arg]
+                for line in experiment.as_gen():
+                    yield line
+                raise StopIteration
             else:
                 raise IOError('No experiment named %s' % arg)
-        print("================Neroman=================")
-        print("\n================User=================")
-        print("Name: " + self.preferences['name'])
-        print("Email: " + self.preferences['email'])
+        yield "================Neroman=================\n"
+        yield "\n"
+        yield "================User====================\n"
+        yield "Name: %s\n" % self.preferences['name']
+        yield "Email: %s\n" % self.preferences['email']
         if self.preferences['default_cluster']:
-            print("Default Cluster: " + self.preferences['default_cluster'])
-        print("\n================Clusters================")
+            yield "Default Cluster: %s\n" % self.preferences['default_cluster']
+        yield "\n"
+        yield "================Clusters================\n"
         if not self.clusters['clusters']:
-            print("No clusters defined")
+            yield "No clusters defined\n"
         else:
-            for cluster in self.clusters['clusters']:
-                address = self.clusters['clusters'][cluster]['ssh_address']
-                type = self.clusters['clusters'][cluster]['type']
-                print("{} {} {}".format(cluster, address, type))
-        print("\n================Experiments=============")
-        if not len(self.experiments):
-            print("No experiments defined")
+            clusters = self.clusters['clusters']
+            for cluster in clusters:
+                cluster_name = cluster
+                cluster = clusters[cluster]
+                address = cluster['ssh_address']
+                type = cluster['type']
+                yield "%s:\n" % cluster_name
+                yield "  Address: %s\n" % address
+                yield "  Type: %s\n" % type 
+                for key, value in cluster.iteritems():
+                    if key != 'ssh_address' and key != 'type':
+                        yield "  %s: %s\n" % (key.capitalize(), value)
+        yield "\n"
+        yield "================Experiments=============\n"
+        if not len(self.database):
+            yield "No experiments defined\n"
         else:
-            for experiment in sorted(self.experiments):
-                print(self.experiments[experiment])
+            experiments_by_state = self._partition_by_state(self.database)
+            current = ""
+            for state, experiments in sorted(experiments_by_state.iteritems()):
+                yield "%s:\n" % state.capitalize()
+                for experiment in sorted(experiments, key=lambda e: e.id):
+                    yield "  %s\n" % experiment.id
+
+    def _partition_by_state(self, experiments):
+        """Partitions the experiments in the database by state"""
+        experiments_by_state = collections.defaultdict(list)
+        for experiment in experiments.values():
+            experiments_by_state[experiment.state[-1][0]].append(experiment)
+        return experiments_by_state
 
     def send_files(
         self,
@@ -254,11 +268,11 @@ class Neroman:
             raise IOError('The given cluster ID or default cluster is not valid')
         
         remote_dir = '/tmp/neronet-%d' % (time.time())
-        experiment_destination = self.experiments[exp_id].fields[
-            'path'] + "/" + self.experiments[exp_id].fields['logoutput']
-        experiment_folder = self.experiments[exp_id].fields["path"]
-        #experiment = self.experiments[exp_id]["path"]+"/"+self.experiments[exp_id]["main_code_file"]
-        experiment_parameters = self.experiments[exp_id].callstring
+        experiment_destination = self.database[exp_id].path + \
+            "/" + self.database[exp_id].logoutput
+        experiment_folder = self.database[exp_id].path
+        #experiment = self.database[exp_id]["path"]+"/"+self.database[exp_id]["main_code_file"]
+        experiment_parameters = self.database[exp_id].callstring
         cluster_port = self.clusters['clusters'][cluster_ID]["port"]
         cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
         self.send_files(
@@ -275,9 +289,10 @@ class Neroman:
              remote_dir,
              remote_dir,
              experiment_parameters))
-        self.experiments[exp_id].cluster = cluster_ID
-        self.experiments[exp_id].update_state('submitted')
-        self.save_database()
+        self.database[exp_id].cluster = cluster_ID
+        self.update_state(exp_id, 'submitted')
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                        self.database)
         time.sleep(2)  # will be unnecessary as soon as daemon works
         # returns the results, should be called from cli
         self.get_experiment_results(exp_id, remote_dir, experiment_destination)

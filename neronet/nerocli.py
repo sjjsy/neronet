@@ -2,25 +2,27 @@
 """This module implements the Command Line Interface of Neroman.
 """
 
-
+from __future__ import print_function
 import os.path
 import argparse
 import sys
-from __future_ import print_function
 
 import neronet.neroman
 
 def create_argument_parser():
     """Create and return an argument parser."""
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--experiment',
-        metavar='folder',
-        nargs=1,
-        help='Creates experiments according to the config file found in'
-        'the folder')
+    parser.add_argument('--experiment',
+                        metavar='folder',
+                        nargs=1,
+                        help='Creates experiments according to the config'
+                        'file found in the folder')
+    parser.add_argument('--delete',
+                        metavar='experiment_id',
+                        nargs=1,
+                        help='Deletes the experiment with the given id')
     parser.add_argument('--cluster',
-                        metavar=('id', 'address', 'type'),
+                        metavar=('cluster_id', 'address', 'type'),
                         nargs=3,
                         help='Specify a new cluster for computing')
     parser.add_argument('--user',
@@ -45,19 +47,19 @@ def main():
     """Parses the command line arguments and starts Neroman."""
     parser = create_argument_parser()
     args = parser.parse_args()
-    neronet_dir = os.path.expanduser('~') + '/.neronet'
-    if not os.path.exists(neronet_dir):
-        os.makedirs(neronet_dir)
-    nero = neronet.neroman.Neroman(database= neronet_dir + '/default.yaml',
-         preferences_file=neronet_dir + '/preferences.yaml',
-         clusters_file=neronet_dir + '/clusters.yaml')
+    nero = neronet.neroman.Neroman()
     if args.experiment:
         experiment_folder = args.experiment[0]
         try:
             nero.specify_experiments(experiment_folder)
-            nero.save_database()
-        except (FileNotFoundError, neronet.config_parser.FormatError) as e:
+        except (IOError, neronet.config_parser.FormatError) as e:
             print(e)
+    if args.delete:
+        experiment_id = args.delete[0]
+        try:
+            nero.delete_experiment(experiment_id)
+        except KeyError:
+            print("No experiment named %s" % experiment_id)
     if args.cluster:
         cluster_id = args.cluster[0]
         address = args.cluster[1]
@@ -69,7 +71,8 @@ def main():
         nero.specify_user(name, email)
     if args.status:
         try:
-            nero.status(args.status)
+            status_gen = nero.status_gen(args.status)
+            print(''.join(status_gen), end="")
         except IOError as e:
             print(e)
     if args.submit:
@@ -80,8 +83,7 @@ def main():
         else:
             nero.submit(experiment_ID)
     if args.clean:
-        if os.path.exists(neronet_dir):
-            remove_dir(neronet_dir)
+        nero.clean()
 
 def remove_dir(path):
     os.system('rm -r ' + path)

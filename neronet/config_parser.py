@@ -10,8 +10,9 @@ import yaml
 
 import neronet.core
 
-CONFIG_FOLDER = os.path.expanduser('~/.neronet')
-CONFIG_FILENAME = 'config.yaml'
+EXPERIMENT_CONFIG_FILENAME = 'config.yaml'
+CLUSTER_TYPES = set(['slurm', 'unmanaged'])
+NERONET_DIR = os.path.expanduser('~') + '/.neronet/'
 
 class FormatError(Exception):
     """ Exception raised when experiment config file is poorly formatted
@@ -27,82 +28,192 @@ class FormatError(Exception):
     def __str__(self):
         return '\n'.join([''] + self.error_msgs)
 
-class ConfigManager():
+class ConfigParser():
     """ Configuration file parser for neronet configuration files
     """
-    def __init__(self, verbosity=0):
-        self._verbosity = verbosity
-        self._database_file = os.path.join(CONFIG_FOLDER, 'default.yaml')
-        self._clusters_file = os.path.join(CONFIG_FOLDER, 'clusters.yaml')
-        self._preferences_file = os.path.join(CONFIG_FOLDER, 'preferences.yaml')
-        self._load()
+    def load_config(self, filename, default, check, *args):
+        """Loads the yaml file and checks its format
 
-    def _load_config(self, config_file, default=None):
-        return yaml.load(config_file.read_text()) if config_file.exists() \
-                else default
+        Parameters:
+            filename (str): name of the file to be loaded
+            default (dict): default data to be returned and written if the
+                file doesn't exist
+            check (function): function that checks that the format of the data
+                is correct
+            args (list): extra arguments for the check function
+        
+        Returns:
+            data (dict): data that was loaded
 
-    def _config_loader(self, config_file, default_data):
-        data = self._load_config(config_file, default)
-        if not data:
-            data = default_data
-            self._save_config(config_file, data)
+        Raises:
+            FormatError: if the data wasn't correctly formated
+        """
+        if not os.path.exists(NERONET_DIR):
+            os.makedirs(NERONET_DIR)
+        if not os.path.exists(NERONET_DIR + filename):
+            self.write_yaml(NERONET_DIR + filename, default)
+            return default
+        data = self.load_yaml(NERONET_DIR + filename)
+        check(data, *args)
         return data
 
-    def _save_config(self, config_file, data):
-        """Save config data into the config file path."""
-        config_file.write_text(yaml.dump(data, default_flow_style=False))
+    def load_clusters(self, clusters_filename):
+        """Loads the clusters file
 
-    def _load(self):
-        """
-        Load the configurations from the yaml files or creates them if they
-        don't exist
-        """
-        self._load_preferences()
-        self._load_clusters()
-        self._load_experiments()
+        Parameters:
+            clusters_filename (str): name of the clusters file
+        
+        Returns:
+            dict: data of the clusters
 
-    def _load_preferences(self):
+        Raises:
+            FormatError: if the data wasn't correctly formated
         """
-        Load the preferences config.
-        """
-        self.preferences = self._config_loader(self.preferences_file,
-            {'name': None, 'email': None, 'default_cluster': None})
-        if self._verbosity > 3:
-            if 'name' not in self.preferences:
-                print('Warning: The user\'s name is not specified')
-            if 'email' not in self.preferences:
-                print('Warning: The user\'s email is not specified')
+        cluster_default = {'clusters': {}, 'groups': {}}
+        return self.load_config(clusters_filename, cluster_default, 
+                                self.check_clusters)
 
-    def _load_clusters(self):
-        """
-        Load the clusters config.
-        """
-        self.clusters = self._config_loader(self.clusters_file,
-            {'clusters': {}, 'groups': None})
-        # This checks the format of the clusters file            
-        for key, cluster in clusters['clusters'].items():
-            if 'type' not in cluster:
-                cluster['type'] = 'unmanaged'
-            else:
-                if cluster['type'] != 'unmanaged':
-                    if cluster['type'] != 'slurm':
-                        raise FormatError('The cluster type for the cluster ' +
-                        key + ' is not valid.')
-            if 'port' not in cluster:
-                cluster['port'] = 22
-            if 'ssh_address' not in cluster:
-                raise FormatError('The ssh address for the cluster ' + key + 
-                ' is not defined.')
-        if self.preferences['default_cluster']:
-            if self.preferences['default_cluster'] not in clusters['clusters']:
-                raise FormatError('The specified default cluster ' + 
-                self.preferences['default_cluster'] +' is not found')
+    def check_clusters(self, clusters_data):
+        """Checks the format of the cluster data
+        
+        Parameters:
+            clusters_data (dict): data of the clusters
 
-    def _load_experiments(self):
+        Raises:
+            FormatError: if the data wasn't correctly formated
         """
-        Load the experiments config.
+        errors = []
+        clusters = clusters_data.get('clusters', {})
+        for cluster_id, fields in clusters.iteritems():
+            if 'type' not in fields:
+                errors.append('No type specified for cluster %s' % cluster_id)
+            elif fields['type'] not in CLUSTER_TYPES:
+                errors.append('Invalid type %s for cluster %s' % \
+                                (fields['type'], cluster_id))
+            if 'port' not in fields:
+                fields['port'] = 22
+            if 'ssh_address' not in fields:
+                errors.append('No ssh address specified for cluster %s' % \
+                                                            cluster_id)
+        groups = clusters_data.get('groups', {})
+        for group_name, group_clusters in groups.iteritems():
+            for cluster in group_clusters:
+                if cluster not in clusters.keys():
+                    errors.append('Group %s cluster %s is not defined' % \
+                                    (group_name, cluster))
+        if errors:
+            raise FormatError(errors)
+
+    def load_preferences(self, preferences_filename, clusters_data):
+        """Loads the preferences file
+        Parameters:
+            preferences_filename (str): name of the preferences file
+            clusters_data (dict): data of the clusters
+
+        Returns:
+            dict: data of the preferences
+
+        Raises:
+            FormatError: if the data wasn't correctly formated
         """
-        self.experiments = self._config_loader(self.experiments_file, {})
+        preferences_default = {'name': '', 'email': '', 'default_cluster': ''}
+        return self.load_config(preferences_filename, preferences_default, \
+                            self.check_preferences, clusters_data)
+
+    def check_preferences(self, preferences_data, clusters_data):
+        """Checks the preferences data
+
+        Parameters:
+            preferences_data (dict): data of the preferences
+            clusters_data (dict): data of the clusters
+
+        Raises:
+            FormatError: if the data wasn't correctly formated
+        """
+        clusters = clusters_data.get('clusters', {})
+        default_cluster = preferences_data['default_cluster']
+        if default_cluster not in clusters and default_cluster:
+            raise FormatError(['Default cluster %s no defined' % \
+                                default_cluster])
+
+    def load_database(self, database_filename):
+        """Loads the database file
+        
+        Parameters:
+            database_filename (str): name of the database file
+
+        Returns:
+            dict: data of the database
+        """
+        database_default = {}
+        return self.load_config(database_filename, database_default, \
+                            self.check_database)
+
+    def check_database(self, database_data):
+        pass
+
+    def load_configurations(self, clusters_filename, 
+                                    preferences_filename,
+                                    database_filename):
+        """Loads all the configurations
+
+        Parameters:
+            clusters_filename (str): name of the clusters file
+            preferences_filename (str): name of the preferences file
+            database_filename (str): name of the database file
+
+        Returns:
+            tuple of dicts: a tuple containing the data of clusters,
+            preferences and database as dicts
+
+        Raises:
+            FormatError: if the data wasn't correctly formated
+        """
+        errors = []
+        clusters = {}
+        try:
+            clusters = self.load_clusters(clusters_filename)
+        except FormatError as e:
+            errors += e.error_msgs
+        try:
+            preferences = self.load_preferences(preferences_filename, \
+                                                clusters)
+        except FormatError as e:
+            errors += e.error_msgs
+        try:
+            database = self.load_database(database_filename)
+        except FormatError as e:
+            errors += e.error_msgs
+        if errors:
+            raise FormatError(errors)
+        return clusters, preferences, database
+
+    def remove_data(self):
+        """Removes the neronet data files
+        """
+        if os.path.exists(NERONET_DIR):
+            os.system('rm -r ' + NERONET_DIR)
+
+    def save_database(self, database_filename, database):
+        self.write_yaml(NERONET_DIR + database_filename, database)
+
+    def save_preferences(self, preferences_filename, preferences):
+        self.write_yaml(NERONET_DIR + preferences_filename, preferences)
+
+    def save_clusters(self, clusters_filename, clusters):
+        self.write_yaml(NERONET_DIR + clusters_filename, clusters)
+
+    def load_yaml(self, filename):
+        """Loads yaml file"""
+        with open(filename, 'r') as f:
+            data = yaml.load(f.read())
+        if not data: data = {}
+        return data
+
+    def write_yaml(self, filename, data):
+        """Writes a yaml file"""
+        with open(filename, 'w') as f:
+            f.write(yaml.dump(data, default_flow_style=False))
 
     def parse_experiments(self, folder):
         """ Parses the configuration file found inside the given folder and
@@ -116,7 +227,7 @@ class ConfigManager():
             according to the configuration file in the experiment folder
 
         Raises:
-            FileNotFoundError: If the folder or configuration file doesn't
+            IOError: If the folder or configuration file doesn't
             exists
 
             FormatError: If the configuration file isn't in the correct format
@@ -124,10 +235,10 @@ class ConfigManager():
 
         #Check that the input is valid
         if not os.path.isdir(folder):
-            raise FileNotFoundError('No such folder')
-        config_file = os.path.join(folder, CONFIG_FILENAME)
+            raise IOError('No such folder')
+        config_file = os.path.join(folder, EXPERIMENT_CONFIG_FILENAME)
         if not os.path.exists(config_file):
-            raise FileNotFoundError('No config file in folder')
+            raise IOError('No config file in folder')
         
         if os.stat(config_file).st_size == 0:
             raise FormatError(['Empty config file'])
