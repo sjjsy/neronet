@@ -19,59 +19,69 @@ class Neromum(neronet.daemon.Daemon):
 
     Gets the experiment as the 1st command line argument
     Experiment parameters from 2nd onwards.
+
+    Attrs:
+        exp_dict (dict): A dict of all experiments submitted to this mum by
+            experiment ID.
     """
 
     def __init__(self):
         super().__init__('neromum')
-        self.nerokid_queue = []
-        self.nerokid_dict = {}
-        self.add_query('nerokid', self.qry_nerokid)
-        self.add_query('list_nerokids', self.qry_list_nerokids)
-        self.add_query('nerokid_update', self.qry_nerokid_update)
+        self.exp_dict = {}
+        self.add_query('experiment', self.qry_exp)
+        self.add_query('list_exps', self.qry_list_exps)
+        self.add_query('exp_update', self.qry_exp_update)
 
-    def qry_nerokid(self, experiment_id, path, runcmd):
-        nerokid = neronet.core.Experiment(experiment_id, path, runcmd)
-        self.nerokid_queue.append(nerokid)
-        self.nerokid_dict[experiment_id] = nerokid
+    def qry_exp(self):
+        """Receive a new experiment job from Neroman."""
+        # TODO: read experiment object from stdin
+        exp = Experiment(experiment_id='exp1', run_command_prefix='python',
+                main_code_file='main.py', parameters=['4', '3'],
+                parameters_format='%d %d',
+                path='/home/smarisa/snc/pro/neronet/test/experiments/sleep',
+                required_files=None, logoutput='out', collection=None,
+                conditions=None)
+        self.exp_dict[exp.id] = exp
         self._reply['rv'] = 0
 
-    def qry_list_nerokids(self):
-        msg = 'Nerokids:\n'
-        for nerokid in self.nerokid_queue:
-            msg += '- %s' % (nerokid.experiment_id)
+    def qry_list_exps(self):
+        """List all experiments submitted to this mum."""
+        msg = 'Experiments:\n'
+        for exp in self.exp_dict.values():
+            msg += '- %s  %s\n' % (exp.id, exp.path)
         self._reply['msgbody'] = msg
         self._reply['rv'] = 0
 
-    def qry_nerokid_update(self, experiment):
-        """Extract information from nerokid's data updates."""
-        nerokid = self.nerokid_dict[experiment.experiment_id]
+    def qry_exp_update(self, changes):
+        """Extract information from Nerokids' data updates."""
+        exp = self.exp_dict[experiment.id]
         for log_path, new_text in experiment.log_output.items():
             self.log('New output in %s:' % (log_path))
             for ln in new_text.split('\n'):
                 if not ln:
                     continue
                 self.log('    %s' % (ln.strip()))
-        nerokid.state = experiment.state
-        if nerokid.state == 'finished':
-            self.log('Kid %s has finished!' % (nerokid.experiment_id))
+        exp.state = experiment.state
+        if exp.state == 'finished':
+            self.log('Kid %s has finished!' % (exp.experiment_id))
         self._reply['rv'] = 0
 
     def ontimeout(self):
-        for nerokid in self.nerokid_queue:
-            if nerokid.state == None:
-                self.start_nerokid(nerokid)
+        for exp in self.exp_queue:
+            if exp.state == None:
+                self.start_exp(exp)
                 return
 
-    def start_nerokid(self, nerokid):
-        """Starts the nerokid in the node"""
-        self.log('Launching kid %s...' % (nerokid.experiment_id))
-        kid_daemon = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(nerokid.experiment_id))
-        kid_daemon.start()
-        kid_daemon.query('launch', self.host, self.port)
+    def start_exp(self, exp):
+        """Starts the exp in the node"""
+        self.log('Launching kid %s...' % (exp.experiment_id))
+        nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(nerokid.experiment_id))
+        nerokid.start()
+        nerokid.query('launch', self.host, self.port)
         #neronet.core.osrun('nerokid --start')
         #neronet.core.osrun('nerokid --query launch %s %d %s'
         #    % (self.host, self.port, nerokid.experiment_id))
-        nerokid.state = 'running'
+        exp.state = 'running'
 
 class NeromumCli(neronet.daemon.Cli):
     def __init__(self):
@@ -79,7 +89,7 @@ class NeromumCli(neronet.daemon.Cli):
         self.funcs.update({
             'input' : self.func_input,
         })
-      
+
     def func_input(self):
         data = input()
         print('Data:\n%s\n' % (data))

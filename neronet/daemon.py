@@ -156,9 +156,13 @@ class Daemon(object):
         - Defines stdout, stderr and logging streams
         - Writes the pid file
         """
-
         # Exit first parent (first fork)
         self.log("daemonize(): Daemonizing the process...")
+        self.log("daemonize(): Attributes:")
+        self.log("daemonize():   name:   %s" % (self._name))
+        self.log("daemonize():   pdir    %s" % (self._pdir))
+        self.log("daemonize():   pfout   %s" % (self._pfout))
+        self.log("daemonize():   pferr   %s" % (self._pferr))
         try:
             pid = os.fork()
             if pid > 0:
@@ -167,11 +171,13 @@ class Daemon(object):
             self.err('daemonize(): Fork #1 failed!', err=err)
             sys.exit(1)
 
-        # Decouple from parent environment
+        # Decouple from parent environment and make sure we have a clean
+        # daemon directory to store log output etc.
         os.umask(0)
-        if not os.path.exists(self._pdir):
+        if os.path.exists(self._pdir):
+            self._cleanup(outfiles=True)
+        else:
             os.mkdir(self._pdir)
-        self._cleanup(outfiles=True)
         os.chdir(self._pdir)
         os.setsid() # create a session and set the process group ID
 
@@ -187,9 +193,10 @@ class Daemon(object):
         # Redirect standard file descriptors
         sys.stdout.flush()
         sys.stderr.flush()
-        sys.stdin.close()
-        sys.stdout.close()
-        sys.stderr.close()
+        #sys.stdin.close()
+        #sys.stdout.close()
+        #sys.stderr.close()
+        neronet.core.write_file(self._pfin, '')
         si = open(self._pfin, 'r', encoding='utf-8')
         so = open(self._pfout, 'w', encoding='utf-8')
         se = open(self._pferr, 'w', encoding='utf-8')
@@ -199,12 +206,13 @@ class Daemon(object):
 
         # Update PID
         self._pid = os.getpid()
+        self.log('daemonize(): Forked to PID = %d...' % (self._pid))
         neronet.core.write_file(self._pfpid, self._pid)
 
         # Add signal handlers
         self.log('daemonize(): Adding a signal handler...')
-        signal(SIGTERM, self._recv_signal)
-        signal(SIGQUIT, self._recv_signal)
+        signal.signal(signal.SIGTERM, self._recv_signal)
+        signal.signal(signal.SIGQUIT, self._recv_signal)
 
         # Print encoding info
         import locale
@@ -223,9 +231,10 @@ class Daemon(object):
         # Put the socket into server mode and retrieve the chosen port number
         sckt.listen(1)
         host, self._port = sckt.getsockname()
-        self._pfport.write_text(str(self._port))
+        neronet.core.write_file(self._pfport, self._port)
         self.log('run(): Starting to listen at (%s, %d)...' % (host, self._port))
         sckt.listen(1)
+        self._doquit = False
         while not self._doquit:
             self.log('run(): Looping...')
             try:
@@ -240,7 +249,8 @@ class Daemon(object):
             #thread = threading.Thread(target=self.handle, args=[conn])
             #thread.daemon = True
             #thread.start()
-            if not self._pfport.exists():
+            if not os.path.exists(self._pfpid) or \
+                    not os.path.exists(self._pfport):
                 self.log('run(): Port file disappeared! Aborting...')
                 self._doquit = True
         self._quit()
@@ -319,7 +329,7 @@ class QueryInterface(object):
         localhost = neronet.core.get_hostname()
         if self.host in ('127.0.0.1', 'localhost', localhost):
             if os.path.exists(self.daemon._pfport):
-                self.port = int(self.daemon._pfport.read_text())
+                self.port = int(neronet.core.read_file(self.daemon._pfport))
             else:
                 raise self.NoPortFileError('No daemon port file!')
                 #self.abort(10, 'No daemon port file found! Is it running?')
@@ -377,11 +387,9 @@ class QueryInterface(object):
     def start(self):
         """Start the daemon."""
         self.inf('start(): Starting the daemon...')
-        # Remove old files...
-        self.daemon._cleanup(outfiles=True)
         # Start the daemon
         self.daemon._daemonize()
-        self.log('start(): Executing run...')
+        self.inf('start(): Executing run...')
         self.daemon._run()
 
     def stop(self):
@@ -392,7 +400,7 @@ class QueryInterface(object):
             return
         self.query('stop')
         time.sleep(TIMEOUT*0.5)
-        if self.daemon._pfport.exists():
+        if os.path.exists(self.daemon._pfport):
             self.wrn('stop(): The daemon failed to cleanup!')
             self.daemon._cleanup()
         else:

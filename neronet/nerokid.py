@@ -5,6 +5,14 @@ Attributes:
   INTERVAL (float): interval for how long the kid waits until it rechecks
     for changes in the log file
   LOG_FILES (tuple): Log files for stdout and stderr
+
+Example usage:
+    ## Unmanaged node example
+    python nerokid exp1 --start
+    ## Managed node example (Slurm SBATCH)
+    #!/bin/sh
+    #SBATCH --time=60
+    python nerokid exp1 --start
 """
 
 from __future__ import print_function
