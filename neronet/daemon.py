@@ -13,6 +13,7 @@ import traceback
 import socket
 import pickle
 import re
+import datetime
 #import threading
 
 import neronet.core
@@ -159,7 +160,8 @@ class Daemon(object):
         # Exit first parent (first fork)
         self.log("daemonize(): Daemonizing the process...")
         self.log("daemonize(): Attributes:")
-        self.log("daemonize():   name:   %s" % (self._name))
+        self.log("daemonize():   time    %s" % (datetime.datetime.now()))
+        self.log("daemonize():   name    %s" % (self._name))
         self.log("daemonize():   pdir    %s" % (self._pdir))
         self.log("daemonize():   pfout   %s" % (self._pfout))
         self.log("daemonize():   pferr   %s" % (self._pferr))

@@ -6,6 +6,7 @@
 
 import sys
 import pickle
+import glob
 
 import neronet.core
 import neronet.daemon
@@ -28,22 +29,8 @@ class Neromum(neronet.daemon.Daemon):
     def __init__(self):
         super().__init__('neromum')
         self.exp_dict = {}
-        self.add_query('experiment', self.qry_exp)
         self.add_query('list_exps', self.qry_list_exps)
         self.add_query('exp_update', self.qry_exp_update)
-
-    def qry_exp(self):
-        """Receive a new experiment job from Neroman."""
-        # TODO: read experiment object from stdin
-        exp = Experiment(experiment_id='exp1', run_command_prefix='python',
-                main_code_file='main.py', parameters=['4', '3'],
-                parameters_format='%d %d',
-                path='/home/smarisa/snc/pro/neronet/test/experiments/sleep',
-                required_files=None, logoutput='out', collection=None,
-                conditions=None)
-        exp.update_state(neronet.core.Experiment.State.submitted)
-        self.exp_dict[exp.id] = exp
-        self._reply['rv'] = 0
 
     def qry_list_exps(self):
         """List all experiments submitted to this mum."""
@@ -68,21 +55,23 @@ class Neromum(neronet.daemon.Daemon):
         self._reply['rv'] = 0
 
     def ontimeout(self):
+        # Load all experiments into the dict that have not yet been loaded
+        for exp_file in glob.glob('./experiments/*/exp.pickle'):
+            exp_id = os.path.basename(os.path.dirname(exp_file))
+            if exp_id not in self.exp_dict:
+                self.log('New experiment submitted: %s...' % (exp_id))
+                exp = pickle.loads(neronet.core.read_file(exp_file))
+                self.exp_dict[exp_id] = exp
+        # Start an experiment if there is any to start
         for exp in self.exp_dict.values():
             if exp.state == neronet.core.Experiment.State.submitted:
-                self.start_exp(exp)
+                # TODO: Allow sbatch launch
+                # Launch experiment in the local (umanaged) node
+                self.log('Launching experiment %s...' % (exp.id))
+                nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(exp.id))
+                nerokid.start()
+                nerokid.query('launch', self.host, self.port)
                 return # pace submission by launching one at a time
-
-    def start_exp(self, exp):
-        """Starts the exp in the unmanaged node."""
-        self.log('Launching kid %s...' % (exp.id))
-        nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(exp.id))
-        nerokid.start()
-        nerokid.query('launch', self.host, self.port)
-        #neronet.core.osrun('nerokid --start')
-        #neronet.core.osrun('nerokid --query launch %s %d %s'
-        #    % (self.host, self.port, nerokid.experiment_id))
-        exp.state = 'running'
 
 class NeromumCli(neronet.daemon.Cli):
     def __init__(self):
@@ -110,3 +99,6 @@ def main():
     """Create a CLI interface object and process CLI arguments."""
     cli = NeromumCli()
     cli.parse_arguments()
+
+#if __name__ == '__main__':
+#    main()

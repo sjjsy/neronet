@@ -85,9 +85,9 @@ class Nerokid(neronet.daemon.Daemon):
                 neronet.neromum.Neromum(), host=host, port=int(port))
         self.log('Launching a kid...')
         self.log('- Mom address: (%s, %d)' % (self.neromum.host, self.neromum.port))
-        self.log('- Experiment ID: "%s"' % (self.experiment.experiment_id))
-        self.log_files = [LogFile(log_file_path)
-                          for log_file_path in LOG_FILES]
+        #self.log('- Experiment ID: "%s"' % (self.experiment.experiment_id))
+        #self.log_files = [LogFile(log_file_path)
+        #                  for log_file_path in LOG_FILES]
         self.log('Launching the experiment...')
         """Launches received script"""
         self.process = subprocess.Popen(
@@ -144,3 +144,6 @@ def main():
     #sys.argv = [sys.argv[0]] + sys.argv[2:]
     cli = neronet.daemon.Cli(Nerokid(exp_id))
     cli.parse_arguments()
+
+#if __name__ == '__main__':
+#    main()

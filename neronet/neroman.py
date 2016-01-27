@@ -27,6 +27,8 @@ import time
 import datetime
 import os.path
 import collections
+import pickle
+import shutil
 
 import neronet.core
 import neronet.config_parser
@@ -207,93 +209,79 @@ class Neroman:
         """Partitions the experiments in the database by state"""
         experiments_by_state = collections.defaultdict(list)
         for experiment in experiments.values():
-            experiments_by_state[experiment.state[-1][0]].append(experiment)
+            experiments_by_state[experiment.state].append(experiment)
         return experiments_by_state
 
-    def send_files(
-        self,
-        experiment_folder,
-        remote_dir,
-        cluster_address,
-        cluster_port,
-        neronet_root=os.getcwd(),
-    ):
-        """Send experiment files to the cluster
-
-        Args:
-            experiment_folder (str): the file path to experiment folder on the local machine.
-            remote_dir (str): the file path to experiment folder on the remote cluster.
-            neronet_root (str): the file path to neronet folder.
-            cluster_address (str): the address of the cluster.
-            cluster_port (int): ssh port number of the cluster.
-        """
-        tmp_dir = '/tmp/neronet-tmp'
-        # rsync the neronet files to tmp
-        neronet.core.osrun(
-            'rsync -az "%s" "%s"' %
-            (neronet_root +
-             '/neronet',
-             tmp_dir))
-        # rsync bin files to tmp
-        neronet.core.osrun(
-            'rsync -az "%s" "%s"' %
-            (neronet_root + '/bin', tmp_dir))
-        # rsync the experiment files to tmp
-        neronet.core.osrun(
-            'rsync -az "%s/" "%s"' %
-            (experiment_folder, tmp_dir))
-        neronet.core.osrun(
-            'rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
-            (cluster_port,
-             tmp_dir,
-             cluster_address,
-             remote_dir))
-
-    def submit(self, exp_id, cluster_ID = ""):
+    def submit(self, exp_id, cluster_id=""):
         """Main loop of neroman.
 
         Start the experiment in the cluster using ssh.
 
         Args:
-            experiment_folder (str) : the file path to experiment folder in local machine.
-            experiment_destination (str) : the file path to experiment folder on the remote cluster.
-            experiment (str) : the name of the experiment.
-            cluster_address (str) : the address of the cluster.
-            cluster_port (int) : ssh port number of the cluster.
+            local_exp_path (str): the file path to experiment folder in local machine.
+            experiment_destination (str): the file path to experiment folder on the remote cluster.
+            experiment (str): the name of the experiment.
+            cluster_address (str): the address of the cluster.
+            cluster_port (int): ssh port number of the cluster.
         """
-        if not cluster_ID:
-            cluster_ID = self.preferences['default_cluster']
+        if not cluster_id:
+            cluster_id = self.preferences['default_cluster']
             
-        if cluster_ID not in self.clusters['clusters']:
+        if cluster_id not in self.clusters['clusters']:
             raise IOError('The given cluster ID or default cluster is not valid')
         
         exp = self.database[exp_id]
-        experiment_folder = self.database[exp_id].path
-        remote_dir = '/tmp/neronet-%d' % (time.time())
-        experiment_destination = self.database[exp_id].path + \
-            "/" + self.database[exp_id].logoutput
-        #experiment = self.database[exp_id]["path"]+"/"+self.database[exp_id]["main_code_file"]
-        experiment_parameters = self.database[exp_id].callstring
-        cluster_port = self.clusters['clusters'][cluster_ID]["port"]
-        cluster_address = self.clusters["clusters"][cluster_ID]["ssh_address"]
-        self.send_files(
-            experiment_folder,
-            remote_dir,
-            cluster_address,
-            cluster_port)
+        # Update experiment info
+        exp.cluster = cluster_id
+        exp.update_state(neronet.core.Experiment.State.submitted)
+        # Define local path, where experiment currently exists
+        local_exp_path = exp.path
+        # Define the remote path into which the files will be transferred to,
+        # assuming it will be under the user's home directory
+        remote_dir = '~/.neronet'
+        # Define a temporary folder to contain all the required files
+        local_tmp_dir = '/tmp/.neronet-%s' % (exp.id)
+        # Define a folder for the files required by the experiment
+        local_tmp_exp_dir = os.path.join(local_tmp_dir, 'experiments', exp.id)
+        # Create the local temporary directories
+        os.makedirs(local_tmp_exp_dir)
+        # Define paths to required Neronet files
+        neronet_root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        neronet_code_dir = os.path.join(neronet_root_dir, 'neronet')
+        neronet_bin_dir = os.path.join(neronet_root_dir, 'bin')
+        # Add Neronet source code files to the temporary dir
+        neronet.core.osrun('rsync -az "%s" "%s"' %
+                (neronet_code_dir, local_tmp_dir))
+        # Second, add Neronet executables
+        neronet.core.osrun('rsync -az "%s" "%s"' %
+                (neronet_bin_dir, local_tmp_dir))
+        # Third, add the experiment files
+        for file_path in exp.required_files + [exp.main_code_file]:
+            neronet.core.osrun('cp -p "%s" "%s"' %
+                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
+        # Finally, serialize the experiment object into the experiment folder
+        neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
+                pickle.dumps(exp))
+        # Read cluster address and port
+        cluster = self.clusters["clusters"][cluster_id]
+        cluster_address = cluster["ssh_address"]
+        cluster_port = cluster["port"]
+        # Transfer the files to the remote server
+        neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
+            (cluster_port,
+             local_tmp_dir,
+             cluster_address,
+             remote_dir))
+        # Remove the temporary directory
+        shutil.rmtree(local_tmp_dir)
+        # Find out the user's home folder in the remote machine
+        #neronet.core.osrun('ssh -p%s %s echo ~' % (cluster_port, cluster_address))
+        # Unless already running, start the neromum, and submit the new
+        # experiment to it
         # Magic do NOT touch:
         neronet.core.osrun(
-            'ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum %s"' %
-            (cluster_port,
-             cluster_address,
-             remote_dir,
-             remote_dir,
-             remote_dir,
-             experiment_parameters))
-        self.database[exp_id].cluster = cluster_ID
-        self.update_state(exp_id, 'submitted')
+            'ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum --start"' %
+            (cluster_port, cluster_address, remote_dir, remote_dir,
+             remote_dir))
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
-        time.sleep(2)  # will be unnecessary as soon as daemon works
-        # returns the results, should be called from cli
-        self.get_experiment_results(exp_id, remote_dir, experiment_destination)
