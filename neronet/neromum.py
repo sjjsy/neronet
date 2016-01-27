@@ -27,7 +27,7 @@ class Neromum(neronet.daemon.Daemon):
     """
 
     def __init__(self):
-        super().__init__('neromum')
+        super(Neromum, self).__init__('neromum')
         self.exp_dict = {}
         self.add_query('list_exps', self.qry_list_exps)
         self.add_query('exp_update', self.qry_exp_update)
@@ -75,7 +75,7 @@ class Neromum(neronet.daemon.Daemon):
 
 class NeromumCli(neronet.daemon.Cli):
     def __init__(self):
-        super().__init__(Neromum())
+        super(NeromumCli, self).__init__(Neromum())
         self.funcs.update({
             'input' : self.func_input,
         })

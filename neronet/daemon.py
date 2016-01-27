@@ -157,7 +157,6 @@ class Daemon(object):
         - Defines stdout, stderr and logging streams
         - Writes the pid file
         """
-        # Exit first parent (first fork)
         self.log("daemonize(): Daemonizing the process...")
         self.log("daemonize(): Attributes:")
         self.log("daemonize():   time    %s" % (datetime.datetime.now()))
@@ -165,6 +164,7 @@ class Daemon(object):
         self.log("daemonize():   pdir    %s" % (self._pdir))
         self.log("daemonize():   pfout   %s" % (self._pfout))
         self.log("daemonize():   pferr   %s" % (self._pferr))
+        # Exit first parent (first fork)
         try:
             pid = os.fork()
             if pid > 0:
@@ -196,8 +196,8 @@ class Daemon(object):
         sys.stdout.flush()
         sys.stderr.flush()
         #sys.stdin.close()
-        #sys.stdout.close()
-        #sys.stderr.close()
+        sys.stdout.close()
+        sys.stderr.close()
         neronet.core.write_file(self._pfin, '')
         si = open(self._pfin, 'r', encoding='utf-8')
         so = open(self._pfout, 'w', encoding='utf-8')

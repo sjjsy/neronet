@@ -104,7 +104,7 @@ class Nerokid(neronet.daemon.Daemon):
         if self.process:
             self.process.kill()
             self.log('- Experiment PID: %s terminated' % (self.process.pid))
-        super().qry_stop()
+        super(Nerokid, self).qry_stop()
 
     def ontimeout(self):
         """Writes information about the process into a log file on set intervals"""
