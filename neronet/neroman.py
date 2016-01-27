@@ -267,10 +267,11 @@ class Neroman:
         if cluster_ID not in self.clusters['clusters']:
             raise IOError('The given cluster ID or default cluster is not valid')
         
+        exp = self.database[exp_id]
+        experiment_folder = self.database[exp_id].path
         remote_dir = '/tmp/neronet-%d' % (time.time())
         experiment_destination = self.database[exp_id].path + \
             "/" + self.database[exp_id].logoutput
-        experiment_folder = self.database[exp_id].path
         #experiment = self.database[exp_id]["path"]+"/"+self.database[exp_id]["main_code_file"]
         experiment_parameters = self.database[exp_id].callstring
         cluster_port = self.clusters['clusters'][cluster_ID]["port"]

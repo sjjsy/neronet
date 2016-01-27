@@ -41,6 +41,7 @@ class Neromum(neronet.daemon.Daemon):
                 path='/home/smarisa/snc/pro/neronet/test/experiments/sleep',
                 required_files=None, logoutput='out', collection=None,
                 conditions=None)
+        exp.update_state(neronet.core.Experiment.State.submitted)
         self.exp_dict[exp.id] = exp
         self._reply['rv'] = 0
 
@@ -67,15 +68,15 @@ class Neromum(neronet.daemon.Daemon):
         self._reply['rv'] = 0
 
     def ontimeout(self):
-        for exp in self.exp_queue:
-            if exp.state == None:
+        for exp in self.exp_dict.values():
+            if exp.state == neronet.core.Experiment.State.submitted:
                 self.start_exp(exp)
-                return
+                return # pace submission by launching one at a time
 
     def start_exp(self, exp):
-        """Starts the exp in the node"""
-        self.log('Launching kid %s...' % (exp.experiment_id))
-        nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(nerokid.experiment_id))
+        """Starts the exp in the unmanaged node."""
+        self.log('Launching kid %s...' % (exp.id))
+        nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(exp.id))
         nerokid.start()
         nerokid.query('launch', self.host, self.port)
         #neronet.core.osrun('nerokid --start')

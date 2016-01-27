@@ -13,6 +13,7 @@ Example usage:
     #!/bin/sh
     #SBATCH --time=60
     python nerokid exp1 --start
+    python nerokid exp1 --launch triton 12345
 """
 
 from __future__ import print_function

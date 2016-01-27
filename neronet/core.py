@@ -13,7 +13,6 @@ import time
 from signal import signal, SIGTERM, SIGQUIT
 from traceback import print_exc
 from copy import deepcopy
-from enum import Enum
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
@@ -46,7 +45,7 @@ class Experiment:
         path (str): Path to the experiment folder
     """
 
-    class State(Enum):
+    class State:
         none = 'none'
         defined = 'defined'
         submitted = 'submitted'
@@ -170,9 +169,13 @@ class Experiment:
     @time_modified.setter
     def time_modified(self, value):
         self._fields['time_modified'] = value
-     
+
     @property
     def state(self):
+        return self._fields['state'][-1][0]
+
+    @property
+    def state_info(self):
         return self._fields['state'][-1]
     
     @property
