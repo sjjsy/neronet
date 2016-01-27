@@ -2,7 +2,6 @@
 #
 # Core class and function definitions
 
-from __future__ import print_function
 import os
 import sys
 import datetime
@@ -13,7 +12,6 @@ import time
 from signal import signal, SIGTERM, SIGQUIT
 from traceback import print_exc
 from copy import deepcopy
-from enum import Enum
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
@@ -26,7 +24,7 @@ OPTIONAL_FIELDS = set(['logoutput', 'collection', 'required_files',
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster'])
 
-class Experiment:
+class Experiment(object):
     """ 
     Attributes:
         experiment_id (str): Unique identifier to the experiment
@@ -46,7 +44,7 @@ class Experiment:
         path (str): Path to the experiment folder
     """
 
-    class State(Enum):
+    class State:
         none = 'none'
         defined = 'defined'
         submitted = 'submitted'
@@ -54,13 +52,12 @@ class Experiment:
         finished = 'finished'
 
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
-                    parameters, parameters_format, path, required_files=[],
+                    parameters, parameters_format, path, required_files=None,
                     logoutput='output.log', collection=None, conditions=None):
-        self._experiment_id = experiment_id
         now = datetime.datetime.now()
-        self._fields = {'run_command_prefix': run_command_prefix,
-                        'main_code_file': main_code_file,
-                    'required_files': required_files,
+        fields = {'run_command_prefix': run_command_prefix,
+                    'main_code_file': main_code_file,
+                    'required_files': required_files if required_files else [],
                     'logoutput': logoutput,
                     'parameters': parameters,
                     'parameters_format': parameters_format,
@@ -69,116 +66,38 @@ class Experiment:
                     'path': path,
                     'time_created': now,
                     'time_modified': now,
-                    'state': [(Experiment.State.defined, now)],
+                    'state': [['defined', now]],
                     'cluster': None}
+        #MAGIC: Creates the attributes for the experiment class
+        super(Experiment, self).__setattr__('_fields', fields)
+        super(Experiment, self).__setattr__('_experiment_id', experiment_id)
     
-    @property
-    def id(self):
-        return self._experiment_id
+    def __getattr__(self, attr):
+        """Getter for the experiment class hides the inner dictionary"""
+        #Gets the inner dictionary
+        fields = super(Experiment, self).__getattribute__('_fields')
+        if attr in fields:
+            return fields[attr]
+        #Gets hidden attributes by adding _
+        if attr == 'id':
+            attr = 'experiment_id'
+        return super(Experiment, self).__getattribute__('_' + attr)
 
-    @id.setter
-    def id(self, value):
-        self._experiment_id = value
+    def __setattr__(self, attr, value):
+        """Setter for the experiment class
+        
+        Raises:
+            AttributeError: if the attribute doesn't exist
+        """
+        #Gets the inner dictionary
+        fields = super(Experiment, self).__getattribute__('_fields')
+        if attr == 'id' or attr == 'experiment_id':
+            super(Experiment, self).__setattr__('_experiment_id', value)
+        elif attr in fields:
+            fields[attr] = value
+        else:
+            raise AttributeError('Experiment has no attribute named %s' % attr)
     
-    @property
-    def run_command_prefix(self):
-        self._fields['run_command_prefix']
-    
-    @run_command_prefix.setter
-    def run_command_prefix(self, value):
-        self._fields['run_command_prefix'] = value
-    @property
-    def main_code_file(self):
-        return self._fields['main_code_file']
-    
-    @main_code_file.setter
-    def main_code_file(self, value):
-        self._fields['main_code_file'] = value
-
-    @property
-    def parameters(self):
-        return self._fields['parameters']
-    
-    @parameters.setter
-    def parameters(self, value):
-        self._fields['parameters'] = value
-     
-    @property
-    def parameters_format(self):
-        return self._fields['parameters_format']
-    
-    @parameters_format.setter
-    def parameters_format(self, value):
-        self._fields['parameters_format'] = value
- 
-    @property
-    def logoutput(self):
-        return self._fields['logoutput']
-    
-    @logoutput.setter
-    def logoutput(self, value):
-        self._fields['logoutput'] = value
-     
-    @property
-    def collection(self):
-        return self._fields['collection']
-    
-    @collection.setter
-    def collection(self, value):
-        self._fields['collection'] = value
-     
-    @property
-    def required_files(self):
-        return self._fields['required_files']
-    
-    @required_files.setter
-    def required_files(self, value):
-        self._fields['required_files'] = value
-     
-    @property
-    def conditions(self):
-        return self._fields['conditions']
-    
-    @conditions.setter
-    def conditions(self, value):
-        self._fields['conditions'] = value
-     
-    @property
-    def cluster(self):
-        return self._fields['cluster']
-    
-    @cluster.setter
-    def cluster(self, value):
-        self._fields['cluster'] = value
-     
-    @property
-    def path(self):
-        return self._fields['path']
-    
-    @path.setter
-    def path(self, value):
-        self._fields['path'] = value
-     
-    @property
-    def time_created(self):
-        return self._fields['time_created']
-    
-    @property
-    def time_modified(self):
-        return self._fields['time_modified']
-    
-    @time_modified.setter
-    def time_modified(self, value):
-        self._fields['time_modified'] = value
-     
-    @property
-    def state(self):
-        return self._fields['state'][-1]
-    
-    @property
-    def states(self):
-        return self._fields['state']
-
     @property 
     def callstring(self):
         rcmd = self._fields['run_command_prefix']
@@ -198,6 +117,23 @@ class Experiment:
         """ Returns the experiment as a dictionary
         """
         return {self._experiment_id: deepcopy(self._fields)}
+
+    def as_gen(self):
+        """Creates a generate that generates info about the experiment
+        Yields:
+            str: A line of experiment status
+        """
+        yield "%s\n" % self._experiment_id
+        yield "  Run command: %s\n" % self._fields['run_command_prefix']
+        yield "  Main code file: %s\n" % self._fields['main_code_file']
+        params = self._fields['parameters_format'].format( \
+            **self._fields['parameters'])
+        yield "  Parameters: %s\n" % params
+        yield "  Parameters format: %s\n" % self._fields['parameters_format']
+        if self._fields['collection']:
+            yield "  Collection: %s\n" % self._fields['collection']
+        yield "  State: %s\n" % self._fields['state'][-1][0]
+        yield "  Last modified: %s\n" % self._fields['time_modified']
 
     def __str__(self):
         return "%s %s" % (self._experiment_id, self._fields['state'][-1][0])
