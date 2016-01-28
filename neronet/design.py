@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Wed Jan 27 17:27:52 2016
+# Created: Wed Jan 27 18:14:55 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,12 +29,9 @@ class Ui_MainWindow(object):
         MainWindow.resize(800, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.cluster_type_field = QtGui.QListView(self.centralwidget)
-        self.cluster_type_field.setGeometry(QtCore.QRect(10, 20, 141, 531))
-        self.cluster_type_field.setObjectName(_fromUtf8("cluster_type_field"))
-        self.clusters = QtGui.QListView(self.centralwidget)
-        self.clusters.setGeometry(QtCore.QRect(160, 20, 141, 531))
-        self.clusters.setObjectName(_fromUtf8("clusters"))
+        self.experimetns = QtGui.QListView(self.centralwidget)
+        self.experimetns.setGeometry(QtCore.QRect(10, 20, 141, 531))
+        self.experimetns.setObjectName(_fromUtf8("experimetns"))
         self.submit_btn = QtGui.QPushButton(self.centralwidget)
         self.submit_btn.setGeometry(QtCore.QRect(20, 560, 281, 27))
         self.submit_btn.setObjectName(_fromUtf8("submit_btn"))
@@ -79,11 +76,14 @@ class Ui_MainWindow(object):
         self.exp_add_btn = QtGui.QPushButton(self.centralwidget)
         self.exp_add_btn.setGeometry(QtCore.QRect(390, 140, 111, 27))
         self.exp_add_btn.setObjectName(_fromUtf8("exp_add_btn"))
-        self.comboBox = QtGui.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(620, 140, 111, 31))
-        self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        self.comboBox.addItem(_fromUtf8(""))
-        self.comboBox.addItem(_fromUtf8(""))
+        self.cluster_type_combo = QtGui.QComboBox(self.centralwidget)
+        self.cluster_type_combo.setGeometry(QtCore.QRect(620, 140, 111, 31))
+        self.cluster_type_combo.setObjectName(_fromUtf8("cluster_type_combo"))
+        self.cluster_type_combo.addItem(_fromUtf8(""))
+        self.cluster_type_combo.addItem(_fromUtf8(""))
+        self.clusters = QtGui.QListWidget(self.centralwidget)
+        self.clusters.setGeometry(QtCore.QRect(160, 20, 151, 531))
+        self.clusters.setObjectName(_fromUtf8("clusters"))
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -94,6 +94,6 @@ class Ui_MainWindow(object):
         self.submit_btn.setText(_translate("MainWindow", "Submit", None))
         self.cluster_add_btn.setText(_translate("MainWindow", "Add cluster", None))
         self.exp_add_btn.setText(_translate("MainWindow", "Add experiment", None))
-        self.comboBox.setItemText(0, _translate("MainWindow", "unmanaged", None))
-        self.comboBox.setItemText(1, _translate("MainWindow", "slurm", None))
+        self.cluster_type_combo.setItemText(0, _translate("MainWindow", "unmanaged", None))
+        self.cluster_type_combo.setItemText(1, _translate("MainWindow", "slurm", None))
 
