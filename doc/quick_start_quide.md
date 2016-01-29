@@ -137,8 +137,6 @@ A few notes regarding the format:
     - main_code_file: The path to the code file that is to be run when executing 
 	  the experiment
 	- run_command_prefix: The prefix of the run command f.ex 'python3'
-	- logoutput: The location to which the log output of the experiment is to be 
-	  written.
 	- parameters: This attribute is followed by a block containing all the 
 	  unique parameters of this specific experiment. Parameter names can be 
 	  arbitrary.
@@ -149,10 +147,6 @@ A few notes regarding the format:
 	  example above sleep2 --parameters_format defines a parameter string 
 	  'kh nyt data/2.txt 400'. You can escape braces and special characters 
 	  with backslashes in case your parameter names contain braces.
-	- Your experiments must be runnable with a command of the form 
-	  'RUN_COMMAND_PREFIX MAIN_CODE_FILE PARAMETER_STRING' F.ex in the example 
-	  above lang_exp2 must be runnable with the command 
-	  'python2 main2.py kh nyt data/2.txt 400'**
 - If multiple experiments have the same attribute values, it is not necessary 
   to re-write every attribute for every experiment. The experiments defined in 
   inner blocks automatically inherit all the attribute values specified in 
