@@ -238,7 +238,7 @@ class Neroman:
         local_exp_path = exp.path
         # Define the remote path into which the files will be transferred to,
         # assuming it will be under the user's home directory
-        remote_dir = '~/.neronet'
+        remote_dir = neronet.core.USER_DATA_DIR
         # Define a temporary folder to contain all the required files
         local_tmp_dir = '/tmp/.neronet-%s' % (exp.id)
         # Define a folder for the files required by the experiment
