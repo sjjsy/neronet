@@ -158,4 +158,22 @@ Usage: nerocli --status EXPERIMENT_ID
 Example: nerocli --status sleep1
 ```
 
+###nerogui
+Using nerogui is as simple as nerocli.
+
+Start nerogui program by writing
+```
+nerogui
+```
+
+You can view your defined experiments in the leftmost view.
+You can ciew your specified clusters in view next to experiment view.
+
+You can add new experiments by pressing "add experiments" and then selecting the folder with "config.yaml"
+
+You can add new clusters by typing server info to text fields and pressing "add cluster"
+You can update your clusters by clicking cluster name. Information of corresponding cluster is added to cluster fields.
+
+You can submit your experiments by selecting experiment and cluster from list, and then presing submit.
+
 
