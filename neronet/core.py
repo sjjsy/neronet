@@ -23,7 +23,7 @@ USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 OPTIONAL_FIELDS = set(['logoutput', 'collection', 'required_files',
-                        'conditions'])
+                        'conditions', 'warnings'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster'])
 

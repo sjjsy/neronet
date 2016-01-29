@@ -43,17 +43,14 @@ clusters.yaml. The formats are as follows:
 clusters.yaml:
 ```
 clusters:
-  triton:
-    ssh_address: triton.aalto.fi
+  cluster1:
+    ssh_address: cluster1.example.fi
     type: unmanaged
-  gpu1:
-	ssh_address: gpu1
-	type: unmanaged
-  gpu2:
-	ssh_address: gpu1
+  cluster2:
+	ssh_address: cluster2.example.fi
 	type: unmanaged
 groups:
-  gpu: [gpu1, gpu2]
+  gpu: [cluster1, cluster2]
 ```
 
 preferences.yaml:
@@ -113,62 +110,9 @@ sleep1:
 sleep3:
     sleep5:
         logoutput: 'output'
-sleep4:
-    run_command_prefix: 'python'
-    sleep6:
-        parameters:
-            count: 3
-        sleep7:
-            parameters:
-                count: 7
-                interval: 1
 ```
 
-A few notes regarding the format:
-- The information on the config.yaml file is divided to blocks that have the 
-  same indentation.
-- The collection-attribute must either be None or any unique value 
-- Each experiment specification must begin with a row containing the 
-  experiment id (f.ex in the example above six experiments are specified: 
-  sleep1, sleep2, sleep3, sleep4, sleep5, sleep6) and be followed by a block 
-  containing all the experiment's attributes. The experiment ids must 
-  be unique.
-- Each different experiment specification must have the following attributes
-    - main_code_file: The path to the code file that is to be run when executing 
-	  the experiment
-	- run_command_prefix: The prefix of the run command f.ex 'python3'
-	- logoutput: The location to which the log output of the experiment is to be 
-	  written.
-	- parameters: This attribute is followed by a block containing all the 
-	  unique parameters of this specific experiment. Parameter names can be 
-	  arbitrary.
-	- parameters_format: Specifies the order in which the parameters are given to 
-	  the experiment code file in the form of a string. Write the attribute 
-	  value within single quotes. Parameter names written within braces will be 
-	  replaced by their values defined in the *parameters* section. F.ex in the 
-	  example above sleep2 --parameters_format defines a parameter string 
-	  'kh nyt data/2.txt 400'. You can escape braces and special characters 
-	  with backslashes in case your parameter names contain braces.
-	- Your experiments must be runnable with a command of the form 
-	  'RUN_COMMAND_PREFIX MAIN_CODE_FILE PARAMETER_STRING' F.ex in the example 
-	  above lang_exp2 must be runnable with the command 
-	  'python2 main2.py kh nyt data/2.txt 400'**
-- If multiple experiments have the same attribute values, it is not necessary 
-  to re-write every attribute for every experiment. The experiments defined in 
-  inner blocks automatically inherit all the attribute values specified in 
-  outer blocks. For example in the example above all the experiments inherit 
-  the main_code_file and logoutput values from the outmost block and sleep2 the 
-  parameter 'count' values from sleep1. If you don't want to inherit a specific 
-  value, just specify it again in the inner block and it is automatically 
-  overwritten. For example in the example above sleep2 uses different parameter 
-  'interval' than its parent sleep1.
-- If you place multiple parameter values within brackets and separated by a 
-  comma (like in the example above sleep1 -- count: [4,5,6,7] ) Neronet will 
-  automatically create different version of the experiment for each value 
-  specified within brackets.
-- It is also possible to configure Neronet to send automatic warnings or 
-  autoterminate an experiment. For that, please see further instructions in user
-  manual.
+See user manual for further instructions.
 
 ####2.3 Specifying the experiments so that Neronet knows of their existence
 
@@ -213,5 +157,23 @@ Get a single experiment's status report:
 Usage: nerocli --status EXPERIMENT_ID
 Example: nerocli --status sleep1
 ```
+
+###nerogui
+Using nerogui is as simple as nerocli.
+
+Start nerogui program by writing
+```
+nerogui
+```
+
+You can view your defined experiments in the leftmost view.
+You can ciew your specified clusters in view next to experiment view.
+
+You can add new experiments by pressing "add experiments" and then selecting the folder with "config.yaml"
+
+You can add new clusters by typing server info to text fields and pressing "add cluster"
+You can update your clusters by clicking cluster name. Information of corresponding cluster is added to cluster fields.
+
+You can submit your experiments by selecting experiment and cluster from list, and then presing submit.
 
 
