@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Wed Jan 27 18:14:55 2016
+# Created: Fri Jan 29 13:48:10 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,9 +29,6 @@ class Ui_MainWindow(object):
         MainWindow.resize(800, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.experimetns = QtGui.QListView(self.centralwidget)
-        self.experimetns.setGeometry(QtCore.QRect(10, 20, 141, 531))
-        self.experimetns.setObjectName(_fromUtf8("experimetns"))
         self.submit_btn = QtGui.QPushButton(self.centralwidget)
         self.submit_btn.setGeometry(QtCore.QRect(20, 560, 281, 27))
         self.submit_btn.setObjectName(_fromUtf8("submit_btn"))
@@ -55,12 +52,6 @@ class Ui_MainWindow(object):
         self.line_4.setFrameShape(QtGui.QFrame.VLine)
         self.line_4.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_4.setObjectName(_fromUtf8("line_4"))
-        self.exp_name_field = QtGui.QLineEdit(self.centralwidget)
-        self.exp_name_field.setGeometry(QtCore.QRect(390, 50, 113, 27))
-        self.exp_name_field.setObjectName(_fromUtf8("exp_name_field"))
-        self.exp_folder_field = QtGui.QLineEdit(self.centralwidget)
-        self.exp_folder_field.setGeometry(QtCore.QRect(390, 80, 113, 27))
-        self.exp_folder_field.setObjectName(_fromUtf8("exp_folder_field"))
         self.cluster_name_field = QtGui.QLineEdit(self.centralwidget)
         self.cluster_name_field.setGeometry(QtCore.QRect(620, 50, 113, 27))
         self.cluster_name_field.setObjectName(_fromUtf8("cluster_name_field"))
@@ -74,7 +65,7 @@ class Ui_MainWindow(object):
         self.cluster_add_btn.setGeometry(QtCore.QRect(620, 170, 111, 27))
         self.cluster_add_btn.setObjectName(_fromUtf8("cluster_add_btn"))
         self.exp_add_btn = QtGui.QPushButton(self.centralwidget)
-        self.exp_add_btn.setGeometry(QtCore.QRect(390, 140, 111, 27))
+        self.exp_add_btn.setGeometry(QtCore.QRect(390, 50, 111, 27))
         self.exp_add_btn.setObjectName(_fromUtf8("exp_add_btn"))
         self.cluster_type_combo = QtGui.QComboBox(self.centralwidget)
         self.cluster_type_combo.setGeometry(QtCore.QRect(620, 140, 111, 31))
@@ -82,8 +73,20 @@ class Ui_MainWindow(object):
         self.cluster_type_combo.addItem(_fromUtf8(""))
         self.cluster_type_combo.addItem(_fromUtf8(""))
         self.clusters = QtGui.QListWidget(self.centralwidget)
-        self.clusters.setGeometry(QtCore.QRect(160, 20, 151, 531))
+        self.clusters.setGeometry(QtCore.QRect(220, 20, 151, 531))
         self.clusters.setObjectName(_fromUtf8("clusters"))
+        self.label = QtGui.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(530, 50, 91, 21))
+        self.label.setObjectName(_fromUtf8("label"))
+        self.label_2 = QtGui.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(510, 80, 101, 21))
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.label_3 = QtGui.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(530, 110, 81, 21))
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.experiments = QtGui.QListWidget(self.centralwidget)
+        self.experiments.setGeometry(QtCore.QRect(10, 20, 201, 531))
+        self.experiments.setObjectName(_fromUtf8("experiments"))
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -92,8 +95,12 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
         self.submit_btn.setText(_translate("MainWindow", "Submit", None))
+        self.cluster_port_field.setText(_translate("MainWindow", "22", None))
         self.cluster_add_btn.setText(_translate("MainWindow", "Add cluster", None))
         self.exp_add_btn.setText(_translate("MainWindow", "Add experiment", None))
         self.cluster_type_combo.setItemText(0, _translate("MainWindow", "unmanaged", None))
         self.cluster_type_combo.setItemText(1, _translate("MainWindow", "slurm", None))
+        self.label.setText(_translate("MainWindow", "cluster name", None))
+        self.label_2.setText(_translate("MainWindow", "cluster address", None))
+        self.label_3.setText(_translate("MainWindow", "cluster port", None))
 
