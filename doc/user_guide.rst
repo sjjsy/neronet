@@ -66,21 +66,23 @@ The format of clusters.yaml is as follows. From here on out we will explain the 
 
 *Example:*
 ::
-	triton:
-	  ssh_address: triton.aalto.fi
-	  type: slurm
-	  default_log_path:
-	  queue_max: 20
-	  hard_disk_space: 1000GB
-	  cpu:
-	gpu1:
-	  ssh_address: gpu1
-	  type: unmanaged
-	  hardware:
-	gpu2:
-	  ssh_address: gpu1
-	  type: unmanaged
-	gpu: [gpu1, gpu2]
+    clusters:
+	    triton:
+	      ssh_address: triton.aalto.fi
+	      type: slurm
+	      default_log_path:
+	      queue_max: 20
+	      hard_disk_space: 1000GB
+	      cpu:
+	    gpu1:
+	      ssh_address: gpu1
+	      type: unmanaged
+	      hardware:
+	    gpu2:
+	      ssh_address: gpu1
+	      type: unmanaged	    
+	groups:
+	    gpu: [gpu1, gpu2]
 
 
 
