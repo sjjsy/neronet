@@ -161,6 +161,11 @@ Example: nerocli --status sleep1
 ###nerogui
 Using nerogui is as simple as nerocli.
 
+Nerogui requires pyqt4. You an download it by following
+```
+apt-get install python-qt4
+```
+
 Start nerogui program by writing
 ```
 nerogui

@@ -23,7 +23,7 @@ USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 OPTIONAL_FIELDS = set(['logoutput', 'collection', 'required_files',
-                        'conditions', 'warnings'])
+                        'conditions'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster'])
 
@@ -72,10 +72,32 @@ class Experiment(object):
                     'time_modified': now,
                     'states_info': [(Experiment.State.defined, now)],
                     'cluster': None}
+        self.warnings = {}
+        if conditions:
+            for warning in conditions:
+                if all( ['variablename' in conditions[warning],
+                    'killvalue' in conditions[warning],
+                    'comparator' in conditions[warning],
+                    'when' in conditions[warning],
+                    'action' in conditions[warning] ] ):
+                    wvarname = conditions[warning]['variablename']
+                    wkillvalue = conditions[warning]['killvalue']
+                    wcomparator = conditions[warning]['comparator']
+                    wwhen = conditions[warning]['when']
+                    waction = conditions[warning]['action']
+                    self.warnings[warning] = ExperimentWarning(warning, wvarname, 
+                        wkillvalue, wcomparator, wwhen, waction)
         #MAGIC: Creates the attributes for the experiment class
         super(Experiment, self).__setattr__('_fields', fields)
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
     
+    def get_action(self, logrow):
+        for key in self.warnings:
+            action = self.warnings[key].get_action(logrow)
+            if action != 'no action':
+                return (action, key)
+        return ('no action', '')
+        
     def __getattr__(self, attr):
         """Getter for the experiment class hides the inner dictionary"""
         #Gets the inner dictionary
@@ -216,3 +238,39 @@ class ExperimentOLD():
         self.runcmd = runcmd
         self.state = None
         self.log_output = {}
+        
+class ExperimentWarning:
+    
+    def __init__(self, name, varname, killvalue, comparator, when, action):
+        self.name = name.strip()
+        self.varname = varname.strip()
+        self.killvalue = killvalue
+        self.comparator = comparator.strip()
+        self.when = when.strip()
+        self.action = action.strip()
+        self.start_time = datetime.datetime.now()
+            
+    def get_action(self, logrow):
+        logrow = logrow.strip()
+        varlen = len(self.varname)
+        check_condition = True
+        if 'time' in self.when:
+            time_when = float(self.when[4:].strip())
+            time_passed = datetime.datetime.now() - self.start_time
+            time_passed_sec = time_passed.days * 86400 + time_passed.seconds
+            time_passed_min = time_passed_sec / 60
+            if time_passed_min < time_when:
+                check_condition = False
+        if check_condition and logrow[:varlen].strip() == self.varname:
+            varvalue = logrow[varlen:].strip()
+            try:
+                varvalue = float(varvalue)
+            except:
+                return 'no action'
+            if any( [self.comparator == 'gt' and varvalue > self.killvalue,
+                self.comparator == 'lt' and varvalue < self.killvalue,
+                self.comparator == 'eq' and varvalue == self.killvalue,
+                self.comparator == 'geq' and varvalue >= self.killvalue,
+                self.comparator == 'leq' and varvalue <= self.killvalue] ):
+                return self.action
+        return 'no action'

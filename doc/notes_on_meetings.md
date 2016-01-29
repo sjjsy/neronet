@@ -1537,3 +1537,13 @@ Participants: Team
 
 Agenda:
 - Work on Daemon
+
+## 02-29 60m Progress review 2
+
+Participants: team + PO + Coach
+
+Agenda:
+
+- 13:00 Presentation of progress report (35 minutes)
+- 13:35 Feedback and questions (10 minutes)
+
