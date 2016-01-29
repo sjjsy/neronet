@@ -441,13 +441,18 @@ class Cli(QueryInterface):
         """
         Parses and executes arguments that are in the format:
           '--func parg kwarg=kwvalue'
-        If no arguments are found, the default function is executed 
+
+        The default function is always executed. Pos. and keyw. arguments
+        parsed before any '--func' arguments are found are given to default.
         """
         #self.inf('Parse arguments: %s' % (sys.argv))
         cli_args = cli_args if cli_args else sys.argv[1:]
         work_queue = []
         pargs = []
-        kargs = []
+        kargs = {}
+        #Before any '--func' arguments are found, give all found pos. arguments
+        #and keyword arguments to the default function
+        work_queue.append(('default', pargs, kargs))
 
         for arg in cli_args:
             self.inf('Parsing argument "%s"...' % (arg))
@@ -468,10 +473,6 @@ class Cli(QueryInterface):
                 continue
             self.abort(1, 'Unrecognized argument: "%s"' % (arg))
        
-        #If no '--func' arguments are found, feed the parsed positional
-        #and keyword arguments to the default function
-        if not work_queue:
-            work_queue.append(('default', pargs, kargs))
 
         for work in work_queue:
             func, pargs, kargs = work
