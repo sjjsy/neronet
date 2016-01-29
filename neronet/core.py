@@ -84,7 +84,7 @@ class Experiment(object):
             if action != 'no action':
                 return (action, key)
         return ('no action', '')
-        
+
     def __getattr__(self, attr):
         """Getter for the experiment class hides the inner dictionary"""
         #Gets the inner dictionary
@@ -149,7 +149,7 @@ class Experiment(object):
         yield "  Parameters format: %s\n" % self._fields['parameters_format']
         if self._fields['collection']:
             yield "  Collection: %s\n" % self._fields['collection']
-        yield "  State: %s\n" % self._fields['state'][-1][0]
+        yield "  State: %s\n" % self.state
         yield "  Last modified: %s\n" % self._fields['time_modified']
 
     def __str__(self):

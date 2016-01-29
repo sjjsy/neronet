@@ -230,15 +230,10 @@ class Neroman:
         # Create the local temporary directories
         os.makedirs(local_tmp_exp_dir)
         # Define paths to required Neronet files
-        neronet_root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        neronet_code_dir = os.path.join(neronet_root_dir, 'neronet')
-        neronet_bin_dir = os.path.join(neronet_root_dir, 'bin')
-        # Add Neronet source code files to the temporary dir
+        neronet_root_dir = os.path.dirname(os.path.abspath(__file__))
+        # Add Neronet source code files and executables to the temporary dir
         neronet.core.osrun('rsync -az "%s" "%s"' %
-                (neronet_code_dir, local_tmp_dir))
-        # Second, add Neronet executables
-        neronet.core.osrun('rsync -az "%s" "%s"' %
-                (neronet_bin_dir, local_tmp_dir))
+                (neronet_root_dir, local_tmp_dir))
         # Third, add the experiment files
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
@@ -264,7 +259,7 @@ class Neroman:
         # experiment to it
         # Magic do NOT touch:
         neronet.core.osrun(
-            'ssh -p%s %s "cd %s; PATH="%s/bin:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum --start"' %
+            'ssh -p%s %s "cd %s; PATH="%s/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum --start"' %
             (cluster_port, cluster_address, remote_dir, remote_dir,
              remote_dir))
         self.config_parser.save_database(DATABASE_FILENAME, \
