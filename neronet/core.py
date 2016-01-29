@@ -17,6 +17,9 @@ TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
 
+USER_DATA_DIR = '~/.neronet' # Remember to os.path.expanduser
+USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
+
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 OPTIONAL_FIELDS = set(['logoutput', 'collection', 'required_files',
@@ -97,7 +100,7 @@ class Experiment(object):
         fields = super(Experiment, self).__getattribute__('_fields')
         if attr == 'id' or attr == 'experiment_id':
             super(Experiment, self).__setattr__('_experiment_id', value)
-        elif attr in fields:
+        elif attr in fields or attr in ('log_output', ):
             fields[attr] = value
         else:
             raise AttributeError('Experiment has no attribute named %s' % attr)
@@ -167,12 +170,6 @@ def read_file(filepath, default=None):
     except IOError as e:
         pass
     return result
-
-class KidUpdate:
-    def __init__(self, id):
-        self.id = id
-        self.state = None
-        self.log_output = {}
 
 class Logger:
 

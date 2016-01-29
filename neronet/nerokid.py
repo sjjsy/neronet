@@ -22,14 +22,13 @@ import subprocess
 import shlex
 import time
 import sys
+import pickle
 
 import neronet.core
 import neronet.daemon
 import neronet.neromum
 
 INTERVAL = 2.0
-LOG_FILES = 'stdout.log', 'stderr.log'
-packet = {"running": True, "log_output": ""}
 commands = ("status")
 
 class LogFile(object):
@@ -47,7 +46,7 @@ class LogFile(object):
         self.seek = 0
 
     def read_changes(self):
-        """Read changes made to the logfile."""
+        """Return changes made to the logfile as a single string."""
         mtime = os.stat(self.path).st_mtime
         if mtime > self.rtime:
             self.rtime = mtime
@@ -69,70 +68,74 @@ class Nerokid(neronet.daemon.Daemon):
     Experiment as the 3rd
     Experiment parameters from 4th argument onwards
     """
-    def __init__(self, experiment_id):
-        super(Nerokid, self).__init__('nerokid-%s' % (experiment_id))
+    def __init__(self, exp_id):
+        super(Nerokid, self).__init__('nerokid-%s' % (exp_id))
         self.neromum = None
-        self.experiment = neronet.core.ExperimentOLD(experiment_id)
+        self.exp_id = exp_id
+        self.exp = None
         self.process = None
-        self.add_query('launch', self.qry_launch)
+        self.add_query('configure', self.qry_configure)
 
-    def qry_launch(self, host, port):
-        """The Nerokid main.
+    def qry_configure(self, host, port):
+        """Connect with Neromum.
 
-        Initializes the socket, launches the child process and starts to monitor the child process
+        Initializes the query interface.
         """
         self.neromum = neronet.daemon.QueryInterface(
                 neronet.neromum.Neromum(), host=host, port=int(port))
-        self.log('Launching a kid...')
-        self.log('- Mom address: (%s, %d)' % (self.neromum.host, self.neromum.port))
-        #self.log('- Experiment ID: "%s"' % (self.experiment.experiment_id))
-        #self.log_files = [LogFile(log_file_path)
-        #                  for log_file_path in LOG_FILES]
-        self.log('Launching the experiment...')
-        """Launches received script"""
-        self.process = subprocess.Popen(
-            shlex.split('sleep 30'),
-            universal_newlines=True,
-            stdout=open('stdout.log', 'w'),
-            stderr=open('stderr.log', 'w'),
-            close_fds=True, bufsize=1)
-        self.log('- Experiment PID: %s' % (self.process.pid))
-        self.experiment.state = 'running'
+        self.log('Mom address: (%s, %d)' % (self.neromum.host,
+                self.neromum.port))
+        self._reply['rv'] = 0
 
     def qry_stop(self):
         """Terminate the experiment"""
-        if self.process:
+        if self.process and self.process.poll() == None:
+            self.log('Killing the experiment...')
             self.process.kill()
-            self.log('- Experiment PID: %s terminated' % (self.process.pid))
         super(Nerokid, self).qry_stop()
 
     def ontimeout(self):
         """Writes information about the process into a log file on set intervals"""
-        if not self.experiment or self.experiment.state != 'running':
-            return
-        if self.process.poll() == None:
-            self.collect_new_file_data()
-        else:
-            self.experiment.state = 'finished'
-            self.refresh_neromum()
-            self.qry_stop()
-
-    def collect_new_file_data(self):
-        """Collect any data that the child process outputs and send them to neromum"""
-        # Check for any new log output
-        log_output = {}
-        for log_file in self.log_files:
-            changes = log_file.read_changes()
-            if changes:
-                log_output[log_file.path] = changes
-        # Send any new log output to Mum
-        if log_output:
-            self.experiment.log_output = log_output
-            self.refresh_neromum()
-
-    def refresh_neromum(self):
-        """Send data to Neromum."""
-        self.neromum.query('nerokid_update', self.experiment)
+        # If the experiment is defined and running
+        if self.exp and self.exp.state == neronet.core.Experiment.State.running:
+            # Collect any data that the child process has output
+            log_output = {}
+            for log_file in self.log_files:
+                changes = log_file.read_changes()
+                if changes:
+                    log_output[log_file.path] = changes
+            # If the process has stopped
+            if self.process.poll() != None:
+                self.exp.update_state('finished')
+                # Flag the daemon for exit
+                self.qry_stop()
+            # Send any information to Neromum
+            try:
+                self.neromum.query('exp_update', self.exp_id,
+                        self.exp.state, log_output)
+            except RuntimeError:
+                self.wrn('Cannot communicate with Neromum!')
+        # If the experiment is not defined and we have Neromum defined, start
+        # the experiment!
+        elif not self.exp and self.neromum:
+            """Launches received script"""
+            # Load the experiment data
+            self.log('Loading the experiment object...')
+            self.exp = pickle.loads(neronet.core.read_file(os.path.join(
+                    neronet.core.USER_DATA_DIR_ABS,
+                    'experiments/%s/exp.pickle' % (self.exp_id))))
+            self.log('Experiment ID: "%s"' % (self.exp.id))
+            self.log_files = [LogFile(log_file_path)
+                      for log_file_path in ('stdout.log', 'stderr.log')]
+            self.log('Launching the experiment...')
+            self.process = subprocess.Popen(
+                shlex.split(self.exp.callstring),
+                universal_newlines=True,
+                stdout=open('stdout.log', 'w'),
+                stderr=open('stderr.log', 'w'),
+                close_fds=True, bufsize=1)
+            self.log('Experiment PID: %s' % (self.process.pid))
+            self.exp.update_state(neronet.core.Experiment.State.running)
 
 def main():
     """Create a CLI interface object and process CLI arguments."""

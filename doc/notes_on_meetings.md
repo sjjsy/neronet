@@ -1506,6 +1506,34 @@ Agenda:
 
 - Use the future: https://pypi.python.org/pypi/future
 
+## 01-20 360m Wedshop (team)
+
+Participants: Team - Samuel
+
+Agenda: 
+- Work on user stories
+- Work on Daemon
+
+## 01-22 300m Frifury (team)
+
+Participants: Team - Joona
+
+Agenda: 
+- Update config parser
+- Work on Daemon
+
+## 01-27 360m Wedshop (team)
+  
+Participants: Team
+
+Agenda:
+- Work on Daemon
+
 ## 01-27 120m EES: Testing (TuJo)
 
-Participants: Tuomo + Joona
+## 01-29 300m Frifury (team)
+
+Participants: Team
+
+Agenda:
+- Work on Daemon
