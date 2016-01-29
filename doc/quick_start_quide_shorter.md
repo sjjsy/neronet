@@ -37,15 +37,15 @@ The neronet is then downloaded and installed to your local machine.
 ####1.2: Configuring your settings
 
 Configure your clusters with the following command
-'''
+```
 nerocli --cluster cluster_id ssh_address type
-'''
+```
 where type can be unmanaged or slurm
 
 Configure your user details with the command
-'''
+```
 nerocli --user name email
-'''
+```
 where the user name should be enclosed in quotation marks if it contains
 spaces
 
@@ -87,9 +87,9 @@ test_experiment:
 ```
 
 This config file would create an experiment that would be run with the command
-'''
+```
 python test_exp.py 12 17
-'''
+```
 
 Neronet will notify if the config file is not correctly formated
 
@@ -130,7 +130,8 @@ nerocli --status experiment_id
 ```
 Get a single experiment's status report
 
-'''
+```
 nerocli --clean
-'''
+```
+
 Wipes all Neronet related files e.g. Neronet's database, user configurations
