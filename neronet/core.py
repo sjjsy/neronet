@@ -52,6 +52,7 @@ class Experiment(object):
         defined = 'defined'
         submitted = 'submitted'
         submitted_to_kid = 'submitted_to_kid'
+        terminated = 'terminated'
         running = 'running'
         finished = 'finished'
 
@@ -72,28 +73,14 @@ class Experiment(object):
                     'time_modified': now,
                     'states_info': [(Experiment.State.defined, now)],
                     'cluster_id': None}
-        self.__dict__['warnings'] = {}
-        if conditions:
-            for warning in conditions:
-                if all( ['variablename' in conditions[warning],
-                    'killvalue' in conditions[warning],
-                    'comparator' in conditions[warning],
-                    'when' in conditions[warning],
-                    'action' in conditions[warning] ] ):
-                    wvarname = conditions[warning]['variablename']
-                    wkillvalue = conditions[warning]['killvalue']
-                    wcomparator = conditions[warning]['comparator']
-                    wwhen = conditions[warning]['when']
-                    waction = conditions[warning]['action']
-                    self.warnings[warning] = ExperimentWarning(warning, wvarname, 
-                        wkillvalue, wcomparator, wwhen, waction)
-        # MAGIC: Creates the attributes for the experiment class
-        super(Experiment, self).__setattr__('_fields', fields)
+        #MAGIC: Creates the attributes for the experiment class
+        self.__dict__['_fields'] = fields
+        #super(Experiment, self).__setattr__('_fields', fields)
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
     
     def get_action(self, logrow):
-        for key in self.warnings:
-            action = self.warnings[key].get_action(logrow)
+        for key in self._fields['conditions']:
+            action = self._fields['conditions'][key].get_action(logrow)
             if action != 'no action':
                 return (action, key)
         return ('no action', '')
@@ -231,11 +218,14 @@ class Socket:
         #self.logger.log('Closing socket...')
         sock.close()
         
+WARNING_FIELDS = set(['variablename', 'killvalue', 'comparator', 'when', \
+                        'action'])
+
 class ExperimentWarning:
     
-    def __init__(self, name, varname, killvalue, comparator, when, action):
+    def __init__(self, name, variablename, killvalue, comparator, when, action):
         self.name = name.strip()
-        self.varname = varname.strip()
+        self.varname = variablename.strip()
         self.killvalue = killvalue
         self.comparator = comparator.strip()
         self.when = when.strip()

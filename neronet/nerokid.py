@@ -106,11 +106,18 @@ class Nerokid(neronet.daemon.Daemon):
                     continue
                 changes = log_file.read_changes()
                 if changes:
+                    #rows = changes.split()
+                    #for row in rows:
+                    #    result = self.exp.ANALYSE(row)
+                    #    if result == MUST DIE:
+                    #        self.exp.update_state(neronet.core.Experiment.State.terminated)
+                    #        self.qry_stop()
+                    #    changes += '\nMY MESSAGE\n'
                     log_output[log_file.path[len(self.exp_dir)+1:]] = changes
             # If the process has stopped
             if self.process.poll() != None:
                 self.log('Experiment has finished!')
-                self.exp.update_state('finished')
+                self.exp.update_state(neronet.core.Experiment.State.finished)
                 # Flag the daemon for exit
                 self.qry_stop()
             # Send any information to Neromum

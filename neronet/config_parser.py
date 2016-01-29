@@ -311,8 +311,15 @@ class ConfigParser():
                 optional_fields = set(old_scope) & neronet.core.OPTIONAL_FIELDS
                 for optional_field in optional_fields:
                     if optional_field not in new_scope:
+                        if optional_field == 'conditions':
+                            conditions = old_scope[optional_field]
+                            for condition in conditions:
+                                condition = conditions[condition]
+                                cond_errors = \
+                                    self.check_conditions(condition) 
+                            for err in cond_errors:
+                                errors.append(err)
                         new_scope[optional_field] = old_scope[optional_field]
-                        
 
                 if not errors:
                     #Create the experiments
@@ -323,6 +330,14 @@ class ConfigParser():
                         if field == 'parameters':
                             params = \
                                 self._param_combinations(new_scope[field])
+                        if field == 'conditions':
+                            conditions = {}
+                            for condition_name in new_scope[field]:
+                                condition = new_scope[field][condition_name]
+                                condition['name'] = condition_name
+                                conditions[condition_name] = \
+                                    neronet.core.ExperimentWarning(**condition)
+                            experiment[field] = conditions
                         else:
                             experiment[field] = new_scope[field]
 
@@ -346,6 +361,14 @@ class ConfigParser():
             return experiments
         else:
             raise FormatError(['No experiments defined in config file'])
+
+    def check_conditions(self, conditions):
+        err = []
+        for field in neronet.core.WARNING_FIELDS:
+            if field not in conditions:
+                err.append("Experiment warning doesn't have field %s" % field)
+        return err
+            
 
     def _param_combinations(self,params):
         """ A helper function to create all combinatorial subsets of the value
