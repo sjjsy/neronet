@@ -48,7 +48,7 @@ class Experiment(object):
     """
 
     class State:
-        none = 'none'
+        #none = 'none'
         defined = 'defined'
         submitted = 'submitted'
         submitted_to_kid = 'submitted_to_kid'

@@ -136,25 +136,6 @@ class Neroman:
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
 
-    def get_experiment_results(self, experiment_id, remote_dir, local_dir):
-        """Get the experiment results from neromum
-
-        Args:
-            experiment_id (str): the experiment ID.
-            remote_dir (str): the file path to results folder on the remote
-                machine.
-            local_dir (str): the file path to results folder on the local
-                machine.
-        """
-        experiment = self.database[experiment_id]
-        cluster_ID = experiment.cluster
-        cluster_port = self.clusters['clusters'][cluster_ID]['port']
-        cluster_address = self.clusters['clusters'][cluster_ID]['ssh_address']
-        neronet.core.osrun(
-            'rsync -az -e "ssh -p%s" "%s:%s" "%s"'
-            % (cluster_port, cluster_address,
-                remote_dir, local_dir))
-
     def status_gen(self, arg):
         """Creates a generator that generates the polled status
 
@@ -213,9 +194,7 @@ class Neroman:
         return experiments_by_state
 
     def submit(self, exp_id, cluster_id=""):
-        """Main loop of neroman.
-
-        Start the experiment in the cluster using ssh.
+        """Submit an experiment to a cluster using SSH.
 
         Args:
             local_exp_path (str): the file path to experiment folder in local machine.
@@ -232,7 +211,7 @@ class Neroman:
         
         exp = self.database[exp_id]
         # Update experiment info
-        exp.cluster = cluster_id
+        exp.cluster_id = cluster_id
         exp.update_state(neronet.core.Experiment.State.submitted)
         # Define local path, where experiment currently exists
         local_exp_path = exp.path
@@ -285,3 +264,30 @@ class Neroman:
              remote_dir))
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
+
+    def fetch(self):
+        """Fetch results of submitted experiments."""
+        fetched_clusters = set()
+        for exp in self.database.values():
+            # Ignore experiments that are not changing (at some cluster) and
+            # only fetch each cluster once
+            #if exp.state in neronet.core.Experiment.State.defined, neronet.core.Experiment.State.finished:
+            if not hasattr(exp, 'cluster_id') or \
+                    exp.cluster_id in fetched_clusters:
+                continue
+            fetched_clusters.add(exp.cluster_id)
+            # Load cluster details
+            cluster = self.clusters['clusters'][exp.cluster_id]
+            cluster_address = cluster['ssh_address']
+            cluster_port = cluster['port']
+            # Define source and destination directories
+            remote_dir = os.path.join(neronet.core.USER_DATA_DIR,
+                    'experiments')
+            local_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
+                    'results')
+            # Fetch the files from the remote server
+            neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
+                (cluster_port,
+                 remote_dir + '/',
+                 cluster_address,
+                 local_dir))

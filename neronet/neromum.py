@@ -54,6 +54,8 @@ class Neromum(neronet.daemon.Daemon):
             exp.log_output[log_path] += new_text
         # Update experiment state info
         exp.update_state(state)
+        neronet.core.write_file(os.path.join(neronet.core.USER_DATA_DIR_ABS,
+                'experiments', exp.id, 'exp.pickle'), pickle.dumps(exp))
         # Debugging
         if exp.state == neronet.core.Experiment.State.finished:
             self.log('Kid %s has finished!' % (exp.id))
