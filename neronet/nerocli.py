@@ -22,7 +22,7 @@ def create_argument_parser():
                         nargs=1,
                         help='Deletes the experiment with the given id')
     parser.add_argument('--cluster',
-                        metavar=('cluster_id', 'address', 'type'),
+                        metavar=('cluster_id', 'ssh_address', 'type'),
                         nargs=3,
                         help='Specify a new cluster for computing')
     parser.add_argument('--user',
