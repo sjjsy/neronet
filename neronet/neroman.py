@@ -108,13 +108,17 @@ class Neroman:
 
 
         experiments = self.config_parser.parse_experiments(folder)
+        err = []
         for experiment in experiments:
             if experiment.id in self.database:
-                raise IOError("Experiment named %s already in the database" \
+                err.append("Experiment named %s already in the database" \
                                 % experiment.id)
-            else: self.database[experiment.id] = experiment
-        self.config_parser.save_database(DATABASE_FILENAME, \
+            elif not err: self.database[experiment.id] = experiment
+        if not err:
+            self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
+        if err:
+            raise IOError("\n".join(err))
 
     def specify_user(self, name, email, default_cluster = ""):
         """Update user data"""
@@ -179,18 +183,19 @@ class Neroman:
         if not len(self.database):
             yield "No experiments defined\n"
         else:
-            experiments_by_state = self._partition_by_state(self.database)
+            experiments_by_state = self._experiments_by_state(self.database)
             current = ""
             for state, experiments in sorted(experiments_by_state.iteritems()):
                 yield "%s:\n" % state.capitalize()
                 for experiment in sorted(experiments, key=lambda e: e.id):
                     yield "  %s\n" % experiment.id
 
-    def _partition_by_state(self, experiments):
+    def _experiments_by_state(self, experiments, state=None):
         """Partitions the experiments in the database by state"""
         experiments_by_state = collections.defaultdict(list)
         for experiment in experiments.values():
-            experiments_by_state[experiment.state].append(experiment)
+            if not state or experiment.state == state:
+                experiments_by_state[experiment.state].append(experiment)
         return experiments_by_state
 
     def submit(self, exp_id, cluster_id=""):
