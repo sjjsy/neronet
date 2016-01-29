@@ -17,10 +17,13 @@ TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
 
+USER_DATA_DIR = '~/.neronet' # Remember to os.path.expanduser
+USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
+
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 OPTIONAL_FIELDS = set(['logoutput', 'collection', 'required_files',
-                        'conditions'])
+                        'conditions', 'warnings'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster'])
 
@@ -66,7 +69,7 @@ class Experiment(object):
                     'path': path,
                     'time_created': now,
                     'time_modified': now,
-                    'state': [['defined', now]],
+                    'states_info': [(Experiment.State.defined, now)],
                     'cluster': None}
         #MAGIC: Creates the attributes for the experiment class
         super(Experiment, self).__setattr__('_fields', fields)
@@ -81,6 +84,10 @@ class Experiment(object):
         #Gets hidden attributes by adding _
         if attr == 'id':
             attr = 'experiment_id'
+        elif attr == 'state':
+            return fields['states_info'][-1][0]
+        elif attr == 'state_info':
+            return fields['states_info'][-1]
         return super(Experiment, self).__getattribute__('_' + attr)
 
     def __setattr__(self, attr, value):
@@ -93,11 +100,11 @@ class Experiment(object):
         fields = super(Experiment, self).__getattribute__('_fields')
         if attr == 'id' or attr == 'experiment_id':
             super(Experiment, self).__setattr__('_experiment_id', value)
-        elif attr in fields:
+        elif attr in fields or attr in ('log_output', ):
             fields[attr] = value
         else:
             raise AttributeError('Experiment has no attribute named %s' % attr)
-    
+
     @property 
     def callstring(self):
         rcmd = self._fields['run_command_prefix']
@@ -111,7 +118,7 @@ class Experiment(object):
     def update_state(self, state):
         """ Updates the state
         """
-        self._fields['state'].append([state, datetime.datetime.now()])
+        self._fields['states_info'].append((state, datetime.datetime.now()))
 
     def as_dict(self):
         """ Returns the experiment as a dictionary
@@ -163,12 +170,6 @@ def read_file(filepath, default=None):
     except IOError as e:
         pass
     return result
-
-class KidUpdate:
-    def __init__(self, id):
-        self.id = id
-        self.state = None
-        self.log_output = {}
 
 class Logger:
 

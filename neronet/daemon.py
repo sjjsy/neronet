@@ -13,6 +13,7 @@ import traceback
 import socket
 import pickle
 import re
+import datetime
 #import threading
 
 import neronet.core
@@ -96,19 +97,23 @@ class Daemon(object):
 
     def log(self, message):
         sys.stdout.write(self._log_pform('LOG', message))
+        sys.stdout.flush()
 
     def wrn(self, message):
         sys.stdout.write(self._log_pform('WRN', message))
+        sys.stdout.flush()
 
     def err(self, message, err=None):
         output = self._log_pform('ERR', message)
         sys.stdout.write(output)
+        sys.stdout.flush()
         if err:
             sys.stderr.write(output)
             traceback.print_exc()
             sys.stderr.write('\n')
         else:
             sys.stderr.write(output)
+        sys.stderr.flush()
 
     def abort(self, message, err=None):
         self.err(message, err)
@@ -144,7 +149,7 @@ class Daemon(object):
 
     def _recv_signal(self, sign, frme):
         self.log('recv_signal(): Received signal "%s"!' % (sign))
-        if sign in (SIGTERM, SIGQUIT):
+        if sign in (signal.SIGTERM, signal.SIGQUIT):
             self._quit()
 
     def _daemonize(self):
@@ -156,13 +161,9 @@ class Daemon(object):
         - Defines stdout, stderr and logging streams
         - Writes the pid file
         """
-        # Exit first parent (first fork)
         self.log("daemonize(): Daemonizing the process...")
-        self.log("daemonize(): Attributes:")
-        self.log("daemonize():   name:   %s" % (self._name))
-        self.log("daemonize():   pdir    %s" % (self._pdir))
-        self.log("daemonize():   pfout   %s" % (self._pfout))
-        self.log("daemonize():   pferr   %s" % (self._pferr))
+
+        # Exit first parent (first fork)
         try:
             pid = os.fork()
             if pid > 0:
@@ -190,16 +191,18 @@ class Daemon(object):
             self.err('daemonize(): Fork #2 failed!', err=err)
             sys.exit(1)
 
-        # Redirect standard file descriptors
+        ## Standard IO redirection
+        # Flush the standard output streams
         sys.stdout.flush()
         sys.stderr.flush()
-        #sys.stdin.close()
-        #sys.stdout.close()
-        #sys.stderr.close()
+        # Initialize an input stream file
         neronet.core.write_file(self._pfin, '')
-        si = open(self._pfin, 'r', encoding='utf-8')
-        so = open(self._pfout, 'w', encoding='utf-8')
-        se = open(self._pferr, 'w', encoding='utf-8')
+        # Open new IO streams
+        si = open(self._pfin, 'r')
+        so = open(self._pfout, 'w')
+        se = open(self._pferr, 'w')
+        # Duplicate the new streams to replace the standard ones and close
+        # the existing standard file descriptors if open
         os.dup2(si.fileno(), sys.stdin.fileno())
         os.dup2(so.fileno(), sys.stdout.fileno())
         os.dup2(se.fileno(), sys.stderr.fileno())
@@ -219,6 +222,15 @@ class Daemon(object):
         self.log(
             'daemonize(): Encodings: %s (system), %s (preferred)...' %
             (sys.getfilesystemencoding(), locale.getpreferredencoding()))
+
+        self.log("daemonize(): Attributes:")
+        self.log("daemonize():   time    %s" % (datetime.datetime.now()))
+        self.log("daemonize():   name    %s" % (self._name))
+        self.log("daemonize():   pdir    %s" % (self._pdir))
+        self.log("daemonize():   pfout   %s" % (self._pfout))
+        self.log("daemonize():   pferr   %s" % (self._pferr))
+        self.log("daemonize():   cwd     %s" % (os.getcwd()))
+        self.log("daemonize():   pid     %s" % (self._pid))
 
     def _run(self):
         """The daemon process loop."""
@@ -337,8 +349,9 @@ class QueryInterface(object):
             raise self.NoPortNumberError('No daemon port number!')
             #self.abort(10, 'No daemon port number defined!')
 
-    def query(self, name, trials=4, *pargs, **kwargs):
-        self.inf('Query(%s, %s, %s)...' % (name, pargs, kwargs))
+    def query(self, name, *pargs, **kwargs):
+        trials = 4
+        self.inf('Query(%s, %s, %s, trials=%d)...' % (name, pargs, kwargs, trials))
         self.determine_port()
         if name not in self.daemon._queries:
             raise RuntimeError('No such query "%s"!' % (name))
@@ -365,7 +378,7 @@ class QueryInterface(object):
                 self.inf('Closing socket.')
                 sckt.close()
                 return data
-            except ConnectionRefusedError:
+            except socket.error:
                 time.sleep(0.3)
         raise RuntimeError('Unable to connect to the daemon!')
         #self.abort(11, 'Unable to connect to the daemon.')
@@ -387,10 +400,12 @@ class QueryInterface(object):
     def start(self):
         """Start the daemon."""
         self.inf('start(): Starting the daemon...')
-        # Start the daemon
-        self.daemon._daemonize()
-        self.inf('start(): Executing run...')
-        self.daemon._run()
+        # Fork a new thread that starts the daemon
+        pid = os.fork()
+        if pid == 0:
+            self.daemon._daemonize()
+            self.inf('start(): Executing run...')
+            self.daemon._run()
 
     def stop(self):
         """Stop the daemon."""
@@ -437,22 +452,31 @@ class Cli(QueryInterface):
 
     def parse_arguments(self, cli_args=None):
         """
-          --func parg kwarg=kwvalue
+        Parse and execute CLI arguments.
+
+        The arguments must be in format:
+          '--func parg kwarg=kwvalue'
+
+        The default function is always executed. Pos. and keyw. arguments
+        parsed before any '--func' arguments are found are given to default.
         """
         #self.inf('Parse arguments: %s' % (sys.argv))
         cli_args = cli_args if cli_args else sys.argv[1:]
         work_queue = []
-        func = 'default'
         pargs = []
         kargs = {}
+        # Before any '--func' arguments are found, give all found pos. arguments
+        # and keyword arguments to the default function
+        work_queue.append(('default', pargs, kargs))
+
         for arg in cli_args:
             self.inf('Parsing argument "%s"...' % (arg))
             mtch = self.RE_FUNC.match(arg)
             if mtch:
-                work_queue.append((func, pargs, kargs))
                 func = mtch.group(1)
                 pargs = []
                 kargs = {}
+                work_queue.append((func, pargs, kargs))
                 continue
             mtch = self.RE_KARG.match(arg)
             if mtch:
@@ -463,7 +487,8 @@ class Cli(QueryInterface):
                 pargs.append(mtch.group(1))
                 continue
             self.abort(1, 'Unrecognized argument: "%s"' % (arg))
-        work_queue.append((func, pargs, kargs))
+       
+
         for work in work_queue:
             func, pargs, kargs = work
             if func in self.funcs:
