@@ -101,16 +101,21 @@ class Nerokid(neronet.daemon.Daemon):
             # Collect any data that the child process has output
             log_output = {}
             for log_file in self.log_files:
+                if not os.path.exists(log_file.path):
+                    self.log('No output file %s!' % (log_file.path))
+                    continue
                 changes = log_file.read_changes()
                 if changes:
-                    log_output[log_file.path] = changes
+                    log_output[log_file.path[len(self.exp_dir)+1:]] = changes
             # If the process has stopped
             if self.process.poll() != None:
+                self.log('Experiment has finished!')
                 self.exp.update_state('finished')
                 # Flag the daemon for exit
                 self.qry_stop()
             # Send any information to Neromum
             try:
+                self.log('Updating Neromum...')
                 self.neromum.query('exp_update', self.exp_id,
                         self.exp.state, log_output)
             except RuntimeError:
@@ -121,19 +126,26 @@ class Nerokid(neronet.daemon.Daemon):
             """Launches received script"""
             # Load the experiment data
             self.log('Loading the experiment object...')
+            self.exp_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
+                    'experiments', self.exp_id)
             self.exp = pickle.loads(neronet.core.read_file(os.path.join(
-                    neronet.core.USER_DATA_DIR_ABS,
-                    'experiments/%s/exp.pickle' % (self.exp_id))))
+                    self.exp_dir, 'exp.pickle')))
             self.log('Experiment ID: "%s"' % (self.exp.id))
-            self.log_files = [LogFile(log_file_path)
-                      for log_file_path in ('stdout.log', 'stderr.log')]
+            self.log_files = [LogFile(os.path.join(self.exp_dir,
+                    log_file_path)) for log_file_path in ('stdout.log',
+                    'stderr.log')]
             self.log('Launching the experiment...')
+            # Change temprarily to the experiment's directory and launch the
+            # experiment there
+            cwd = os.getcwd()
+            os.chdir(self.exp_dir)
             self.process = subprocess.Popen(
                 shlex.split(self.exp.callstring),
                 universal_newlines=True,
                 stdout=open('stdout.log', 'w'),
                 stderr=open('stderr.log', 'w'),
                 close_fds=True, bufsize=1)
+            os.chdir(cwd)
             self.log('Experiment PID: %s' % (self.process.pid))
             self.exp.update_state(neronet.core.Experiment.State.running)
 
