@@ -25,7 +25,7 @@ MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters',
 OPTIONAL_FIELDS = set(['logoutput', 'collection', 'required_files',
                         'conditions'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
-                        'cluster'])
+                        'cluster_id'])
 
 class Experiment(object):
     """ 
@@ -40,7 +40,7 @@ class Experiment(object):
         collection (str): The collection the experiment is part of
         conditions (dict): Special condition for the experiment to do stuff
         state (list of tuples): The states of the experiment with timestamp
-        cluster (str): The cluster where the experiment is run
+        cluster_id (str): The ID of the cluster where the experiment is run
         time_created (str): Timestamp of when the experiment was created
         time_modified (str): Timestamp of when the experiment was modified
         last
@@ -71,8 +71,8 @@ class Experiment(object):
                     'time_created': now,
                     'time_modified': now,
                     'states_info': [(Experiment.State.defined, now)],
-                    'cluster': None}
-        self.warnings = {}
+                    'cluster_id': None}
+        self.__dict__['warnings'] = {}
         if conditions:
             for warning in conditions:
                 if all( ['variablename' in conditions[warning],
@@ -87,7 +87,7 @@ class Experiment(object):
                     waction = conditions[warning]['action']
                     self.warnings[warning] = ExperimentWarning(warning, wvarname, 
                         wkillvalue, wcomparator, wwhen, waction)
-        #MAGIC: Creates the attributes for the experiment class
+        # MAGIC: Creates the attributes for the experiment class
         super(Experiment, self).__setattr__('_fields', fields)
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
     
@@ -126,7 +126,7 @@ class Experiment(object):
         elif attr in fields or attr in ('log_output', ):
             fields[attr] = value
         else:
-            raise AttributeError('Experiment has no attribute named %s' % attr)
+            raise AttributeError('Experiment has no attribute named "%s"!' % attr)
 
     @property 
     def callstring(self):
@@ -230,14 +230,6 @@ class Socket:
         # Close socket
         #self.logger.log('Closing socket...')
         sock.close()
-
-class ExperimentOLD():
-    def __init__(self, experiment_id, path=None, runcmd=None):
-        self.experiment_id = experiment_id
-        self.path = path
-        self.runcmd = runcmd
-        self.state = None
-        self.log_output = {}
         
 class ExperimentWarning:
     

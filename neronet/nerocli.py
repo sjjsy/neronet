@@ -20,7 +20,7 @@ def create_argument_parser():
     parser.add_argument('--delete',
                         metavar='experiment_id',
                         nargs=1,
-                        help='Deletes the experiment with the given id')
+                        help='Deletes the experiment with the given ID')
     parser.add_argument('--cluster',
                         metavar=('cluster_id', 'ssh_address', 'type'),
                         nargs=3,
@@ -30,8 +30,12 @@ def create_argument_parser():
                         nargs=2,
                         help='Updates user information')
     parser.add_argument('--submit',
+                        metavar=('experiment', 'cluster'),
                         nargs="+",
                         help='Submits an experiment to be run')
+    parser.add_argument('--fetch',
+                        action='store_true',
+                        help='Fetches results of submitted experiments')
     parser.add_argument('--status',
                         metavar='experiment_id',
                         nargs='?',
@@ -76,12 +80,14 @@ def main():
         except IOError as e:
             print(e)
     if args.submit:
-        experiment_ID = args.submit[0]
+        experiment_id = args.submit[0]
         if len(args.submit) > 1:
-            cluster_ID = args.submit[1]
-            nero.submit(experiment_ID, cluster_ID)
+            cluster_id = args.submit[1]
+            nero.submit(experiment_id, cluster_id)
         else:
-            nero.submit(experiment_ID)
+            nero.submit(experiment_id)
+    if args.fetch:
+        nero.fetch()
     if args.clean:
         nero.clean()
 

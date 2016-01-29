@@ -73,6 +73,7 @@ class Neromum(neronet.daemon.Daemon):
                 exp = pickle.loads(neronet.core.read_file(exp_file))
                 self.exp_dict[exp_id] = exp
         # Start an experiment if there is any to start
+        finished_count = 0
         for exp in self.exp_dict.values():
             if exp.state == neronet.core.Experiment.State.submitted:
                 # Initialize the log output container
@@ -89,28 +90,17 @@ class Neromum(neronet.daemon.Daemon):
                 nerokid.query('configure', host='localhost', port=self._port)
                 exp.update_state(neronet.core.Experiment.State.submitted_to_kid)
                 return # pace submission by launching one at a time
+            elif exp.state == neronet.core.Experiment.State.finished:
+                finished_count += 1
+        # Exit if all submitted experiments are finished
+        if finished_count == len(self.exp_dict):
+            self.log('All %d experiments are finished. Quitting...' % (finished_count))
+            self._doquit = True
+
 
 class NeromumCli(neronet.daemon.Cli):
     def __init__(self):
         super(NeromumCli, self).__init__(Neromum())
-        self.funcs.update({
-            'input' : self.func_input,
-        })
-
-    def func_input(self):
-        data = input()
-        print('Data:\n%s\n' % (data))
-        while(not ("***" in data)):
-            data = input("") # pickle.loads()
-            print('Data:\n%s\n' % (data))
-        #data = sys.stdin.readLine() # pickle.loads()
-        #print('Data:\n%s\n' % (data))
-        #nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
-        #nerokid_dqi.start()
-        #nerokid_dqi = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid('test'))
-        #print(nerokid_dqi.query('status'))
-        #data = sys.stdin.read() # pickle.loads()
-        #print('Data:\n%s\n' % (data))
 
 def main():
     """Create a CLI interface object and process CLI arguments."""

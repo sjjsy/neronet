@@ -261,9 +261,8 @@ class Daemon(object):
             #thread = threading.Thread(target=self.handle, args=[conn])
             #thread.daemon = True
             #thread.start()
-            if not os.path.exists(self._pfpid) or \
-                    not os.path.exists(self._pfport):
-                self.log('run(): Port file disappeared! Aborting...')
+            if self._read_i_or_nan(self._pfpid) != self._pid:
+                self.log('run(): PID file altered! Aborting...')
                 self._doquit = True
         self._quit()
 
@@ -400,6 +399,9 @@ class QueryInterface(object):
     def start(self):
         """Start the daemon."""
         self.inf('start(): Starting the daemon...')
+        if self.daemon_is_alive():
+            self.wrn('start(): The daemon is already running!')
+            return
         # Fork a new thread that starts the daemon
         pid = os.fork()
         if pid == 0:

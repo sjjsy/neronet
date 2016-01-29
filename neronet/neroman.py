@@ -267,27 +267,37 @@ class Neroman:
 
     def fetch(self):
         """Fetch results of submitted experiments."""
-        fetched_clusters = set()
+        experiments_to_check = set()
+        clusters_to_fetch = set()
+        # Find out the experiments that have been submitted to some cluster
+        # and the associated clusters
         for exp in self.database.values():
-            # Ignore experiments that are not changing (at some cluster) and
-            # only fetch each cluster once
-            #if exp.state in neronet.core.Experiment.State.defined, neronet.core.Experiment.State.finished:
-            if not hasattr(exp, 'cluster_id') or \
-                    exp.cluster_id in fetched_clusters:
-                continue
-            fetched_clusters.add(exp.cluster_id)
+            if exp.cluster_id != None:
+                experiments_to_check.add(exp)
+                clusters_to_fetch.add(exp.cluster_id)
+        # Define source and destination directories
+        remote_dir = os.path.join(neronet.core.USER_DATA_DIR,
+                'experiments')
+        local_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
+                'results')
+        # Fetch the changes from the clusters
+        for cluster_id in clusters_to_fetch:
+            print('Fetching changes from cluster "%s"...' % (cluster_id))
             # Load cluster details
-            cluster = self.clusters['clusters'][exp.cluster_id]
+            cluster = self.clusters['clusters'][cluster_id]
             cluster_address = cluster['ssh_address']
             cluster_port = cluster['port']
-            # Define source and destination directories
-            remote_dir = os.path.join(neronet.core.USER_DATA_DIR,
-                    'experiments')
-            local_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
-                    'results')
             # Fetch the files from the remote server
-            neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
+            neronet.core.osrun('rsync -az -e "ssh -p%s" "%s:%s/" "%s"' %
                 (cluster_port,
-                 remote_dir + '/',
                  cluster_address,
+                 remote_dir,
                  local_dir))
+        # Update the experiments
+        for exp in experiments_to_check:
+            print('Updating experiment "%s"...' % (exp.id))
+            exp = self.database[exp.id] = pickle.loads(neronet.core.read_file(
+                    os.path.join(local_dir, exp.id, 'exp.pickle')))
+            if exp.state == neronet.core.Experiment.State.finished:
+                exp.cluster_id = None
+        self.config_parser.save_database(DATABASE_FILENAME, self.database)
