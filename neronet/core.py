@@ -51,6 +51,7 @@ class Experiment(object):
         none = 'none'
         defined = 'defined'
         submitted = 'submitted'
+        submitted_to_kid = 'submitted_to_kid'
         running = 'running'
         finished = 'finished'
 

@@ -46,7 +46,7 @@ class Neromum(neronet.daemon.Daemon):
         """Save information from Nerokids' experiment data updates."""
         exp = self.exp_dict[exp_id]
         # Extract log output update information
-        for log_path, new_text in experiment.log_output.items():
+        for log_path, new_text in exp.log_output.items():
             # Initialize buffers for any new log path
             if log_path not in exp.log_output:
                 exp.log_output[log_path] = ''
@@ -56,7 +56,7 @@ class Neromum(neronet.daemon.Daemon):
         exp.update_state(state)
         # Debugging
         if exp.state == neronet.core.Experiment.State.finished:
-            self.log('Kid %s has finished!' % (exp.experiment_id))
+            self.log('Kid %s has finished!' % (exp.id))
         self._reply['rv'] = 0
 
     def ontimeout(self):
@@ -64,7 +64,7 @@ class Neromum(neronet.daemon.Daemon):
         # Load all experiments into the dict that have not yet been loaded
         for exp_file in glob.glob(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                 'experiments/*/exp.pickle')):
-            self.log('Checking exp "%s"...' % (exp_file))
+            #self.log('Checking exp "%s"...' % (exp_file))
             exp_id = os.path.basename(os.path.dirname(exp_file))
             if exp_id not in self.exp_dict:
                 self.log('New experiment submitted: "%s"...' % (exp_id))
@@ -83,8 +83,9 @@ class Neromum(neronet.daemon.Daemon):
                 nerokid.start()
                 # Wait until it gets initialized
                 time.sleep(2.0)
-                # Configure it
-                nerokid.query('configure', host=self._host, port=self._port)
+                # Configure it -- self._host
+                nerokid.query('configure', host='localhost', port=self._port)
+                exp.update_state(neronet.core.Experiment.State.submitted_to_kid)
                 return # pace submission by launching one at a time
 
 class NeromumCli(neronet.daemon.Cli):
