@@ -32,7 +32,7 @@ setup(
     long_description=long_description,
     scripts=['bin/nerocli'],
     packages=['neronet'],
-    package_data={'neronet': ['bin/nerokid', 'bin/neromum']}
+    package_data={'neronet': ['bin/nerokid', 'bin/neromum']},
     platforms='unix',
     zip_safe=True,
     classifiers = [
