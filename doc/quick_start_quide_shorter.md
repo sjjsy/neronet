@@ -1,6 +1,6 @@
-#Neronet quick start guide
+# Neronet quick start guide
 
-##What is Neronet
+## What is Neronet
 
 Neronet is a python-based, framework agnostic tool for computational researchers 
 that is made to enable easy
@@ -19,11 +19,11 @@ Windows.
 
 This is a quick start quide; we will cover the most important 
 
-##Neronet CLI
+## Neronet CLI
 
-###Step 1: Installation and configuration
+### Step 1: Installation and configuration
 
-####1.1: Pip installation
+#### 1.1: Pip installation
 
 Start by typing the following command on your local Linux or Unix computer's 
 terminal:
@@ -34,7 +34,7 @@ sudo pip install neronet
 
 The neronet is then downloaded and installed to your local machine.
 
-####1.2: Configuring your settings
+#### 1.2: Configuring your settings
 
 Configure your clusters with the following command
 ```
@@ -49,16 +49,16 @@ nerocli --user name email
 where the user name should be enclosed in quotation marks if it contains
 spaces
 
-###Step 2: Specifying and submitting experiments
+### Step 2: Specifying and submitting experiments
 
-####2.1 Creating Neronet-compatible experiments
+#### 2.1 Creating Neronet-compatible experiments
 
 - Your experiments must be runnable on Terminal with a command of the format:
   'run_command_prefix main_code_file [parameters]' where run_command_prefix, 
   main_code_file and parameter_string are specified on the next step in config.yaml
   file.
 
-####2.2 Adding config.yaml to your experiment folder
+#### 2.2 Adding config.yaml to your experiment folder
 
 To configure your experiments to work with Neronet it is necessary to add 
 a configuration file named config.yaml to your experiment folder. The format is
@@ -93,7 +93,7 @@ python test_exp.py 12 17
 
 Neronet will notify if the config file is not correctly formated
 
-####2.3 Specifying the experiments so that Neronet knows of their existence
+#### 2.3 Specifying the experiments so that Neronet knows of their existence
 
 To complete specifying your experiments, type the following command
 
@@ -104,7 +104,7 @@ nerocli --experiment folder
 Where folder is the absolute path to your experiment folder. Neronet will notify
 if the specifying of experiments fails for some reason or another.
 
-####2.4 Submitting experiments to computing clusters
+#### 2.4 Submitting experiments to computing clusters
 
 After you have successfully configured your experiments (You can make sure of
 that by typing 'nerocli --status' after which you will see a list of all the
@@ -112,13 +112,28 @@ specified experiments and clusters, and your personal information) you can submi
 them to computing clusters with the following command:
 
 ```
-nerocli --submit cluster_id experiment_id
+nerocli --submit experiment_id cluster_id
 ```
 
 Where cluster_id is one of the previously defined clusters and experiment_id 
 is one of the experiments specified.
 
-###Step 3: Other important Neronet CLI commands
+#### 2.5 Fetching data of submitted experiments
+
+To fetch data of submitted experiments, type
+```
+nerocli --fetch
+```
+
+#### 2.6 Reviewing status information
+
+To see a basic status report of which clusters and experiments Neronet knows of
+and what are the experiments' state, type
+```
+nerocli --status
+```
+
+### Step 3: Other important Neronet CLI commands
 
 ```
 nerocli --delete experiment_id
