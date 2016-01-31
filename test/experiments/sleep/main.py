@@ -21,3 +21,5 @@ for i in range(1, count+1):
     print('%s: %d/%d (%.1f)' % (datetime.datetime.now(), i, count, interval))
     print('test ' + str(random.random()*100))
     sys.stdout.flush()
+    print('test ' + random.random()*100)
+    sys.stdout.flush()

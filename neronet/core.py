@@ -89,6 +89,7 @@ class Experiment(object):
             elif action != 'no action':
                 init_action = (action, key)
         return init_action
+<<<<<<< HEAD
         
     def set_warning(self, warning):
         self._fields['warnings'].append(str(datetime.datetime.now()) + ": The condition '" + warning + "' was met")
@@ -104,6 +105,8 @@ class Experiment(object):
     
     def get_warnings(self):
         return self._fields['warnings']
+=======
+>>>>>>> 398613475835b2560c8370bd295caea3a069b6d6
 
     def __getattr__(self, attr):
         """Getter for the experiment class hides the inner dictionary"""
