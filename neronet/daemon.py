@@ -83,7 +83,7 @@ class Daemon(object):
         self.add_query('stop', self.qry_stop)
         self._trun = 0
         self._port = 0
-        self._host = neronet.core.get_hostname()
+        self._host = 'localhost' # neronet.core.get_hostname() FIXME kosh != kosh.aalto.fi
         self._tdo = tdo
         self._sckt = None
 
@@ -307,6 +307,7 @@ class QueryInterface(object):
 
     class NoPortFileError(RuntimeError): pass
     class NoPortNumberError(RuntimeError): pass
+    class ConnectError(RuntimeError): pass
 
     def __init__(self, daemon, port=None, host='127.0.0.1', verbose=False):
         self.daemon = daemon
@@ -350,8 +351,9 @@ class QueryInterface(object):
 
     def query(self, name, *pargs, **kwargs):
         trials = 4
-        self.inf('Query(%s, %s, %s, trials=%d)...' % (name, pargs, kwargs, trials))
         self.determine_port()
+        self.inf('Query "%s" with %s, %s to (%s, %s)...' % (name, pargs,
+                kwargs, self.host, self.port))
         if name not in self.daemon._queries:
             raise RuntimeError('No such query "%s"!' % (name))
             #self.abort(11, 'No such query "%s"!' % (name))
@@ -359,27 +361,26 @@ class QueryInterface(object):
         sckt = socket.socket()
         sckt.settimeout(TIMEOUT)
         # Connect to the daemon
-        self.inf('Connecting to (%s, %d)...' % (self.host, self.port))
         for i in range(trials):
             try:
                 sckt.connect((self.host, self.port))
                 data = {'name': name, 'args': pargs, 'kwargs': kwargs}
-                self.inf('Sending data...')
+                #self.inf('Sending data...')
                 sckt.sendall(pickle.dumps(data, -1))
-                self.inf('Listening for a reply...')
+                #self.inf('Listening for a reply...')
                 try:
                     byts = sckt.recv(4096)
                     data = pickle.loads(byts) if byts else None
-                    self.inf('Received %s' % (data))
+                    self.inf('Received reply: %s' % (data))
                 except socket.timeout:
-                    self.inf('No reply received.')
+                    self.inf('No reply received!')
                     data = None
-                self.inf('Closing socket.')
+                #self.inf('Closing socket.')
                 sckt.close()
                 return data
             except socket.error:
                 time.sleep(0.3)
-        raise RuntimeError('Unable to connect to the daemon!')
+        raise self.ConnectError('Unable to connect to the daemon!')
         #self.abort(11, 'Unable to connect to the daemon.')
 
     def daemon_is_alive(self):
@@ -391,6 +392,8 @@ class QueryInterface(object):
             return uptime > 0 if uptime != None else False
         except self.NoPortFileError:
             return False
+        except self.ConnectError:
+            return None
 
     def cleanup(self):
         """Erase daemon instance related files."""
@@ -411,10 +414,10 @@ class QueryInterface(object):
 
     def stop(self):
         """Stop the daemon."""
-        self.inf('stop(): Stopping the daemon...')
         if not self.daemon_is_alive():
-            self.wrn('stop(): The daemon is not running!')
+            self.wrn('stop(): The daemon is not even running!')
             return
+        self.inf('stop(): Stopping the daemon...')
         self.query('stop')
         time.sleep(TIMEOUT*0.5)
         if os.path.exists(self.daemon._pfport):
@@ -470,9 +473,10 @@ class Cli(QueryInterface):
         # Before any '--func' arguments are found, give all found pos. arguments
         # and keyword arguments to the default function
         work_queue.append(('default', pargs, kargs))
-
+        # Go through and parse the arguments, organizing them into a queue of
+        # function calls with their positional and key word arguments
         for arg in cli_args:
-            self.inf('Parsing argument "%s"...' % (arg))
+            #self.inf('Parsing argument "%s"...' % (arg))
             mtch = self.RE_FUNC.match(arg)
             if mtch:
                 func = mtch.group(1)
@@ -489,13 +493,11 @@ class Cli(QueryInterface):
                 pargs.append(mtch.group(1))
                 continue
             self.abort(1, 'Unrecognized argument: "%s"' % (arg))
-       
-
-        for work in work_queue:
-            func, pargs, kargs = work
+        # Go through the work queue and execute the functions
+        for func, pargs, kargs in work_queue:
             if func in self.funcs:
-                self.inf('Executing function "%s" with %s %s...' 
-                    % (func, pargs, kargs))
+                #self.inf('Executing function "%s" with %s %s...' 
+                #    % (func, pargs, kargs))
                 self.funcs[func](*pargs, **kargs)
             else:
                 self.abort(2, 'Unrecognized function: "%s"' % (func))

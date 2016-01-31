@@ -234,7 +234,7 @@ class Neroman:
         # Add Neronet source code files and executables to the temporary dir
         neronet.core.osrun('rsync -az "%s" "%s"' %
                 (neronet_root_dir, local_tmp_dir))
-        # Third, add the experiment files
+        # Add the experiment files
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
                 (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
