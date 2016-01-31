@@ -106,13 +106,17 @@ class Nerokid(neronet.daemon.Daemon):
                     continue
                 changes = log_file.read_changes()
                 if changes:
-                    #rows = changes.split()
-                    #for row in rows:
-                    #    result = self.exp.ANALYSE(row)
-                    #    if result == MUST DIE:
-                    #        self.exp.update_state(neronet.core.Experiment.State.terminated)
-                    #        self.qry_stop()
-                    #    changes += '\nMY MESSAGE\n'
+                    rows = changes.split()
+                    terminated = False
+                    for row in rows:
+                        result = self.exp.get_action(row)
+                        if result[0] == 'kill':
+                            self.exp.update_state(neronet.core.Experiment.State.terminated)
+                            self.qry_stop()
+                            terminated = True
+                            changes += '\nTermination condition ' + result[1] + ' fullfilled. Terminating the experiment...\n'
+                        elif result[0] == 'warn' and not terminated:
+                            changes += '\nWARNING: condition ' + result[1] + ' fullfilled.\n'                            
                     log_output[log_file.path[len(self.exp_dir)+1:]] = changes
             # If the process has stopped
             if self.process.poll() != None:

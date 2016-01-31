@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # core.py
 #
 # Core class and function definitions
@@ -79,11 +80,14 @@ class Experiment(object):
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
     
     def get_action(self, logrow):
+        init_action = ('no action', '')
         for key in self._fields['conditions']:
             action = self._fields['conditions'][key].get_action(logrow)
-            if action != 'no action':
+            if action == 'kill':
                 return (action, key)
-        return ('no action', '')
+            elif action != 'no action':
+                init_action = (action, key)
+        return init_action
 
     def __getattr__(self, attr):
         """Getter for the experiment class hides the inner dictionary"""
