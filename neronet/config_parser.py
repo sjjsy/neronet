@@ -133,7 +133,7 @@ class ConfigParser():
         clusters = clusters_data.get('clusters', {})
         default_cluster = preferences_data['default_cluster']
         if default_cluster not in clusters and default_cluster:
-            raise FormatError(['Default cluster %s no defined' % \
+            raise FormatError(['Default cluster %s not defined' % \
                                 default_cluster])
 
     def load_database(self, database_filename):
