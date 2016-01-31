@@ -188,7 +188,8 @@ class Neroman:
             for state, experiments in sorted(experiments_by_state.iteritems()):
                 yield "%s:\n" % state.capitalize()
                 for experiment in sorted(experiments, key=lambda e: e.id):
-                    yield "  %s\n" % experiment.id
+                    exp_warnings_exist = experiment.has_warnings()
+                    yield str("  %s" % experiment.id) + ' ' + exp_warnings_exist + '\n'
 
     def _experiments_by_state(self, experiments, state=None):
         """Partitions the experiments in the database by state"""

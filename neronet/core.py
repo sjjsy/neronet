@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # core.py
 #
 # Core class and function definitions
@@ -72,18 +73,37 @@ class Experiment(object):
                     'time_created': now,
                     'time_modified': now,
                     'states_info': [(Experiment.State.defined, now)],
-                    'cluster_id': None}
+                    'cluster_id': None,
+                    'warnings' : [] }
         #MAGIC: Creates the attributes for the experiment class
         self.__dict__['_fields'] = fields
         #super(Experiment, self).__setattr__('_fields', fields)
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
     
     def get_action(self, logrow):
+        init_action = ('no action', '')
         for key in self._fields['conditions']:
             action = self._fields['conditions'][key].get_action(logrow)
-            if action != 'no action':
+            if action == 'kill':
                 return (action, key)
-        return ('no action', '')
+            elif action != 'no action':
+                init_action = (action, key)
+        return init_action
+        
+    def set_warning(self, warning):
+        self._fields['warnings'].append(str(datetime.datetime.now()) + ": The condition '" + warning + "' was met")
+    
+    def set_multiple_warnings(self, warnings):
+        self._fields['warnings'] = warnings
+            
+    def has_warnings(self):
+        if self._fields['warnings']:
+            return 'WARNING'
+        else:
+            return ''
+    
+    def get_warnings(self):
+        return self._fields['warnings']
 
     def __getattr__(self, attr):
         """Getter for the experiment class hides the inner dictionary"""
@@ -151,6 +171,21 @@ class Experiment(object):
             yield "  Collection: %s\n" % self._fields['collection']
         yield "  State: %s\n" % self.state
         yield "  Last modified: %s\n" % self._fields['time_modified']
+        if self._fields['conditions']:            
+            conds = 'conditions:\n'
+            for condition in self._fields['conditions']:
+                conds +=  '  ' + self._fields['conditions'][condition].name + ':\n'
+                conds +=  '    variablename: ' + self._fields['conditions'][condition].varname + '\n'
+                conds +=  '    killvalue: ' + str(self._fields['conditions'][condition].killvalue) + '\n'
+                conds +=  '    comparator: ' + self._fields['conditions'][condition].comparator + '\n'
+                conds +=  '    when: ' + self._fields['conditions'][condition].when + '\n'
+                conds +=  '    action: ' + self._fields['conditions'][condition].action + '\n'
+            yield conds
+        if self._fields['warnings']:
+            warns = 'warnings:\n'
+            for warn in self._fields['warnings']:
+                warns += '  ' + warn + '\n'
+            yield warns
 
     def __str__(self):
         return "%s %s" % (self._experiment_id, self._fields['state'][-1][0])

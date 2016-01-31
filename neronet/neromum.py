@@ -33,6 +33,7 @@ class Neromum(neronet.daemon.Daemon):
         self.exp_dict = {}
         self.add_query('list_exps', self.qry_list_exps)
         self.add_query('exp_update', self.qry_exp_update)
+        self.add_query('exp_set_warning', self.qry_exp_warning)
 
     def qry_list_exps(self): # primarily for debugging
         """List all experiments submitted to this mum."""
@@ -60,6 +61,12 @@ class Neromum(neronet.daemon.Daemon):
         if exp.state == neronet.core.Experiment.State.finished:
             self.log('Experiment "%s" has finished!' % (exp.id))
         self._reply['rv'] = 0
+    
+    def qry_exp_warning(self, exp_id, warnings):
+        exp = self.exp_dict[exp_id]
+        exp.set_multiple_warnings(warnings)
+        neronet.core.write_file(os.path.join(neronet.core.USER_DATA_DIR_ABS,
+                'experiments', exp.id, 'exp.pickle'), pickle.dumps(exp))
 
     def ontimeout(self):
         """Load and start any unstarted received experiments."""

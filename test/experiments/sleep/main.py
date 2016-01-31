@@ -11,6 +11,7 @@
 import sys
 import time
 import datetime
+import random
 
 count = int(sys.argv[1])
 interval = float(sys.argv[2])
@@ -18,4 +19,5 @@ interval = float(sys.argv[2])
 for i in range(1, count+1):
     time.sleep(interval)
     print('%s: %d/%d (%.1f)' % (datetime.datetime.now(), i, count, interval))
+    print('test ' + str(random.random()*100))
     sys.stdout.flush()
