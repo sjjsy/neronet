@@ -29,6 +29,7 @@ import os.path
 import collections
 import pickle
 import shutil
+import random
 
 import neronet.core
 import neronet.config_parser
@@ -178,6 +179,12 @@ class Neroman:
                 for key, value in cluster.iteritems():
                     if key != 'ssh_address' and key != 'type':
                         yield "  %s: %s\n" % (key.capitalize(), value)
+            yield "Cluster groups:\n"
+            groups = self.clusters['groups']
+            for group, group_clusters in groups.iteritems():
+                yield "  " + group + ':\n'
+                for cluster in group_clusters:
+                    yield "    " + cluster + "\n"
         yield "\n"
         yield "================Experiments=============\n"
         if not len(self.database):
@@ -188,7 +195,8 @@ class Neroman:
             for state, experiments in sorted(experiments_by_state.iteritems()):
                 yield "%s:\n" % state.capitalize()
                 for experiment in sorted(experiments, key=lambda e: e.id):
-                    yield "  %s\n" % experiment.id
+                    exp_warnings_exist = experiment.has_warnings()
+                    yield str("  %s" % experiment.id) + ' ' + exp_warnings_exist + '\n'
 
     def _experiments_by_state(self, experiments, state=None):
         """Partitions the experiments in the database by state"""
@@ -212,7 +220,11 @@ class Neroman:
             cluster_id = self.preferences['default_cluster']
             
         if cluster_id not in self.clusters['clusters']:
-            raise IOError('The given cluster ID or default cluster is not valid')
+            if cluster_id in self.clusters['groups']:
+                group_clusters = self.clusters['groups'][cluster_id]
+                cluster_id = random.choice(group_clusters)
+            else:
+                raise IOError('The given cluster ID or default cluster is not valid')
         
         exp = self.database[exp_id]
         # Update experiment info

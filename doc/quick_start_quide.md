@@ -146,6 +146,11 @@ Uage: nerocli --delete EXPERIMENT_ID
 Example: nerocli --delete sleep1
 ```
 
+Fetch data of submitted experiments:
+```
+nerocli --fetch
+```
+
 Adds a cluster via command line
 ```
 Usage: nerocli --cluster ID SSH_ADDRESS TYPE

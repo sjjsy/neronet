@@ -7,7 +7,7 @@ parameters:
     interval: 2.0
 parameters_format: '{count} {interval}'
 conditions:
-    test_condition:
+    test_condition1:
         variablename: test
         killvalue: 50
         comparator: gt
@@ -15,8 +15,21 @@ conditions:
         action: warn
 sleep1:
     parameters:
-        count: [4, 5, 6, 7]
+        count: [40, 50, 60, 70]
         interval: 3
+    conditions:
+        test_condition:
+            variablename: test
+            killvalue: 50
+            comparator: lt
+            when: time 1
+            action: kill
+        test_condition2:
+            variablename: test
+            killvalue: 50
+            comparator: geq
+            when: time 1
+            action: warn
     sleep2:
         parameters:
             interval: [100,200]
@@ -33,4 +46,4 @@ sleep4:
             parameters:
                 count: 7
                 interval: 1
-sleep8:
+

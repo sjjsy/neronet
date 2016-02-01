@@ -133,7 +133,7 @@ class ConfigParser():
         clusters = clusters_data.get('clusters', {})
         default_cluster = preferences_data['default_cluster']
         if default_cluster not in clusters and default_cluster:
-            raise FormatError(['Default cluster %s no defined' % \
+            raise FormatError(['Default cluster %s not defined' % \
                                 default_cluster])
 
     def load_database(self, database_filename):
@@ -335,6 +335,7 @@ class ConfigParser():
                             for condition_name in new_scope[field]:
                                 condition = new_scope[field][condition_name]
                                 condition['name'] = condition_name
+                                condition['killvalue'] = float(condition['killvalue'])
                                 conditions[condition_name] = \
                                     neronet.core.ExperimentWarning(**condition)
                             experiment[field] = conditions
@@ -367,6 +368,16 @@ class ConfigParser():
         for field in neronet.core.WARNING_FIELDS:
             if field not in conditions:
                 err.append("Experiment warning doesn't have field %s" % field)
+            elif field == 'when' and 'time' in conditions[field]:
+                try:
+                    float(conditions[field][4:].strip())
+                except:
+                    err.append("Invalid syntax at experiment warning 'when' attribute: " + conditions[field])
+            elif field == 'killvalue':
+                try:
+                    float(conditions[field])
+                except:
+                    err.append("Invalid syntax at experiment warning 'killvalue' attribute")
         return err
             
 
