@@ -17,7 +17,7 @@ Neronet can be used either via command-line interface or via GUI. Neronet can be
 used on Linux and Unix machines, unfortunately Neronet doesn't currently support 
 Windows.
 
-This is a quick start quide; we will cover the most important 
+This is a quick start quide; we will cover the most important commands needed to use Neronet.
 
 ## Neronet CLI
 

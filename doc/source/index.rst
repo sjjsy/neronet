@@ -19,7 +19,7 @@ A good introduction and overview of the project is available at the
 Quick start guide
 -----------------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    quick_start_guide
 

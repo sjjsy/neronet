@@ -19,7 +19,8 @@ Neronet can be used either via command-line interface or via GUI.
 Neronet can be used on Linux and Unix machines, unfortunately Neronet
 doesn’t currently support Windows.
 
-This is a quick start quide; we will cover the most important
+This is a quick start quide; we will cover the most important commands
+needed to use Neronet.
 
 Neronet CLI
 -----------
@@ -121,4 +122,63 @@ To complete specifying your experiments, type the following command
 
     nerocli --experiment folder
 
-Where folder is the absolute
+Where folder is the absolute path to your experiment folder. Neronet
+will notify if the specifying of experiments fails for some reason or
+another.
+
+2.4 Submitting experiments to computing clusters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+After you have successfully configured your experiments (You can make
+sure of that by typing ‘nerocli –status’ after which you will see a list
+of all the specified experiments and clusters, and your personal
+information) you can submit them to computing clusters with the
+following command:
+
+::
+
+    nerocli --submit experiment_id cluster_id
+
+Where cluster\_id is one of the previously defined clusters and
+experiment\_id is one of the experiments specified.
+
+2.5 Fetching data of submitted experiments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To fetch data of submitted experiments, type
+
+::
+
+    nerocli --fetch
+
+2.6 Reviewing status information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To see a basic status report of which clusters and experiments Neronet
+knows of and what are the experiments’ state, type
+
+::
+
+    nerocli --status
+
+Step 3: Other important Neronet CLI commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    nerocli --delete experiment_id
+
+Deletes a specified experiment from Neronet’s database:
+
+::
+
+    nerocli --status experiment_id
+
+Get a single experiment’s status report
+
+::
+
+    nerocli --clean
+
+Wipes all Neronet related files e.g. Neronet’s database, user
+configurations
