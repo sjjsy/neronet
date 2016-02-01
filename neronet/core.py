@@ -170,6 +170,8 @@ class Experiment(object):
         if self._fields['collection']:
             yield "  Collection: %s\n" % self._fields['collection']
         yield "  State: %s\n" % self.state
+        if self._fields['cluster_id']:
+            yield "  Cluster: " + self._fields['cluster_id'] + '\n'
         yield "  Last modified: %s\n" % self._fields['time_modified']
         if self._fields['conditions']:            
             conds = 'conditions:\n'

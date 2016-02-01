@@ -124,7 +124,7 @@ class Nerokid(neronet.daemon.Daemon):
                                 self.exp.get_warnings())
                     log_output[log_file.path[len(self.exp_dir)+1:]] = changes
             # If the process has stopped
-            if self.process.poll() != None and not terminated:
+            if self.process.poll() != None and terminated == False:
                 self.log('Experiment has finished!')
                 self.exp.update_state(neronet.core.Experiment.State.finished)
                 # Flag the daemon for exit
