@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Fri Jan 29 13:48:10 2016
+# Created: Wed Feb  3 15:50:16 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.submit_btn = QtGui.QPushButton(self.centralwidget)
-        self.submit_btn.setGeometry(QtCore.QRect(20, 560, 281, 27))
+        self.submit_btn.setGeometry(QtCore.QRect(20, 560, 351, 27))
         self.submit_btn.setObjectName(_fromUtf8("submit_btn"))
         self.line = QtGui.QFrame(self.centralwidget)
         self.line.setGeometry(QtCore.QRect(380, 30, 361, 16))
@@ -87,6 +87,12 @@ class Ui_MainWindow(object):
         self.experiments = QtGui.QListWidget(self.centralwidget)
         self.experiments.setGeometry(QtCore.QRect(10, 20, 201, 531))
         self.experiments.setObjectName(_fromUtf8("experiments"))
+        self.label_4 = QtGui.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(220, 0, 91, 21))
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.label_5 = QtGui.QLabel(self.centralwidget)
+        self.label_5.setGeometry(QtCore.QRect(10, 0, 161, 21))
+        self.label_5.setObjectName(_fromUtf8("label_5"))
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -103,4 +109,6 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "cluster name", None))
         self.label_2.setText(_translate("MainWindow", "cluster address", None))
         self.label_3.setText(_translate("MainWindow", "cluster port", None))
+        self.label_4.setText(_translate("MainWindow", "clusters", None))
+        self.label_5.setText(_translate("MainWindow", "experiments", None))
 
