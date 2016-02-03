@@ -82,12 +82,15 @@ class Experiment(object):
     
     def get_action(self, logrow):
         init_action = ('no action', '')
-        for key in self._fields['conditions']:
-            action = self._fields['conditions'][key].get_action(logrow)
-            if action == 'kill':
-                return (action, key)
-            elif action != 'no action':
-                init_action = (action, key)
+        try:
+            for key in self._fields['conditions']:
+                action = self._fields['conditions'][key].get_action(logrow)
+                if action == 'kill':
+                    return (action, key)
+                elif action != 'no action':
+                    init_action = (action, key)
+        except TypeError:
+            return init_action
         return init_action
        
     def set_warning(self, warning):
