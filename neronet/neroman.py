@@ -108,7 +108,8 @@ class Neroman:
         """
 
 
-        experiments = self.config_parser.parse_experiments(folder)
+        experiments = self.config_parser.parse_experiments(folder,\
+                                                self.preferences)
         err = []
         for experiment in experiments:
             if experiment.id in self.database:
@@ -141,7 +142,7 @@ class Neroman:
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
 
-    def status_gen(self, arg):
+    def status_gen(self, arg, arg2=None):
         """Creates a generator that generates the polled status
 
         Yields:
@@ -155,48 +156,49 @@ class Neroman:
                 raise StopIteration
             else:
                 raise IOError('No experiment named %s' % arg)
-        yield "================Neroman=================\n"
-        yield "\n"
-        yield "================User====================\n"
-        yield "Name: %s\n" % self.preferences['name']
-        yield "Email: %s\n" % self.preferences['email']
-        if self.preferences['default_cluster']:
-            yield "Default Cluster: %s\n" % self.preferences['default_cluster']
-        yield "\n"
-        yield "================Clusters================\n"
-        if not self.clusters['clusters']:
-            yield "No clusters defined\n"
         else:
-            clusters = self.clusters['clusters']
-            for cluster in clusters:
-                cluster_name = cluster
-                cluster = clusters[cluster]
-                address = cluster['ssh_address']
-                type = cluster['type']
-                yield "%s:\n" % cluster_name
-                yield "  Address: %s\n" % address
-                yield "  Type: %s\n" % type 
-                for key, value in cluster.iteritems():
-                    if key != 'ssh_address' and key != 'type':
-                        yield "  %s: %s\n" % (key.capitalize(), value)
-            yield "Cluster groups:\n"
-            groups = self.clusters['groups']
-            for group, group_clusters in groups.iteritems():
-                yield "  " + group + ':\n'
-                for cluster in group_clusters:
-                    yield "    " + cluster + "\n"
-        yield "\n"
-        yield "================Experiments=============\n"
-        if not len(self.database):
-            yield "No experiments defined\n"
-        else:
-            experiments_by_state = self._experiments_by_state(self.database)
-            current = ""
-            for state, experiments in sorted(experiments_by_state.iteritems()):
-                yield "%s:\n" % state.capitalize()
-                for experiment in sorted(experiments, key=lambda e: e.id):
-                    exp_warnings_exist = experiment.has_warnings()
-                    yield str("  %s" % experiment.id) + ' ' + exp_warnings_exist + '\n'
+            yield "================Neroman=================\n"
+            yield "\n"
+            yield "================User====================\n"
+            yield "Name: %s\n" % self.preferences['name']
+            yield "Email: %s\n" % self.preferences['email']
+            if self.preferences['default_cluster']:
+                yield "Default Cluster: %s\n" % self.preferences['default_cluster']
+            yield "\n"
+            yield "================Clusters================\n"
+            if not self.clusters['clusters']:
+                yield "No clusters defined\n"
+            else:
+                clusters = self.clusters['clusters']
+                for cluster in clusters:
+                    cluster_name = cluster
+                    cluster = clusters[cluster]
+                    address = cluster['ssh_address']
+                    type = cluster['type']
+                    yield "%s:\n" % cluster_name
+                    yield "  Address: %s\n" % address
+                    yield "  Type: %s\n" % type 
+                    for key, value in cluster.iteritems():
+                        if key != 'ssh_address' and key != 'type':
+                            yield "  %s: %s\n" % (key.capitalize(), value)
+                yield "Cluster groups:\n"
+                groups = self.clusters['groups']
+                for group, group_clusters in groups.iteritems():
+                    yield "  " + group + ':\n'
+                    for cluster in group_clusters:
+                        yield "    " + cluster + "\n"
+            yield "\n"
+            yield "================Experiments=============\n"
+            if not len(self.database):
+                yield "No experiments defined\n"
+            else:
+                experiments_by_state = self._experiments_by_state(self.database)
+                current = ""
+                for state, experiments in sorted(experiments_by_state.iteritems()):
+                    yield "%s:\n" % state.capitalize()
+                    for experiment in sorted(experiments, key=lambda e: e.id):
+                        exp_warnings_exist = experiment.has_warnings()
+                        yield str("  %s" % experiment.id) + ' ' + exp_warnings_exist + '\n'
 
     def _experiments_by_state(self, experiments, state=None):
         """Partitions the experiments in the database by state"""
@@ -313,3 +315,6 @@ class Neroman:
             if exp.state == neronet.core.Experiment.State.finished:
                 exp.cluster_id = None
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
+    
+    def plot_experiment(self, experiment):
+        pass
