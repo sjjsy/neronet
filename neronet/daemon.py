@@ -241,11 +241,10 @@ class Daemon(object):
         sckt.settimeout(TIMEOUT)
         sckt.bind(('localhost', self._port))
         # Put the socket into server mode and retrieve the chosen port number
+        self.log('run(): Starting to listen at (%s, %d)...' % (host, self._port))
         sckt.listen(1)
         host, self._port = sckt.getsockname()
         neronet.core.write_file(self._pfport, self._port)
-        self.log('run(): Starting to listen at (%s, %d)...' % (host, self._port))
-        sckt.listen(1)
         self._doquit = False
         while not self._doquit:
             self.log('run(): Looping...')

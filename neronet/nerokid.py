@@ -106,8 +106,8 @@ class Nerokid(neronet.daemon.Daemon):
                     self.log('No output file %s!' % (log_file.path))
                     continue
                 changes = log_file.read_changes()
-                if changes:                    
-                    rows = changes.split('\n')                    
+                if changes:                   
+                    rows = changes.split('\n')
                     for row in rows:
                         result = self.exp.get_action(row)
                         if result[0] == 'kill':
@@ -115,7 +115,7 @@ class Nerokid(neronet.daemon.Daemon):
                             self.log('Termination condition ' + result[1] + ' was met. The experiment will be terminated.')
                             self.qry_stop()
                             terminated = True
-                            changes += '\nTermination condition \'' + result[1] + '\' was met. The experiment will be terminated.\n'                            
+                            changes += '\nTermination condition \'' + result[1] + '\' was met. The experiment will be terminated.\n'
                         elif result[0] == 'warn' and not terminated:
                             self.exp.set_warning(result[1])
                             changes += '\nWARNING: condition ' + result[1] + ' was met.\n'

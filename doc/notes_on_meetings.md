@@ -1539,7 +1539,7 @@ Participants: Team
 Agenda:
 - Work on Daemon
 
-## 02-01 120m Sprint change 3
+## 02-01 120m Sprint change 2
 
 Participants: team + PO
 
@@ -1549,9 +1549,6 @@ Agenda:
 - 15:00 Planning
 
 ### Review
-
-- We went through all stories and tasks planned for the sprint
-- We presented a live product demo
 
 ### Planning
 
@@ -1573,6 +1570,68 @@ Agenda:
 
 Sprint goal: *Publish Neronet as an open source project*
 
+## 02-03 Sprint 3 retrospective
+
+### Visiting and reviewing the commitments done in the last sprint retrospective
+
+- CI not set up
+- Automated tests not done
+- More experiments and trials, less debating on whether to do what. Somewhat successful
+
+### Identifying things the team should start doing
+
+- Consider employing CI with Travis, Joona
+- System test automation, Joona
+- Following the hours spent by all the developers and properly adjusting them
+
+### Identifying things the team should continue doing
+
+- Hold daily scrums only when some of the developers feel the need for them
+
+## 02-05 300m Frifury
+
+Participants: Samuel, Matias
+
+Agenda:
+- Sprint planning with (Samuel, Matias)
+- 
+
+### Sprint planning
+
+- Improve code documentation and commenting
+- General appearance, marketability and clarity improvement
+- Triton support (Consult Pyry with inclusion to backlog)
+- Google "Neronet" group for marketing and user support
+- Gather test users: Pyry, Jelena, Simo, Triton users
+- Extend and improve the documentation in the technical overview
+- Embed/append mainenance instructions to the technical overview
+- Continuous integration
+- Improvements based on user feedback
+- Advert in Reddit
+- Use cases: categorizing numbers, some neural networks problems
+- Future of Neronet?
+- Basic Neronet via GUI
+- Visualize variable changes
+- Automated testing
+
+### Daily scrum
+
+- Teemu and Matias tried to test Neronet with a Theano example script;
+  Now they are to continue creating a few use cases
+- Iiro did planning work related to the variable visualization story; He will
+  continue the work today.
+- Samuel did some overall sprint planning and will now try to work on adding
+  Slurm support
+
+### Message to Pyry
+
+Triton
+We discussed about the 
+
+User testing
+
+
+
 ## 02-29 60m Progress review 2
 
 Participants: team + PO + Coach
@@ -1582,24 +1641,6 @@ Agenda:
 - 13:00 Presentation of progress report (35 minutes)
 - 13:35 Feedback and questions (10 minutes)
 
-## 02-29 120m Triton Winter Kickstart
 
-Dear Tritoners,
 
-a lot is happening on Triton side and we need to get together to tell
-about it. There will be two events at once. First of all, all the
-newcomers are warmly welcome to Triton Winter Kickstart on Mon 29.2.
-Mark your calendars, the course is obligatory to those that had no
-chance to attend Summer Kickstart in June 2015 or has started after.
 
-Second, Triton User Group Meeting on Wed 2.3. All the users are warmly
-welcome. Triton has got new compute nodes, new storage system and will
-be fully re-installed with CentOS 7. Do you want to know more about it?
-Come to listen to that informal event. Your feedback is what we are
-looking for. Share the ideas, let us know what works and what does not etc.
-
-Details and registration link at:
-
-http://science-it.aalto.fi/scip/scip-winter-kickstart-2016/
-
-YT Ivan Degtyarenko (on behalf Science IT)
