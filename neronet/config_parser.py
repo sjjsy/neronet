@@ -215,7 +215,7 @@ class ConfigParser():
         with open(filename, 'w') as f:
             f.write(yaml.dump(data, default_flow_style=False))
 
-    def parse_experiments(self, folder):
+    def parse_experiments(self, folder, preferences):
         """ Parses the configuration file found inside the given folder and
         returns the experiments created as a dictionary.
 
@@ -246,9 +246,9 @@ class ConfigParser():
         with open(config_file, 'r') as file:
             data = yaml.load(file.read())
 
-        return self.parse_experiment_data(folder, data)
+        return self.parse_experiment_data(folder, data, preferences)
         
-    def parse_experiment_data(self, folder, data):
+    def parse_experiment_data(self, folder, data, preferences):
         """ Parses experiment configuration data to experiments
 
         Args:
@@ -299,7 +299,6 @@ class ConfigParser():
                     for param in not_updated:
                         new_scope['parameters'][param] = \
                                     old_scope['parameters'][param]
-
                 #Add the missing values from the old scope to the new
                 for missing_field in missing_mandatory_fields:
                     if missing_field in old_scope:
@@ -320,6 +319,14 @@ class ConfigParser():
                             for err in cond_errors:
                                 errors.append(err)
                         new_scope[optional_field] = old_scope[optional_field]
+
+                #Set the folder name as a default collection
+                collection = set([os.path.basename(os.path.normpath(folder))])
+                if 'collection' in new_scope:
+                    c = new_scope['collection']
+                    collection = collection | \
+                                c if isinstance(c, set) else set([c])
+                new_scope['collection'] = collection
 
                 if not errors:
                     #Create the experiments

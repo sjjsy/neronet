@@ -23,7 +23,7 @@ USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
 
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
-OPTIONAL_FIELDS = set(['logoutput', 'collection', 'required_files',
+OPTIONAL_FIELDS = set(['outputs', 'collection', 'required_files',
                         'conditions'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster_id'])
@@ -59,12 +59,13 @@ class Experiment(object):
 
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
                     parameters, parameters_format, path, required_files=None,
-                    logoutput='output.log', collection=None, conditions=None):
+                    outputs="stdout", collection=None, conditions=None):
         now = datetime.datetime.now()
         fields = {'run_command_prefix': run_command_prefix,
                     'main_code_file': main_code_file,
                     'required_files': required_files if required_files else [],
-                    'logoutput': logoutput,
+                    'outputs': outputs if isinstance(outputs, list) else
+                                [outputs],
                     'parameters': parameters,
                     'parameters_format': parameters_format,
                     'collection': collection,
@@ -177,19 +178,19 @@ class Experiment(object):
             yield "  Cluster: " + self._fields['cluster_id'] + '\n'
         yield "  Last modified: %s\n" % self._fields['time_modified']
         if self._fields['conditions']:            
-            conds = 'conditions:\n'
+            conds = '  Conditions:\n'
             for condition in self._fields['conditions']:
-                conds +=  '  ' + self._fields['conditions'][condition].name + ':\n'
-                conds +=  '    variablename: ' + self._fields['conditions'][condition].varname + '\n'
-                conds +=  '    killvalue: ' + str(self._fields['conditions'][condition].killvalue) + '\n'
-                conds +=  '    comparator: ' + self._fields['conditions'][condition].comparator + '\n'
-                conds +=  '    when: ' + self._fields['conditions'][condition].when + '\n'
-                conds +=  '    action: ' + self._fields['conditions'][condition].action + '\n'
+                conds +=  '    ' + self._fields['conditions'][condition].name + ':\n'
+                conds +=  '      variablename: ' + self._fields['conditions'][condition].varname + '\n'
+                conds +=  '      killvalue: ' + str(self._fields['conditions'][condition].killvalue) + '\n'
+                conds +=  '      comparator: ' + self._fields['conditions'][condition].comparator + '\n'
+                conds +=  '      when: ' + self._fields['conditions'][condition].when + '\n'
+                conds +=  '      action: ' + self._fields['conditions'][condition].action + '\n'
             yield conds
         if self._fields['warnings']:
-            warns = 'warnings:\n'
+            warns = '  Warnings:\n'
             for warn in self._fields['warnings']:
-                warns += '  ' + warn + '\n'
+                warns += '    ' + warn + '\n'
             yield warns
 
     def __str__(self):
