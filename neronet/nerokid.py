@@ -132,6 +132,8 @@ class Nerokid(neronet.daemon.Daemon):
             # Send any information to Neromum
             try:
                 self.log('Updating Neromum...')
+                self.log('Query: %s, Experiment id:%s State:%s Output: %s' % ('exp_update', self.exp_id,
+                                            self.exp.state, log_output))
                 self.neromum.query('exp_update', self.exp_id,
                         self.exp.state, log_output)
             except RuntimeError:

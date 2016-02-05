@@ -83,12 +83,15 @@ class Experiment(object):
     
     def get_action(self, logrow):
         init_action = ('no action', '')
-        for key in self._fields['conditions']:
-            action = self._fields['conditions'][key].get_action(logrow)
-            if action == 'kill':
-                return (action, key)
-            elif action != 'no action':
-                init_action = (action, key)
+        try:
+            for key in self._fields['conditions']:
+                action = self._fields['conditions'][key].get_action(logrow)
+                if action == 'kill':
+                    return (action, key)
+                elif action != 'no action':
+                    init_action = (action, key)
+        except TypeError:
+            return init_action
         return init_action
        
     def set_warning(self, warning):
@@ -218,6 +221,19 @@ def read_file(filepath, default=None):
     except IOError as e:
         pass
     return result
+
+def create_config_template():
+    # Creates an empty experiment config file with the required fields.
+    if os.path.exists('template.yaml'):
+        print('A config template already exists in this folder.')
+        return
+    with open('template.yaml', 'w') as f:
+        f.write('###Mandatory fields###\n')
+        for field in MANDATORY_FIELDS:
+            f.write('%s: \n' % field)
+        f.write('###Optional fields###\n')
+        for field in OPTIONAL_FIELDS:
+            f.write('%s: \n' % field)
 
 class Logger:
 

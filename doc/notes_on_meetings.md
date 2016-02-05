@@ -1431,7 +1431,8 @@ Storyless tasks:
 - Revert to python 2.7
 - Comprehensive system testing
 
-Sprint goal:
+Sprint goal: *Finish asynchronous system functionality and create a GUI
+mockup*
 
 ## 01-15 60m Frifury
 
@@ -1538,6 +1539,40 @@ Participants: Team
 Agenda:
 - Work on Daemon
 
+## 02-01 120m Sprint change 3
+
+Participants: team + PO
+
+Agenda:
+
+- 14:00 Review
+- 15:00 Planning
+
+### Review
+
+- We went through all stories and tasks planned for the sprint
+- We presented a live product demo
+
+### Planning
+
+- The sprint budget is 50h of pair time.
+
+- User testing -- continuous integration, ... -- Implement improvements based
+  on user feedback
+- Use cases: categorizing numbers, some neural networks problems (MAKE
+  examples)
+- Testikäyttäjiä muualta! Simo, Aallosta muita, ehkä vielä joitain muita
+  Finding and supporting test users.
+- Miten Neronetin tulevaisuus? Kuka käyttää ja kehittää sitä (markkinointi),
+  voisiko liittää johonkin Aallon kurssiin?
+- Linkki short guidiin Readthedocsiin ja git hub front pageen -- General
+  appearance, marketability and clarity improvement.
+- Perustetaan Neronet Google Group ja autetaan ihmisiä siellä.
+  Ekassa vaiheessa face-to-face demoja ja avustettua koittamista, Toisessa
+  vaiheessa markkoinoidaan netissä.
+
+Sprint goal: *Publish Neronet as an open source project*
+
 ## 02-29 60m Progress review 2
 
 Participants: team + PO + Coach
@@ -1547,3 +1582,24 @@ Agenda:
 - 13:00 Presentation of progress report (35 minutes)
 - 13:35 Feedback and questions (10 minutes)
 
+## 02-29 120m Triton Winter Kickstart
+
+Dear Tritoners,
+
+a lot is happening on Triton side and we need to get together to tell
+about it. There will be two events at once. First of all, all the
+newcomers are warmly welcome to Triton Winter Kickstart on Mon 29.2.
+Mark your calendars, the course is obligatory to those that had no
+chance to attend Summer Kickstart in June 2015 or has started after.
+
+Second, Triton User Group Meeting on Wed 2.3. All the users are warmly
+welcome. Triton has got new compute nodes, new storage system and will
+be fully re-installed with CentOS 7. Do you want to know more about it?
+Come to listen to that informal event. Your feedback is what we are
+looking for. Share the ideas, let us know what works and what does not etc.
+
+Details and registration link at:
+
+http://science-it.aalto.fi/scip/scip-winter-kickstart-2016/
+
+YT Ivan Degtyarenko (on behalf Science IT)

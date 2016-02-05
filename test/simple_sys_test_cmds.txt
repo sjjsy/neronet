@@ -3,4 +3,5 @@ nerocli --status
 nerocli --cluster kosh kosh.aalto.fi unmanaged
 nerocli --status
 nerocli --experiment experiments/sleep
+nerocli --experiment experiments/theanotest
 nerocli --status
