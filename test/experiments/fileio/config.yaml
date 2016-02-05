@@ -1,0 +1,7 @@
+run_command_prefix: 'python'
+main_code_file: 'main.py'
+parameters_format: '{pfi} {pfo}'
+fileio1:
+  parameters:
+      pfi: in.txt
+      pfo: out.txt

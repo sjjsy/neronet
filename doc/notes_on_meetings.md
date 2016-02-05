@@ -1627,7 +1627,7 @@ Agenda:
 
 Triton
 
-Puhuttiin 
+Puhuttiin teamin kanssa 
 We discussed with the team about 
 
 User testing
