@@ -18,7 +18,7 @@ import datetime
 
 import neronet.core
 
-TIMEOUT = 4.0
+TIMEOUT = 3.0
 
 class Query():
   """A daemon query class."""
@@ -69,7 +69,7 @@ class Daemon(object):
     class NoPidFileError(Exception):
         pass
 
-    def __init__(self, name, tdo=5.):
+    def __init__(self, name, tdo=TIMEOUT):
         self._name = name
         self._pdir = os.path.join(os.path.expanduser('~/.neronet'), self._name)
         self._pfin = os.path.join(self._pdir, 'in')
@@ -176,6 +176,11 @@ class Daemon(object):
         # daemon directory to store log output etc.
         os.umask(0)
         if os.path.exists(self._pdir):
+            # Clean up daemon related files and wait for any possible
+            # existing deamon to notice the cleanup and exit and then cleanup
+            # again
+            self._cleanup()
+            time.sleep(self._tdo)
             self._cleanup(outfiles=True)
         else:
             os.mkdir(self._pdir)
@@ -238,13 +243,13 @@ class Daemon(object):
         # Create a socket with a timeout and bind it to any available port on
         # localhost
         sckt = socket.socket()
-        sckt.settimeout(TIMEOUT)
+        sckt.settimeout(self._tdo)
         sckt.bind(('localhost', self._port))
         # Put the socket into server mode and retrieve the chosen port number
-        self.log('run(): Starting to listen at (%s, %d)...' % (host, self._port))
         sckt.listen(1)
         host, self._port = sckt.getsockname()
         neronet.core.write_file(self._pfport, self._port)
+        self.log('run(): Listening at (%s, %d)...' % (host, self._port))
         self._doquit = False
         while not self._doquit:
             self.log('run(): Looping...')
@@ -265,15 +270,22 @@ class Daemon(object):
                 self._doquit = True
         self._quit()
 
-    def _handle(self, sckt):
-        self.log(str(sckt.getsockname()))
+    def _handle(self, conn):
+        self.log(str(conn.getsockname()))
         result = ''
-        while True:
-            byts = sckt.recv(4096)
-            if (byts):
-                result += byts
-            else:
-                break
+        #byts = conn.recv(4096)
+        #result += byts
+        conn.settimeout(self._tdo/4)
+        try:
+            while True:
+                self.log('Receiving data...')
+                byts = conn.recv(2048)
+                if byts:
+                    result += byts
+                else:
+                    break
+        except socket.timeout:
+            pass
         data = pickle.loads(result)
         self.log('Received %s' % (data))
         self._uptime = time.time() - self._trun
@@ -287,7 +299,9 @@ class Daemon(object):
                 self._queries[name].process(*args, **kwargs)
             else:
                 self._reply['msgbody'] = 'Unsupported query "%s"!' % (name)
-        sckt.sendall(pickle.dumps(self._reply, -1))
+        self.log('Sending the reply %s...' % (self._reply))
+        # Send the reply to the connected socket
+        conn.sendall(pickle.dumps(self._reply, -1))
 
     def qry_uptime(self):
         self._reply['rv'] = 0
@@ -364,7 +378,7 @@ class QueryInterface(object):
             #self.abort(11, 'No such query "%s"!' % (name))
         # Create a TCP/IP socket
         sckt = socket.socket()
-        sckt.settimeout(TIMEOUT)
+        sckt.settimeout(self.daemon._tdo)
         # Connect to the daemon
         for i in range(trials):
             try:
@@ -424,7 +438,7 @@ class QueryInterface(object):
             return
         self.inf('stop(): Stopping the daemon...')
         self.query('stop')
-        time.sleep(TIMEOUT*0.5)
+        time.sleep(self.daemon._tdo*0.5)
         if os.path.exists(self.daemon._pfport):
             self.wrn('stop(): The daemon failed to cleanup!')
             self.daemon._cleanup()

@@ -1626,9 +1626,14 @@ Agenda:
 ### Message to Pyry
 
 Triton
-We discussed about the 
+
+Puhuttiin 
+We discussed with the team about 
 
 User testing
+
+
+## 02-10 300m Wedshop
 
 
 
