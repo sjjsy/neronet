@@ -8,6 +8,7 @@ import argparse
 import sys
 
 import neronet.neroman
+from neronet.core import create_config_template as cfgtemplate
 
 def create_argument_parser():
     """Create and return an argument parser."""
@@ -44,6 +45,10 @@ def create_argument_parser():
     parser.add_argument('--clean',
                         action='store_true',
                         help='Removes files created by neroman')
+    parser.add_argument('--template',
+                        action='store_true',
+                        help='Creates a config template file with the \
+                        required fields')
     return parser
 
 
@@ -90,6 +95,8 @@ def main():
         nero.fetch()
     if args.clean:
         nero.clean()
+    if args.template:
+        cfgtemplate()
 
 def remove_dir(path):
     os.system('rm -r ' + path)

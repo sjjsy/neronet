@@ -221,6 +221,19 @@ def read_file(filepath, default=None):
         pass
     return result
 
+def create_config_template():
+    # Creates an empty experiment config file with the required fields.
+    if os.path.exists('template.yaml'):
+        print('A config template already exists in this folder.')
+        return
+    with open('template.yaml', 'w') as f:
+        f.write('###Mandatory fields###\n')
+        for field in MANDATORY_FIELDS:
+            f.write('%s: \n' % field)
+        f.write('###Optional fields###\n')
+        for field in OPTIONAL_FIELDS:
+            f.write('%s: \n' % field)
+
 class Logger:
 
     """A class to simplify logging."""
