@@ -268,8 +268,14 @@ class Daemon(object):
 
     def _handle(self, sckt):
         self.log(str(sckt.getsockname()))
-        byts = sckt.recv(4096)
-        data = pickle.loads(byts)
+        result = ''
+        while True:
+            byts = sckt.recv(4096)
+            if (byts):
+                result += byts
+            else:
+                break
+        data = pickle.loads(result)
         self.log('Received %s' % (data))
         self._uptime = time.time() - self._trun
         self._reply = {'rv': 9, 'uptime': self._uptime}
