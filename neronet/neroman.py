@@ -62,33 +62,27 @@ class Neroman:
         """Removes all neronet related data"""
         self.config_parser.remove_data()
 
-    def specify_cluster(
-            self,
-            cluster_name,
-            ssh_address,
-            cluster_type,
-            portnumber=22):
+    def specify_cluster(self, cluster_id, cluster_type, ssh_address, ssh_port=22):
         """Specify clusters so that Neroman is aware of them.
 
         Writes cluster name, address and type to the clusters config file
 
         Args:
-            cluster_name (str): The name of the cluster, should be unique
-            ssh_address (str): SSH address of the cluster
+            cluster_id (str): The name of the cluster, should be unique
             cluster_type (str): Type of the cluster. Either slurm or unmanaged
+            ssh_address (str): SSH address of the cluster
+            ssh_port (str): SSH port of the cluster
 
         Raises:
             FormatError: if the cluster type isn't unmanaged or slurm
 
         """
-        if cluster_type != 'slurm' and cluster_type != 'unmanaged':
-            raise neronet.config_parser.FormatError( \
-                        "Cluster type should be slurm or unmanaged")
+        if not neronet.core.Cluster.Type.is_member(cluster_type):
+            raise neronet.config_parser.FormatError(
+                        ['Invalid cluster type "%s"!' % (cluster_type)])
 
-        self.clusters['clusters'][cluster_name] = {'ssh_address': ssh_address,
-                                                   'type': cluster_type,
-                                                   'port': portnumber}
-
+        self.clusters['clusters'][cluster_id] = neronet.core.Cluster(
+            cluster_id, cluster_type, ssh_address, ssh_port)
         self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
 
     def specify_experiments(self, folder):
@@ -108,8 +102,7 @@ class Neroman:
         """
 
 
-        experiments = self.config_parser.parse_experiments(folder,\
-                                                self.preferences)
+        experiments = self.config_parser.parse_experiments(folder)
         err = []
         for experiment in experiments:
             if experiment.id in self.database:
@@ -142,7 +135,7 @@ class Neroman:
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
 
-    def status_gen(self, arg, arg2=None):
+    def status_gen(self, arg):
         """Creates a generator that generates the polled status
 
         Yields:
@@ -154,51 +147,45 @@ class Neroman:
                 for line in experiment.as_gen():
                     yield line
                 raise StopIteration
+            elif arg in self.clusters['clusters']:
+                cluster = self.clusters['clusters'][arg]
+                for ln in cluster.yield_status():
+                    yield ln
+                raise StopIteration
             else:
-                raise IOError('No experiment named %s' % arg)
+                raise IOError('No experiment or cluster named "%s"!' % (arg))
+        yield "================Neroman=================\n"
+        yield "\n"
+        yield "================User====================\n"
+        yield "Name: %s\n" % self.preferences['name']
+        yield "Email: %s\n" % self.preferences['email']
+        if self.preferences['default_cluster']:
+            yield "Default Cluster: %s\n" % self.preferences['default_cluster']
+        yield "\n"
+        yield "================Clusters================\n"
+        yield 'Clusters:\n'
+        if not self.clusters['clusters']:
+            yield 'No clusters defined\n'
         else:
-            yield "================Neroman=================\n"
-            yield "\n"
-            yield "================User====================\n"
-            yield "Name: %s\n" % self.preferences['name']
-            yield "Email: %s\n" % self.preferences['email']
-            if self.preferences['default_cluster']:
-                yield "Default Cluster: %s\n" % self.preferences['default_cluster']
-            yield "\n"
-            yield "================Clusters================\n"
-            if not self.clusters['clusters']:
-                yield "No clusters defined\n"
-            else:
-                clusters = self.clusters['clusters']
-                for cluster in clusters:
-                    cluster_name = cluster
-                    cluster = clusters[cluster]
-                    address = cluster['ssh_address']
-                    type = cluster['type']
-                    yield "%s:\n" % cluster_name
-                    yield "  Address: %s\n" % address
-                    yield "  Type: %s\n" % type 
-                    for key, value in cluster.iteritems():
-                        if key != 'ssh_address' and key != 'type':
-                            yield "  %s: %s\n" % (key.capitalize(), value)
+            for cid, cluster in self.clusters['clusters'].iteritems():
+                yield '- %s\n' % (cluster)
+            if self.clusters['groups']:
                 yield "Cluster groups:\n"
                 groups = self.clusters['groups']
-                for group, group_clusters in groups.iteritems():
-                    yield "  " + group + ':\n'
-                    for cluster in group_clusters:
-                        yield "    " + cluster + "\n"
-            yield "\n"
-            yield "================Experiments=============\n"
-            if not len(self.database):
-                yield "No experiments defined\n"
-            else:
-                experiments_by_state = self._experiments_by_state(self.database)
-                current = ""
-                for state, experiments in sorted(experiments_by_state.iteritems()):
-                    yield "%s:\n" % state.capitalize()
-                    for experiment in sorted(experiments, key=lambda e: e.id):
-                        exp_warnings_exist = experiment.has_warnings()
-                        yield str("  %s" % experiment.id) + ' ' + exp_warnings_exist + '\n'
+                for group_id, group_clusters in groups.iteritems():
+                    yield '- %s: %s\n' % (group_id, ', '.join(cluster for cluster in group_clusters))
+        yield "\n"
+        yield "================Experiments=============\n"
+        if not len(self.database):
+            yield "No experiments defined\n"
+        else:
+            experiments_by_state = self._experiments_by_state(self.database)
+            current = ""
+            for state, experiments in sorted(experiments_by_state.iteritems()):
+                yield "%s:\n" % state.capitalize()
+                for experiment in sorted(experiments, key=lambda e: e.id):
+                    exp_warnings_exist = experiment.has_warnings()
+                    yield str("- %s" % experiment.id) + ' ' + exp_warnings_exist + '\n'
 
     def _experiments_by_state(self, experiments, state=None):
         """Partitions the experiments in the database by state"""
@@ -212,22 +199,19 @@ class Neroman:
         """Submit an experiment to a cluster using SSH.
 
         Args:
-            local_exp_path (str): the file path to experiment folder in local machine.
-            experiment_destination (str): the file path to experiment folder on the remote cluster.
-            experiment (str): the name of the experiment.
-            cluster_address (str): the address of the cluster.
-            cluster_port (int): ssh port number of the cluster.
+            exp_id (str): the ID of the experiment.
+            cluster_id (str): the ID of the cluster.
         """
+        # Determine the cluster
         if not cluster_id:
             cluster_id = self.preferences['default_cluster']
-            
+        if cluster_id in self.clusters['groups']:
+            cluster_id = random.choice(self.clusters['groups'][cluster_id])
         if cluster_id not in self.clusters['clusters']:
-            if cluster_id in self.clusters['groups']:
-                group_clusters = self.clusters['groups'][cluster_id]
-                cluster_id = random.choice(group_clusters)
-            else:
-                raise IOError('The given cluster ID or default cluster is not valid')
-        
+            raise AttributeError('The given cluster ID "%s" is not valid!' %
+                    (cluster_id))
+        cluster = self.clusters["clusters"][cluster_id]
+        # Load the experiment
         exp = self.database[exp_id]
         # Update experiment info
         exp.cluster_id = cluster_id
@@ -255,29 +239,18 @@ class Neroman:
         # Finally, serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
-        # Read cluster address and port
-        cluster = self.clusters["clusters"][cluster_id]
-        cluster_address = cluster["ssh_address"]
-        cluster_port = cluster["port"]
         # Transfer the files to the remote server
         neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
-            (cluster_port,
+            (cluster.ssh_port,
              local_tmp_dir,
-             cluster_address,
+             cluster.ssh_address,
              remote_dir))
         # Remove the temporary directory
         shutil.rmtree(local_tmp_dir)
-        # Find out the user's home folder in the remote machine
-        #neronet.core.osrun('ssh -p%s %s echo ~' % (cluster_port, cluster_address))
-        # Unless already running, start the neromum, and submit the new
-        # experiment to it
-        # Magic do NOT touch:
-        neronet.core.osrun(
-            'ssh -p%s %s "cd %s; PATH="%s/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" neromum --start"' %
-            (cluster_port, cluster_address, remote_dir, remote_dir,
-             remote_dir))
-        self.config_parser.save_database(DATABASE_FILENAME, \
-                                        self.database)
+        # Start the Neromum daemon
+        cluster.start_neromum()
+        # Update the experiment database
+        self.config_parser.save_database(DATABASE_FILENAME, self.database)
 
     def fetch(self):
         """Fetch results of submitted experiments."""
@@ -299,22 +272,24 @@ class Neroman:
             print('Fetching changes from cluster "%s"...' % (cluster_id))
             # Load cluster details
             cluster = self.clusters['clusters'][cluster_id]
-            cluster_address = cluster['ssh_address']
-            cluster_port = cluster['port']
             # Fetch the files from the remote server
             neronet.core.osrun('rsync -az -e "ssh -p%s" "%s:%s/" "%s"' %
-                (cluster_port,
-                 cluster_address,
+                (cluster.ssh_port,
+                 cluster.ssh_address,
                  remote_dir,
                  local_dir))
+            # Clean the cluster
+            cluster.clean_experiments()
         # Update the experiments
         for exp in experiments_to_check:
             print('Updating experiment "%s"...' % (exp.id))
-            exp = self.database[exp.id] = pickle.loads(neronet.core.read_file(
-                    os.path.join(local_dir, exp.id, 'exp.pickle')))
+            exp_file = os.path.join(local_dir, exp.id, 'exp.pickle')
+            if not os.path.exists(exp_file):
+                print('ERR: Experiment pickle missing!')
+                exp.update_state(neronet.core.Experiment.State.lost)
+                continue
+            exp = self.database[exp.id] = pickle.loads(
+                    neronet.core.read_file(exp_file))
             if exp.state == neronet.core.Experiment.State.finished:
                 exp.cluster_id = None
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
-    
-    def plot_experiment(self, experiment):
-        pass

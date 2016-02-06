@@ -9,6 +9,8 @@ import sys
 import pickle
 import glob
 import time
+import datetime
+import shutil
 
 import neronet.core
 import neronet.daemon
@@ -34,6 +36,7 @@ class Neromum(neronet.daemon.Daemon):
         self.add_query('list_exps', self.qry_list_exps)
         self.add_query('exp_update', self.qry_exp_update)
         self.add_query('exp_set_warning', self.qry_exp_warning)
+        self.add_query('input', self.qry_input)
 
     def qry_list_exps(self): # primarily for debugging
         """List all experiments submitted to this mum."""
@@ -53,8 +56,10 @@ class Neromum(neronet.daemon.Daemon):
                 exp.log_output[log_path] = ''
             # Append the new log output
             exp.log_output[log_path] += new_text
-        # Update experiment state info
+        # Update experiment state and timestamp
         exp.update_state(state)
+        exp.time_modified = datetime.datetime.now()
+        # Update the experiment pickle
         neronet.core.write_file(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                 'experiments', exp.id, 'exp.pickle'), pickle.dumps(exp))
         # Debugging
@@ -63,11 +68,37 @@ class Neromum(neronet.daemon.Daemon):
         self._reply['rv'] = 0
     
     def qry_exp_warning(self, exp_id, warnings):
+        # FIXME is this function necessary? -Samuel
         exp = self.exp_dict[exp_id]
         exp.set_multiple_warnings(warnings)
         neronet.core.write_file(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                 'experiments', exp.id, 'exp.pickle'), pickle.dumps(exp))
+        self._reply['rv'] = 0
 
+    def qry_input(self, data):
+        """Process input from Neroman."""
+        answer = {}
+        if 'action' in data:
+            action = data['action']
+            if action == 'fetch':
+                answer['exp_dict'] = self.exp_dict
+            elif action == 'clean_experiments':
+                # Clean all experiments that are either finished or lost
+                for exp_dir in glob.glob(os.path.join(neronet.core.USER_DATA_DIR_ABS,
+                        'experiments/*')):
+                    exp_id = os.path.basename(exp_dir)
+                    if exp_id not in self.exp_dict:
+                        continue
+                    exp = self.exp_dict[exp_id]
+                    if exp.state in (neronet.core.Experiment.State.finished,
+                            neronet.core.Experiment.State.lost):
+                        self.log('Cleaning experiment "%s"...' % (exp_id))
+                        shutil.rmtree(exp_dir)
+                        del self.exp_dict[exp_id]
+        self._reply['data'] = answer
+        self._reply['msgbody'] = 'Thanks!'
+        self._reply['rv'] = 0
+    
     def ontimeout(self):
         """Load and start any unstarted received experiments."""
         # Load all experiments into the dict that have not yet been loaded
@@ -81,29 +112,42 @@ class Neromum(neronet.daemon.Daemon):
                 self.exp_dict[exp_id] = exp
         # Start an experiment if there is any to start
         for exp in self.exp_dict.values():
-            if exp.state == neronet.core.Experiment.State.submitted:
+            if exp.state == neronet.core.Experiment.State.submitted_to_kid:
+                # Try to configure the kid
+                nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(exp.id))
+                nerokid.query('configure', host=self._host, port=self._port)
+            elif exp.state == neronet.core.Experiment.State.submitted:
                 # Initialize the log output container
                 exp.log_output = {}
-                # TODO: Allow sbatch launch
+                # TODO: Support for Slurm!
                 # Launch experiment in the local (umanaged) node
                 self.log('Launching experiment "%s"...' % (exp.id))
                 nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(exp.id))
                 # Start the kid daemon
                 nerokid.start()
-                # Wait until it gets initialized
-                time.sleep(2.0)
-                # Configure it
-                nerokid.query('configure', host=self._host, port=self._port)
+                # Update the experiment state and timestamp
                 exp.update_state(neronet.core.Experiment.State.submitted_to_kid)
+                exp.time_modified = datetime.datetime.now()
                 return # pace submission by launching only one at a time
+        # Compute the number of lost experiments
+        lost_count = 0
+        now = datetime.datetime.now()
+        for exp in self.exp_dict.values():
+            if exp.state in (neronet.core.Experiment.State.submitted_to_kid, neronet.core.Experiment.State.running) \
+                    and exp.time_modified < now - datetime.timedelta(minutes=1):
+                exp.update_state(neronet.core.Experiment.State.lost)
+                lost_count += 1
         # Compute the number of finished experiments
         finished_count = 0
         for exp in self.exp_dict.values():
             if exp.state == neronet.core.Experiment.State.finished:
                 finished_count += 1
-        # Exit if all known (submitted) experiments are finished
-        if finished_count == len(self.exp_dict):
-            self.log('All %d experiments are finished. Quitting...' % (finished_count))
+        # Exit if all known (submitted) experiments are either finished or
+        # lost
+        total_count = len(self.exp_dict)
+        if finished_count + lost_count == total_count:
+            self.log('Nothing to do (%d/%d/%d). Quitting...' % (lost_count,
+                    finished_count, total_count))
             self._doquit = True
 
 def main():

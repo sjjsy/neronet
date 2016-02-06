@@ -120,6 +120,7 @@ class Nerokid(neronet.daemon.Daemon):
                             self.exp.set_warning(result[1])
                             changes += '\nWARNING: condition ' + result[1] + ' was met.\n'
                             self.log('WARNING: condition ' + result[1] + ' was met.')
+                            # FIXME: This data would end up there anyway via next update -Samuel
                             self.neromum.query('exp_set_warning', self.exp_id,
                                 self.exp.get_warnings())
                     log_output[log_file.path[len(self.exp_dir)+1:]] = changes

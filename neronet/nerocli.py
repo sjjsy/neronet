@@ -23,8 +23,8 @@ def create_argument_parser():
                         nargs=1,
                         help='Deletes the experiment with the given ID')
     parser.add_argument('--cluster',
-                        metavar=('cluster_id', 'ssh_address', 'type'),
-                        nargs=3,
+                        metavar=('cluster_id', 'type', 'ssh_address', 'ssh_port'),
+                        nargs=argparse.REMAINDER,
                         help='Specify a new cluster for computing')
     parser.add_argument('--user',
                         metavar=('name', 'email'),
@@ -38,7 +38,7 @@ def create_argument_parser():
                         action='store_true',
                         help='Fetches results of submitted experiments')
     parser.add_argument('--status',
-                        metavar='experiment_id',
+                        metavar='id',
                         nargs='?',
                         const='all',
                         help='Displays neronet status information')
@@ -71,9 +71,10 @@ def main():
             print("No experiment named %s" % experiment_id)
     if args.cluster:
         cluster_id = args.cluster[0]
-        address = args.cluster[1]
-        cluster_type = args.cluster[2]
-        nero.specify_cluster(cluster_id, address, cluster_type)
+        cluster_type = args.cluster[1]
+        ssh_address = args.cluster[2]
+        ssh_port = int(args.cluster[3]) if len(args.cluster) > 3 else 22
+        nero.specify_cluster(cluster_id, cluster_type, ssh_address, ssh_port)
     if args.user:
         name = args.user[0]
         email = args.user[1]

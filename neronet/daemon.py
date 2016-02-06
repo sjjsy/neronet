@@ -14,6 +14,7 @@ import socket
 import pickle
 import re
 import datetime
+import shutil
 #import threading
 
 import neronet.core
@@ -132,18 +133,24 @@ class Daemon(object):
         return self._port
 
     def _cleanup(self, outfiles=False):
-        """Remove daemon instance related files."""
+        """Remove daemon instance related files.
+
+        Returns:
+            int: The number of files removed."""
         self.log('cleanup(): Removing instance related files...')
         file_paths = [self._pfpid, self._pfport] + \
             ([self._pfout, self._pferr] if outfiles else [])
-        self.log('cleanup(): Files: %s' % (file_paths))
+        #self.log('cleanup(): Files: %s' % (file_paths))
+        remove_count = 0
         for pf in file_paths:
             if os.path.exists(pf):
                 self.log('cleanup(): Removing "%s"...' % (pf))
-                os.unlink(pf)
+                shutil.move(pf, pf + '.old')
+                remove_count += 1
+        return remove_count
 
     def _quit(self):
-        self._cleanup()
+        self._cleanup(outfiles=True)
         self.log("quit(): Exiting... Bye!")
         sys.exit(0)
 
@@ -174,14 +181,17 @@ class Daemon(object):
 
         # Decouple from parent environment and make sure we have a clean
         # daemon directory to store log output etc.
-        os.umask(0)
+        os.umask(0027)
         if os.path.exists(self._pdir):
-            # Clean up daemon related files and wait for any possible
+            # Clean up any daemon related files and wait for any possible
             # existing deamon to notice the cleanup and exit and then cleanup
             # again
-            self._cleanup()
-            time.sleep(self._tdo)
-            self._cleanup(outfiles=True)
+            remove_count = self._cleanup(outfiles=True)
+            if remove_count > 0:
+                self.wrn('daemonize(): %d files had to be cleaned!' %
+                        (remove_count))
+                time.sleep(self._tdo)
+                self._cleanup(outfiles=True)
         else:
             os.mkdir(self._pdir)
         os.chdir(self._pdir)
@@ -239,7 +249,6 @@ class Daemon(object):
 
     def _run(self):
         """The daemon process loop."""
-        self._trun = time.time()
         # Create a socket with a timeout and bind it to any available port on
         # localhost
         sckt = socket.socket()
@@ -250,6 +259,7 @@ class Daemon(object):
         host, self._port = sckt.getsockname()
         neronet.core.write_file(self._pfport, self._port)
         self.log('run(): Listening at (%s, %d)...' % (host, self._port))
+        self._trun = time.time()
         self._doquit = False
         while not self._doquit:
             self.log('run(): Looping...')
@@ -271,11 +281,9 @@ class Daemon(object):
         self._quit()
 
     def _handle(self, conn):
-        self.log(str(conn.getsockname()))
+        self.log('Handle %s...' % (str(conn.getsockname())))
+        conn.settimeout(self._tdo/6)
         result = ''
-        #byts = conn.recv(4096)
-        #result += byts
-        conn.settimeout(self._tdo/4)
         try:
             while True:
                 self.log('Receiving data...')
@@ -362,7 +370,8 @@ class QueryInterface(object):
             if os.path.exists(self.daemon._pfport):
                 self.port = int(neronet.core.read_file(self.daemon._pfport))
             else:
-                raise self.NoPortFileError('No daemon port file!')
+                raise self.NoPortFileError('No daemon port file at "%s"!'
+                        % (self.daemon._pfport))
                 #self.abort(10, 'No daemon port file found! Is it running?')
         else:
             raise self.NoPortNumberError('No daemon port number!')
@@ -441,7 +450,7 @@ class QueryInterface(object):
         time.sleep(self.daemon._tdo*0.5)
         if os.path.exists(self.daemon._pfport):
             self.wrn('stop(): The daemon failed to cleanup!')
-            self.daemon._cleanup()
+            self.daemon._cleanup(outfiles=True)
         else:
             self.inf("stop(): The daemon exited cleanly.")
 
@@ -472,6 +481,7 @@ class Cli(QueryInterface):
             'stop': self.func_stop,
             'restart': self.func_restart,
             'query': self.func_query,
+            'input': self.func_input
         }
 
     def parse_arguments(self, cli_args=None):
@@ -549,3 +559,19 @@ class Cli(QueryInterface):
             self.inf('Received a reply with code %d.' % (reply['rv']))
             if 'msgbody' in reply:
               self.inf('Message:\n%s' % (reply['msgbody']))
+
+    def func_input(self):
+        """Read data input from stdin."""
+        print('Reading stdin...')
+        byts = ''
+        for ln in sys.stdin:
+            print('Read %d bytes ("%s").' % (len(ln), ln))
+            byts += ln
+        print('Reading finished!')
+        data = pickle.loads(byts)
+        print('Received %s' % (data))
+        try:
+            reply = self.query('input', data)
+        except self.NoPortFileError:
+            reply = {'rv': 1, 'msgbody': 'No port file!'}
+        print('Reply %s' % (reply))

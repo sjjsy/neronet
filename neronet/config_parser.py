@@ -11,7 +11,6 @@ import yaml
 import neronet.core
 
 EXPERIMENT_CONFIG_FILENAME = 'config.yaml'
-CLUSTER_TYPES = set(['slurm', 'unmanaged'])
 NERONET_DIR = os.path.expanduser('~') + '/.neronet/'
 
 class FormatError(Exception):
@@ -86,20 +85,25 @@ class ConfigParser():
         clusters = clusters_data.get('clusters', {})
         for cluster_id, fields in clusters.iteritems():
             if 'type' not in fields:
-                errors.append('No type specified for cluster %s' % cluster_id)
-            elif fields['type'] not in CLUSTER_TYPES:
-                errors.append('Invalid type %s for cluster %s' % \
+                errors.append('No type specified for cluster "%s"' % cluster_id)
+            elif not neronet.core.Cluster.Type.is_member(fields['type']):
+                errors.append('Invalid type "%s" for cluster "%s"' % \
                                 (fields['type'], cluster_id))
-            if 'port' not in fields:
-                fields['port'] = 22
+            if 'ssh_port' not in fields:
+                fields['ssh_port'] = 22
             if 'ssh_address' not in fields:
-                errors.append('No ssh address specified for cluster %s' % \
+                errors.append('No ssh address specified for cluster "%s"' % \
                                                             cluster_id)
+            if not errors:
+                clusters[cluster_id] = neronet.core.Cluster(cluster_id,
+                        fields['type'], fields['ssh_address'],
+                        fields['ssh_port'])
+                
         groups = clusters_data.get('groups', {})
         for group_name, group_clusters in groups.iteritems():
             for cluster in group_clusters:
                 if cluster not in clusters.keys():
-                    errors.append('Group %s cluster %s is not defined' % \
+                    errors.append('Group "%s" cluster "%s" is not defined' % \
                                     (group_name, cluster))
         if errors:
             raise FormatError(errors)
@@ -201,7 +205,13 @@ class ConfigParser():
         self.write_yaml(NERONET_DIR + preferences_filename, preferences)
 
     def save_clusters(self, clusters_filename, clusters):
-        self.write_yaml(NERONET_DIR + clusters_filename, clusters)
+        cluster_field_dict = {}
+        for k, v in clusters['clusters'].items():
+            cluster_field_dict[k] = {'type': v.ctype, 'ssh_address':
+                    v.ssh_address, 'ssh_port': v.ssh_port}
+        clusters_data = {'clusters': cluster_field_dict,
+                'groups': clusters['groups']}
+        self.write_yaml(NERONET_DIR + clusters_filename, clusters_data)
 
     def load_yaml(self, filename):
         """Loads yaml file"""

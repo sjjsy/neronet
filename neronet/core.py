@@ -9,10 +9,9 @@ import datetime
 import socket
 import pickle
 import time
-#import psutil
-from signal import signal, SIGTERM, SIGQUIT
-from traceback import print_exc
-from copy import deepcopy
+import subprocess
+import shlex
+import copy
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
@@ -28,6 +27,73 @@ OPTIONAL_FIELDS = set(['outputs', 'collection', 'required_files',
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster_id'])
 
+class Cluster(object):
+    """ 
+    Attributes:
+        cid (str): The unique ID (name) of the cluster
+        ctype (str): Type of the cluster. Either slurm or unmanaged
+        ssh_address (str): SSH address to the cluster
+        ssh_port (int): SSH port number.
+    """
+
+    class Type:
+        unmanaged = 'unmanaged'
+        slurm = 'slurm'
+        _members = set(['slurm', 'unmanaged'])
+        @classmethod
+        def is_member(cls, arg):
+            return arg in cls._members
+
+    def __init__(self, cid, ctype, ssh_address, ssh_port):
+        self.cid = cid
+        self.ctype = ctype
+        self.ssh_address = ssh_address
+        self.ssh_port = ssh_port
+        self.dir = USER_DATA_DIR
+
+    def __str__(self):
+        return '%s (%s) at %s:%s' % (self.cid, self.ctype, self.ssh_address,
+                self.ssh_port)
+
+    def sshrun(self, cmd, inp=None):
+        """Execute a shell command via SSH on the remote Neronet cluster."""
+        # Ask SSH to execute a command that starts by changing the working
+        # directory to 'self.dir' at the machine served at the specified
+        # address and port
+        scmd = 'ssh -p%s %s "cd %s;' % (self.ssh_port, self.ssh_address,
+                self.dir)
+        # Potentially include initialization commands depending on cluster
+        # type
+        if self.ctype == self.Type.unmanaged:
+            pass
+        elif self.ctype == self.Type.slurm:
+            # Load the python 2.7 module to gain access to the interpreter
+            scmd += ' module load python/2.7.4;'
+        # Run the given command with the PATH and PYTHONPATH environment
+        # variables defined to include the neronet executables and modules
+        scmd += ' PATH="%s/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="%s" %s"' \
+                % (self.dir, self.dir, cmd)
+        # Actual execution
+        res = osrunroe(scmd, inp=inp)
+        if res.rv != 0:
+            raise RuntimeError('Failed to run "%s" via SSH at cluster "%s"! Err: "%s", Out: "%s".' \
+                % (cmd, self.cid, res.err, res.out))
+        return res
+        # PATH="$HOME/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="$HOME/.neronet"
+
+    def start_neromum(self):
+        self.sshrun('neromum --start')
+
+    def clean_experiments(self):
+        data = {'action': 'clean_experiments'}
+        res = self.sshrun('neromum --input', inp=pickle.dumps(data, -1))
+        print('Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out))
+
+    def yield_status(self):
+        data = {'action': 'fetch', 'msg': 'I love honeybees!'}
+        res = self.sshrun('neromum --input', inp=pickle.dumps(data, -1))
+        yield 'Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out)
+
 class Experiment(object):
     """ 
     Attributes:
@@ -42,8 +108,8 @@ class Experiment(object):
         conditions (dict): Special condition for the experiment to do stuff
         state (list of tuples): The states of the experiment with timestamp
         cluster_id (str): The ID of the cluster where the experiment is run
-        time_created (str): Timestamp of when the experiment was created
-        time_modified (str): Timestamp of when the experiment was modified
+        time_created (datetime): Timestamp of when the experiment was created
+        time_modified (datetime): Timestamp of when the experiment was modified
         last
         path (str): Path to the experiment folder
     """
@@ -53,6 +119,7 @@ class Experiment(object):
         defined = 'defined'
         submitted = 'submitted'
         submitted_to_kid = 'submitted_to_kid'
+        lost = 'lost'
         terminated = 'terminated'
         running = 'running'
         finished = 'finished'
@@ -152,12 +219,13 @@ class Experiment(object):
     def update_state(self, state):
         """ Updates the state
         """
+        if state == self.state: return
         self._fields['states_info'].append((state, datetime.datetime.now()))
 
     def as_dict(self):
         """ Returns the experiment as a dictionary
         """
-        return {self._experiment_id: deepcopy(self._fields)}
+        return {self._experiment_id: copy.deepcopy(self._fields)}
 
     def as_gen(self):
         """Creates a generate that generates info about the experiment
@@ -196,12 +264,33 @@ class Experiment(object):
     def __str__(self):
         return "%s %s" % (self._experiment_id, self._fields['state'][-1][0])
 
-def osrun(cmd):
-    print('> %s' % (cmd))
-    os.system(cmd)
+class Runresult: """A class for holding shell command execution results."""
+
+def osrunroe(cmd, vrb=True, inp=None):
+    """Execute a shell command and return the return code, stdout and -err."""
+    if vrb: print('> %s' % (cmd))
+    if type(cmd) == str:
+        cmd = shlex.split(cmd)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    res = Runresult()
+    res.cmd = cmd
+    res.out, res.err = proc.communicate(inp)
+    res.rv = proc.poll()
+    return res
+
+def osrun(cmd, vrb=True):
+    res = osrunroe(cmd, vrb)
+    if res.rv != 0:
+        raise RuntimeError('osrun(%s) failed! Err: "%s", Out: "%s".' \
+                % (res.cmd, res.err, res.out))
+    return res
+
+def osrunq(cmd):
+    return osrun(cmd, vrb=False)
 
 def get_hostname():
-    return read_file('/etc/hostname').strip()
+    return osrunq('hostname').out.strip()
 
 def time_now():
     return datetime.datetime.now() #.strftime('%H:%M:%S %d-%m-%Y')

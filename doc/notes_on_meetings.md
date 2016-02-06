@@ -1625,13 +1625,10 @@ Agenda:
 
 ### Message to Pyry
 
-Triton
+@Pyry
+Puhuttiin teamin kanssa mahdollisista testikäyttäjistä ja huomasimme, että Neronetin yhteensopivuus tritonin kanssa olisi tärkeää. Ajattelimme, että voisimme siksi ottaa Triton yhteensopivuus user storyn tähän sprinttiin. Mitä mieltä olet tästä?
 
-Puhuttiin teamin kanssa 
-We discussed with the team about 
-
-User testing
-
+Lisäksi kävisikö, että käymme läpi sinun userfeedbackkiä keskiviikkona, ehkä mahdollinen skypekeskustelu niiden läpikäymiseen?
 
 ## 02-10 300m Wedshop
 
