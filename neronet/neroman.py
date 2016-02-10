@@ -239,9 +239,12 @@ class Neroman:
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
                 (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
-        # Finally, serialize the experiment object into the experiment folder
+        # Serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
+        # Finally, serialize the cluster object into the tmp folder
+        neronet.core.write_file(os.path.join(local_tmp_dir, 'cluster.pickle'),
+                pickle.dumps(cluster))
         # Transfer the files to the remote server
         neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
             (cluster.ssh_port,
@@ -280,7 +283,11 @@ class Neroman:
                 (cluster.ssh_port, cluster.ssh_address, remote_dir,
                  local_dir))
             # Clean the cluster
-            cluster.clean_experiments()
+            exceptions = [exp.id for exp in experiments_to_check if exp.state
+                    in (neronet.core.Experiment.State.submitted,
+                    neronet.core.Experiment.State.submitted_to_kid,
+                    neronet.core.Experiment.State.running)]
+            cluster.clean_experiments(exceptions)
         # Update the experiments
         for exp in experiments_to_check:
             print('Updating experiment "%s"...' % (exp.id))
