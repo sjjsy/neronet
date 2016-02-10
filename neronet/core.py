@@ -82,7 +82,8 @@ class Cluster(object):
         # PATH="$HOME/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="$HOME/.neronet"
 
     def start_neromum(self):
-        self.sshrun('neromum --start')
+        res = self.sshrun('neromum --start')
+        print('Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out))
 
     def clean_experiments(self):
         data = {'action': 'clean_experiments'}
@@ -267,7 +268,15 @@ class Experiment(object):
 class Runresult: """A class for holding shell command execution results."""
 
 def osrunroe(cmd, vrb=True, inp=None):
-    """Execute a shell command and return the return code, stdout and -err."""
+    """Execute a shell command and return the return code, stdout and -err.
+
+    Args:
+        vrb (boolean): Whether to print command or not.
+        inp (str): Input string for the sub process.
+
+    Returns
+        Runresult: The result object of the executed command.
+    """
     if vrb: print('> %s' % (cmd))
     if type(cmd) == str:
         cmd = shlex.split(cmd)
