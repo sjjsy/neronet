@@ -14,32 +14,12 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QListView" name="cluster_type_field">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>141</width>
-      <height>531</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListView" name="clusters">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>20</y>
-      <width>141</width>
-      <height>531</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="submit_btn">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>560</y>
-      <width>281</width>
+      <width>351</width>
       <height>27</height>
      </rect>
     </property>
@@ -64,7 +44,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>180</y>
+      <y>190</y>
       <width>361</width>
       <height>20</height>
      </rect>
@@ -79,7 +59,7 @@
       <x>370</x>
       <y>40</y>
       <width>20</width>
-      <height>151</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="orientation">
@@ -92,37 +72,17 @@
       <x>730</x>
       <y>40</y>
       <width>20</width>
-      <height>151</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QLineEdit" name="exp_name_field">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>50</y>
-      <width>113</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="exp_folder_field">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>80</y>
-      <width>113</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="cluster_name_field">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>520</x>
       <y>50</y>
       <width>113</width>
       <height>27</height>
@@ -132,28 +92,31 @@
    <widget class="QLineEdit" name="cluster_address_field">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>520</x>
       <y>80</y>
       <width>113</width>
       <height>27</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_5">
+   <widget class="QLineEdit" name="cluster_port_field">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>520</x>
       <y>110</y>
       <width>113</width>
       <height>27</height>
      </rect>
     </property>
+    <property name="text">
+     <string>22</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="cluster_add_btn">
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>140</y>
+      <x>520</x>
+      <y>170</y>
       <width>111</width>
       <height>27</height>
      </rect>
@@ -162,18 +125,156 @@
      <string>Add cluster</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="exp_add_btn">
+   <widget class="QComboBox" name="cluster_type_combo">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>520</x>
       <y>140</y>
       <width>111</width>
-      <height>27</height>
+      <height>31</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>unmanaged</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>slurm</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QListWidget" name="clusters">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>20</y>
+      <width>151</width>
+      <height>531</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>50</y>
+      <width>91</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Add experiment</string>
+     <string>cluster name</string>
     </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>80</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>cluster address</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>110</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>cluster port</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="experiments">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>201</width>
+      <height>531</height>
+     </rect>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::MultiSelection</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>0</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>clusters</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>experiments</string>
+    </property>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>210</y>
+      <width>351</width>
+      <height>371</height>
+     </rect>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Tab 1</string>
+     </attribute>
+     <widget class="QPushButton" name="exp_add_btn">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>300</y>
+        <width>111</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add experiment</string>
+      </property>
+     </widget>
+     <widget class="QPlainTextEdit" name="experiment_log">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>331</width>
+        <height>281</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Tab 2</string>
+     </attribute>
+    </widget>
    </widget>
   </widget>
  </widget>

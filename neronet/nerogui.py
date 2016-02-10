@@ -55,9 +55,11 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def submit_exp(self):
 	"""submit button functionality"""
-	exp = str(self.experiments.currentItem().text())
 	cluster = str(self.clusters.currentItem().text())
-	self.nero.submit(exp, cluster)
+	if cluster is None:
+		return
+	for exp in self.experiments.selectedItems():
+		self.nero.submit(str(exp.text()), cluster)
 
     def show_one_experiment(self):
 	self.experiment_log.clear()
