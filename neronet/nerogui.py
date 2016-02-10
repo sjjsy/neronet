@@ -14,6 +14,7 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 	#bind functions to buttons
 	self.cluster_add_btn.clicked.connect(self.add_cluster)
 	self.clusters.itemSelectionChanged.connect(self.update_cluster_fields)
+	self.experiments.itemSelectionChanged.connect(self.show_one_experiment)
 	self.exp_add_btn.clicked.connect(self.add_file)
 	self.submit_btn.clicked.connect(self.submit_exp)	
 
@@ -55,6 +56,12 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 	exp = str(self.experiments.currentItem().text())
 	cluster = str(self.clusters.currentItem().text())
 	self.nero.submit(exp, cluster)
+
+    def show_one_experiment(self):
+	self.experiment_log.clear()
+	name = str(self.experiments.currentItem().text())
+	for line in self.nero.status_gen(name):
+		self.experiment_log.insertPlainText(line)
 
 
 def main():
