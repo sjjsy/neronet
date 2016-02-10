@@ -88,7 +88,9 @@ class Cluster(object):
     def clean_experiments(self):
         data = {'action': 'clean_experiments'}
         res = self.sshrun('neromum --input', inp=pickle.dumps(data, -1))
-        print('Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out))
+        print(res.out)
+        if res.err:
+            print('Error: %s\n' % (res.err))
 
     def yield_status(self):
         data = {'action': 'fetch', 'msg': 'I love honeybees!'}

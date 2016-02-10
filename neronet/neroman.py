@@ -214,6 +214,9 @@ class Neroman:
         # Load the experiment
         exp = self.database[exp_id]
         # Update experiment info
+        #if exp.cluster_id != None: # (Commented for debugging)
+        #    raise Exception('Experiment already submitted to "%s"!'
+        #            % (exp.cluster_id))
         exp.cluster_id = cluster_id
         exp.update_state(neronet.core.Experiment.State.submitted)
         # Define local path, where experiment currently exists
@@ -274,9 +277,7 @@ class Neroman:
             cluster = self.clusters['clusters'][cluster_id]
             # Fetch the files from the remote server
             neronet.core.osrun('rsync -az -e "ssh -p%s" "%s:%s/" "%s"' %
-                (cluster.ssh_port,
-                 cluster.ssh_address,
-                 remote_dir,
+                (cluster.ssh_port, cluster.ssh_address, remote_dir,
                  local_dir))
             # Clean the cluster
             cluster.clean_experiments()
@@ -290,6 +291,12 @@ class Neroman:
                 continue
             exp = self.database[exp.id] = pickle.loads(
                     neronet.core.read_file(exp_file))
-            if exp.state == neronet.core.Experiment.State.finished:
+            if exp.state in (neronet.core.Experiment.State.finished,
+                        neronet.core.Experiment.State.lost):
                 exp.cluster_id = None
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
+
+    #def tail_log(self, exp_id=None):
+    #    """List latest log file lines of submitted experiments."""
+    #    for exp in self.database.values():
+    #        if exp.cluster_id != None:

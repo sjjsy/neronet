@@ -1643,7 +1643,7 @@ Joona: studied Travis; will set it up.
 Tuomo: has been sick; going to work on GUI display of configs
 Matias: fixing bugs; going to work on the cases
 Teemu: same thing
-Samuel: created a Cluster class, worked on Slurm support; going to continue
+Samuel: developed a Cluster class, worked on Slurm support; going to continue
 
 ## 02-12 300m Frifury
 

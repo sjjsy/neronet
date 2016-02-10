@@ -37,6 +37,7 @@ class Neromum(neronet.daemon.Daemon):
         self.add_query('exp_update', self.qry_exp_update)
         self.add_query('exp_set_warning', self.qry_exp_warning)
         self.add_query('input', self.qry_input)
+        self.idling = False
 
     def qry_list_exps(self): # primarily for debugging
         """List all experiments submitted to this mum."""
@@ -77,26 +78,32 @@ class Neromum(neronet.daemon.Daemon):
 
     def qry_input(self, data):
         """Process input from Neroman."""
-        answer = {}
+        now = datetime.datetime.now()
+        answer = {}; msg = ''
         if 'action' in data:
             action = data['action']
-            if action == 'fetch':
-                answer['exp_dict'] = self.exp_dict
-            elif action == 'clean_experiments':
-                # Clean all experiments that are either finished or lost
+            if action == 'clean_experiments':
+                # Clean all experiments that have been either finished or
+                # lost for at least 30 seconds
+                experiments_cleaned_count = 0
                 for exp_dir in glob.glob(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                         'experiments/*')):
                     exp_id = os.path.basename(exp_dir)
                     if exp_id not in self.exp_dict:
                         continue
                     exp = self.exp_dict[exp_id]
-                    if exp.state in (neronet.core.Experiment.State.finished,
-                            neronet.core.Experiment.State.lost):
-                        self.log('Cleaning experiment "%s"...' % (exp_id))
+                    state, state_dt = exp.state_info
+                    seconds_in_state = (now - state_dt).total_seconds()
+                    if state in (neronet.core.Experiment.State.finished,
+                            neronet.core.Experiment.State.lost) and \
+                            seconds_in_state > 30:
+                        self.log('Cleaning experiment "%s" (%s for %d s)...' % (exp_id, state, seconds_in_state))
                         shutil.rmtree(exp_dir)
                         del self.exp_dict[exp_id]
+                        experiments_cleaned_count += 1
+                msg += '%d experiments cleaned.\n' % (experiments_cleaned_count)
         self._reply['data'] = answer
-        self._reply['msgbody'] = 'Thanks!'
+        self._reply['msgbody'] = msg
         self._reply['rv'] = 0
     
     def ontimeout(self):
@@ -127,7 +134,7 @@ class Neromum(neronet.daemon.Daemon):
                 nerokid.start()
                 # Update the experiment state and timestamp
                 exp.update_state(neronet.core.Experiment.State.submitted_to_kid)
-                exp.time_modified = datetime.datetime.now()
+                exp.time_modified = now = datetime.datetime.now()
                 return # pace submission by launching only one at a time
         # Compute the number of lost experiments
         lost_count = 0
@@ -143,12 +150,22 @@ class Neromum(neronet.daemon.Daemon):
             if exp.state == neronet.core.Experiment.State.finished:
                 finished_count += 1
         # Exit if all known (submitted) experiments are either finished or
-        # lost
+        # lost and we've been idling for at least 5 minutes
         total_count = len(self.exp_dict)
         if finished_count + lost_count == total_count:
-            self.log('Nothing to do (%d/%d/%d). Quitting...' % (lost_count,
-                    finished_count, total_count))
-            self._doquit = True
+            if not self.idling:
+                self.idling = True
+                self.idling_since = now
+            idling_duration = now - self.idling_since
+            if idling_duration < datetime.timedelta(minutes=5):
+                self.log('Nothing to do (%d/%d/%d). Idling for %d s...' %
+                        (lost_count, finished_count, total_count,
+                        idling_duration.total_seconds()))
+            else:
+                self.log('Quitting due to boredom...')
+                self._doquit = True
+        elif self.idling:
+            self.idling = False
 
 def main():
     """Create a CLI interface object and process CLI arguments."""
