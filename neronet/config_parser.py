@@ -225,7 +225,7 @@ class ConfigParser():
         with open(filename, 'w') as f:
             f.write(yaml.dump(data, default_flow_style=False))
 
-    def parse_experiments(self, folder, preferences):
+    def parse_experiments(self, folder):
         """ Parses the configuration file found inside the given folder and
         returns the experiments created as a dictionary.
 
@@ -256,9 +256,9 @@ class ConfigParser():
         with open(config_file, 'r') as file:
             data = yaml.load(file.read())
 
-        return self.parse_experiment_data(folder, data, preferences)
+        return self.parse_experiment_data(folder, data)
         
-    def parse_experiment_data(self, folder, data, preferences):
+    def parse_experiment_data(self, folder, data):
         """ Parses experiment configuration data to experiments
 
         Args:

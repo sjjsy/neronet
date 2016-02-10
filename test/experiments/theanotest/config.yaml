@@ -1,7 +1,7 @@
 collection: None
 run_command_prefix: 'python'
 main_code_file: 'theanotest.py'
-logoutput: 'results'
+outputs: 'results'
 parameters_format: '{N} {feats} {training_steps}'
 theanotest:
     parameters:
