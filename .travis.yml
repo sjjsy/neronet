@@ -1,4 +1,4 @@
 language: python
 script:
   - cd neronet
-  - python -m unittest -v warning_test
+  - python -m unittest -v core_test
