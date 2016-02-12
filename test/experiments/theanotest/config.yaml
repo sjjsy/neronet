@@ -1,0 +1,10 @@
+collection: None
+run_command_prefix: 'python'
+main_code_file: 'theanotest.py'
+outputs: 'results'
+parameters_format: '{N} {feats} {training_steps}'
+theanotest:
+    parameters:
+        N: 400
+        feats: 784
+        training_steps: 10000

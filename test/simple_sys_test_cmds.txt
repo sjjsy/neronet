@@ -1,6 +1,8 @@
 nerocli --clean
 nerocli --status
-nerocli --cluster kosh.aalto.fi kosh unmanaged
+nerocli --cluster kosh unmanaged kosh.aalto.fi 
+nerocli --cluster brute unmanaged brute.aalto.fi
 nerocli --status
 nerocli --experiment experiments/sleep
+nerocli --experiment experiments/theanotest
 nerocli --status

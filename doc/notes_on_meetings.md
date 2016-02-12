@@ -1431,7 +1431,8 @@ Storyless tasks:
 - Revert to python 2.7
 - Comprehensive system testing
 
-Sprint goal:
+Sprint goal: *Finish asynchronous system functionality and create a GUI
+mockup*
 
 ## 01-15 60m Frifury
 
@@ -1537,3 +1538,125 @@ Participants: Team
 
 Agenda:
 - Work on Daemon
+
+## 02-01 120m Sprint change 2
+
+Participants: team + PO
+
+Agenda:
+
+- 14:00 Review
+- 15:00 Planning
+
+### Review
+
+### Planning
+
+- The sprint budget is 50h of pair time.
+
+- User testing -- continuous integration, ... -- Implement improvements based
+  on user feedback
+- Use cases: categorizing numbers, some neural networks problems (MAKE
+  examples)
+- Testikäyttäjiä muualta! Simo, Aallosta muita, ehkä vielä joitain muita
+  Finding and supporting test users.
+- Miten Neronetin tulevaisuus? Kuka käyttää ja kehittää sitä (markkinointi),
+  voisiko liittää johonkin Aallon kurssiin?
+- Linkki short guidiin Readthedocsiin ja git hub front pageen -- General
+  appearance, marketability and clarity improvement.
+- Perustetaan Neronet Google Group ja autetaan ihmisiä siellä.
+  Ekassa vaiheessa face-to-face demoja ja avustettua koittamista, Toisessa
+  vaiheessa markkoinoidaan netissä.
+
+Sprint goal: *Publish Neronet as an open source project*
+
+## 02-03 Sprint 3 retrospective
+
+### Visiting and reviewing the commitments done in the last sprint retrospective
+
+- CI not set up
+- Automated tests not done
+- More experiments and trials, less debating on whether to do what. Somewhat successful
+
+### Identifying things the team should start doing
+
+- Consider employing CI with Travis, Joona
+- System test automation, Joona
+- Following the hours spent by all the developers and properly adjusting them
+
+### Identifying things the team should continue doing
+
+- Hold daily scrums only when some of the developers feel the need for them
+
+## 02-05 300m Frifury
+
+Participants: Samuel, Matias
+
+Agenda:
+- Sprint planning with (Samuel, Matias)
+
+### Sprint planning
+
+- Improve code documentation and commenting
+- General appearance, marketability and clarity improvement
+- Triton support (Consult Pyry with inclusion to backlog)
+- Google "Neronet" group for marketing and user support
+- Gather test users: Pyry, Jelena, Simo, Triton users
+- Extend and improve the documentation in the technical overview
+- Embed/append mainenance instructions to the technical overview
+- Continuous integration
+- Improvements based on user feedback
+- Advert in Reddit
+- Use cases: categorizing numbers, some neural networks problems
+- Future of Neronet?
+- Basic Neronet via GUI
+- Visualize variable changes
+- Automated testing
+
+### Daily scrum
+
+- Teemu and Matias tried to test Neronet with a Theano example script;
+  Now they are to continue creating a few use cases
+- Iiro did planning work related to the variable visualization story; He will
+  continue the work today.
+- Samuel did some overall sprint planning and will now try to work on adding
+  Slurm support
+
+### Message to Pyry
+
+@Pyry
+Puhuttiin teamin kanssa mahdollisista testikäyttäjistä ja huomasimme, että Neronetin yhteensopivuus tritonin kanssa olisi tärkeää. Ajattelimme, että voisimme siksi ottaa Triton yhteensopivuus user storyn tähän sprinttiin. Mitä mieltä olet tästä?
+
+Lisäksi kävisikö, että käymme läpi sinun userfeedbackkiä keskiviikkona, ehkä mahdollinen skypekeskustelu niiden läpikäymiseen?
+
+## 02-10 300m Wedshop
+
+Participants: Samuel, Matias
+
+Agenda:
+- Daily scrum
+- Development
+
+### Daily scrum
+
+Joona: studied Travis; will set it up.
+Tuomo: has been sick; going to work on GUI display of configs
+Matias: fixing bugs; going to work on the cases
+Teemu: same thing
+Samuel: developed a Cluster class, worked on Slurm support; going to continue
+
+## 02-12 300m Frifury
+
+Participants: Samuel, Matias
+
+Agenda:
+- ??
+
+## 02-29 60m Progress review 2
+
+Participants: team + PO + Coach
+
+Agenda:
+
+- 13:00 Presentation of progress report (35 minutes)
+- 13:35 Feedback and questions (10 minutes)

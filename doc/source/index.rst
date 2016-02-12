@@ -6,9 +6,6 @@
 Neronet documentation
 =====================
 
-.. toctree::
-   :maxdepth: 2
-
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
@@ -18,6 +15,21 @@ Introduction
 
 A good introduction and overview of the project is available at the
 `project's GitHub repository <https://github.com/smarisa/neronet>`_.
+
+Quick start guide
+-----------------
+.. toctree::
+   :maxdepth: 3
+
+   quick_start_guide
+
+User guide
+------------
+.. toctree::
+   :maxdepth: 2
+
+   user_guide
+
 
 Key modules
 -----------

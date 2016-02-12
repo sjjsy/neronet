@@ -1,3 +1,12 @@
+## Python 2.7
+virtualenv -p /usr/bin/python2.7 venv27
+source bashrc.sh
+pip install -r requirements.txt
+
+# Then you should be able to start testing!
+nerocli --cluster kosh ...
+
+## Python 3.5 specific
 sudo add-apt-repository ppa:fkrull/deadsnakes
 sudo apt-get update
 sudo apt-get install python3.5

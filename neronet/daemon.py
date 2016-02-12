@@ -14,11 +14,12 @@ import socket
 import pickle
 import re
 import datetime
+import shutil
 #import threading
 
 import neronet.core
 
-TIMEOUT = 4.0
+TIMEOUT = 3.0
 
 class Query():
   """A daemon query class."""
@@ -69,7 +70,7 @@ class Daemon(object):
     class NoPidFileError(Exception):
         pass
 
-    def __init__(self, name, tdo=5.):
+    def __init__(self, name, tdo=TIMEOUT):
         self._name = name
         self._pdir = os.path.join(os.path.expanduser('~/.neronet'), self._name)
         self._pfin = os.path.join(self._pdir, 'in')
@@ -83,7 +84,7 @@ class Daemon(object):
         self.add_query('stop', self.qry_stop)
         self._trun = 0
         self._port = 0
-        self._host = neronet.core.get_hostname()
+        self._host = 'localhost' # neronet.core.get_hostname() FIXME kosh != kosh.aalto.fi
         self._tdo = tdo
         self._sckt = None
 
@@ -132,18 +133,24 @@ class Daemon(object):
         return self._port
 
     def _cleanup(self, outfiles=False):
-        """Remove daemon instance related files."""
+        """Remove daemon instance related files.
+
+        Returns:
+            int: The number of files removed."""
         self.log('cleanup(): Removing instance related files...')
         file_paths = [self._pfpid, self._pfport] + \
             ([self._pfout, self._pferr] if outfiles else [])
-        self.log('cleanup(): Files: %s' % (file_paths))
+        #self.log('cleanup(): Files: %s' % (file_paths))
+        remove_count = 0
         for pf in file_paths:
             if os.path.exists(pf):
                 self.log('cleanup(): Removing "%s"...' % (pf))
-                os.unlink(pf)
+                shutil.move(pf, pf + '.old')
+                remove_count += 1
+        return remove_count
 
     def _quit(self):
-        self._cleanup()
+        self._cleanup(outfiles=True)
         self.log("quit(): Exiting... Bye!")
         sys.exit(0)
 
@@ -174,9 +181,17 @@ class Daemon(object):
 
         # Decouple from parent environment and make sure we have a clean
         # daemon directory to store log output etc.
-        os.umask(0)
+        os.umask(0027)
         if os.path.exists(self._pdir):
-            self._cleanup(outfiles=True)
+            # Clean up any daemon related files and wait for any possible
+            # existing deamon to notice the cleanup and exit and then cleanup
+            # again
+            remove_count = self._cleanup(outfiles=True)
+            if remove_count > 0:
+                self.wrn('daemonize(): %d files had to be cleaned!' %
+                        (remove_count))
+                time.sleep(self._tdo)
+                self._cleanup(outfiles=True)
         else:
             os.mkdir(self._pdir)
         os.chdir(self._pdir)
@@ -234,18 +249,17 @@ class Daemon(object):
 
     def _run(self):
         """The daemon process loop."""
-        self._trun = time.time()
         # Create a socket with a timeout and bind it to any available port on
         # localhost
         sckt = socket.socket()
-        sckt.settimeout(TIMEOUT)
+        sckt.settimeout(self._tdo)
         sckt.bind(('localhost', self._port))
         # Put the socket into server mode and retrieve the chosen port number
         sckt.listen(1)
         host, self._port = sckt.getsockname()
         neronet.core.write_file(self._pfport, self._port)
-        self.log('run(): Starting to listen at (%s, %d)...' % (host, self._port))
-        sckt.listen(1)
+        self.log('run(): Listening at (%s, %d)...' % (host, self._port))
+        self._trun = time.time()
         self._doquit = False
         while not self._doquit:
             self.log('run(): Looping...')
@@ -261,16 +275,26 @@ class Daemon(object):
             #thread = threading.Thread(target=self.handle, args=[conn])
             #thread.daemon = True
             #thread.start()
-            if not os.path.exists(self._pfpid) or \
-                    not os.path.exists(self._pfport):
-                self.log('run(): Port file disappeared! Aborting...')
+            if self._read_i_or_nan(self._pfpid) != self._pid:
+                self.log('run(): PID file altered! Aborting...')
                 self._doquit = True
         self._quit()
 
-    def _handle(self, sckt):
-        self.log(str(sckt.getsockname()))
-        byts = sckt.recv(4096)
-        data = pickle.loads(byts)
+    def _handle(self, conn):
+        self.log('Handle %s...' % (str(conn.getsockname())))
+        conn.settimeout(self._tdo/6)
+        result = ''
+        try:
+            while True:
+                self.log('Receiving data...')
+                byts = conn.recv(2048)
+                if byts:
+                    result += byts
+                else:
+                    break
+        except socket.timeout:
+            pass
+        data = pickle.loads(result)
         self.log('Received %s' % (data))
         self._uptime = time.time() - self._trun
         self._reply = {'rv': 9, 'uptime': self._uptime}
@@ -283,7 +307,9 @@ class Daemon(object):
                 self._queries[name].process(*args, **kwargs)
             else:
                 self._reply['msgbody'] = 'Unsupported query "%s"!' % (name)
-        sckt.sendall(pickle.dumps(self._reply, -1))
+        self.log('Sending the reply %s...' % (self._reply))
+        # Send the reply to the connected socket
+        conn.sendall(pickle.dumps(self._reply, -1))
 
     def qry_uptime(self):
         self._reply['rv'] = 0
@@ -308,6 +334,7 @@ class QueryInterface(object):
 
     class NoPortFileError(RuntimeError): pass
     class NoPortNumberError(RuntimeError): pass
+    class ConnectError(RuntimeError): pass
 
     def __init__(self, daemon, port=None, host='127.0.0.1', verbose=False):
         self.daemon = daemon
@@ -343,7 +370,8 @@ class QueryInterface(object):
             if os.path.exists(self.daemon._pfport):
                 self.port = int(neronet.core.read_file(self.daemon._pfport))
             else:
-                raise self.NoPortFileError('No daemon port file!')
+                raise self.NoPortFileError('No daemon port file at "%s"!'
+                        % (self.daemon._pfport))
                 #self.abort(10, 'No daemon port file found! Is it running?')
         else:
             raise self.NoPortNumberError('No daemon port number!')
@@ -351,36 +379,36 @@ class QueryInterface(object):
 
     def query(self, name, *pargs, **kwargs):
         trials = 4
-        self.inf('Query(%s, %s, %s, trials=%d)...' % (name, pargs, kwargs, trials))
         self.determine_port()
+        self.inf('Query "%s" with %s, %s to (%s, %s)...' % (name, pargs,
+                kwargs, self.host, self.port))
         if name not in self.daemon._queries:
             raise RuntimeError('No such query "%s"!' % (name))
             #self.abort(11, 'No such query "%s"!' % (name))
         # Create a TCP/IP socket
         sckt = socket.socket()
-        sckt.settimeout(TIMEOUT)
+        sckt.settimeout(self.daemon._tdo)
         # Connect to the daemon
-        self.inf('Connecting to (%s, %d)...' % (self.host, self.port))
         for i in range(trials):
             try:
                 sckt.connect((self.host, self.port))
                 data = {'name': name, 'args': pargs, 'kwargs': kwargs}
-                self.inf('Sending data...')
+                #self.inf('Sending data...')
                 sckt.sendall(pickle.dumps(data, -1))
-                self.inf('Listening for a reply...')
+                #self.inf('Listening for a reply...')
                 try:
                     byts = sckt.recv(4096)
                     data = pickle.loads(byts) if byts else None
-                    self.inf('Received %s' % (data))
+                    self.inf('Received reply: %s' % (data))
                 except socket.timeout:
-                    self.inf('No reply received.')
+                    self.inf('No reply received!')
                     data = None
-                self.inf('Closing socket.')
+                #self.inf('Closing socket.')
                 sckt.close()
                 return data
             except socket.error:
                 time.sleep(0.3)
-        raise RuntimeError('Unable to connect to the daemon!')
+        raise self.ConnectError('Unable to connect to the daemon!')
         #self.abort(11, 'Unable to connect to the daemon.')
 
     def daemon_is_alive(self):
@@ -392,6 +420,8 @@ class QueryInterface(object):
             return uptime > 0 if uptime != None else False
         except self.NoPortFileError:
             return False
+        except self.ConnectError:
+            return None
 
     def cleanup(self):
         """Erase daemon instance related files."""
@@ -400,6 +430,9 @@ class QueryInterface(object):
     def start(self):
         """Start the daemon."""
         self.inf('start(): Starting the daemon...')
+        if self.daemon_is_alive():
+            self.wrn('start(): The daemon is already running!')
+            return
         # Fork a new thread that starts the daemon
         pid = os.fork()
         if pid == 0:
@@ -409,15 +442,15 @@ class QueryInterface(object):
 
     def stop(self):
         """Stop the daemon."""
-        self.inf('stop(): Stopping the daemon...')
         if not self.daemon_is_alive():
-            self.wrn('stop(): The daemon is not running!')
+            self.wrn('stop(): The daemon is not even running!')
             return
+        self.inf('stop(): Stopping the daemon...')
         self.query('stop')
-        time.sleep(TIMEOUT*0.5)
+        time.sleep(self.daemon._tdo*0.5)
         if os.path.exists(self.daemon._pfport):
             self.wrn('stop(): The daemon failed to cleanup!')
-            self.daemon._cleanup()
+            self.daemon._cleanup(outfiles=True)
         else:
             self.inf("stop(): The daemon exited cleanly.")
 
@@ -448,6 +481,7 @@ class Cli(QueryInterface):
             'stop': self.func_stop,
             'restart': self.func_restart,
             'query': self.func_query,
+            'input': self.func_input
         }
 
     def parse_arguments(self, cli_args=None):
@@ -468,9 +502,10 @@ class Cli(QueryInterface):
         # Before any '--func' arguments are found, give all found pos. arguments
         # and keyword arguments to the default function
         work_queue.append(('default', pargs, kargs))
-
+        # Go through and parse the arguments, organizing them into a queue of
+        # function calls with their positional and key word arguments
         for arg in cli_args:
-            self.inf('Parsing argument "%s"...' % (arg))
+            #self.inf('Parsing argument "%s"...' % (arg))
             mtch = self.RE_FUNC.match(arg)
             if mtch:
                 func = mtch.group(1)
@@ -487,13 +522,11 @@ class Cli(QueryInterface):
                 pargs.append(mtch.group(1))
                 continue
             self.abort(1, 'Unrecognized argument: "%s"' % (arg))
-       
-
-        for work in work_queue:
-            func, pargs, kargs = work
+        # Go through the work queue and execute the functions
+        for func, pargs, kargs in work_queue:
             if func in self.funcs:
-                self.inf('Executing function "%s" with %s %s...' 
-                    % (func, pargs, kargs))
+                #self.inf('Executing function "%s" with %s %s...' 
+                #    % (func, pargs, kargs))
                 self.funcs[func](*pargs, **kargs)
             else:
                 self.abort(2, 'Unrecognized function: "%s"' % (func))
@@ -526,3 +559,19 @@ class Cli(QueryInterface):
             self.inf('Received a reply with code %d.' % (reply['rv']))
             if 'msgbody' in reply:
               self.inf('Message:\n%s' % (reply['msgbody']))
+
+    def func_input(self):
+        """Read data input from stdin."""
+        print('Reading stdin...')
+        byts = ''
+        for ln in sys.stdin:
+            print('Read %d bytes ("%s").' % (len(ln), ln))
+            byts += ln
+        print('Reading finished!')
+        data = pickle.loads(byts)
+        print('Received %s' % (data))
+        try:
+            reply = self.query('input', data)
+        except self.NoPortFileError:
+            reply = {'rv': 1, 'msgbody': 'No port file!'}
+        print('Reply %s' % (reply))

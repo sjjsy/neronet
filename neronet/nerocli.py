@@ -8,6 +8,7 @@ import argparse
 import sys
 
 import neronet.neroman
+from neronet.core import create_config_template as cfgtemplate
 
 def create_argument_parser():
     """Create and return an argument parser."""
@@ -20,26 +21,34 @@ def create_argument_parser():
     parser.add_argument('--delete',
                         metavar='experiment_id',
                         nargs=1,
-                        help='Deletes the experiment with the given id')
+                        help='Deletes the experiment with the given ID')
     parser.add_argument('--cluster',
-                        metavar=('cluster_id', 'address', 'type'),
-                        nargs=3,
+                        metavar=('cluster_id', 'type', 'ssh_address', 'ssh_port'),
+                        nargs=argparse.REMAINDER,
                         help='Specify a new cluster for computing')
     parser.add_argument('--user',
                         metavar=('name', 'email'),
                         nargs=2,
                         help='Updates user information')
     parser.add_argument('--submit',
+                        metavar=('experiment', 'cluster'),
                         nargs="+",
                         help='Submits an experiment to be run')
+    parser.add_argument('--fetch',
+                        action='store_true',
+                        help='Fetches results of submitted experiments')
     parser.add_argument('--status',
-                        metavar='experiment_id',
+                        metavar='id',
                         nargs='?',
                         const='all',
                         help='Displays neronet status information')
     parser.add_argument('--clean',
                         action='store_true',
                         help='Removes files created by neroman')
+    parser.add_argument('--template',
+                        action='store_true',
+                        help='Creates a config template file with the \
+                        required fields')
     return parser
 
 
@@ -62,9 +71,10 @@ def main():
             print("No experiment named %s" % experiment_id)
     if args.cluster:
         cluster_id = args.cluster[0]
-        address = args.cluster[1]
-        cluster_type = args.cluster[2]
-        nero.specify_cluster(cluster_id, address, cluster_type)
+        cluster_type = args.cluster[1]
+        ssh_address = args.cluster[2]
+        ssh_port = int(args.cluster[3]) if len(args.cluster) > 3 else 22
+        nero.specify_cluster(cluster_id, cluster_type, ssh_address, ssh_port)
     if args.user:
         name = args.user[0]
         email = args.user[1]
@@ -76,14 +86,18 @@ def main():
         except IOError as e:
             print(e)
     if args.submit:
-        experiment_ID = args.submit[0]
+        experiment_id = args.submit[0]
         if len(args.submit) > 1:
-            cluster_ID = args.submit[1]
-            nero.submit(experiment_ID, cluster_ID)
+            cluster_id = args.submit[1]
+            nero.submit(experiment_id, cluster_id)
         else:
-            nero.submit(experiment_ID)
+            nero.submit(experiment_id)
+    if args.fetch:
+        nero.fetch()
     if args.clean:
         nero.clean()
+    if args.template:
+        cfgtemplate()
 
 def remove_dir(path):
     os.system('rm -r ' + path)

@@ -11,7 +11,6 @@ import yaml
 import neronet.core
 
 EXPERIMENT_CONFIG_FILENAME = 'config.yaml'
-CLUSTER_TYPES = set(['slurm', 'unmanaged'])
 NERONET_DIR = os.path.expanduser('~') + '/.neronet/'
 
 class FormatError(Exception):
@@ -86,20 +85,25 @@ class ConfigParser():
         clusters = clusters_data.get('clusters', {})
         for cluster_id, fields in clusters.iteritems():
             if 'type' not in fields:
-                errors.append('No type specified for cluster %s' % cluster_id)
-            elif fields['type'] not in CLUSTER_TYPES:
-                errors.append('Invalid type %s for cluster %s' % \
+                errors.append('No type specified for cluster "%s"' % cluster_id)
+            elif not neronet.core.Cluster.Type.is_member(fields['type']):
+                errors.append('Invalid type "%s" for cluster "%s"' % \
                                 (fields['type'], cluster_id))
-            if 'port' not in fields:
-                fields['port'] = 22
+            if 'ssh_port' not in fields:
+                fields['ssh_port'] = 22
             if 'ssh_address' not in fields:
-                errors.append('No ssh address specified for cluster %s' % \
+                errors.append('No ssh address specified for cluster "%s"' % \
                                                             cluster_id)
+            if not errors:
+                clusters[cluster_id] = neronet.core.Cluster(cluster_id,
+                        fields['type'], fields['ssh_address'],
+                        fields['ssh_port'])
+                
         groups = clusters_data.get('groups', {})
         for group_name, group_clusters in groups.iteritems():
             for cluster in group_clusters:
                 if cluster not in clusters.keys():
-                    errors.append('Group %s cluster %s is not defined' % \
+                    errors.append('Group "%s" cluster "%s" is not defined' % \
                                     (group_name, cluster))
         if errors:
             raise FormatError(errors)
@@ -133,7 +137,7 @@ class ConfigParser():
         clusters = clusters_data.get('clusters', {})
         default_cluster = preferences_data['default_cluster']
         if default_cluster not in clusters and default_cluster:
-            raise FormatError(['Default cluster %s no defined' % \
+            raise FormatError(['Default cluster %s not defined' % \
                                 default_cluster])
 
     def load_database(self, database_filename):
@@ -201,7 +205,13 @@ class ConfigParser():
         self.write_yaml(NERONET_DIR + preferences_filename, preferences)
 
     def save_clusters(self, clusters_filename, clusters):
-        self.write_yaml(NERONET_DIR + clusters_filename, clusters)
+        cluster_field_dict = {}
+        for k, v in clusters['clusters'].items():
+            cluster_field_dict[k] = {'type': v.ctype, 'ssh_address':
+                    v.ssh_address, 'ssh_port': v.ssh_port}
+        clusters_data = {'clusters': cluster_field_dict,
+                'groups': clusters['groups']}
+        self.write_yaml(NERONET_DIR + clusters_filename, clusters_data)
 
     def load_yaml(self, filename):
         """Loads yaml file"""
@@ -299,7 +309,6 @@ class ConfigParser():
                     for param in not_updated:
                         new_scope['parameters'][param] = \
                                     old_scope['parameters'][param]
-
                 #Add the missing values from the old scope to the new
                 for missing_field in missing_mandatory_fields:
                     if missing_field in old_scope:
@@ -311,8 +320,23 @@ class ConfigParser():
                 optional_fields = set(old_scope) & neronet.core.OPTIONAL_FIELDS
                 for optional_field in optional_fields:
                     if optional_field not in new_scope:
+                        if optional_field == 'conditions':
+                            conditions = old_scope[optional_field]
+                            for condition in conditions:
+                                condition = conditions[condition]
+                                cond_errors = \
+                                    self.check_conditions(condition) 
+                            for err in cond_errors:
+                                errors.append(err)
                         new_scope[optional_field] = old_scope[optional_field]
-                        
+
+                #Set the folder name as a default collection
+                collection = set([os.path.basename(os.path.normpath(folder))])
+                if 'collection' in new_scope:
+                    c = new_scope['collection']
+                    collection = collection | \
+                                c if isinstance(c, set) else set([c])
+                new_scope['collection'] = collection
 
                 if not errors:
                     #Create the experiments
@@ -323,6 +347,15 @@ class ConfigParser():
                         if field == 'parameters':
                             params = \
                                 self._param_combinations(new_scope[field])
+                        if field == 'conditions':
+                            conditions = {}
+                            for condition_name in new_scope[field]:
+                                condition = new_scope[field][condition_name]
+                                condition['name'] = condition_name
+                                condition['killvalue'] = float(condition['killvalue'])
+                                conditions[condition_name] = \
+                                    neronet.core.ExperimentWarning(**condition)
+                            experiment[field] = conditions
                         else:
                             experiment[field] = new_scope[field]
 
@@ -346,6 +379,24 @@ class ConfigParser():
             return experiments
         else:
             raise FormatError(['No experiments defined in config file'])
+
+    def check_conditions(self, conditions):
+        err = []
+        for field in neronet.core.WARNING_FIELDS:
+            if field not in conditions:
+                err.append("Experiment warning doesn't have field %s" % field)
+            elif field == 'when' and 'time' in conditions[field]:
+                try:
+                    float(conditions[field][4:].strip())
+                except:
+                    err.append("Invalid syntax at experiment warning 'when' attribute: " + conditions[field])
+            elif field == 'killvalue':
+                try:
+                    float(conditions[field])
+                except:
+                    err.append("Invalid syntax at experiment warning 'killvalue' attribute")
+        return err
+            
 
     def _param_combinations(self,params):
         """ A helper function to create all combinatorial subsets of the value
