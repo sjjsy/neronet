@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 """This module defines Neroman.
 
 To work with Neroman each experiment must have the following attributes
@@ -30,6 +31,7 @@ import collections
 import pickle
 import shutil
 import random
+import sys
 
 import neronet.core
 import neronet.config_parser
@@ -99,22 +101,37 @@ class Neroman:
             IOError: If the folder doesn't exists or the config file
                 doesn't exists
             FormatError: If the config file is badly formated
+
+        Returns:
+            changed_exps: A dictionary of changed experiments. 
+                This is then later used to prompt the user if they
+                want to replace the old experiment(s) with the new one(s).
         """
 
 
         experiments = self.config_parser.parse_experiments(folder)
         err = []
+        #Look for changes in the relevant fields and add them to changed_exps.
+        changed_exps = {}
+        relevant_fields = neronet.core.MANDATORY_FIELDS | neronet.core.OPTIONAL_FIELDS | set('path')
         for experiment in experiments:
             if experiment.id in self.database:
+                for key in experiment._fields:
+                    if key in relevant_fields and self.database[experiment.id].__getattr__(key) \
+                                                    != experiment.__getattr__(key):
+                        #(debug)print('Key: %s, Old: %s, New: %s' % (key, \
+                        #        self.database[experiment.id].__getattr__(key), 
+                        #        experiment.__getattr__(key)))
+                        changed_exps[experiment.id] = experiment
+                        break
                 err.append("Experiment named %s already in the database" \
-                                % experiment.id)
-            elif not err: self.database[experiment.id] = experiment
-        if not err:
-            self.config_parser.save_database(DATABASE_FILENAME, \
-                                        self.database)
-        if err:
-            raise IOError("\n".join(err))
-
+                            % experiment.id)
+            else: self.database[experiment.id] = experiment
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                    self.database)
+        if err: print('\n'.join(err), file=sys.stderr)
+        return changed_exps
+    
     def specify_user(self, name, email, default_cluster = ""):
         """Update user data"""
         self.preferences['name'] = name
@@ -122,6 +139,18 @@ class Neroman:
         self.preferences['default_cluster'] = default_cluster
         self.config_parser.save_preferences(PREFERENCES_FILENAME, \
                                             self.preferences)
+
+    def replace_experiment(self, new_experiment):
+        """Replaces an experiment in the database with a new,
+        updated instance of it.
+
+        Parameters:
+            new_experiment (neronet.core.Experiment): the experiment object
+                    to be put in the database in place of the old one.
+        """
+        self.database[new_experiment.id] = new_experiment
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                        self.database)
 
     def delete_experiment(self, experiment_id):
         """Deletes the experiment with the given experiment id
@@ -239,9 +268,12 @@ class Neroman:
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
                 (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
-        # Finally, serialize the experiment object into the experiment folder
+        # Serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
+        # Finally, serialize the cluster object into the tmp folder
+        neronet.core.write_file(os.path.join(local_tmp_dir, 'cluster.pickle'),
+                pickle.dumps(cluster))
         # Transfer the files to the remote server
         neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
             (cluster.ssh_port,
@@ -280,7 +312,11 @@ class Neroman:
                 (cluster.ssh_port, cluster.ssh_address, remote_dir,
                  local_dir))
             # Clean the cluster
-            cluster.clean_experiments()
+            exceptions = [exp.id for exp in experiments_to_check if exp.state
+                    in (neronet.core.Experiment.State.submitted,
+                    neronet.core.Experiment.State.submitted_to_kid,
+                    neronet.core.Experiment.State.running)]
+            cluster.clean_experiments(exceptions)
         # Update the experiments
         for exp in experiments_to_check:
             print('Updating experiment "%s"...' % (exp.id))

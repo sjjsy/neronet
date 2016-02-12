@@ -1650,7 +1650,18 @@ Samuel: developed a Cluster class, worked on Slurm support; going to continue
 Participants: Samuel, Matias
 
 Agenda:
-- ??
+- Daily scrum
+
+### Daily scrum
+
+- Tuomo: Works on the GUI and image display
+- Matias: Explored the Slurm related code, added an example experiment to the
+  user guide; Not sure what to do next
+- Teemu: Worked on the config file sync logic; Not sure what to do next
+
+Things to deal with:
+- Tuomo's work (rendering plots)
+- How to proceed with Teemu & Matias
 
 ## 02-29 60m Progress review 2
 
