@@ -25,7 +25,7 @@ MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters',
 OPTIONAL_FIELDS = set(['outputs', 'collection', 'required_files',
                         'conditions'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
-                        'cluster_id'])
+                        'cluster_id', 'warnings'])
 
 class Cluster(object):
     """ 
@@ -412,6 +412,13 @@ class ExperimentWarning:
                 self.comparator == 'leq' and varvalue <= self.killvalue] ):
                 return self.action
         return 'no action'
+
+    def __eq__(self, other):
+        if not other:
+            return False
+        for value in ['name', 'varname', 'killvalue', 'comparator', 'when', 'action']:
+            if getattr(self, value) != getattr(other, value): return False
+        return True
 
 """def get_sbatch_script(exp_id, exp_dir):
     s = '#!/bin/bash\n'

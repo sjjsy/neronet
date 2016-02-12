@@ -1,0 +1,24 @@
+Steps to take to upload your current version of Neronet to PyPI:
+1. Create a PyPI account:
+https://pypi.python.org/pypi?%3Aaction=register_form
+
+2. Write a ~/.pypirc file to hold your PyPI credentials
+#Example:
+[distutils]
+index-servers=pypi
+
+[pypi]
+repository = https://pypi.python.org/pypi
+username = <username>
+password = <password>
+
+3. Ask current PyPI neronet package owner for maintenance permissions
+Currently it's blomqvt1, or Teemu Blomqvist
+
+4. Update metadata in setup.py. At the very least you need to increase
+the version number.
+
+5. In the repo, use 'python setup.py sdist' to create a source distribution
+of the neronet package.
+
+6. Then use 'python setup.py sdist upload' to upload to PyPI. 
