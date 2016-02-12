@@ -1,0 +1,4 @@
+language: python
+script:
+  - cd neronet
+  - python -m unittest -v warning_test
