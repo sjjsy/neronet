@@ -4,7 +4,7 @@
 
 from __future__ import print_function
 import os.path
-import argparse
+import argcomplete, argparse
 import sys
 
 import neronet.neroman
@@ -55,14 +55,26 @@ def create_argument_parser():
 def main():
     """Parses the command line arguments and starts Neroman."""
     parser = create_argument_parser()
+    argcomplete.autocomplete(parser)
     args = parser.parse_args()
     nero = neronet.neroman.Neroman()
     if args.experiment:
         experiment_folder = args.experiment[0]
+        changed_exps = {}
         try:
-            nero.specify_experiments(experiment_folder)
+            changed_exps = nero.specify_experiments(experiment_folder)
         except (IOError, neronet.config_parser.FormatError) as e:
             print(e)
+        if changed_exps:
+            for experiment in changed_exps.values():
+                print('Changes detected in experiment: %s' % experiment.id)
+                while True:
+                    answer = raw_input('Do you want to overwrite the old' \
+                                    + ' version? (y/n)\n')
+                    if answer in ['yes', 'ye', 'y']:
+                        nero.replace_experiment(experiment)
+                        break
+                    elif answer in ['no', 'n']: break
     if args.delete:
         experiment_id = args.delete[0]
         try:
