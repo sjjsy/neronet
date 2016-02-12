@@ -92,6 +92,7 @@ def main():
         email = args.user[1]
         nero.specify_user(name, email)
     if args.status:
+        nero.fetch()
         try:
             status_gen = nero.status_gen(args.status)
             print(''.join(status_gen), end="")
