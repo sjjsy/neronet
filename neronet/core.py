@@ -34,6 +34,7 @@ class Cluster(object):
         ctype (str): Type of the cluster. Either slurm or unmanaged
         ssh_address (str): SSH address to the cluster
         ssh_port (int): SSH port number.
+        sbatch_args (str): Slurm SBATCH arguments.
     """
 
     class Type:
@@ -44,11 +45,12 @@ class Cluster(object):
         def is_member(cls, arg):
             return arg in cls._members
 
-    def __init__(self, cid, ctype, ssh_address, ssh_port):
+    def __init__(self, cid, ctype, ssh_address, ssh_port, sbatch_args=None):
         self.cid = cid
         self.ctype = ctype
         self.ssh_address = ssh_address
         self.ssh_port = ssh_port
+        self.sbatch_args = sbatch_args
         self.dir = USER_DATA_DIR
 
     def __str__(self):
@@ -82,12 +84,15 @@ class Cluster(object):
         # PATH="$HOME/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="$HOME/.neronet"
 
     def start_neromum(self):
-        self.sshrun('neromum --start')
-
-    def clean_experiments(self):
-        data = {'action': 'clean_experiments'}
-        res = self.sshrun('neromum --input', inp=pickle.dumps(data, -1))
+        res = self.sshrun('neromum --start')
         print('Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out))
+
+    def clean_experiments(self, exceptions):
+        data = {'action': 'clean_experiments', 'exceptions': exceptions}
+        res = self.sshrun('neromum --input', inp=pickle.dumps(data, -1))
+        print(res.out)
+        if res.err:
+            print('Error: %s\n' % (res.err))
 
     def yield_status(self):
         data = {'action': 'fetch', 'msg': 'I love honeybees!'}
@@ -267,7 +272,15 @@ class Experiment(object):
 class Runresult: """A class for holding shell command execution results."""
 
 def osrunroe(cmd, vrb=True, inp=None):
-    """Execute a shell command and return the return code, stdout and -err."""
+    """Execute a shell command and return the return code, stdout and -err.
+
+    Args:
+        vrb (boolean): Whether to print command or not.
+        inp (str): Input string for the sub process.
+
+    Returns
+        Runresult: The result object of the executed command.
+    """
     if vrb: print('> %s' % (cmd))
     if type(cmd) == str:
         cmd = shlex.split(cmd)
@@ -406,3 +419,17 @@ class ExperimentWarning:
         for value in ['name', 'varname', 'killvalue', 'comparator', 'when', 'action']:
             if getattr(self, value) != getattr(other, value): return False
         return True
+
+"""def get_sbatch_script(exp_id, exp_dir):
+    s = '#!/bin/bash\n'
+    s += '#SBATCH -J %s\n' % (exp_id)
+    s += '#SBATCH -D %s\n' (exp_dir)
+    s += '#SBATCH -o slurm.log\n' (exp_dir)
+    #SBATCH -o slurm.log
+    #SBATCH --time=0-00:01:00 --mem-per-cpu=10 -p play 
+    echo "Python version:"
+    module load python/2.7.4
+    python -V
+    echo "Launching the job!"
+    srun python main.py in.txt out.txt
+"""

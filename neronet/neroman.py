@@ -243,6 +243,9 @@ class Neroman:
         # Load the experiment
         exp = self.database[exp_id]
         # Update experiment info
+        #if exp.cluster_id != None: # (Commented for debugging)
+        #    raise Exception('Experiment already submitted to "%s"!'
+        #            % (exp.cluster_id))
         exp.cluster_id = cluster_id
         exp.update_state(neronet.core.Experiment.State.submitted)
         # Define local path, where experiment currently exists
@@ -265,9 +268,12 @@ class Neroman:
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
                 (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
-        # Finally, serialize the experiment object into the experiment folder
+        # Serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
+        # Finally, serialize the cluster object into the tmp folder
+        neronet.core.write_file(os.path.join(local_tmp_dir, 'cluster.pickle'),
+                pickle.dumps(cluster))
         # Transfer the files to the remote server
         neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
             (cluster.ssh_port,
@@ -303,12 +309,14 @@ class Neroman:
             cluster = self.clusters['clusters'][cluster_id]
             # Fetch the files from the remote server
             neronet.core.osrun('rsync -az -e "ssh -p%s" "%s:%s/" "%s"' %
-                (cluster.ssh_port,
-                 cluster.ssh_address,
-                 remote_dir,
+                (cluster.ssh_port, cluster.ssh_address, remote_dir,
                  local_dir))
             # Clean the cluster
-            cluster.clean_experiments()
+            exceptions = [exp.id for exp in experiments_to_check if exp.state
+                    in (neronet.core.Experiment.State.submitted,
+                    neronet.core.Experiment.State.submitted_to_kid,
+                    neronet.core.Experiment.State.running)]
+            cluster.clean_experiments(exceptions)
         # Update the experiments
         for exp in experiments_to_check:
             print('Updating experiment "%s"...' % (exp.id))
@@ -319,6 +327,12 @@ class Neroman:
                 continue
             exp = self.database[exp.id] = pickle.loads(
                     neronet.core.read_file(exp_file))
-            if exp.state == neronet.core.Experiment.State.finished:
+            if exp.state in (neronet.core.Experiment.State.finished,
+                        neronet.core.Experiment.State.lost):
                 exp.cluster_id = None
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
+
+    #def tail_log(self, exp_id=None):
+    #    """List latest log file lines of submitted experiments."""
+    #    for exp in self.database.values():
+    #        if exp.cluster_id != None:

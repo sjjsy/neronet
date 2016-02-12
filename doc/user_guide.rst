@@ -373,6 +373,44 @@ Prints:
 - The list of experiments submitted to and running in the given cluster
 - The times when the experiments were submitted and started running
 
+Example experiment
+------------------
+Assume we have a folder theanotest which contains a experiment named theanotest.py and we want to submit it to kosh.aalto.fi to be run there.
+
+Define a cluster where the experiment is to be run:
+nerocli --cluster kosh kosh.aalto.fi unmanaged
+
+Move the theanotest folder under the .neronet/experiments/ folder
+
+Write the following to a config.yaml file under the theanotest folder:
+
+```
+collection: None
+run_command_prefix: 'python'
+main_code_file: 'theanotest.py'
+outputs: 'results'
+parameters_format: '{N} {feats} {training_steps}'
+theanotest:
+    parameters:
+        N: 400
+        feats: 784
+        training_steps: 10000
+```
+
+Specify the experiment so neronet knows it is there:
+nerocli --experiment theanotest
+
+Submit the experiment to be run in the cluster:
+nerocli --submit kosh theanotest
+
+Before submitting make sure that all the dependencies of the experiment file are installed in the cluster.
+
+While the experiment is running, we can check its status with:
+nerocli --status
+Eventually the experiment will show as finished and it the results will be automatically synced under .neronet/results/theanotest folder.
+
+
+
 ===
 GUI
 ===

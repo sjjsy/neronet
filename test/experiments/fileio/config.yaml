@@ -5,3 +5,4 @@ fileio1:
   parameters:
       pfi: in.txt
       pfo: out.txt
+sbatch_args: '--time=0-00:02:00 --mem-per-cpu=8 -p play'

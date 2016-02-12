@@ -1594,7 +1594,6 @@ Participants: Samuel, Matias
 
 Agenda:
 - Sprint planning with (Samuel, Matias)
-- 
 
 ### Sprint planning
 
@@ -1632,7 +1631,26 @@ Lisäksi kävisikö, että käymme läpi sinun userfeedbackkiä keskiviikkona, e
 
 ## 02-10 300m Wedshop
 
+Participants: Samuel, Matias
 
+Agenda:
+- Daily scrum
+- Development
+
+### Daily scrum
+
+Joona: studied Travis; will set it up.
+Tuomo: has been sick; going to work on GUI display of configs
+Matias: fixing bugs; going to work on the cases
+Teemu: same thing
+Samuel: developed a Cluster class, worked on Slurm support; going to continue
+
+## 02-12 300m Frifury
+
+Participants: Samuel, Matias
+
+Agenda:
+- ??
 
 ## 02-29 60m Progress review 2
 
@@ -1642,7 +1660,3 @@ Agenda:
 
 - 13:00 Presentation of progress report (35 minutes)
 - 13:35 Feedback and questions (10 minutes)
-
-
-
-
