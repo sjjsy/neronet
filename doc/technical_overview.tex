@@ -304,22 +304,23 @@
 \end{frame}
 \begin{frame}{Updating to PyPI}
   \begin{itemize}
-  \item Create a PyPI account:
-    \begin{itemize}
-    \item https://pypi.python.org/pypi?%3Aaction=register_form
-    \end{itemize}
-  \item Write a ~/.pypirc file to hold your PyPI credentials
-    \begin{itemize}
-    \item #Example: [distutils] index-servers=pypi
-    \item [pypi] repository = https://pypi.python.org/pypi username = <username> password = <password>
-    \end{itemize}
-  \item Ask current PyPI neronet package owner for maintenance permissions
-    \begin{itemize}
-    \item Currently it's blomqvt1, or Teemu Blomqvist
-    \end{itemize}
-  \item Update metadata in setup.py. At the very least you need to increase the version number
-  \item In the repository, use 'python setup.py sdist' to create a source distribution of the neronet package
-  \item Then use 'python setup.py sdist upload' to upload to PyPI
+  \item Create a PyPI account \href{https://pypi.python.org/pypi?\%3Aaction=register_form}{here}.
+  \item Write a \texttt{\textasciitilde{}/.pypirc} file to hold your PyPI credentials:
+    \begin{verb}
+    [distutils]
+    index-servers = pypi
+    [pypi]
+    repository = https://pypi.python.org/pypi
+    username = my_username
+    password = my_password
+    \end{verb}
+  \item Ask current PyPI neronet package owner for maintenance permissions.
+    Currently it's \texttt{blomqvt1}, or Teemu Blomqvist
+  \item Update metadata in setup.py. At the very least you need to increase
+    the version number
+  \item In the repository, use \texttt{python setup.py sdist} to create a
+    source distribution of the neronet package
+  \item Then use \texttt{python setup.py sdist upload} to upload to PyPI
   \end{itemize}
 \end{frame}
 \end{document}

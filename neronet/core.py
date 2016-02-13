@@ -23,7 +23,7 @@ USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 OPTIONAL_FIELDS = set(['outputs', 'collection', 'required_files',
-                        'conditions'])
+                        'conditions', 'sbatch_args'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster_id', 'warnings'])
 
@@ -45,7 +45,7 @@ class Cluster(object):
         def is_member(cls, arg):
             return arg in cls._members
 
-    def __init__(self, cid, ctype, ssh_address, ssh_port, sbatch_args=None):
+    def __init__(self, cid, ctype, ssh_address, ssh_port, sbatch_args):
         self.cid = cid
         self.ctype = ctype
         self.ssh_address = ssh_address
@@ -131,7 +131,7 @@ class Experiment(object):
 
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
                     parameters, parameters_format, path, required_files=None,
-                    outputs="stdout", collection=None, conditions=None):
+                    outputs="stdout", collection=None, conditions=None, sbatch_args=None):
         now = datetime.datetime.now()
         fields = {'run_command_prefix': run_command_prefix,
                     'main_code_file': main_code_file,
@@ -142,6 +142,7 @@ class Experiment(object):
                     'parameters_format': parameters_format,
                     'collection': collection,
                     'conditions': conditions,
+                    'sbatch_args': sbatch_args,
                     'path': path,
                     'time_created': now,
                     'time_modified': now,

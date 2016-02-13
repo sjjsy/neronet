@@ -242,10 +242,11 @@ class Neroman:
         cluster = self.clusters["clusters"][cluster_id]
         # Load the experiment
         exp = self.database[exp_id]
-        # Update experiment info
+        #TODO: offer to cancel the current experiment submission
         #if exp.cluster_id != None: # (Commented for debugging)
         #    raise Exception('Experiment already submitted to "%s"!'
         #            % (exp.cluster_id))
+        # Update experiment info
         exp.cluster_id = cluster_id
         exp.update_state(neronet.core.Experiment.State.submitted)
         # Define local path, where experiment currently exists
@@ -316,7 +317,10 @@ class Neroman:
                     in (neronet.core.Experiment.State.submitted,
                     neronet.core.Experiment.State.submitted_to_kid,
                     neronet.core.Experiment.State.running)]
-            cluster.clean_experiments(exceptions)
+            try:
+                cluster.clean_experiments(exceptions)
+            except RuntimeError:
+                print('Note: Failed to clean the experiments at the cluster.')
         # Update the experiments
         for exp in experiments_to_check:
             print('Updating experiment "%s"...' % (exp.id))

@@ -94,10 +94,13 @@ class ConfigParser():
             if 'ssh_address' not in fields:
                 errors.append('No ssh address specified for cluster "%s"' % \
                                                             cluster_id)
+            if 'sbatch_args' not in fields:
+                fields['sbatch_args'] = None
+
             if not errors:
                 clusters[cluster_id] = neronet.core.Cluster(cluster_id,
                         fields['type'], fields['ssh_address'],
-                        fields['ssh_port'])
+                        fields['ssh_port'], fields['sbatch_args'])
                 
         groups = clusters_data.get('groups', {})
         for group_name, group_clusters in groups.iteritems():
@@ -207,8 +210,12 @@ class ConfigParser():
     def save_clusters(self, clusters_filename, clusters):
         cluster_field_dict = {}
         for k, v in clusters['clusters'].items():
-            cluster_field_dict[k] = {'type': v.ctype, 'ssh_address':
-                    v.ssh_address, 'ssh_port': v.ssh_port}
+            dct = {'type': v.ctype, 'ssh_address': v.ssh_address}
+            if v.ssh_port != 22:
+                dct['ssh_port'] = v.ssh_port
+            if v.sbatch_args:
+                dct['sbatch_args'] = v.sbatch_args
+            cluster_field_dict[k] = dct
         clusters_data = {'clusters': cluster_field_dict,
                 'groups': clusters['groups']}
         self.write_yaml(NERONET_DIR + clusters_filename, clusters_data)

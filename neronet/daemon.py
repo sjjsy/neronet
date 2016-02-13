@@ -408,7 +408,8 @@ class QueryInterface(object):
                 return data
             except socket.error:
                 time.sleep(0.3)
-        raise self.ConnectError('Unable to connect to the daemon!')
+        raise self.ConnectError('Unable to connect to the daemon at %s, %s!'
+                % (self.host, self.port))
         #self.abort(11, 'Unable to connect to the daemon.')
 
     def daemon_is_alive(self):

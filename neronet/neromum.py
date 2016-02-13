@@ -42,6 +42,7 @@ class Neromum(neronet.daemon.Daemon):
         self.idling = False
         self.cluster = pickle.loads(neronet.core.read_file(os.path.join(
                 neronet.core.USER_DATA_DIR_ABS, 'cluster.pickle')))
+        self._host = self.cluster.ssh_address
 
     def qry_list_exps(self): # primarily for debugging
         """List all experiments submitted to this mum."""
@@ -123,34 +124,38 @@ class Neromum(neronet.daemon.Daemon):
         # Start an experiment if there is any to start
         for exp in self.exp_dict.values():
             if exp.state == neronet.core.Experiment.State.submitted_to_kid:
-                # Try to configure the kid
-                nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(exp.id))
-                nerokid.query('configure', host=self._host, port=self._port)
+                pass
             elif exp.state == neronet.core.Experiment.State.submitted:
-                if self.cluster.ctype == neronet.core.Cluster.Type.unmanaged:
-                    # Initialize the log output container
-                    exp.log_output = {}
-                    # TODO: Support for Slurm!
-                    # Launch experiment in the local (umanaged) node
-                    self.log('Launching experiment "%s"...' % (exp.id))
-                    nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(exp.id))
-                    # Start the kid daemon
-                    nerokid.start()
-                    # Update the experiment state and timestamp
-                    exp.update_state(neronet.core.Experiment.State.submitted_to_kid)
-                    exp.time_modified = now = datetime.datetime.now()
-                    return # pace submission by launching only one at a time
-                elif self.cluster.ctype == neronet.core.Cluster.Type.slurm:
+                # Initialize the log output container
+                exp.log_output = {}
+                # Launch experiment
+                self.log('Launching experiment "%s"...' % (exp.id))
+                if self.cluster.ctype == neronet.core.Cluster.Type.slurm:
                     exp_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
                             'experiments', exp.id)
                     s = '#!/bin/bash\n'
                     s += '#SBATCH -J %s -D %s -o slurm.log\n' % (exp.id, exp_dir)
-                    s += '#SBATCH %s\n' % (self.cluster.sbatch_args)
+                    if self.cluster.sbatch_args: s += '#SBATCH %s\n' % (self.cluster.sbatch_args)
+                    if exp.sbatch_args: s += '#SBATCH %s\n' % (exp.sbatch_args)
                     s += 'module load python/2.7.4\n'
-                    s += '%s\n' % (self.cluster.sbatch_commands)
-                    s += 'srun nerokid --start\n'
-                    s += 'srun nerokid --query configure %s %s\n' % (self._host, self._port)
-                    # TODO: fix and exec s
+                    s += 'nerokid %s --start; sleep 4;\n' % (exp.id)
+                    s += 'nerokid %s --query configure %s %s; sleep 2m\n' % (exp.id, '130.233.229.116', self._port) # self._host
+                    #s += 'srun nerokid %s --query configure %s %s\n' % (exp.id, self._host, self._port)
+                    sbatch_script = os.path.join(exp_dir, 'slurm.sh')
+                    neronet.core.write_file(sbatch_script, s)
+                    neronet.core.osrun('sbatch "%s"' % (sbatch_script))
+                else:
+                    # Launch experiment in the local (umanaged) node
+                    nerokid = neronet.daemon.QueryInterface(neronet.nerokid.Nerokid(exp.id))
+                    # Start the kid daemon
+                    nerokid.start()
+                    # Try to configure the kid
+                    time.sleep(3.0)
+                    nerokid.query('configure', host='localhost', port=self._port)
+                # Update the experiment state and timestamp
+                exp.update_state(neronet.core.Experiment.State.submitted_to_kid)
+                exp.time_modified = now = datetime.datetime.now()
+                return # pace submission by launching only one at a time
         # Compute the number of lost experiments
         lost_count = 0
         now = datetime.datetime.now()
@@ -173,9 +178,9 @@ class Neromum(neronet.daemon.Daemon):
                 self.idling_since = now
             idling_duration = now - self.idling_since
             if idling_duration < datetime.timedelta(minutes=5):
-                self.log('Nothing to do (%d/%d/%d). Idling for %d s...' %
+                self.log('Nothing to do (%d/%d/%d). Idling for %s...' %
                         (lost_count, finished_count, total_count,
-                        idling_duration.total_seconds()))
+                        idling_duration))
             else:
                 self.log('Quitting due to boredom...')
                 self._doquit = True
