@@ -77,10 +77,21 @@ class Cluster(object):
         # Actual execution
         res = osrunroe(scmd, inp=inp)
         if res.rv != 0:
-            raise RuntimeError('Failed to run "%s" via SSH at cluster "%s"! Err: "%s", Out: "%s".' \
-                % (cmd, self.cid, res.err, res.out))
+            msg = ''
+            if res.err: msg += '\nErr: %s' % (res.err)
+            if res.out: msg += '\nOut: %s' % (res.out)
+            raise RuntimeError('Failed to run "%s" via SSH at cluster "%s"!%s'
+                % (cmd, self.cid, msg))
         return res
         # PATH="$HOME/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="$HOME/.neronet"
+
+    def test_connection(self):
+        res = self.sshrun('python -V')
+        if res.rv != 0:
+            raise RuntimeError('Failed to run Python via SSH at "%s"!' % (self.cid))
+        elif not res.err.startswith('Python 2.7'):
+            raise RuntimeError('Incorrect Python version at "%s": "%s"!' % (self.cid, res.err))
+        return True
 
     def start_neromum(self):
         res = self.sshrun('neromum --start')

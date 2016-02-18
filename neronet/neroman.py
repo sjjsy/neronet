@@ -81,9 +81,13 @@ class Neroman:
         if not neronet.core.Cluster.Type.is_member(cluster_type):
             raise neronet.config_parser.FormatError(
                         ['Invalid cluster type "%s"!' % (cluster_type)])
-
-        self.clusters['clusters'][cluster_id] = neronet.core.Cluster(
-            cluster_id, cluster_type, ssh_address)
+        cluster = neronet.core.Cluster(cluster_id, cluster_type, ssh_address)
+        try:
+            cluster.test_connection()
+            print('The cluster seems to be online!')
+        except RuntimeError as e:
+            print('Warning: %s' % (e))
+        self.clusters['clusters'][cluster_id] = cluster
         self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
 
     def specify_experiments(self, folder):
@@ -275,12 +279,14 @@ class Neroman:
         neronet.core.write_file(os.path.join(local_tmp_dir, 'cluster.pickle'),
                 pickle.dumps(cluster))
         # Transfer the files to the remote server
-        neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
-            (local_tmp_dir, cluster.ssh_address, remote_dir))
-        # Remove the temporary directory
-        shutil.rmtree(local_tmp_dir)
-        # Start the Neromum daemon
-        cluster.start_neromum()
+        try:
+            neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
+                (local_tmp_dir, cluster.ssh_address, remote_dir))
+            # Start the Neromum daemon
+            cluster.start_neromum()
+        finally:
+            # Remove the temporary directory
+            shutil.rmtree(local_tmp_dir)
         # Update the experiment database
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
 
@@ -305,8 +311,11 @@ class Neroman:
             # Load cluster details
             cluster = self.clusters['clusters'][cluster_id]
             # Fetch the files from the remote server
-            neronet.core.osrun('rsync -az -e "ssh" "%s:%s/" "%s"' %
-                (cluster.ssh_address, remote_dir, local_dir))
+            try:
+                neronet.core.osrun('rsync -az -e "ssh" "%s:%s/" "%s"' %
+                    (cluster.ssh_address, remote_dir, local_dir))
+            except RuntimeError:
+                print('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
             # Clean the cluster
             exceptions = [exp.id for exp in experiments_to_check if exp.state
                     in (neronet.core.Experiment.State.submitted,

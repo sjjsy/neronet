@@ -534,7 +534,6 @@ class Cli(QueryInterface):
 
     def func_default(self):
         pass
-        #raise NotImplementedError('The default function is not implemented!')
 
     def func_cleanup(self):
         """Erase daemon instance related files."""
