@@ -225,6 +225,9 @@ class Experiment(object):
         """ Updates the state
         """
         if state == self.state: return
+        if state == 'running' and self._fields['conditions']:
+            for c in self._fields['conditions']:
+                self._fields['conditions'][c].start_time = datetime.datetime.now()
         self._fields['states_info'].append((state, datetime.datetime.now()))
 
     def as_dict(self):
