@@ -38,7 +38,7 @@ The neronet is then downloaded and installed to your local machine.
 
 Configure your clusters with the following command
 ```
-nerocli --cluster cluster_id ssh_address type
+nerocli --cluster cluster_id type ssh_address
 ```
 where type can be unmanaged or slurm
 

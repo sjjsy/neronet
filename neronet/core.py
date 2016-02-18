@@ -27,6 +27,8 @@ OPTIONAL_FIELDS = set(['outputs', 'collection', 'required_files',
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster_id', 'warnings'])
 
+
+
 class Cluster(object):
     """ 
     Attributes:
@@ -45,7 +47,7 @@ class Cluster(object):
         def is_member(cls, arg):
             return arg in cls._members
 
-    def __init__(self, cid, ctype, ssh_address, ssh_port, sbatch_args):
+    def __init__(self, cid, ctype, ssh_address, ssh_port, sbatch_args=None):
         self.cid = cid
         self.ctype = ctype
         self.ssh_address = ssh_address
