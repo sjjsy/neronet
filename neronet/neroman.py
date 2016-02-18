@@ -284,6 +284,7 @@ class Neroman:
                 (local_tmp_dir, cluster.ssh_address, remote_dir))
             # Start the Neromum daemon
             cluster.start_neromum()
+            print("Experiment " + exp_id + " successfully submitted to " + cluster_id)
         finally:
             # Remove the temporary directory
             shutil.rmtree(local_tmp_dir)
