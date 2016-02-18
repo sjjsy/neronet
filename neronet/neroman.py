@@ -64,7 +64,7 @@ class Neroman:
         """Removes all neronet related data"""
         self.config_parser.remove_data()
 
-    def specify_cluster(self, cluster_id, cluster_type, ssh_address, ssh_port=22):
+    def specify_cluster(self, cluster_id, cluster_type, ssh_address):
         """Specify clusters so that Neroman is aware of them.
 
         Writes cluster name, address and type to the clusters config file
@@ -73,7 +73,6 @@ class Neroman:
             cluster_id (str): The name of the cluster, should be unique
             cluster_type (str): Type of the cluster. Either slurm or unmanaged
             ssh_address (str): SSH address of the cluster
-            ssh_port (str): SSH port of the cluster
 
         Raises:
             FormatError: if the cluster type isn't unmanaged or slurm
@@ -84,7 +83,7 @@ class Neroman:
                         ['Invalid cluster type "%s"!' % (cluster_type)])
 
         self.clusters['clusters'][cluster_id] = neronet.core.Cluster(
-            cluster_id, cluster_type, ssh_address, ssh_port)
+            cluster_id, cluster_type, ssh_address)
         self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
 
     def specify_experiments(self, folder):
@@ -276,11 +275,8 @@ class Neroman:
         neronet.core.write_file(os.path.join(local_tmp_dir, 'cluster.pickle'),
                 pickle.dumps(cluster))
         # Transfer the files to the remote server
-        neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
-            (cluster.ssh_port,
-             local_tmp_dir,
-             cluster.ssh_address,
-             remote_dir))
+        neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
+            (local_tmp_dir, cluster.ssh_address, remote_dir))
         # Remove the temporary directory
         shutil.rmtree(local_tmp_dir)
         # Start the Neromum daemon
@@ -309,9 +305,8 @@ class Neroman:
             # Load cluster details
             cluster = self.clusters['clusters'][cluster_id]
             # Fetch the files from the remote server
-            neronet.core.osrun('rsync -az -e "ssh -p%s" "%s:%s/" "%s"' %
-                (cluster.ssh_port, cluster.ssh_address, remote_dir,
-                 local_dir))
+            neronet.core.osrun('rsync -az -e "ssh" "%s:%s/" "%s"' %
+                (cluster.ssh_address, remote_dir, local_dir))
             # Clean the cluster
             exceptions = [exp.id for exp in experiments_to_check if exp.state
                     in (neronet.core.Experiment.State.submitted,

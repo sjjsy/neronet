@@ -89,8 +89,6 @@ class ConfigParser():
             elif not neronet.core.Cluster.Type.is_member(fields['type']):
                 errors.append('Invalid type "%s" for cluster "%s"' % \
                                 (fields['type'], cluster_id))
-            if 'ssh_port' not in fields:
-                fields['ssh_port'] = 22
             if 'ssh_address' not in fields:
                 errors.append('No ssh address specified for cluster "%s"' % \
                                                             cluster_id)
@@ -100,8 +98,8 @@ class ConfigParser():
             if not errors:
                 clusters[cluster_id] = neronet.core.Cluster(cluster_id,
                         fields['type'], fields['ssh_address'],
-                        fields['ssh_port'], fields['sbatch_args'])
-                
+                        fields['sbatch_args'])
+
         groups = clusters_data.get('groups', {})
         for group_name, group_clusters in groups.iteritems():
             for cluster in group_clusters:
@@ -211,8 +209,6 @@ class ConfigParser():
         cluster_field_dict = {}
         for k, v in clusters['clusters'].items():
             dct = {'type': v.ctype, 'ssh_address': v.ssh_address}
-            if v.ssh_port != 22:
-                dct['ssh_port'] = v.ssh_port
             if v.sbatch_args:
                 dct['sbatch_args'] = v.sbatch_args
             cluster_field_dict[k] = dct

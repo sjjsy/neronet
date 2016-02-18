@@ -23,7 +23,7 @@ def create_argument_parser():
                         nargs=1,
                         help='Deletes the experiment with the given ID')
     parser.add_argument('--cluster',
-                        metavar=('cluster_id', 'type', 'ssh_address', 'ssh_port'),
+                        metavar=('cluster_id', 'type', 'ssh_address'),
                         nargs=argparse.REMAINDER,
                         help='Specify a new cluster for computing')
     parser.add_argument('--user',
@@ -85,8 +85,7 @@ def main():
         cluster_id = args.cluster[0]
         cluster_type = args.cluster[1]
         ssh_address = args.cluster[2]
-        ssh_port = int(args.cluster[3]) if len(args.cluster) > 3 else 22
-        nero.specify_cluster(cluster_id, cluster_type, ssh_address, ssh_port)
+        nero.specify_cluster(cluster_id, cluster_type, ssh_address)
     if args.user:
         name = args.user[0]
         email = args.user[1]
