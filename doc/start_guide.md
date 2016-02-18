@@ -71,7 +71,8 @@ as follows:
       file
     - main_code_file: name of the main code file
     - parameters: name value pairs of parameter values
-    - parameters_format: a string specifying the order of the parameter values
+    - parameters_format: Specifies the parameter string parameter names written 
+      within parenthesis are replaced with the corresponding parameter values.
 
 Example
 
@@ -83,12 +84,12 @@ test_experiment:
     parameters:
         n: 12
         x: 17
-    parameters_format: '{n} {x}'
+    parameters_format: '-- {n} {x}'
 ```
 
 This config file would create an experiment that would be run with the command
 ```
-python test_exp.py 12 17
+python test_exp.py -- 12 17
 ```
 
 Neronet will notify if the config file is not correctly formated
@@ -98,11 +99,11 @@ Neronet will notify if the config file is not correctly formated
 To complete specifying your experiments, type the following command
 
 ```
-nerocli --experiment folder
+nerocli --experiment ./folder/to/my/experiment
 ```
 
-Where folder is the absolute path to your experiment folder. Neronet will notify
-if the specifying of experiments fails for some reason or another.
+Neronet will notify if the specifying of experiments fails for some reason or
+another.
 
 #### 2.4 Submitting experiments to computing clusters
 
