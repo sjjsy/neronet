@@ -60,6 +60,9 @@ def main():
     args = parser.parse_args()
     nero = neronet.neroman.Neroman()
     if args.experiment:
+        if not args.experiment[0]:
+            print("Please specify the path to the experiment folder.")
+            return
         experiment_folder = args.experiment[0]
         changed_exps = {}
         try:
