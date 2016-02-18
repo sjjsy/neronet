@@ -60,14 +60,11 @@ def main():
     args = parser.parse_args()
     nero = neronet.neroman.Neroman()
     if args.experiment:
-        if not args.experiment[0]:
-            print("Please specify the path to the experiment folder.")
-            return
         experiment_folder = args.experiment[0]
         changed_exps = {}
         try:
             changed_exps = nero.specify_experiments(experiment_folder)
-        except (IOError, neronet.config_parser.FormatError) as e:
+        except (IOError, FormatError) as e:
             print(e)
         if changed_exps:
             for experiment in changed_exps.values():
@@ -87,13 +84,14 @@ def main():
             print("No experiment named %s" % experiment_id)
     if args.cluster:
         if len(args.cluster) < 3:
-            print("Please specify at least the required arguments: cluster Id, cluster type and ssh address")
+            print("Please specify the required arguments: cluster Id, cluster type and ssh address")
             return
         cluster_id = args.cluster[0]
         cluster_type = args.cluster[1]
         ssh_address = args.cluster[2]
         try:
             nero.specify_cluster(cluster_id, cluster_type, ssh_address)
+            print("Defined a new cluster named " + cluster_id)
         except FormatError as e:
             print(e)
             return
@@ -102,7 +100,6 @@ def main():
         email = args.user[1]
         nero.specify_user(name, email)
     if args.status:
-        nero.fetch()
         try:
             status_gen = nero.status_gen(args.status)
             print(''.join(status_gen), end="")
