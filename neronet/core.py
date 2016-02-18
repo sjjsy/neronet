@@ -95,7 +95,8 @@ class Cluster(object):
 
     def start_neromum(self):
         res = self.sshrun('neromum --start')
-        print('Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out))
+        print('Neromum daemon started...')
+        #print('Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out))
 
     def clean_experiments(self, exceptions):
         data = {'action': 'clean_experiments', 'exceptions': exceptions}
