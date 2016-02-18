@@ -9,6 +9,7 @@ import sys
 
 import neronet.neroman
 from neronet.core import create_config_template as cfgtemplate
+from neronet.config_parser import FormatError
 
 def create_argument_parser():
     """Create and return an argument parser."""
@@ -82,10 +83,17 @@ def main():
         except KeyError:
             print("No experiment named %s" % experiment_id)
     if args.cluster:
+        if len(args.cluster) < 3:
+            print("Please specify at least the required arguments: cluster Id, cluster type and ssh address")
+            return
         cluster_id = args.cluster[0]
         cluster_type = args.cluster[1]
         ssh_address = args.cluster[2]
-        nero.specify_cluster(cluster_id, cluster_type, ssh_address)
+        try:
+            nero.specify_cluster(cluster_id, cluster_type, ssh_address)
+        except FormatError as e:
+            print(e)
+            return
     if args.user:
         name = args.user[0]
         email = args.user[1]

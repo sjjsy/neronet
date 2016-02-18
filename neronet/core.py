@@ -27,6 +27,8 @@ OPTIONAL_FIELDS = set(['outputs', 'collection', 'required_files',
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster_id', 'warnings'])
 
+
+
 class Cluster(object):
     """ 
     Attributes:
@@ -380,17 +382,3 @@ class ExperimentWarning:
         for value in ['name', 'varname', 'killvalue', 'comparator', 'when', 'action']:
             if getattr(self, value) != getattr(other, value): return False
         return True
-
-"""def get_sbatch_script(exp_id, exp_dir):
-    s = '#!/bin/bash\n'
-    s += '#SBATCH -J %s\n' % (exp_id)
-    s += '#SBATCH -D %s\n' (exp_dir)
-    s += '#SBATCH -o slurm.log\n' (exp_dir)
-    #SBATCH -o slurm.log
-    #SBATCH --time=0-00:01:00 --mem-per-cpu=10 -p play 
-    echo "Python version:"
-    module load python/2.7.4
-    python -V
-    echo "Launching the job!"
-    srun python main.py in.txt out.txt
-"""
