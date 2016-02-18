@@ -139,7 +139,7 @@ class Neromum(neronet.daemon.Daemon):
                     if exp.sbatch_args: s += '#SBATCH %s\n' % (exp.sbatch_args)
                     s += 'module load python/2.7.4\n'
                     s += 'nerokid %s --start; sleep 4;\n' % (exp.id)
-                    s += 'nerokid %s --query configure %s %s; sleep 2m\n' % (exp.id, '130.233.229.116', self._port) # self._host
+                    s += 'nerokid %s --query configure %s %s; sleep 2m\n' % (exp.id, self._host, self._port)
                     #s += 'srun nerokid %s --query configure %s %s\n' % (exp.id, self._host, self._port)
                     sbatch_script = os.path.join(exp_dir, 'slurm.sh')
                     neronet.core.write_file(sbatch_script, s)

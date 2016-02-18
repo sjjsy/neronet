@@ -84,7 +84,7 @@ class Daemon(object):
         self.add_query('stop', self.qry_stop)
         self._trun = 0
         self._port = 0
-        self._host = 'localhost' # neronet.core.get_hostname() FIXME kosh != kosh.aalto.fi
+        self._host = neronet.core.get_hostname() # FIXME kosh != kosh.aalto.fi
         self._tdo = tdo
         self._sckt = None
 
@@ -253,7 +253,7 @@ class Daemon(object):
         # localhost
         sckt = socket.socket()
         sckt.settimeout(self._tdo)
-        sckt.bind(('localhost', self._port))
+        sckt.bind(('0.0.0.0', self._port))
         # Put the socket into server mode and retrieve the chosen port number
         sckt.listen(1)
         host, self._port = sckt.getsockname()
