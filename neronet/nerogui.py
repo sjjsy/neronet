@@ -22,7 +22,8 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 	self.experiments.itemSelectionChanged.connect(self.add_to_param_table)
 	self.experiments.doubleClicked.connect(self.open_config)
 	self.exp_add_btn.clicked.connect(self.add_file)
-	self.submit_btn.clicked.connect(self.submit_exp)	
+	self.submit_btn.clicked.connect(self.submit_exp)
+	self.refresh_btn.clicked.connect(self.fetch_exp)
 
     def init_clusters(self):
 	"""add each cluster to view"""
@@ -97,7 +98,8 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 	path = self.nero.database[name]._fields["path"]
 	webbrowser.open(path+"/config.yaml")
 
-
+    def fetch_exp(self):
+	self.nero.fetch()
 
 def main():
     app = QtGui.QApplication(sys.argv)

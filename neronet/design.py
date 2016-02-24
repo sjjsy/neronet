@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Wed Feb 24 15:28:59 2016
+# Created: Wed Feb 24 16:48:16 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.submit_btn = QtGui.QPushButton(self.centralwidget)
-        self.submit_btn.setGeometry(QtCore.QRect(140, 280, 301, 27))
+        self.submit_btn.setGeometry(QtCore.QRect(140, 280, 111, 27))
         self.submit_btn.setObjectName(_fromUtf8("submit_btn"))
         self.line = QtGui.QFrame(self.centralwidget)
         self.line.setGeometry(QtCore.QRect(470, 10, 291, 16))
@@ -116,6 +116,9 @@ class Ui_MainWindow(object):
         self.exp_add_btn = QtGui.QPushButton(self.centralwidget)
         self.exp_add_btn.setGeometry(QtCore.QRect(10, 280, 111, 27))
         self.exp_add_btn.setObjectName(_fromUtf8("exp_add_btn"))
+        self.refresh_btn = QtGui.QPushButton(self.centralwidget)
+        self.refresh_btn.setGeometry(QtCore.QRect(270, 280, 111, 27))
+        self.refresh_btn.setObjectName(_fromUtf8("refresh_btn"))
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -137,4 +140,5 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Variable legend", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Compare param", None))
         self.exp_add_btn.setText(_translate("MainWindow", "Add experiment", None))
+        self.refresh_btn.setText(_translate("MainWindow", "refresh", None))
 
