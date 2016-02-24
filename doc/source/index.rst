@@ -21,14 +21,14 @@ Quick start guide
 .. toctree::
    :maxdepth: 3
 
-   quick_start_guide
+   start_guide
 
 User guide
 ------------
 .. toctree::
    :maxdepth: 2
 
-   user_guide
+   user_manual
 
 
 Key modules
