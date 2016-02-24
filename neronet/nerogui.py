@@ -68,6 +68,8 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
     def add_to_param_table(self):
 	self.labels = set()
 	self.names = []
+	self.tableWidget.setRowCount(0)
+	self.tableWidget.setColumnCount(0)
 	for exp in self.experiments.selectedItems():
 		self.labels |= set(self.nero.database[str(exp.text())]._fields["parameters"].keys())
 		self.names.append(str(exp.text()))
