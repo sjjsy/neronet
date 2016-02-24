@@ -50,7 +50,6 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 	cluster = str(self.clusters.currentItem().text())
 	self.cluster_name_field.setText(cluster)
 	self.cluster_address_field.setText(self.nero.clusters["clusters"][cluster].ssh_address)
-	self.cluster_port_field.setText("22")
 
     def add_file(self):
 	"""add folder to neroman database"""
