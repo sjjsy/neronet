@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 """This module defines Neroman.
 
 To work with Neroman each experiment must have the following attributes
@@ -30,6 +31,7 @@ import collections
 import pickle
 import shutil
 import random
+import sys
 
 import neronet.core
 import neronet.config_parser
@@ -62,7 +64,7 @@ class Neroman:
         """Removes all neronet related data"""
         self.config_parser.remove_data()
 
-    def specify_cluster(self, cluster_id, cluster_type, ssh_address, ssh_port=22):
+    def specify_cluster(self, cluster_id, cluster_type, ssh_address):
         """Specify clusters so that Neroman is aware of them.
 
         Writes cluster name, address and type to the clusters config file
@@ -71,7 +73,6 @@ class Neroman:
             cluster_id (str): The name of the cluster, should be unique
             cluster_type (str): Type of the cluster. Either slurm or unmanaged
             ssh_address (str): SSH address of the cluster
-            ssh_port (str): SSH port of the cluster
 
         Raises:
             FormatError: if the cluster type isn't unmanaged or slurm
@@ -80,9 +81,13 @@ class Neroman:
         if not neronet.core.Cluster.Type.is_member(cluster_type):
             raise neronet.config_parser.FormatError(
                         ['Invalid cluster type "%s"!' % (cluster_type)])
-
-        self.clusters['clusters'][cluster_id] = neronet.core.Cluster(
-            cluster_id, cluster_type, ssh_address, ssh_port)
+        cluster = neronet.core.Cluster(cluster_id, cluster_type, ssh_address)
+        try:
+            cluster.test_connection()
+            print('The cluster seems to be online!')
+        except RuntimeError as e:
+            print('Warning: %s' % (e))
+        self.clusters['clusters'][cluster_id] = cluster
         self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
 
     def specify_experiments(self, folder):
@@ -99,22 +104,37 @@ class Neroman:
             IOError: If the folder doesn't exists or the config file
                 doesn't exists
             FormatError: If the config file is badly formated
+
+        Returns:
+            changed_exps: A dictionary of changed experiments. 
+                This is then later used to prompt the user if they
+                want to replace the old experiment(s) with the new one(s).
         """
 
 
         experiments = self.config_parser.parse_experiments(folder)
         err = []
+        #Look for changes in the relevant fields and add them to changed_exps.
+        changed_exps = {}
+        relevant_fields = neronet.core.MANDATORY_FIELDS | neronet.core.OPTIONAL_FIELDS | set('path')
         for experiment in experiments:
             if experiment.id in self.database:
+                for key in experiment._fields:
+                    if key in relevant_fields and self.database[experiment.id].__getattr__(key) \
+                                                    != experiment.__getattr__(key):
+                        #(debug)print('Key: %s, Old: %s, New: %s' % (key, \
+                        #        self.database[experiment.id].__getattr__(key), 
+                        #        experiment.__getattr__(key)))
+                        changed_exps[experiment.id] = experiment
+                        break
                 err.append("Experiment named %s already in the database" \
-                                % experiment.id)
-            elif not err: self.database[experiment.id] = experiment
-        if not err:
-            self.config_parser.save_database(DATABASE_FILENAME, \
-                                        self.database)
-        if err:
-            raise IOError("\n".join(err))
-
+                            % experiment.id)
+            else: self.database[experiment.id] = experiment
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                    self.database)
+        if err: print('\n'.join(err), file=sys.stderr)
+        return changed_exps
+    
     def specify_user(self, name, email, default_cluster = ""):
         """Update user data"""
         self.preferences['name'] = name
@@ -122,6 +142,18 @@ class Neroman:
         self.preferences['default_cluster'] = default_cluster
         self.config_parser.save_preferences(PREFERENCES_FILENAME, \
                                             self.preferences)
+
+    def replace_experiment(self, new_experiment):
+        """Replaces an experiment in the database with a new,
+        updated instance of it.
+
+        Parameters:
+            new_experiment (neronet.core.Experiment): the experiment object
+                    to be put in the database in place of the old one.
+        """
+        self.database[new_experiment.id] = new_experiment
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                        self.database)
 
     def delete_experiment(self, experiment_id):
         """Deletes the experiment with the given experiment id
@@ -213,10 +245,11 @@ class Neroman:
         cluster = self.clusters["clusters"][cluster_id]
         # Load the experiment
         exp = self.database[exp_id]
-        # Update experiment info
+        #TODO: offer to cancel the current experiment submission
         #if exp.cluster_id != None: # (Commented for debugging)
         #    raise Exception('Experiment already submitted to "%s"!'
         #            % (exp.cluster_id))
+        # Update experiment info
         exp.cluster_id = cluster_id
         exp.update_state(neronet.core.Experiment.State.submitted)
         # Define local path, where experiment currently exists
@@ -246,15 +279,15 @@ class Neroman:
         neronet.core.write_file(os.path.join(local_tmp_dir, 'cluster.pickle'),
                 pickle.dumps(cluster))
         # Transfer the files to the remote server
-        neronet.core.osrun('rsync -az -e "ssh -p%s" "%s/" "%s:%s"' %
-            (cluster.ssh_port,
-             local_tmp_dir,
-             cluster.ssh_address,
-             remote_dir))
-        # Remove the temporary directory
-        shutil.rmtree(local_tmp_dir)
-        # Start the Neromum daemon
-        cluster.start_neromum()
+        try:
+            neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
+                (local_tmp_dir, cluster.ssh_address, remote_dir))
+            # Start the Neromum daemon
+            cluster.start_neromum()
+            print("Experiment " + exp_id + " successfully submitted to " + cluster_id)
+        finally:
+            # Remove the temporary directory
+            shutil.rmtree(local_tmp_dir)
         # Update the experiment database
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
 
@@ -279,15 +312,20 @@ class Neroman:
             # Load cluster details
             cluster = self.clusters['clusters'][cluster_id]
             # Fetch the files from the remote server
-            neronet.core.osrun('rsync -az -e "ssh -p%s" "%s:%s/" "%s"' %
-                (cluster.ssh_port, cluster.ssh_address, remote_dir,
-                 local_dir))
+            try:
+                neronet.core.osrun('rsync -az -e "ssh" "%s:%s/" "%s"' %
+                    (cluster.ssh_address, remote_dir, local_dir))
+            except RuntimeError:
+                print('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
             # Clean the cluster
             exceptions = [exp.id for exp in experiments_to_check if exp.state
                     in (neronet.core.Experiment.State.submitted,
                     neronet.core.Experiment.State.submitted_to_kid,
                     neronet.core.Experiment.State.running)]
-            cluster.clean_experiments(exceptions)
+            try:
+                cluster.clean_experiments(exceptions)
+            except RuntimeError:
+                print('Note: Failed to clean the experiments at the cluster.')
         # Update the experiments
         for exp in experiments_to_check:
             print('Updating experiment "%s"...' % (exp.id))

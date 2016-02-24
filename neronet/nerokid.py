@@ -133,12 +133,12 @@ class Nerokid(neronet.daemon.Daemon):
             # Send any information to Neromum
             try:
                 self.log('Updating Neromum...')
-                self.log('Query: %s, Experiment id:%s State:%s Output: %s' % ('exp_update', self.exp_id,
-                                            self.exp.state, log_output))
+                self.log('Query: %s, (%s, %s out: %s)' % ('exp_update',
+                        self.exp_id, self.exp.state, log_output))
                 self.neromum.query('exp_update', self.exp_id,
                         self.exp.state, log_output)
-            except RuntimeError:
-                self.wrn('Cannot communicate with Neromum!')
+            except RuntimeError as err:
+                self.err('Cannot communicate with Neromum!', err)
         # If the experiment is not defined and we have Neromum defined, start
         # the experiment!
         elif not self.exp and self.neromum:

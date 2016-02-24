@@ -17,6 +17,8 @@ The project was started in October 19th 2015 and will be finished by April
 
 This project is under the [MIT License](./LICENSE).
 
+To start using Neronet, follow the instructions at [Neronet start guide](https://github.com/smarisa/neronet/blob/sprint/doc/start_guide.md)
+
 ## Branches
 
 The project repo contains two main branches:

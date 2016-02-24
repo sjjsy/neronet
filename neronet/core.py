@@ -23,17 +23,19 @@ USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 OPTIONAL_FIELDS = set(['outputs', 'collection', 'required_files',
-                        'conditions'])
+                        'conditions', 'sbatch_args'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
-                        'cluster_id'])
+                        'cluster_id', 'warnings'])
+
+
 
 class Cluster(object):
     """ 
     Attributes:
         cid (str): The unique ID (name) of the cluster
         ctype (str): Type of the cluster. Either slurm or unmanaged
-        ssh_address (str): SSH address to the cluster
-        ssh_port (int): SSH port number.
+        ssh_address (str): SSH address or config hostname corresponding to
+            the cluster.
         sbatch_args (str): Slurm SBATCH arguments.
     """
 
@@ -45,25 +47,22 @@ class Cluster(object):
         def is_member(cls, arg):
             return arg in cls._members
 
-    def __init__(self, cid, ctype, ssh_address, ssh_port, sbatch_args=None):
+    def __init__(self, cid, ctype, ssh_address, sbatch_args=None):
         self.cid = cid
         self.ctype = ctype
         self.ssh_address = ssh_address
-        self.ssh_port = ssh_port
         self.sbatch_args = sbatch_args
         self.dir = USER_DATA_DIR
 
     def __str__(self):
-        return '%s (%s) at %s:%s' % (self.cid, self.ctype, self.ssh_address,
-                self.ssh_port)
+        return '%s (%s, %s)' % (self.cid, self.ctype, self.ssh_address)
 
     def sshrun(self, cmd, inp=None):
         """Execute a shell command via SSH on the remote Neronet cluster."""
         # Ask SSH to execute a command that starts by changing the working
         # directory to 'self.dir' at the machine served at the specified
         # address and port
-        scmd = 'ssh -p%s %s "cd %s;' % (self.ssh_port, self.ssh_address,
-                self.dir)
+        scmd = 'ssh %s "cd %s;' % (self.ssh_address, self.dir)
         # Potentially include initialization commands depending on cluster
         # type
         if self.ctype == self.Type.unmanaged:
@@ -78,14 +77,26 @@ class Cluster(object):
         # Actual execution
         res = osrunroe(scmd, inp=inp)
         if res.rv != 0:
-            raise RuntimeError('Failed to run "%s" via SSH at cluster "%s"! Err: "%s", Out: "%s".' \
-                % (cmd, self.cid, res.err, res.out))
+            msg = ''
+            if res.err: msg += '\nErr: %s' % (res.err)
+            if res.out: msg += '\nOut: %s' % (res.out)
+            raise RuntimeError('Failed to run "%s" via SSH at cluster "%s"!%s'
+                % (cmd, self.cid, msg))
         return res
         # PATH="$HOME/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="$HOME/.neronet"
 
+    def test_connection(self):
+        res = self.sshrun('python -V')
+        if res.rv != 0:
+            raise RuntimeError('Failed to run Python via SSH at "%s"!' % (self.cid))
+        elif not res.err.startswith('Python 2.7'):
+            raise RuntimeError('Incorrect Python version at "%s": "%s"!' % (self.cid, res.err))
+        return True
+
     def start_neromum(self):
         res = self.sshrun('neromum --start')
-        print('Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out))
+        print('Neromum daemon started...')
+        #print('Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out))
 
     def clean_experiments(self, exceptions):
         data = {'action': 'clean_experiments', 'exceptions': exceptions}
@@ -131,7 +142,7 @@ class Experiment(object):
 
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
                     parameters, parameters_format, path, required_files=None,
-                    outputs="stdout", collection=None, conditions=None):
+                    outputs="stdout", collection=None, conditions=None, sbatch_args=None):
         now = datetime.datetime.now()
         fields = {'run_command_prefix': run_command_prefix,
                     'main_code_file': main_code_file,
@@ -142,6 +153,7 @@ class Experiment(object):
                     'parameters_format': parameters_format,
                     'collection': collection,
                     'conditions': conditions,
+                    'sbatch_args': sbatch_args,
                     'path': path,
                     'time_created': now,
                     'time_modified': now,
@@ -225,6 +237,9 @@ class Experiment(object):
         """ Updates the state
         """
         if state == self.state: return
+        if state == 'running' and self._fields['conditions']:
+            for c in self._fields['conditions']:
+                self._fields['conditions'][c].start_time = datetime.datetime.now()
         self._fields['states_info'].append((state, datetime.datetime.now()))
 
     def as_dict(self):
@@ -336,43 +351,6 @@ def create_config_template():
         f.write('###Optional fields###\n')
         for field in OPTIONAL_FIELDS:
             f.write('%s: \n' % field)
-
-class Logger:
-
-    """A class to simplify logging."""
-
-    def __init__(self, name):
-        self.name = name
-
-    def log(self, msg):
-        """prints datetime, process name, process message"""
-        # Print to stdout in a clear format
-        print('%s %s: %s' % (datetime.datetime.now(), self.name, msg))
-
-
-class Socket:
-
-    """A class to simplify socket usage."""
-
-    def __init__(self, host, port):
-        # Save key attributes
-        self.host = host
-        self.port = port
-
-    def send_data(self, data):
-        """Create a socket, send data over it, and close it"""
-        # Create a TCP/IP socket
-        sock = socket.socket()
-        sock.settimeout(TIMEOUT)
-        # Connect to the mother
-        #self.logger.log('Connecting to (%s, %s)...' % (self.host, self.port))
-        sock.connect((self.host, self.port))
-        # Send data
-        #self.logger.log('Sending data "%s"...' % (data))
-        sock.sendall(pickle.dumps(data, -1))
-        # Close socket
-        #self.logger.log('Closing socket...')
-        sock.close()
         
 WARNING_FIELDS = set(['variablename', 'killvalue', 'comparator', 'when', \
                         'action'])
@@ -413,16 +391,9 @@ class ExperimentWarning:
                 return self.action
         return 'no action'
 
-"""def get_sbatch_script(exp_id, exp_dir):
-    s = '#!/bin/bash\n'
-    s += '#SBATCH -J %s\n' % (exp_id)
-    s += '#SBATCH -D %s\n' (exp_dir)
-    s += '#SBATCH -o slurm.log\n' (exp_dir)
-    #SBATCH -o slurm.log
-    #SBATCH --time=0-00:01:00 --mem-per-cpu=10 -p play 
-    echo "Python version:"
-    module load python/2.7.4
-    python -V
-    echo "Launching the job!"
-    srun python main.py in.txt out.txt
-"""
+    def __eq__(self, other):
+        if not other:
+            return False
+        for value in ['name', 'varname', 'killvalue', 'comparator', 'when', 'action']:
+            if getattr(self, value) != getattr(other, value): return False
+        return True

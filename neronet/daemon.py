@@ -84,7 +84,7 @@ class Daemon(object):
         self.add_query('stop', self.qry_stop)
         self._trun = 0
         self._port = 0
-        self._host = 'localhost' # neronet.core.get_hostname() FIXME kosh != kosh.aalto.fi
+        self._host = neronet.core.get_hostname() # FIXME kosh != kosh.aalto.fi
         self._tdo = tdo
         self._sckt = None
 
@@ -253,7 +253,7 @@ class Daemon(object):
         # localhost
         sckt = socket.socket()
         sckt.settimeout(self._tdo)
-        sckt.bind(('localhost', self._port))
+        sckt.bind(('0.0.0.0', self._port))
         # Put the socket into server mode and retrieve the chosen port number
         sckt.listen(1)
         host, self._port = sckt.getsockname()
@@ -408,7 +408,8 @@ class QueryInterface(object):
                 return data
             except socket.error:
                 time.sleep(0.3)
-        raise self.ConnectError('Unable to connect to the daemon!')
+        raise self.ConnectError('Unable to connect to the daemon at %s, %s!'
+                % (self.host, self.port))
         #self.abort(11, 'Unable to connect to the daemon.')
 
     def daemon_is_alive(self):
@@ -533,7 +534,6 @@ class Cli(QueryInterface):
 
     def func_default(self):
         pass
-        #raise NotImplementedError('The default function is not implemented!')
 
     def func_cleanup(self):
         """Erase daemon instance related files."""
