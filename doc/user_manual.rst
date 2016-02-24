@@ -34,7 +34,7 @@ Neronet is a python-based, framework agnostic tool for computational researchers
 
 - batch submission of experiment jobs to computing clusters
 - management of experiment queues
-- monitoring of ongoing experiments' logs and parameter values
+- monitoring of logs and parameter values for ongoing experiments
 - access to experiment information during and after the run
 - configurable notifications on experiment state and progress
 - configurable criteria for experiment autotermination
@@ -46,17 +46,17 @@ Neronet can be used either via command-line interface or via GUI.
 Installation
 ------------
 
-All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 3.5, so before installation please check that you have the right version of python installed on your local machine and the computing clusters you intend to use. Using older python versions may cause complications and is therefore not recommended. Then download neronet folder and proceed by setting up up your initial cluster setup, setting up your preferences.
+All components of the neronet application, including both the parts run in clusters and the parts run in the researcher's local machine are implemented using python 2.7, so before installation please make sure that the correct version of python is installed on your local machine and on the computing clusters you intend to be use. Using other python versions may cause complications and is therefore not recommended. Then download neronet folder and proceed by setting up your initial cluster setup and setting up your preferences.
 
 **1. Pip Installation**
 
-Start by running the command below on your local machine's command line. Note: python 3.5 is required.
+Start by running the command below on the command line of your local machine. Note: python 2.7 is required.
 
 *Example:*
 ::
 	sudo pip install neronet
 
-The command will load all components related to neronet and install them to the system. It will also create the folder '~/.neronet' to contain your preferences and cluster setup. Proceed by opening the folder and defining your initial cluster setup and preferences there.
+The command will load all components related to neronet and install them to the system. It will also create the folder '~/.neronet' that contain your preferences and cluster setup. Proceed by opening the folder and then defining your initial cluster setup and preferences in the respective files.
 
 **2. Setting up the Initial cluster setup:**
 
@@ -70,16 +70,12 @@ The format of clusters.yaml is as follows. From here on out we will explain the 
 	    triton:
 	      ssh_address: triton.aalto.fi
 	      type: slurm
-	      default_log_path:
-	      queue_max: 20
 	      hard_disk_space: 1000GB
-	      cpu: Very nice
 	    gpu1:
 	      ssh_address: gpu1
 	      type: unmanaged
-	      hardware:
 	    gpu2:
-	      ssh_address: gpu1
+	      ssh_address: gpu2
 	      type: unmanaged	    
 	groups:
 	    gpu: [gpu1, gpu2]
@@ -88,11 +84,9 @@ The format of clusters.yaml is as follows. From here on out we will explain the 
 
 The specification of a cluster must start with the user-specified cluster-id on a separate line. The following lines containing the cluster's information must be indented and contain at least the following attributes: ssh_address: (f.ex  triton.aalto.fi) and type: (either 'unmanaged' or 'slurm'). If the cluster uses Simple Linux Utility for Resource Management (SLURM), its type is 'slurm', otherwise use 'unmanaged'.
 
-Additionally, it is possible to specify the maximum queue with the attribute queue_max and save important information on the cluster such as the cluster's hard disk space with the hard_disk_space attribute and the cluster's CPU with the cpu attribute. You can also write all of the cluster's hardware information under the hardware attribute.
+Additionally, it is possible to specify optional information on the cluster such as the hard disk space for the cluster. Although these are purely for the user and are not used internally.
 
-It is also possible to group some of your clusters or unmanaged nodes under a single virtual cluster name using the following format: GROUP_ID: [NODE_ID, NODE_ID, ...] (f.ex 'gpu: [gpu1, gpu2]' in the example above) Then later on you can submit your experiments to that virtual cluster name and let neronet automatically divide the work between the actual nodes.
-
-After specifying your initial cluster setup fill in your personal information and preferences.
+It is also possible to group some of your clusters or unmanaged nodes under a single virtual cluster name using the following format: GROUP_ID: [NODE_ID, NODE_ID, ...] (f.ex 'gpu: [gpu1, gpu2]' in the example above). Then later on you can submit your experiments to that virtual cluster name and let neronet automatically divide the work between the actual nodes.
 
 **3. Setting up personal Information and preferences:**
 
@@ -105,7 +99,7 @@ Open the file neronet/preferences.yaml and fill in your name, email and default 
 	default_cluster: triton
 
 
-If you followed the instructions clearly, your neronet application should be ready to run now. Proceed by starting neronet. The program will notify you if the installation failed for one reason or another.
+If you followed the instructions, your neronet application should be ready to run now. Proceed by starting neronet. The program will notify you if the installation failed for one reason or another.
 
 ======================
 Command Line Interface
@@ -174,7 +168,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
 - Each experiment specification must begin with a row containing the experiment id (f.ex in the example above three experiments are specified: lang_exp1, lang_exp2 and lang_exp3) and be followed by a block containing all the experiment's attributes. Do not use the reserved words, list of which can be found at the end of this section. The experiment ids must be unique within the same config file.
 - Each different experiment specification must have the following attributes
 	- main_code_file: The path to the code file that is to be run when executing the experiment
-	- run_command_prefix: The prefix of the run command f.ex 'python3'
+	- run_command_prefix: The prefix of the run command f.ex 'python2'
 	- logoutput: The location to which the log output of the experiment is to be written. Can be either stdout or a file path.
 	- parameters: This attribute is followed by a block containing all the unique parameters of this specific experiment. Parameter names can be arbitrary.
 	- parameter_format: Specifies the order in which the parameters are given to the experiment code file in the form of a string. Write the attribute value within single quotes. Parameter names written within braces will be replaced by their values defined in the *parameters* section. F.ex in the example above lang_exp2 --parameter_format defines a parameter string 'kh nyt data/2.txt 400'. You can escape braces and special characters with backslashes in case your parameter names contain braces.
@@ -226,7 +220,7 @@ To delete a specified experiment from your Neronet application's database you ca
 
 EXPERIMENT_ID is the 'ID' attribute defined on the topmost row of the experiment folder's config.yaml. Alternatively, if you only want to delete a certain experiment within a folder, you can use the format 'ID/experiment_Id' (see *specifying experiments* to find out what these attributes are). Commands of the format 'delete ID/experiment_Id' don't affect the experiment's children or parents.
 
-Using the command above doesn't delete the experiment folder or any files within it. It only removes the experiment's information from Neronet's database. It also doesn't affect the experiment's children
+Using the command above doesn't delete the experiment folder or any files within it. It only removes the experiment's information from Neronet's database. It also doesn't affect the children of the experiment.
 
 
 Submitting Experiments and Batches of Experiments to Computing Clusters
@@ -282,7 +276,7 @@ After that you can see the current state of your experiments by typing:
 Specifying Clusters in Neronet CLI
 ----------------------------------
 
-You can specify clusters either via command line or by manually updating the clusters.yaml file. See the section *Installation* to get information on the format to use when manually updating the clusters.yaml file.
+You can specify clusters either via command line or by manually updating the clusters.yaml file. See the section *Installation* for more information on the format when updating the clusters.yaml file manually.
 
 *To add clusters via command line use the following format:*
 ::
@@ -294,22 +288,6 @@ ID is a user defined id of the cluster, SSH_ADDRESS is the ssh address of the cl
 
 The information given via CLI is then automatically updated to clusters.yaml. If you want to save other information on a specific cluster besides the cluster's address, name and type, you must manually write them to the clusters.yaml file.
 
-
-Monitoring log output
----------------------
-
-*Example:*
-::
-	Usage: nerocli --monitor EXPERIMENT_ID
-	Example: nerocli --monitor lang-exp/lang_exp3
-
-
-*The output will be of the following format:*
-::
-	Experiment Id
-	Cluster
-	Starting time
-	Log output
 
 Status report
 -------------
@@ -356,7 +334,7 @@ The experiment state is either 'defined' (specified but not submitted to any clu
 
 The collection status will contain a list of experiments in that collection and their current states.
 
-*All cluster's statuses:*
+*All cluster statuses:*
 ::
 	nerocli --status clusters
 
@@ -377,7 +355,7 @@ Example experiment
 ------------------
 Assume we have folder ``~/mytheanotest`` which contains an experiment named
 ``script.py`` and we want to submit it to ``kosh.aalto.fi`` to be run
-there. Thus we proceed as follows:
+there. We proceed as follows:
 
 Define a cluster where the experiment is to be run:
 ``nerocli --cluster kosh kosh.aalto.fi unmanaged``
