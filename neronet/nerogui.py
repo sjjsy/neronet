@@ -37,15 +37,15 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 	addr = str(self.cluster_address_field.text())
 	nm = str(self.cluster_name_field.text())
 	port = str(self.cluster_port_field.text())
-	self.nero.specify_cluster(nm, addr, "unmanaged", port)
+	self.nero.specify_cluster(nm, "unmanaged", addr)
 	self.init_clusters()
 
     def update_cluster_fields(self):
 	"""add clusters view"""
 	cluster = str(self.clusters.currentItem().text())
 	self.cluster_name_field.setText(cluster)
-	self.cluster_address_field.setText(self.nero.clusters["clusters"][cluster]["ssh_address"])
-	self.cluster_port_field.setText(self.nero.clusters["clusters"][cluster]["port"])
+	self.cluster_address_field.setText(self.nero.clusters["clusters"][cluster].ssh_address)
+	self.cluster_port_field.setText("22")
 
     def add_file(self):
 	"""add folder to neroman database"""
