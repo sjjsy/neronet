@@ -1,4 +1,5 @@
 import sys
+import webbrowser
 from PyQt4 import QtGui
 import design
 import neronet.neroman
@@ -15,6 +16,7 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 	self.cluster_add_btn.clicked.connect(self.add_cluster)
 	self.clusters.itemSelectionChanged.connect(self.update_cluster_fields)
 	self.experiments.itemSelectionChanged.connect(self.show_one_experiment)
+	self.experiments.doubleClicked.connect(self.open_config)
 	self.exp_add_btn.clicked.connect(self.add_file)
 	self.submit_btn.clicked.connect(self.submit_exp)	
 
@@ -53,15 +55,23 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def submit_exp(self):
 	"""submit button functionality"""
-	exp = str(self.experiments.currentItem().text())
 	cluster = str(self.clusters.currentItem().text())
-	self.nero.submit(exp, cluster)
+	if cluster is None:
+		return
+	for exp in self.experiments.selectedItems():
+		self.nero.submit(str(exp.text()), cluster)
 
     def show_one_experiment(self):
 	self.experiment_log.clear()
 	name = str(self.experiments.currentItem().text())
 	for line in self.nero.status_gen(name):
 		self.experiment_log.insertPlainText(line)
+
+    def open_config(self):
+	name = str(self.experiments.currentItem().text())
+	path = self.nero.database[name]._fields["path"]
+	webbrowser.open(path+"/config.yaml")
+
 
 
 def main():
