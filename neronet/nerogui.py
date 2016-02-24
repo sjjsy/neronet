@@ -1,6 +1,7 @@
 import sys
 import webbrowser
 from PyQt4 import QtGui
+from PyQt4 import QtCore
 import design
 import neronet.neroman
 import os.path
@@ -12,10 +13,13 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
         self.nero = neronet.neroman.Neroman()
 	self.init_clusters()
 	self.init_experiments()
+	self.labels = set()
+	self.names = []
 	#bind functions to buttons
 	self.cluster_add_btn.clicked.connect(self.add_cluster)
 	self.clusters.itemSelectionChanged.connect(self.update_cluster_fields)
 	self.experiments.itemSelectionChanged.connect(self.show_one_experiment)
+	self.experiments.itemSelectionChanged.connect(self.add_to_param_table)
 	self.experiments.doubleClicked.connect(self.open_config)
 	self.exp_add_btn.clicked.connect(self.add_file)
 	self.submit_btn.clicked.connect(self.submit_exp)	
@@ -60,6 +64,25 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 		return
 	for exp in self.experiments.selectedItems():
 		self.nero.submit(str(exp.text()), cluster)
+
+    def add_to_param_table(self):
+	self.labels = set()
+	self.names = []
+	for exp in self.experiments.selectedItems():
+		self.labels |= set(self.nero.database[str(exp.text())]._fields["parameters"].keys())
+		self.names.append(str(exp.text()))
+	self.tableWidget.setRowCount(len(self.names))
+	self.tableWidget.setColumnCount(len(self.labels))
+	self.tableWidget.setHorizontalHeaderLabels(tuple(self.labels))
+	self.tableWidget.setVerticalHeaderLabels(self.names)
+
+	for idx1, name in enumerate(self.names):
+		for idx2, param in enumerate(self.labels):
+			try:
+				value = self.nero.database[name]._fields["parameters"][param]
+				self.tableWidget.setItem(idx1,idx2,QtGui.QTableWidgetItem(QtCore.QString("%1").arg(value)))
+			except KeyError:
+				pass
 
     def show_one_experiment(self):
 	self.experiment_log.clear()
