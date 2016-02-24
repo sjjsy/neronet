@@ -41,8 +41,8 @@ class ExampleApp(QtGui.QMainWindow, design.Ui_MainWindow):
 	"""add cluster to neroman configs"""
 	addr = str(self.cluster_address_field.text())
 	nm = str(self.cluster_name_field.text())
-	port = str(self.cluster_port_field.text())
-	self.nero.specify_cluster(nm, "unmanaged", addr)
+	type = str(self.cluster_type_combo.currentText())
+	self.nero.specify_cluster(nm, type, addr)
 	self.init_clusters()
 
     def update_cluster_fields(self):
