@@ -12,6 +12,7 @@ import time
 import subprocess
 import shlex
 import copy
+import importlib
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
@@ -22,8 +23,8 @@ USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
 
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
-OPTIONAL_FIELDS = set(['outputs', 'collection', 'required_files',
-                        'conditions', 'sbatch_args'])
+OPTIONAL_FIELDS = set(['outputs', 'output_processor', 'plot', 'collection', 
+                        'required_files', 'conditions', 'sbatch_args'])
 AUTOMATIC_FIELDS = set(['path', 'time_created', 'time_modified', 'state', 
                         'cluster_id', 'warnings'])
 
@@ -89,7 +90,8 @@ class Cluster(object):
         res = self.sshrun('python -V')
         if res.rv != 0:
             raise RuntimeError('Failed to run Python via SSH at "%s"!' % (self.cid))
-        elif not res.err.startswith('Python 2.7'):
+        #TODO: Make version checking smarter
+        elif not 'Python 2.7' in res.err:
             raise RuntimeError('Incorrect Python version at "%s": "%s"!' % (self.cid, res.err))
         return True
 
@@ -142,13 +144,17 @@ class Experiment(object):
 
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
                     parameters, parameters_format, path, required_files=None,
-                    outputs="stdout", collection=None, conditions=None, sbatch_args=None):
+                    outputs="stdout", output_processor=None, collection=None, 
+                    plot=None, conditions=None, sbatch_args=None):
         now = datetime.datetime.now()
         fields = {'run_command_prefix': run_command_prefix,
                     'main_code_file': main_code_file,
                     'required_files': required_files if required_files else [],
                     'outputs': outputs if isinstance(outputs, list) else
                                 [outputs],
+                    'output_processor': output_processor,
+                    'output': None,
+                    'plot': plot,
                     'parameters': parameters,
                     'parameters_format': parameters_format,
                     'collection': collection,
@@ -164,6 +170,35 @@ class Experiment(object):
         self.__dict__['_fields'] = fields
         #super(Experiment, self).__setattr__('_fields', fields)
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
+
+    def read_output(self):
+        filename = os.path.join(self._fields['path'], 'results', self.id, 'stdout.log')
+        with open(filename, 'r') as f:
+            lines = f.read().strip().split('\n')
+        reader = self._fields['output_processor']
+        data = {}
+        for line in lines:
+            datum = reader(line)
+            for key, value in datum.items():
+                if key not in data:
+                    data[key] = [value]
+                else:
+                    data[key].append(value)
+        return data
+
+    def plot_output(self):
+        output = self.read_output()
+        results_dir = os.path.join(self._fields['path'], 'results', self.id)
+        for plot in self._fields['plot']:
+            args = plot.split()
+            module_name = args[0]
+            plotter_name = args[1]
+            args = args[2:]
+            plotter = import_from("neronet.scripts." + module_name, plotter_name)
+            data = []
+            for arg in args:
+                data.append(output[arg])
+            plotter(os.path.join(results_dir, 'output.png'), *data)
     
     def get_action(self, logrow):
         init_action = ('no action', '')
@@ -338,6 +373,22 @@ def read_file(filepath, default=None):
     except IOError as e:
         pass
     return result
+
+def import_from(module, obj_name):
+    """Import object from module
+
+    Parameters:
+        module (str): name of the module to be imported from
+        obj_name (str): name of the object to be imported
+
+    Returns:
+        object: The object to be imported
+    
+    Raises:
+        ImportError: If the module to be imported doesn't exist
+        AttributeError: If the module doesn't contain an object named obj_name
+    """
+    return getattr(importlib.import_module(module), obj_name)
 
 def create_config_template():
     # Creates an empty experiment config file with the required fields.

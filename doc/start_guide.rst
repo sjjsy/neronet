@@ -9,7 +9,7 @@ researchers that is made to enable easy
 
 -  batch submission of experiment jobs to computing clusters
 -  management of experiment queues
--  monitoring of ongoing experiments’ logs and parameter values
+-  monitoring of logs and parameter values for ongoing experiments
 -  access to experiment information during and after the run
 -  configurable notifications on experiment state and progress
 -  configurable criteria for experiment autotermination
@@ -80,7 +80,7 @@ The format is as follows:
 
 -  The config file follows standard yaml format conventions
 -  Each config file should contain at least one experiment
--  Each experiment should have an unique name and the following
+-  Each experiment should have a unique name and the following
 variables:
 
 -  run\_command\_prefix: the program used for running your experiment

@@ -23,6 +23,10 @@ def create_argument_parser():
                         metavar='experiment_id',
                         nargs=1,
                         help='Deletes the experiment with the given ID')
+    parser.add_argument('--plot',
+                        metavar='experiment_id',
+                        nargs=1,
+                        help='Plots the experiment with the given ID')
     parser.add_argument('--cluster',
                         metavar=('cluster_id', 'type', 'ssh_address'),
                         nargs=argparse.REMAINDER,
@@ -82,6 +86,12 @@ def main():
             nero.delete_experiment(experiment_id)
         except KeyError:
             print("No experiment named %s" % experiment_id)
+    if args.plot:
+        experiment_id = args.plot[0]
+        try:
+            nero.plot_experiment(experiment_id)
+        except KeyError:
+            print("No experiment named %s" % experiment_id)
     if args.cluster:
         if len(args.cluster) < 3:
             print("Please specify the required arguments: cluster Id, cluster type and ssh address")
@@ -92,7 +102,7 @@ def main():
         try:
             nero.specify_cluster(cluster_id, cluster_type, ssh_address)
             print("Defined a new cluster named " + cluster_id)
-        except FormatError as e:
+        except IOError as e:
             print(e)
             return
     if args.user:
@@ -115,7 +125,12 @@ def main():
     if args.fetch:
         nero.fetch()
     if args.clean:
-        nero.clean()
+        answer = raw_input('Do you really want to remove all neronet '
+                            'configuration files? (y/n) ')
+        if answer == 'y':
+            nero.clean()
+            print('Removed neronet configuration files')
+
     if args.template:
         cfgtemplate()
 
