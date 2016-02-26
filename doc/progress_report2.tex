@@ -1,0 +1,220 @@
+%% Define document class, variables and frontmatter
+\documentclass{beamer}
+\title{Progress report 2}
+\input{tex/beamer.tex}
+\def\Done{\textcolor{green}{Done}}
+%% Content pages
+\section{Introduction} \bgset{gfx/neural1__bgmod.jpg}
+\begin{frame}{Introduction}{Goals} % Joona
+  Our goal is to develop a tool for computational researchers to enable easy
+  \begin{itemize}
+  \item specification and management of experiment queues
+  \pause \item batch submission of experiment jobs to computing clusters
+  \pause \item monitoring of ongoing experiments' logs and parameter values
+  \pause \item access to experiment information during and after the run
+  \pause \item configurable notifications on experiment state and progress
+  \pause \item configurable criteria for experiment autotermination
+  \pause \item logging of experiment history
+  \end{itemize}
+\end{frame}
+\begin{frame}{Introduction}{What} % Samuel
+  In essence the product is a Python-based tool that enables computational researchers to conduct their research more effectively.
+  \begin{itemize}
+  \item \pause It utilizes SSH and TCP sockets to distribute the computational workload into computer clusters. It supports the Slurm job and resource manager but can function without it as well.
+  \item \pause It is framework agnostic in that it permits the use of a very wide variety of tools to actually conduct the computing.
+  \end{itemize}
+\end{frame}
+\section{Results} % Samuel & Joona
+\begin{frame}{Results}{Sprint 2} \bgset{gfx/neural3__bgmod.jpg}
+  Goal: \emph{Develop a stable version for end user testing} \pause \
+
+  \pause Product Backlog Items: 
+  \begin{itemize}
+  \pause \item US6: As a user, I want to set my preferences (name, email, default cluster). \pause \Done{}
+  \pause \item US7: As a user, I want my experiment config attributes to support generation of value combinations. \pause \Done{}
+  \pause \item US8: As a user, I want my experiment specifications to be able to inherit properties. \pause \Done{}
+  \pause \item US9: As a user, I want to see a basic status report in the GUI. \pause \Done
+  \pause \item US10: As a user, I want the program to enable easy setup. \pause \Done{}
+  \end{itemize}
+
+  \pause In Sprint 2 we detected several problems with the internal structure of the program which would take a lot of effort to fix. Therefore we were unable to have a stable user testable version by the end of the sprint.
+  
+  
+\end{frame}
+
+
+\begin{frame}{Results}{Sprint 3}
+  Goal: \emph{Finish asynchronous system functionality and create a GUI mockup}
+  
+  \pause Product Backlog Items: 
+  \begin{itemize}
+  \pause \item US11: As a user, I want a save important information about my clusters. \pause \Done{}
+  \pause \item US12: As a user, I want to group my clusters. \pause \Done{}
+  \pause \item US13: As a user, I want to delete obsolete versions of my experiments. \pause \Done{}
+  \pause \item US14: As a user, I want configurable criteria for experiment warnings and autotermination. \pause \Done
+  \pause \item US15: As a user, I want a status report so that I can get an overview. \pause \Done{}
+  \end{itemize}
+
+  \pause Internal structure was fixed and the program was ready for user testing after this sprint.
+\end{frame}
+
+\begin{frame}{Results}{Sprint 4}
+  Goal: \emph{Publish Neronet as an open source project}
+
+  
+  \pause Product Backlog Items: 
+  \begin{itemize}
+  \pause \item US16: As a user, I want to have example use cases that I can study. \pause \Done{}
+  \pause \item US17: As a user, I want to use basic functionalities via GUI. \pause \Done{}
+  \pause \item US18: As a user, I want to be able to easily visualise variable changes by time. \pause \Done{}
+  \pause \item US19: As a maintainer, I want a clear maintenance guide. \pause \Done
+  \pause \item US20: As a user, I want to have a helpful web community to help me out. \pause \Done{}
+  \pause \item US21: As a user, I want to submit individual experiments to be run on Slurm clusters. \pause Deferred
+  \pause \item US22: As a user, I want to cancel a submitted experiment. \pause \Done{}
+  \end{itemize}
+
+  \pause User feedback was received during this sprint and some time was allocated to fixing issues based on user feedback. Some of the user stories were added based on this. This is part of the reason why some of the user stories were deferred to the next sprint.
+\end{frame}
+
+\section{Demo}
+\begin{frame}{Demo} % Tuomo & Teemu
+  Demo script:
+  \begin{enumerate}
+  \item Neronet Installation, preferences and initial setup of clusters
+  \item Specification of clusters via CLI
+  \item Specification of an experiment
+  \item Submission of the specified experiment to an unmanaged node
+  \item Retrieval of experiment status report
+  \end{enumerate}
+\end{frame}
+\section{Quality} \bgset{gfx/neural1__bgmod.jpg}
+\begin{frame}{Quality} % Matias & Iiro
+  Definition of done:
+  \begin{itemize}
+  \item We defined \Done{} in three levels: BI, sprint and project
+  \item BI level: unit tests done where applicable,
+    functional test coverage 80\%, conformity (PEP-8), commented,
+    documented, peer reviewed
+  \item Sprint level: BI:s are \Done{}, increment is tested and reviewed,
+    sprint goal is achieved
+  \pause \item Updates to DoD:
+    \begin{itemize}
+    \item We replaced \emph{unit test coverage 90\%} with \emph{unit tests
+      are written where applicable} -- the old metric was not useful for all
+      BIs
+    \end{itemize}
+  \item Otherwise, we have followed our DoD as planned.
+  \end{itemize}
+\end{frame}
+\begin{frame}{Quality} % Matias & Iiro
+  Used QA practices and tools:
+  \begin{itemize}
+  \item Commenting \& documentation -- forces to rethink from another
+    perspective, facilitates peer review
+  \item Python standard unittest framework -- white-box test automation
+  \item Functional testing -- manual black-box testing based on specs
+  \item Peer review -- quality assurance
+  \end{itemize}
+\end{frame}
+\begin{frame}{Quality} % Matias & Iiro
+  Performance in quality assurance practices peer-graded with scale 0-3:
+  \begin{table} \small
+  \begin{tabular}{l|rrrrrrrrrrr}
+    US &   UT &   FT &  Com &  Doc & Peer  \\ \hline
+     1 &    3 &    3 &    3 &    3 &    3  \\
+     2 &    2 &    2 &    3 &    2 &    3  \\
+     3 &    3 &    3 &    3 &    3 &    3  \\
+     4 &    3 &    3 &    3 &    3 &    1  \\
+     5 &    1 &    3 &    2 &    1 &    1  \\ \hline
+       &    2 &    3 &    3 &    2 &    2
+  \end{tabular}
+  \end{table}
+  \pause Qualitatively we achieved our standards only partially:
+  \begin{itemize}
+  \item Unit and functional test coverage -- good
+  \item Quality of comments and documentation -- good
+  \item Peer review -- ok (done rather quickly)
+  \end{itemize}
+\end{frame}
+\begin{frame}{Quality} % Matias & Iiro
+  Relevant quality attributes:
+  \begin{itemize}
+  \pause \item \alert{Usability} -- Our user guide helps newbies understand
+    our product $\rightarrow$ The usability should be good
+  \pause \item \alert{Reliability} -- We estimate the overall reliability
+    only satisfactory. We will put more effort on this in the future.
+  \pause \item \alert{Extendability} -- At the moment our software's
+    extendability is ok, but it is only a prototype.
+  \pause \item \alert{Performance} -- The current performance is mediocre.
+    We will put more effort on this in the future.
+  \end{itemize}
+\end{frame}
+\section{Effort}
+\begin{frame}{Effort} % Matias & Iiro
+Spent and budgeted effort in hours by team member and sprint:
+\begin{table} \small
+  \begin{tabular}{l|rrrrrrrrrrr}
+    S &  Samuel &   Teemu &   Tuomo &   Joona &    Iiro &  Matias  \\ \hline
+    0 &  140/50 &   36/35 &   45/35 &   40/35 &   36/35 &   43/35  \\
+    1 &   52/30 &   37/33 &   42/33 &   46/33 &   32/33 &   37/33  \\
+    2 &   42/30 &   27/33 &   40/33 &   25/33 &   27/33 &   30/33  \\
+    3 &   24/15 &   27/33 &   14/33 &   22/33 &   20/33 &   27/33  \\
+    4 &    0/15 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
+    5 &    0/15 &    0/33 &    0/33 &    0/33 &    0/33 &    0/33  \\
+    6 &    0/20 &    0/25 &    0/25 &    0/25 &    0/25 &    0/25  \\ \hline
+      & ?/175 &  ?/225 &  ?/225 &  ?/225 &  ?/225 &  ?/225  \\
+  \end{tabular}
+  \end{table}
+  \pause \begin{itemize}
+  \item Our team had comparatively little experience
+  \item The project's problem domain was challenging to understand
+  \item Studying existing products and technologies took a lot of time
+  \item The scrum master served also as team leader and lead developer
+  \end{itemize}
+\end{frame}
+\section{Retros} \bgset{gfx/neural3__bgmod.jpg}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  Sprint planning:
+  \begin{itemize}
+  \item BI clarity and simplicity (user guide helps)
+  \item It might have been better if the PO had created the stories from scratch -Matias, Tuomo
+  \item We should actively seek more input from PO when developing the user guide
+  \item we should make sure we reserve enough time for the actual story selection on Monday -Matias
+  \end{itemize}
+\end{frame}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  Daily scrums:
+  \begin{itemize}
+  \item We have mostly been doing teamwork, so there has been little new info in the scrums -Matias -Joona -Teemu
+  \item They have been overly long and they have extended due to inexperience.
+  \item People are late.
+  \end{itemize}
+\end{frame}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  Teamwork sessions:
+  \begin{itemize}
+  \item Sessions are too long and sometimes people get hungry
+  \item Generally someone has to leave early or comes late
+  \end{itemize}
+\end{frame}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  Tools:
+  \begin{itemize}
+  \item Flowdock is good x6
+  \item Agilefant has a steep learning curve. -Iiro
+  \item People tend to forget to log their time at agilefant
+  \item Github hasn't been used much. Hope to use it more during future sprints
+  \item Floobits is very buggy.
+  \item Top 3 tools: 1) GitHub 2) Flowdock 3) Agilefant
+  \item Worst 3 tools: 1) Floobits 2) Six tactics 3) Agilefant
+  \end{itemize}
+\end{frame}
+\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+  How teamwork could be improved:
+  \begin{itemize}
+  \item People should be more on time
+  \item Scrum Master shouldn't have to work as a team leader too.
+  \item Hard to think of improvements since we haven't really started coding yet
+  \end{itemize}
+\end{frame}
+\end{document}

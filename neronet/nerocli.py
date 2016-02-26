@@ -4,7 +4,7 @@
 
 from __future__ import print_function
 import os.path
-import argcomplete, argparse
+import argparse
 import sys
 
 import neronet.neroman
@@ -60,7 +60,6 @@ def create_argument_parser():
 def main():
     """Parses the command line arguments and starts Neroman."""
     parser = create_argument_parser()
-    argcomplete.autocomplete(parser)
     args = parser.parse_args()
     nero = neronet.neroman.Neroman()
     if args.experiment:

@@ -1671,3 +1671,35 @@ Agenda:
 
 - 13:00 Presentation of progress report (35 minutes)
 - 13:35 Feedback and questions (10 minutes)
+
+
+24.2 daily scrum
+Tuomo
+-went into daily scrum to get new missions, made parameter comparison work
+-no problems
+-should finish in time
+
+Matias
+-did some slurm work
+
+Iiro
+-reinstalled OS, matplotlib not really working
+
+Sprint 4 retrospective
+
+### Visiting and reviewing the commitments done in the last sprint retrospective
+
+- Employed CI with Travis
+- Continued holding daily scrums when necessary
+
+
+### Identifying things the team should start doing
+
+  - Improving unit tests
+  - Report hours done to agilefant after each session
+  - Work more in the same room to improve communication
+
+
+### Identifying things the team should continue doing
+
+- Continue improving testing and continuous integration
