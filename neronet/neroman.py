@@ -75,12 +75,11 @@ class Neroman:
             ssh_address (str): SSH address of the cluster
 
         Raises:
-            FormatError: if the cluster type isn't unmanaged or slurm
+            IOError: if the cluster type isn't unmanaged or slurm
 
         """
         if not neronet.core.Cluster.Type.is_member(cluster_type):
-            raise neronet.config_parser.FormatError(
-                        ['Invalid cluster type "%s"!' % (cluster_type)])
+            raise IOError('Invalid cluster type "%s"!' % (cluster_type))
         cluster = neronet.core.Cluster(cluster_id, cluster_type, ssh_address)
         try:
             cluster.test_connection()
@@ -166,6 +165,10 @@ class Neroman:
         self.database.pop(experiment_id)
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
+
+    def plot_experiment(self, experiment_id):
+        experiment = self.database[experiment_id]
+        experiment.plot_output()
 
     def status_gen(self, arg):
         """Creates a generator that generates the polled status
@@ -339,6 +342,14 @@ class Neroman:
             if exp.state in (neronet.core.Experiment.State.finished,
                         neronet.core.Experiment.State.lost):
                 exp.cluster_id = None
+                #TODO: Do output processing
+                if exp.state == neronet.core.Experiment.State.finished:
+                    results_dir = os.path.join(exp.path, 'results')
+                    if not os.path.exists(results_dir):
+                        os.mkdir(results_dir)
+                    shutil.move(os.path.join(local_dir, exp.id), \
+                                os.path.join(results_dir, exp.id))
+                    exp.plot_output()
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
 
     #def tail_log(self, exp_id=None):
