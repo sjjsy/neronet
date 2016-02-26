@@ -1671,3 +1671,15 @@ Agenda:
 
 - 13:00 Presentation of progress report (35 minutes)
 - 13:35 Feedback and questions (10 minutes)
+
+24.2 daily scrum
+Tuomo
+-went into aily scrum to get new missions, made parameter comparison work
+-no problems
+-should finish in time
+
+Matias
+-did some slurm work
+
+Iiro
+-reinstalled OS, matplotlib not really working
