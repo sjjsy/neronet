@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 def reader(line):
     keys = ['identity', 'squared', 'cubed']
-    vals = [int(val) for val in line.strip().split(', ')]
+    vals = [int(val) for val in line.strip().split(', ') if val]
     return dict(zip(keys, vals))
 
 def plot(filename, x, y):

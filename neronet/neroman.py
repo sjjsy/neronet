@@ -349,7 +349,9 @@ class Neroman:
                         os.mkdir(results_dir)
                     shutil.move(os.path.join(local_dir, exp.id), \
                                 os.path.join(results_dir, exp.id))
-                    exp.plot_output()
+                    print(exp.output_processor)
+                    if exp.output_processor:
+                        exp.plot_output()
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
 
     #def tail_log(self, exp_id=None):

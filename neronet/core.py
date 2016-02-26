@@ -20,7 +20,6 @@ TIME_OUT = 5.0
 
 USER_DATA_DIR = '~/.neronet' # Remember to os.path.expanduser
 USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
-
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 OPTIONAL_FIELDS = set(['outputs', 'output_processor', 'plot', 'collection', 
@@ -168,17 +167,35 @@ class Experiment(object):
                     'warnings' : [] }
         #MAGIC: Creates the attributes for the experiment class
         self.__dict__['_fields'] = fields
+        # Creates a function to process a line of output
+        if fields['output_processor']:
+            args = fields['output_processor'].split()
+            process_output_line = import_from(*args)
+            super(Experiment, self).__setattr__('process_output_line', \
+                                                process_output_line)
         #super(Experiment, self).__setattr__('_fields', fields)
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
+        
+    def get_results_dir(self):
+        """Returns the location of the directory of the experiment results
+        """
+        #TODO: make safe for when files don't exist
+        root = USER_DATA_DIR_ABS
+        if self.state == Experiment.State.finished:
+            root = self._fields['path']
+        return os.path.join(root, 'results', self.id)
 
-    def read_output(self):
-        filename = os.path.join(self._fields['path'], 'results', self.id, 'stdout.log')
+    def get_output(self):
+        """Returns experiment output as a dict using user specified output
+        line parser
+        """
+        #TODO: make safe for when files don't exist
+        filename = os.path.join(self.get_results_dir(), 'stdout.log')
         with open(filename, 'r') as f:
             lines = f.read().strip().split('\n')
-        reader = self._fields['output_processor']
         data = {}
         for line in lines:
-            datum = reader(line)
+            datum = self.process_output_line(line)
             for key, value in datum.items():
                 if key not in data:
                     data[key] = [value]
@@ -187,19 +204,25 @@ class Experiment(object):
         return data
 
     def plot_output(self):
-        output = self.read_output()
-        results_dir = os.path.join(self._fields['path'], 'results', self.id)
+        """Plots the experiment output according to the user specified
+        plotting function and output line parser
+        """
+        #TODO: make safe for when files don't exist
+        output = self.get_output()
+        results_dir = self.get_results_dir()
+        idx = 1
         for plot in self._fields['plot']:
             args = plot.split()
             module_name = args[0]
             plotter_name = args[1]
             args = args[2:]
-            plotter = import_from("neronet.scripts." + module_name, plotter_name)
+            plotter = import_from(module_name, plotter_name)
             data = []
             for arg in args:
                 data.append(output[arg])
-            plotter(os.path.join(results_dir, 'output.png'), *data)
-    
+            plotter(os.path.join(results_dir, 'output%d.png' % idx), *data)
+            idx += 1
+
     def get_action(self, logrow):
         init_action = ('no action', '')
         try:
@@ -299,6 +322,11 @@ class Experiment(object):
         yield "  State: %s\n" % self.state
         if self._fields['cluster_id']:
             yield "  Cluster: " + self._fields['cluster_id'] + '\n'
+        if self.state in (Experiment.State.running, Experiment.State.finished):
+            output = self.get_output()
+            yield "  Output:\n"
+            for field in output:
+                yield "    %s: " % field + str(output[field]) + "\n"
         yield "  Last modified: %s\n" % self._fields['time_modified']
         if self._fields['conditions']:            
             conds = '  Conditions:\n'
@@ -374,8 +402,9 @@ def read_file(filepath, default=None):
         pass
     return result
 
-def import_from(module, obj_name):
-    """Import object from module
+def import_from(module_name, obj_name):
+    """Import object from module, tries to first find module from
+    neronet/scripts
 
     Parameters:
         module (str): name of the module to be imported from
@@ -388,7 +417,8 @@ def import_from(module, obj_name):
         ImportError: If the module to be imported doesn't exist
         AttributeError: If the module doesn't contain an object named obj_name
     """
-    return getattr(importlib.import_module(module), obj_name)
+    module = importlib.import_module("neronet.scripts." + module_name)
+    return getattr(module, obj_name)
 
 def create_config_template():
     # Creates an empty experiment config file with the required fields.

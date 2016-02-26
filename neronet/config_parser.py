@@ -350,13 +350,6 @@ class ConfigParser():
                         if field == 'parameters':
                             params = \
                                 self._param_combinations(new_scope[field])
-                        elif field == 'output_processor':
-                            args = new_scope[field].split()
-                            args[0] = 'neronet.scripts.' + args[0]
-                            if args == 1:
-                                args.append("reader")
-                            output_processor = neronet.core.import_from(*args)
-                            experiment[field] = output_processor
                         elif field == 'conditions':
                             conditions = {}
                             for condition_name in new_scope[field]:
