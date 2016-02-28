@@ -9,91 +9,83 @@
   Our goal is to develop a tool for computational researchers to enable easy
   \begin{itemize}
   \item specification and management of experiment queues
-  \pause \item batch submission of experiment jobs to computing clusters
-  \pause \item monitoring of ongoing experiments' logs and parameter values
-  \pause \item access to experiment information during and after the run
-  \pause \item configurable notifications on experiment state and progress
-  \pause \item configurable criteria for experiment autotermination
-  \pause \item logging of experiment history
+  \item batch submission of experiment jobs to computing clusters
+  \item monitoring of ongoing experiments' logs and parameter values
+  \item access to experiment information during and after the run
+  \item configurable notifications on experiment state and progress
+  \item configurable criteria for experiment autotermination
+  \item logging of experiment history
   \end{itemize}
 \end{frame}
 \begin{frame}{Introduction}{What} % Samuel
   In essence the product is a Python-based tool that enables computational researchers to conduct their research more effectively.
   \begin{itemize}
-  \item \pause It utilizes SSH and TCP sockets to distribute the computational workload into computer clusters. It supports the Slurm job and resource manager but can function without it as well.
-  \item \pause It is framework agnostic in that it permits the use of a very wide variety of tools to actually conduct the computing.
+  \item It utilizes SSH and TCP sockets to distribute the computational workload into computer clusters. It supports the Slurm job and resource manager but can function without it as well.
+  \item It is framework agnostic in that it permits the use of a very wide variety of tools to actually conduct the computing.
   \end{itemize}
 \end{frame}
 \section{Results} % Samuel & Joona
 \begin{frame}{Results}{Sprint 0} \bgset{gfx/neural3__bgmod.jpg}
-  Goal: \emph{Team building and preparing for sprint 1} \pause \Done{}
+  Goal: \emph{Team building and preparing for sprint 1} \Done{}
 
-  \pause Product Backlog Items: \emph{None}
+  Product Backlog Items: \emph{None}
 
-  \pause Sprint 0 took a lot of effort from us since the project topic was very challenging to dive into. Also none of us had done this course before. Interviews with Jelena \& Simo helped us to understand the project.
+  Sprint 0 took a lot of effort from us since the project topic was very challenging to dive into. Also none of us had done this course before. Interviews with Jelena \& Simo helped us to understand the project.
   
-  \pause We were proud of our efforts in the sprint.
+  We were proud of our efforts in the sprint.
 \end{frame}
 \begin{frame}{Results}{Sprint 1}
   Goal: \emph{Develop a prototype that offers the most basic functionality via a CLI}
   
-  \pause Product Backlog Items: 
+  Product Backlog Items: 
   \begin{itemize}
-  \pause \item US1: As a user, I want a basic user guide that would cover the installation of Neronet and its use via CLI. \pause \Done{}
-  \pause \item US2: As a user, I want to specify clusters by address and type to specify my computing resources. \pause \Done{}
-  \pause \item US3: As a user, I want to specify experiments by name, files and parameters. \pause \Done{}
-  \pause \item US4: As a user, I want to submit experiments to unmanaged nodes. \pause \Done
-  \pause \item US5: As a user, I want an experiment status report so that I can review experiment status details. \pause \Done{}
+  \item US1: As a user, I want a basic user guide that would cover the installation of Neronet and its use via CLI. \Done{}
+  \item US2: As a user, I want to specify clusters by address and type to specify my computing resources. \Done{}
+  \item US3: As a user, I want to specify experiments by name, files and parameters. \Done{}
+  \item US4: As a user, I want to submit experiments to unmanaged nodes. \Done{}
+  \item US5: As a user, I want an experiment status report so that I can review experiment status details. \Done{}
   \end{itemize}
 
-  \pause Just a prototype, not ready for release to users.
+  Just a prototype, not ready for release to users.
 \end{frame}
 \begin{frame}{Results}{Sprint 2}
   Goal: \emph{Develop a stable version for end user testing}
   
   \pause Product Backlog Items: 
   \begin{itemize}
-  \pause \item US6: as a user, I want to set preferences (name, email, default cluster)
-  \pause \Done{}
+  \pause \item US6: as a user, I want to set preferences (name, email, default cluster) \pause \Done{}
   \pause \item US7: As a user, I want my experiment config attributes to support generation of value combinations \pause \Done{}
-  \pause \item US8: As a user, I want my experiment specifications to be able to inherit properties \pause \Done
-  \pause \item US9: As a user, I want to see a basic status report in the gui
-  \pause \Done{}
+  \pause \item US8: As a user, I want my experiment specifications to be able to inherit properties \pause \Done{}
+  \pause \item US9: As a user, I want to see a basic status report in the gui \pause \Done{}
   \pause \item US10: Aas a user, I want the program to enable easy setup. \pause \Done{}
   \end{itemize}
   
-  \pause At this point, our software was stable and well tested for the first time, but the user experience was still not the greatest due to lack of asynchronous functionality.
+  \pause Stable but very limited functionality. % Only synchronous
 \end{frame}
 \begin{frame}{Results}{Sprint 3}
   Goal: \emph{Finish asynchronous system functionality and create a GUI mockup}
   
   \pause Product Backlog Items: 
   \begin{itemize}
-  \pause \item US11: As a user, I want to save important information about my clusters
-  \pause \Done{}
-  \pause \item US12: As a user, I want to group my clusters
-  \pause \Done{}
-  \pause \item US13: As a user, I want to delete obsolete versions of my experiments
-  \pause \Done{}
+  \pause \item US11: As a user, I want to save important information about my clusters \pause \Done{}
+  \pause \item US12: As a user, I want to group my clusters \pause \Done{}
+  \pause \item US13: As a user, I want to delete obsolete versions of my experiments \pause \Done{}
   \pause \item US14: As a user, I want configurable criteria for experiment warnings and autotermination \pause \Done{}
-  \pause \item US15:: As a user, I want a status report so that I can get an overview \pause \Done
+  \pause \item US15:: As a user, I want a status report so that I can get an overview \pause \Done{}
   \end{itemize}
   
-  \pause In this sprint we also finished asynchronous daemon system so users could submit and manage multiple experiments and clusters, created gui and made our software to support python 2.7 and newer versions (previously only python 3.5)
+  \pause Rewriting, refactoring and development under the hood. % In this sprint we also finished asynchronous daemon system so users could submit and manage multiple experiments and clusters, created gui and made our software to support python 2.7 and newer versions (previously only python 3.5)
 \end{frame}
 \begin{frame}{Results}{Sprint 4}
   Goal: \emph{Publish Neronet as an open source project}
   
   \pause Product Backlog Items: 
   \begin{itemize}
-  \pause \item US16: As a user, I want to have example use cases that I can study
-  \pause \Done{}
-  \pause \item US17: As a user, I want to use basic functionalities via gui
-  \pause \Done{}
-  \pause \item US18: As a user, I want to be able to easily visualize variable changes over time.
-  \pause \Done{}
+  \pause \item US16: As a user, I want to have example use cases that I can study \pause \Done{}
+  \pause \item US17: As a user, I want to use basic functionalities via gui \pause \Done{}
+  \pause \item US18: As a user, I want to be able to easily visualize variable changes over time. \pause \Done{}
   \pause \item US19: As a maintainer, I want a clear maintenance guide \pause \Done{}
-  \pause \item US20:: As a user, I want to have a helpful web community to help me out \pause \Done
+  \pause \item US20:: As a user, I want to have a helpful web community to help me out \pause \Done{}
   \end{itemize}
   
   \pause In this sprint we started to use automated tests using travis CI and got input from user testing. 
@@ -117,11 +109,11 @@ Our PO gave us some input regarding usability after his initial testing.
 \end{itemize}
 \end{frame}
 \section{Demo}
-\begin{frame}{Demo} % Tuomo & Teemu
+\begin{frame}{Demo}
   We have created video demo and would like to show it now.
 \end{frame}
 \section{Quality} \bgset{gfx/neural1__bgmod.jpg}
-\begin{frame}{Quality} % Matias & Iiro
+\begin{frame}{Quality}
   Definition of done:
   \begin{itemize}
   \item We defined \Done{} in three levels: BI, sprint and project
@@ -134,7 +126,7 @@ Our PO gave us some input regarding usability after his initial testing.
   \item We have mainly followed our DoD as planned, but in sprint 3 we didn't yet have automated tests so we replaced that with manual user testing. Documentation of system testing could also be better.
   \end{itemize}
 \end{frame}
-\begin{frame}{Quality} % Matias & Iiro
+\begin{frame}{Quality}
   Used QA practices and tools:
   \begin{itemize}
   \item Commenting \& documentation -- forces to rethink from another
@@ -145,14 +137,14 @@ Our PO gave us some input regarding usability after his initial testing.
   \item Peer review -- quality assurance
   \end{itemize}
 \end{frame}
-\begin{frame}{Quality} % Matias & Iiro
+\begin{frame}{Quality}
   Relevant quality attributes:
   \begin{itemize}
   \pause \item \alert{Usability} -- We have put a lot of effort in creating helpful user manual, start guide and example use cases to help newbies better understand our product. Some error ans success messages could be more helpful though, but we will make them better right at the start of the next sprint.
   \pause \item \alert{Reliability} -- Our software's reliability should be very good at this point. Test haven't shown any unexpected crashes.
   \end{itemize}
 \end{frame}
-\begin{frame}{Quality} % Matias & Iiro
+\begin{frame}{Quality}
   Relevant quality attributes:
   \begin{itemize}
   \pause \item \alert{Extendability} -- We have paid attention to making our software easily extendable from the start, and in the last sprint we put effort in creating a maintenance guide so it's easier to extend our software even without having been in the development team.
@@ -160,7 +152,7 @@ Our PO gave us some input regarding usability after his initial testing.
   \end{itemize}
 \end{frame}
 \section{Effort}
-\begin{frame}{Effort} % Matias & Iiro
+\begin{frame}{Effort}
 Spent and budgeted effort in hours by team member and sprint:
 \begin{table} \small
   \begin{tabular}{l|rrrrrrrrrrr}
@@ -183,7 +175,7 @@ Spent and budgeted effort in hours by team member and sprint:
   \end{itemize}
 \end{frame}
 \section{Retros} \bgset{gfx/neural3__bgmod.jpg}
-\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+\begin{frame}{Retros: Sprint 0}
   Sprint planning:
   \begin{itemize}
   \item BI clarity and simplicity (user guide helps)
@@ -192,7 +184,7 @@ Spent and budgeted effort in hours by team member and sprint:
   \item we should make sure we reserve enough time for the actual story selection on Monday -Matias
   \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+\begin{frame}{Retros: Sprint 0}
   Daily scrums:
   \begin{itemize}
   \item We have mostly been doing teamwork, so there has been little new info in the scrums -Matias -Joona -Teemu
@@ -200,14 +192,14 @@ Spent and budgeted effort in hours by team member and sprint:
   \item People are late.
   \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+\begin{frame}{Retros: Sprint 0}
   Teamwork sessions:
   \begin{itemize}
   \item Sessions are too long and sometimes people get hungry
   \item Generally someone has to leave early or comes late
   \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+\begin{frame}{Retros: Sprint 0}
   Tools:
   \begin{itemize}
   \item Flowdock is good x6
@@ -219,7 +211,7 @@ Spent and budgeted effort in hours by team member and sprint:
   \item Worst 3 tools: 1) Floobits 2) Six tactics 3) Agilefant
   \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 0} % Joona & Samuel
+\begin{frame}{Retros: Sprint 0}
   How teamwork could be improved:
   \begin{itemize}
   \item People should be more on time
@@ -227,7 +219,7 @@ Spent and budgeted effort in hours by team member and sprint:
   \item Hard to think of improvements since we haven't really started coding yet
   \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 1} % Joona & Samuel
+\begin{frame}{Retros: Sprint 1}
   Improvements since sprint 0:
   \begin{itemize}
   \item Replaced six tactics with Team spirit recap
@@ -236,7 +228,7 @@ Spent and budgeted effort in hours by team member and sprint:
   \item Ambiguity in user stories got less of an issue due to the user guide
   \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 1} % Joona & Samuel
+\begin{frame}{Retros: Sprint 1}
   Evaluating practises:
  \begin{itemize}
   \item Team leader per sprint:
@@ -255,7 +247,7 @@ Spent and budgeted effort in hours by team member and sprint:
       \end{itemize}
 \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 1} % Joona & Samuel
+\begin{frame}{Retros: Sprint 1}
   Evaluating practises:
  \begin{itemize}
   \item Developing user guide first:
@@ -274,7 +266,7 @@ Spent and budgeted effort in hours by team member and sprint:
       \end{itemize}
 \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 1} % Joona & Samuel
+\begin{frame}{Retros: Sprint 1}
   Evaluating practises:
  \begin{itemize}
   \item Daily Scrums:
@@ -295,7 +287,7 @@ Spent and budgeted effort in hours by team member and sprint:
       \end{itemize}
 \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 1} % Joona & Samuel
+\begin{frame}{Retros: Sprint 1}
   Evaluating tools:
  \begin{itemize}
   \item flowdock:
@@ -315,7 +307,7 @@ Spent and budgeted effort in hours by team member and sprint:
       \end{itemize}
 \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 1} % Joona & Samuel
+\begin{frame}{Retros: Sprint 1}
 Evaluating tools:
  \begin{itemize}
   \item Google calendar:
@@ -335,7 +327,7 @@ Evaluating tools:
       \end{itemize}
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 1} % Joona & Samuel
+\begin{frame}{Retros: Sprint 1}
 Improvement to teamwork:
  \begin{itemize}
   \item people are away too often -Matias
@@ -346,7 +338,7 @@ Improvement to teamwork:
   \item Let's design all interfaces at the start of the sprint.
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 1} % Joona & Samuel
+\begin{frame}{Retros: Sprint 1}
 Implementation of improvements:
  \begin{itemize}
   \item Team review in the beginning of January
@@ -354,7 +346,7 @@ Implementation of improvements:
   \item Samuel tries to be less of a lead developer
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 2} % Joona & Samuel
+\begin{frame}{Retros: Sprint 2}
 Visiting and updating the team's DoD:
  \begin{itemize}
   \item Review and update DOD more often
@@ -370,7 +362,7 @@ Visiting and updating the team's DoD:
   \item Not all planned improvements were deemed important
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 2} % Joona & Samuel
+\begin{frame}{Retros: Sprint 2}
 Identifying things the team should start doing
  \begin{itemize}
   \item Consider employing CI with Travis
@@ -386,7 +378,7 @@ Identifying things the team should start doing
   \item Periodic team reviews
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 2} % Joona & Samuel
+\begin{frame}{Retros: Sprint 2}
 Listing actionable commitments
  \begin{itemize}
   \item (Actionable = has clear steps to completion and acceptance criteria. f.ex "Check in code at least twice per day: before lunch and before going home")
@@ -397,7 +389,7 @@ Listing actionable commitments
   \item List items in sprint planning that should be worked on when time permits
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 3} % Joona & Samuel
+\begin{frame}{Retros: Sprint 3}
 Visiting and updating the team's DoD:
  \begin{itemize}
   \item No updates, after the last update the result was good
@@ -409,7 +401,7 @@ Visiting and updating the team's DoD:
   \item List items in sprint planning that should be worked on when time permits. Successful
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 3} % Joona & Samuel
+\begin{frame}{Retros: Sprint 3}
 Identifying things the team should start doing
  \begin{itemize}
   \item CI and automated tests -Joona
@@ -420,7 +412,7 @@ Identifying things the team should start doing
   \item Hold daily scrums only when some of the developers feel the need for them (At some point during this sprint we started holding daily scrums less often and found out they were often not necessary)
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 3} % Joona & Samuel
+\begin{frame}{Retros: Sprint 3}
 Listing actionable commitments
  \begin{itemize}
   \item (Actionable = has clear steps to completion and acceptance criteria. f.ex "Check in code at least twice per day: before lunch and before going home")
@@ -428,7 +420,7 @@ Listing actionable commitments
   \item Everybody checks their spent hours and properly adjusts their participation so that the required 225 hours will be filled
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 4} % Joona & Samuel
+\begin{frame}{Retros: Sprint 4}
 Visiting and updating the team's DoD:
  \begin{itemize}
   \item No updates, after the last update the result was good
@@ -439,7 +431,7 @@ Visiting and updating the team's DoD:
   \item Continued holding daily scrums when necessary
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 4} % Joona & Samuel
+\begin{frame}{Retros: Sprint 4}
 Identifying things the team should start doing
  \begin{itemize}
   \item Improving unit tests
@@ -451,7 +443,7 @@ Identifying things the team should start doing
   \item Continue improving testing and continuous integration
  \end{itemize}
 \end{frame}
-\begin{frame}{Retros: Sprint 4} % Joona & Samuel
+\begin{frame}{Retros: Sprint 4}
 Listing actionable commitments
  \begin{itemize}
   \item (Actionable = has clear steps to completion and acceptance criteria. f.ex "Check in code at least twice per day: before lunch and before going home")
