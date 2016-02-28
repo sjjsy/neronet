@@ -427,18 +427,24 @@ def import_from(module_name, obj_name):
         sys.exit(1)
     return getattr(module, obj_name)
 
-def create_config_template():
-    # Creates an empty experiment config file with the required fields.
-    if os.path.exists('template.yaml'):
-        print('A config template already exists in this folder.')
+def create_config_template(expid='exp_id', runcmdprefix='python', maincodefile='main.py', *params):
+    # Creates a config file with the required fields.
+    if os.path.exists('config.yaml'):
+        print('A config.yaml file already exists in this folder.')
         return
-    with open('template.yaml', 'w') as f:
-        f.write('###Mandatory fields###\n')
-        for field in MANDATORY_FIELDS:
-            f.write('%s: \n' % field)
-        f.write('###Optional fields###\n')
-        for field in OPTIONAL_FIELDS:
-            f.write('%s: \n' % field)
+    with open('config.yaml', 'w') as f:
+        f.write('%s:\n' % expid)
+        f.write('    run_command_prefix: %s\n' % runcmdprefix)
+        f.write('    main_code_file: %s\n' % maincodefile)
+        f.write('    parameters:\n')
+        if params:
+            params_format = ''
+            for param in params:
+                f.write('        %s:\n' % param)
+                params_format += '{%s} ' % param
+            f.write("    parameters_format: '%s'\n" % params_format) 
+        else:
+            f.write('    parameters_format:\n')
         
 WARNING_FIELDS = set(['variablename', 'killvalue', 'comparator', 'when', \
                         'action'])
