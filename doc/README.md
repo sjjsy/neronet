@@ -1,13 +1,16 @@
 # Documentation
 
-This folder contains all the documentation related to the project.
+This folder contains most documentation related to the project.
+The source code also contains comments and some documentation is
+available online at:
+[ReadTheDocs.org](http://neronet.readthedocs.org/en/latest/)
 
 ## Required artifacts
 
 All artifacts required by the course staff are listed below:
 
 - [Required artifacts ZIP](https://github.com/smarisa/neronet/raw/sprint/doc/required_artifacts.zip) -- A ZIP file that contains all of the below.
-- [Progress report](https://github.com/smarisa/neronet/raw/sprint/doc/progress_report.pdf)
+- [Progress report 2](https://github.com/smarisa/neronet/raw/sprint/doc/progress_report2.pdf)
 - [Product vision](https://github.com/smarisa/neronet/raw/sprint/doc/product_vision.pdf)
 - [Process overview](https://github.com/smarisa/neronet/raw/sprint/doc/process_overview.pdf)
 - [Technical overview](https://github.com/smarisa/neronet/raw/sprint/doc/technical_overview.pdf)
