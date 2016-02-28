@@ -220,7 +220,9 @@ class Experiment(object):
             data = []
             for arg in args:
                 data.append(output[arg])
-            plotter(os.path.join(results_dir, 'output%d.png' % idx), *data)
+            name = '-'.join(args)
+            plotter(os.path.join(results_dir, 'output%d__%s.png' % (idx,
+                    name)), name, *data)
             idx += 1
 
     def get_action(self, logrow):
@@ -417,7 +419,12 @@ def import_from(module_name, obj_name):
         ImportError: If the module to be imported doesn't exist
         AttributeError: If the module doesn't contain an object named obj_name
     """
-    module = importlib.import_module("neronet.scripts." + module_name)
+    try:
+        module = importlib.import_module("neronet.scripts." + module_name)
+    except Exception as err:
+        print '%s\nNeronet failed to process script "%s". Please fix it!' \
+                % (err, module_name)
+        sys.exit(1)
     return getattr(module, obj_name)
 
 def create_config_template():

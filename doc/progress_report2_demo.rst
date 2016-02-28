@@ -1,6 +1,25 @@
 Progress report 2 demo script
 =============================
 
+CLI
+---
+
+#. Installation: pip install neronet
+#. Setup kosh at SSH config: vim ~/.ssh/config
+#. Cluster conf: nerocli --cluster kosh unmanaged aalto
+#. Experiment conf: vim experiments/sleep/config
+#. Experiment conf: nerocli --experiment experiments/sleep
+#. Check status: nerocli --status
+#. Check status: nerocli --status sleep1
+#. Submit experiment: nerocli --submit sleep1 kosh
+#. Fetch information: nerocli --fetch
+#. Check status: nerocli --status sleep1
+#. Repeat last two steps until finished
+#. Check status: nerocli --plot
+
+GUI
+---
+
 Notes:
 - Remember to say *toot* everytime you press buttons
 

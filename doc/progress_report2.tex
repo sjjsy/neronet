@@ -73,8 +73,12 @@
   \pause \item US14: As a user, I want configurable criteria for experiment warnings and autotermination \pause \Done{}
   \pause \item US15:: As a user, I want a status report so that I can get an overview \pause \Done{}
   \end{itemize}
-  
-  \pause Rewriting, refactoring and development under the hood. % In this sprint we also finished asynchronous daemon system so users could submit and manage multiple experiments and clusters, created gui and made our software to support python 2.7 and newer versions (previously only python 3.5)
+
+  \pause Rewriting, refactoring and development under the hood. % In this
+  % sprint we also finished asynchronous daemon system so users could submit
+  % and manage multiple experiments and clusters, created gui and made our
+  % software to support python 2.7 and newer versions (previously only python
+  % 3.5)
 \end{frame}
 \begin{frame}{Results}{Sprint 4}
   Goal: \emph{Publish Neronet as an open source project}
@@ -88,29 +92,43 @@
   \pause \item US20:: As a user, I want to have a helpful web community to help me out \pause \Done{}
   \end{itemize}
   
-  \pause In this sprint we started to use automated tests using travis CI and got input from user testing. 
+  \pause Improving user experience; set up a continuous integration system
+  % In this sprint we started to use automated tests using travis CI and got
+  % input from user testing. 
 \end{frame}
 \begin{frame}{Results}{User testing}
 We reached out to Triton admin and he gave us great feedback.
 \begin{itemize}
       \pause \item Synchronizing files between clusters and client computers:
       \begin{itemize}
-          \pause \item Our previous version used rsync and it had exceeding amounts of I/O operations when used with large experiments.
-          \item We should use scp as bandwidth is not as big issue as disk operations.
+          \item Our system so far has used rsync and it has exceeding
+              amounts of I/O operations when used with large experiments.
+          \item We should use scp as to reduce disk operations.
           \item Home directory cannot be used in some clusters, we need to have an option to choose working directory.
       \end{itemize}
-      \item In general he liked our usability.
+      \pause \item In general he liked our usability.
 \end{itemize}
-Our PO gave us some input regarding usability after his initial testing.
+\pause Our PO gave us some input regarding usability after his initial testing.
 \begin{itemize}
-    \item Test connection when specifying clusters to assure the ssh address is valid. FIXED
+    \pause \item Test connection when specifying clusters to assure the ssh address is valid. FIXED
     \item Error and success messages should be more specific.
     \item Some bugs were also found and fixed.
 \end{itemize}
 \end{frame}
 \section{Demo}
 \begin{frame}{Demo}
-  We have created video demo and would like to show it now.
+  (Live demonstration of the current release.)
+  %We have created video demo and would like to show it now.
+
+  \begin{enumerate}
+  \item Installation
+  \item Cluster \& experiment configuration
+  \item Status review
+  \item Experiment submission
+  \item Viewing updates
+  \item Viewing plots
+  \item GUI
+  \end{enumerate}
 \end{frame}
 \section{Quality} \bgset{gfx/neural1__bgmod.jpg}
 \begin{frame}{Quality}

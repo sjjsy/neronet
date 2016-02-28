@@ -27,7 +27,7 @@ codedoc:
 artifacts:
 	@echo "Compiling all updated artifacts."
 	cd ./doc
-	cpdfs ./*.md ./*.tex
+	#cpdfs ./*.md ./*.tex
 	zip ./required_artifacts.zip \
 	  ./product_vision.pdf \
 	  ./process_overview.pdf \

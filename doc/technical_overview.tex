@@ -245,7 +245,7 @@
 % What notation should we use?
 % What level of detail should we present?
 % Who is the audience for these diagrams?
-\begin{frame}{Structural architecture}
+\begin{frame}{Structural architecture design}
   \begin{figure}
     \centering
     \includegraphics[width=0.8\columnwidth]{gfx/structural_architecture.png}
@@ -304,16 +304,16 @@
 \end{frame}
 \begin{frame}{Updating to PyPI}
   \begin{itemize}
-  \item Create a PyPI account \href{https://pypi.python.org/pypi?\%3Aaction=register_form}{here}.
-  \item Write a \texttt{\textasciitilde{}/.pypirc} file to hold your PyPI credentials:
-    \begin{verb}
-    [distutils]
-    index-servers = pypi
-    [pypi]
-    repository = https://pypi.python.org/pypi
-    username = my_username
-    password = my_password
-    \end{verb}
+  \item Create a PyPI account. % \href{https://pypi.python.org/pypi?%3Aaction=register_form}{here}.
+  \item Write a \texttt{\textasciitilde{}/.pypirc} file to hold your PyPI credentials.
+%    \begin{verb}
+%    [distutils]
+%    index-servers = pypi
+%    [pypi]
+%    repository = https://pypi.python.org/pypi
+%    username = my_username
+%    password = my_password
+%    \end{verb}
   \item Ask current PyPI neronet package owner for maintenance permissions.
     Currently it's \texttt{blomqvt1}, or Teemu Blomqvist
   \item Update metadata in setup.py. At the very least you need to increase
