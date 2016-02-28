@@ -51,7 +51,7 @@ def create_argument_parser():
                         action='store_true',
                         help='Removes files created by neroman')
     parser.add_argument('--template',
-                        action='store_true',
+                        nargs='+',
                         help='Creates a config template file with the \
                         required fields')
     return parser
@@ -129,9 +129,8 @@ def main():
         if answer == 'y':
             nero.clean()
             print('Removed neronet configuration files')
-
     if args.template:
-        cfgtemplate()
+        cfgtemplate(*args.template)
 
 def remove_dir(path):
     os.system('rm -r ' + path)
