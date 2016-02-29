@@ -1645,6 +1645,7 @@ Matias: fixing bugs; going to work on the cases
 Teemu: same thing
 Samuel: developed a Cluster class, worked on Slurm support; going to continue
 
+
 ## 02-12 300m Frifury
 
 Participants: Samuel, Matias
@@ -1663,6 +1664,43 @@ Things to deal with:
 - Tuomo's work (rendering plots)
 - How to proceed with Teemu & Matias
 
+
+## 02-24 360m Wedshop
+
+### Daily scrum
+
+Tuomo: 
+- went into daily scrum to get new missions, made parameter comparison work
+- no problems
+- should finish in time
+
+Matias:
+- did some slurm work
+
+Iiro:
+- reinstalled OS, matplotlib not really working
+
+
+## 02-26 300m Frifury
+
+### Sprint 4 retrospective
+
+Visiting and reviewing the commitments done in the last sprint retrospective
+
+- Employed CI with Travis
+- Continued holding daily scrums when necessary
+
+Identifying things the team should start doing
+
+  - Improving unit tests
+  - Report hours done to agilefant after each session
+  - Work more in the same room to improve communication
+
+Identifying things the team should continue doing
+
+- Continue improving testing and continuous integration
+
+
 ## 02-29 60m Progress review 2
 
 Participants: team + PO + Coach
@@ -1673,33 +1711,28 @@ Agenda:
 - 13:35 Feedback and questions (10 minutes)
 
 
-24.2 daily scrum
-Tuomo
--went into daily scrum to get new missions, made parameter comparison work
--no problems
--should finish in time
+## 02-29 60m Sprint planning
 
-Matias
--did some slurm work
+Participants: team + PO
 
-Iiro
--reinstalled OS, matplotlib not really working
+Agenda:
 
-Sprint 4 retrospective
+- 14:00: Agenda
+- 14:05: Sprint team leader Teemu's word
+- 14:10: Discussing the budget
+- 14:15: Discussing the product backlog
+- 14:25: Selection of backlog items (BIs)
+- 14:35: Definition of the sprint goal
+- 14:45: Clarification of BIs (user guide)
+- 14:55: Committing to the sprint goals
 
-### Visiting and reviewing the commitments done in the last sprint retrospective
+### Discussing the product backlog
 
-- Employed CI with Travis
-- Continued holding daily scrums when necessary
-
-
-### Identifying things the team should start doing
-
-  - Improving unit tests
-  - Report hours done to agilefant after each session
-  - Work more in the same room to improve communication
-
-
-### Identifying things the team should continue doing
-
-- Continue improving testing and continuous integration
+Work suggestions by the PO
+- linkki quick start guideen githubissa rikki
+- pidemmässä user guidessa voisi olla hyvä aloittaa klusteri-määrittelyllä, ja sitten vasta tulla eksperimentit -- eli että noudattaisi samaa järjestystä kuin quick user guide
+- hyvä lisätä assert jos parametrit väärin spesifioitu yamlissa
+- nerocli --clean olisi hyvä pyytää lisävarmistus ettei voi liian helposti vahingossa tuhota kaikkea
+- yksinkertainen esimerkki tiedostosta joka ottaa argumentteja voisi olla hyvä lisätä johonkin
+- alkaa olla hyvin lähellä käytettävää versiota
+- gui tulee olemaan varmasti hyödyllinen; olisko mahdollista että olisi vain tuo compare-param taulukko jossa voisi valita myös experimentit? eli tuota experiments-boksia ei näkyisi ollenkaan, ja saman toiminnallisuuden voisi tehdä compare param taulukossa? toi cluster name, cluster address, cluster port -boksi voisi olla myös hyvä siirtää johonkin muuhun näkymään; niitä tuskin tarvitsee kuitenkaan jatkuvasti muutella
