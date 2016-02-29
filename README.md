@@ -19,6 +19,8 @@ This project is under the [MIT License](./LICENSE).
 
 To start using Neronet, follow the instructions at [Neronet start guide](https://github.com/smarisa/neronet/blob/sprint/doc/start_guide.rst)
 
+We have a user group at [Google](https://groups.google.com/forum/#!forum/neronet-users).
+
 ## Branches
 
 The project repo contains two main branches:

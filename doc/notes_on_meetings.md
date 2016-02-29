@@ -1710,6 +1710,14 @@ Agenda:
 - 13:00 Presentation of progress report (35 minutes)
 - 13:35 Feedback and questions (10 minutes)
 
+### Feedback
+
+- System internally: 5 -- usability, security, maintanablility
+- System externally: 5 -- functionality, etc.
+- Work practices: 4 -- pros: planningit, reviewet, flowdock, communication
+  methods pretty good cons: one sprint planning was chaotic, poorly tested
+  software releases; we need to improve in continuous integration and testing
+
 
 ## 02-29 60m Sprint planning
 
@@ -1722,6 +1730,24 @@ Agenda:
 - 14:10: Discussing the budget
 - 14:15: Discussing the product backlog
 - 14:25: Selection of backlog items (BIs)
+
+### Todo
+
+- Documentation
+- Error handling, communication with the user, improving user experience
+- Teemu prefers to work in seperate rooms, Matias likes to know where people are
+- Comparison of experiments via GUI
+- Explore ways to allow collaborative usage
+
+## 03-04 60m Sprint planning
+
+Participants: team + PO
+
+Agenda:
+
+- 14:00: Agenda
+- 14:05: Discussing the budget and the product backlog
+- 14:15: Selection of backlog items (BIs)
 - 14:35: Definition of the sprint goal
 - 14:45: Clarification of BIs (user guide)
 - 14:55: Committing to the sprint goals
