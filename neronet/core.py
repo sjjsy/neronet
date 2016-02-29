@@ -239,9 +239,18 @@ class Experiment(object):
         return init_action
        
     def set_warning(self, warning):
+        """Called when a condition is met. Adds a warning message to self.warnings
+           attributes:
+               warning(str): the name/id of the condition that was met
+        """
         self._fields['warnings'].append(str(datetime.datetime.now()) + ": The condition '" + warning + "' was met")
     
     def set_multiple_warnings(self, warnings):
+        """Updates self.warnings to be exactly the same as the parameter given to
+           this function.
+           Parameters:
+               warnings(list): List of warning messages
+        """
         self._fields['warnings'] = warnings
             
     def has_warnings(self):
