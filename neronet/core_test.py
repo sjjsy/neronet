@@ -43,23 +43,7 @@ class Core_test(unittest.TestCase):
         self.assertEqual(w.get_action("variable 51"), "email")
         self.assertEqual(w.get_action("var1 51"), "no action")
     
-    def test_cluster(self):
-        
-        c = Cluster("triton","slurm", "triton.aalto.fi", 22)
-        self.assertEqual(c.__str__(), "triton (slurm) at triton.aalto.fi:22")
-        
-        c = Cluster("kosh","unmanaged", "kosh.aalto.fi", 22)
-        self.assertEqual(c.__str__(), "kosh (unmanaged) at kosh.aalto.fi:22")
-        
-        #TODO: write more tests for different cluster methods
-        
-    def test_experiment(self):
-        
-        c = {'c' : ExperimentWarning("name", "var1", 50.0, "gt", "immediately", "kill")}
-        e = Experiment("exp1", "python", "run.py",
-                    {'param1': 20, 'param2' : 30}, "{param1} {param2}", "", conditions=c)
-        
-        #TODO: write more tests
+    
         
         
 
