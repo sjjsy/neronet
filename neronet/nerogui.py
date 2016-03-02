@@ -24,6 +24,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def __init__(self, parent=None):
         super(Nerogui, self).__init__(parent)
+        self.labels = set()
+        self.actions = {}
         self.setupUi(self)
         self.nero = neronet.neroman.Neroman()
         self.init_clusters()
@@ -37,6 +39,31 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.exp_add_btn.clicked.connect(self.add_file)
         self.submit_btn.clicked.connect(self.submit_exp)
         self.refresh_btn.clicked.connect(self.fetch_exp)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.openMenu)
+
+    @QtCore.pyqtSlot(QtCore.QPoint)
+    def openMenu(self, pos):
+        menu = QtGui.QMenu(self)
+
+        if self.actions:
+            for action in self.labels:
+                menu.addAction(self.actions[action])
+
+	if not self.actions:
+            for label in self.labels:
+                action = QtGui.QAction(label, self)
+                self.actions[label] = action
+                menu.addAction(action)
+                action.setCheckable(True)
+		
+        menu.popup(self.mapToGlobal(pos))
+        selectedAction = menu.exec_(self.mapToGlobal(pos))
+	for action in self.labels:
+            if self.actions[action] == selectedAction:
+                self.actions[action].setChecked(self.actions[action].isChecked())
+                self.add_to_param_table()
+            menu.addAction(self.actions[action])
 
     def init_clusters(self):
         """add each cluster to view"""
@@ -66,7 +93,9 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
                 self,
                 "Select Directory"))
         self.nero.specify_experiments(file_path)
+        self.actions = {} #reset actions in case of new parameters
 	self.add_to_param_table()
+        
 
     def submit_exp(self):
         """submit button functionality"""
@@ -79,41 +108,72 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def add_to_param_table(self):
         """inserts values from database to comparison table"""
-        labels = set()
+        self.labels = set()
         names = []
         self.paramTable.setRowCount(0)
         self.paramTable.setColumnCount(0)
         for exp in self.nero.database.keys():
-            labels |= set(
+            self.labels |= set(
                 self.nero.database[exp]._fields["parameters"].keys())
             names.append(exp)
         self.paramTable.setRowCount(len(names))
-        self.paramTable.setColumnCount(len(labels)+1)
-        self.paramTable.setHorizontalHeaderLabels(tuple(["Name",] + list(labels)))
+        self.paramTable.setColumnCount(len(self.labels)+1)
+        self.paramTable.setHorizontalHeaderLabels(tuple(["Name",] + list(self.labels)))
         self.paramTable.setColumnWidth(0,200)
-        #self.paramTable.setVerticalHeaderLabels(names)
+        
+        
+        if not self.actions:
+	    for idx1, name in enumerate(names):
+	        self.paramTable.setItem(
+	            idx1,
+	            0,
+	            MyTableWidgetItem(
+	                QtCore.QString("%1").arg(name)))
+	        for idx2, param in enumerate(self.labels):
+	            try:
+	                value = self.nero.database[
+	                    name]._fields["parameters"][param]
+	                self.paramTable.setItem(
+	                    idx1,
+	                    idx2+1,
+	                    MyTableWidgetItem(
+	                        QtCore.QString("%1").arg(value)))
+	            except KeyError:
+	                pass
 
-        for idx1, name in enumerate(names):
-            self.paramTable.setItem(
-                idx1,
-                0,
-                MyTableWidgetItem(
-                    QtCore.QString("%1").arg(name)))
-            for idx2, param in enumerate(labels):
-                try:
-                    value = self.nero.database[
-                        name]._fields["parameters"][param]
-                    try:
-                        value = int(value)
-                    except:
-                        pass
-                    self.paramTable.setItem(
-                        idx1,
-                        idx2+1,
-                        MyTableWidgetItem(
-                            QtCore.QString("%1").arg(value)))
-                except KeyError:
-                    pass
+        if self.actions:
+            noneSelected = True
+            for idx1, name in enumerate(names):
+	        self.paramTable.setItem(
+	            idx1,
+	            0,
+	            MyTableWidgetItem(
+	                QtCore.QString("%1").arg(name)))
+	        for idx2, param in enumerate(self.labels):
+                    if noneSelected:
+	                try:
+	                    value = self.nero.database[
+	                        name]._fields["parameters"][param]
+	                    self.paramTable.setItem(
+	                        idx1,
+	                        idx2+1,
+	                        MyTableWidgetItem(
+	                            QtCore.QString("%1").arg(value)))
+	                except KeyError:
+	                    pass
+                    else:
+                        if not self.actions[param].isChecked:
+                            continue
+	                try:
+	                    value = self.nero.database[
+	                        name]._fields["parameters"][param]
+	                    self.paramTable.setItem(
+	                        idx1,
+	                        idx2+1,
+	                        MyTableWidgetItem(
+	                            QtCore.QString("%1").arg(value)))
+	                except KeyError:
+	                    pass
 
     def show_one_experiment(self):
         """prints detailed info of one experiment"""
