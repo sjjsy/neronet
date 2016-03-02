@@ -246,8 +246,8 @@ The following command will submit an experiment to a specified cluster.
 
 *Example:*
 ::
-	Usage: nerocli --submit CLUSTER_ID EXPERIMENT_ID
-	Example: nerocli --submit triton lang_exp
+	Usage: nerocli --submit EXPERIMENT_ID CLUSTER_ID 
+	Example: nerocli --submit lang_exp triton 
 
 
 EXPERIMENT_ID is the name of the experiment you are about to submit.
