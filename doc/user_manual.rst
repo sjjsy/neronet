@@ -115,6 +115,22 @@ To start your Neronet CLI application, run nerocli on your local machine's comma
 	nerocli --status
 
 
+Specifying Clusters in Neronet CLI
+----------------------------------
+
+You can specify clusters either via command line or by manually updating the clusters.yaml file. See the section *Installation* for more information on the format when updating the clusters.yaml file manually.
+
+*To add clusters via command line use the following format:*
+::
+	Usage: nerocli --cluster ID TYPE SSH_ADDRESS
+	Example: nerocli --cluster triton slurm triton.cs.hut.fi
+
+
+ID is a user defined id of the cluster, SSH_ADDRESS is the ssh address of the cluster, TYPE is either 'slurm' or 'unmanaged'
+
+The information given via CLI is then automatically updated to clusters.yaml. If you want to save other information about a specific cluster besides the cluster's address, name and type, you must manually write them to the clusters.yaml file.
+
+
 Specifying and Configuring Experiments in Neronet CLI
 -----------------------------------------------------
 
@@ -180,7 +196,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
 	- killvalue: This is the value to which you want neronet to compare the monitored variable
 	- comparator: Either 'gt' (greater that), 'lt' (less than), 'eq' (equal to), 'geq' (greater than or equal to) or 'leq' (less than or equal to). Use 'gt' if you want a warning when the value of the variable monitored exceeds killvalue, 'lt' if you want a warning when the variable falls below killvalue and 'eq' if you want a warning when the variable reaches killvalue.
  	- when: The value of this attribute can be either 'immediately' or 'time MINUTES' where MINUTES is the time interval in minutes after which the warning condition is checked and action performed.
- 	- action: Specifies what you want neronet to do when the warning condition is fulfilled. The value of this attribute is either 'kill' (if you want the experiment to be terminated when the warning condition is fulfilled), 'warn' (if you only want to see a warning message the next time you check the experiment status) or email (if you want to receive a warning email when the warning condition is fulfilled)
+ 	- action: Specifies what you want neronet to do when the warning condition is fulfilled. The value of this attribute is either 'kill' (if you want the experiment to be terminated when the warning condition is fulfilled) or 'warn' (if you want to see a warning message when the condition is fullfilled)
  	- The log output from the experiment code must contain rows of the format: 'VARIABLENAME VALUE'. So that neronet is able to follow the variable values. F.ex. in the example above the log output of lang_exp1 must contain rows of the form 'error_rate 24.3334', 'error_rate 49', 'error_rate 67.01', etc... The row must not contain anything else.
 - If multiple experiments have the same attribute values, it is not necessary to re-write every attribute for every experiment. The experiments defined in inner blocks automatically inherit all the attribute values specified in outer blocks. For example in the example above 'lang_exp1' and 'lang_exp2' inherit the run_command_prefix, main_code_file and logoutput values from the outmost block and lang_exp3 inherits all the parameter values from lang_exp1. If you don't want to inherit a specific value, just specify it again in the inner block and it is automatically overwritten. For example in the example above lang_exp3 uses different hyperparamz and parameter_format values than its parent lang_exp1.
 - If you place multiple parameter values within brackets and separated by a comma (like in the example above lang_exp1 -- hyperparamx: [1,2,34,20])Neronet will automatically generate different experiments for each value specified within brackets. (f.ex lang_exp1 would be run with the parameters '1 2 data/1.txt 2', '2 2 data/1.txt 2', '34 2 data/1.txt 2' and '20 2 data/1.txt 2')
@@ -223,10 +239,10 @@ EXPERIMENT_ID is the 'ID' attribute defined on the topmost row of the experiment
 Using the command above doesn't delete the experiment folder or any files within it. It only removes the experiment's information from Neronet's database. It also doesn't affect the children of the experiment.
 
 
-Submitting Experiments and Batches of Experiments to Computing Clusters
+Submitting Experiments to Computing Clusters
 -----------------------------------------------------------------------
 
-The following command will submit a batch of experiments to a specified cluster.
+The following command will submit an experiment to a specified cluster.
 
 *Example:*
 ::
@@ -234,28 +250,10 @@ The following command will submit a batch of experiments to a specified cluster.
 	Example: nerocli --submit triton lang_exp
 
 
-EXPERIMENT_ID is the 'ID' attribute defined on the topmost row of the experiment folder's config.yaml. Alternatively, if you only want to submit a certain experiment within a folder, you can use the format 'ID/experiment_Id' (see *specifying experiments* to find out what these attributes are)
-Using 'all' as EXPERIMENT_ID will submit all specified but not submitted experiments.
+EXPERIMENT_ID is the name of the experiment you are about to submit.
 
 CLUSTER_ID can be any cluster id or cluster group id specified in the clusters.yaml file or via CLI.
-Using 'any' as CLUSTER_ID will divide the work (if it can be divided) and submit it to all free clusters.
 If you have specified a default cluster in preferences.yaml (see *Installation*), you can leave CLUSTER_ID blank to automatically submit your experiments to the specified default cluster. F.ex 'submit lang_exp'.
-
-**Tasks can be submitted also by logical arguments:**
-::
-	Usage: nerocli --submit CLUSTER_ID ARGUMENT
-
-	#Specify an experiment and submit it instantly
-	Example: nerocli --submit triton ~/experiments/lang_exp x
-
-	#Submit all experiments that were modified since 2015-11-23
-	Example: nerocli --submit triton tmod>2015-11-23
-
-	#Submit all that have a specified parameter
-	Example: nerocli --submit triton params=*data/1.txt*
-
-	#Submit all defined but not submitted experiments
-	Example: nerocli --submit any all
 
 
 Fetching data about submitted experiments:
@@ -271,22 +269,6 @@ After that you can see the current state of your experiments by typing:
 ::
     nerocli --status
     
-
-
-Specifying Clusters in Neronet CLI
-----------------------------------
-
-You can specify clusters either via command line or by manually updating the clusters.yaml file. See the section *Installation* for more information on the format when updating the clusters.yaml file manually.
-
-*To add clusters via command line use the following format:*
-::
-	Usage: nerocli --cluster ID SSH_ADDRESS TYPE
-	Example: nerocli --cluster triton triton.cs.hut.fi slurm
-
-
-ID is a user defined id of the cluster, SSH_ADDRESS is the ssh address of the cluster, TYPE is either slurm or unmanaged
-
-The information given via CLI is then automatically updated to clusters.yaml. If you want to save other information on a specific cluster besides the cluster's address, name and type, you must manually write them to the clusters.yaml file.
 
 
 Status report
@@ -310,46 +292,12 @@ The command above will print the overall status information. That is, printing t
 
 *Experiment status:*
 ::
-	nerocli --status lang_exp/lang_exp3
+	nerocli --status lang_exp3
 
-The experiment status report contains:
-
-- The experiment's parameters
-- The experiment's last modification date
-- The experiment's current state and the times when the state has changed
-- The final output, if the experiment is finished
-
-The experiment state is either 'defined' (specified but not submitted to any cluster), 'submitted CLUSTER_ID' (submitted to a cluster but not yet running), 'running CLUSTER_ID', 'finished CLUSTER_ID' or 'terminated CLUSTER_ID'. CLUSTER_ID will be replaced with the correct cluster's id.
-
-*Collection status:*
-::
-	#All experiments that were modified since 2015-11-23
-	Example: nerocli --status tmod>2015-11-23
-
-	#All experiments that have a specified parameter
-	Example: nerocli --status params=*data/1.txt*
-
-	#All experiments that have the current state of 'defined'
-	Example: nerocli --status defined
-
-The collection status will contain a list of experiments in that collection and their current states.
-
-*All cluster statuses:*
-::
-	nerocli --status clusters
-
-Prints a list of all clusters and their current states. A cluster's current state is the number of experiments running in that cluster.
-
-*Single cluster status:*
+*Cluster status:*
 ::
 	Usage: nerocli --status CLUSTER_ID
 	Example nerocli --status triton
-
-Prints:
-
-- The number of experiments submitted to and running in the given cluster
-- The list of experiments submitted to and running in the given cluster
-- The times when the experiments were submitted and started running
 
 Example experiment
 ------------------
