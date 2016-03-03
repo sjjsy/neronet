@@ -5,7 +5,6 @@
 # TODO: need database parsing
 
 import os
-import sys
 import pickle
 import glob
 import time

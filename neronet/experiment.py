@@ -1,4 +1,3 @@
-import copy
 import datetime
 import os
 
@@ -203,11 +202,6 @@ class Experiment(object):
             for c in self._fields['conditions']:
                 self._fields['conditions'][c].start_time = datetime.datetime.now()
         self._fields['states_info'].append((state, datetime.datetime.now()))
-
-    def as_dict(self):
-        """ Returns the experiment as a dictionary
-        """
-        return {self._experiment_id: copy.deepcopy(self._fields)}
 
     def as_gen(self):
         """Creates a generate that generates info about the experiment

@@ -26,10 +26,11 @@ defined in its config:
 import os
 import time
 import datetime
-import os.path
+#FIXME: (collections) Can we do without this module?
 import collections
 import pickle
 import shutil
+#FIXME: (random) Can we do without this module?
 import random
 import sys
 
@@ -116,7 +117,7 @@ class Neroman:
         experiments = self.config_parser.parse_experiments(folder)
         err = []
         #Look for changes in the relevant fields and add them to changed_exps.
-        #TODO: Change this functionality so that the comaprison is done in the
+        #FIXME: Change this functionality so that the comaprison is done in the
         #experiment side and not on neroman
         changed_exps = {}
         relevant_fields = neronet.config_parser.MANDATORY_FIELDS | \
@@ -136,6 +137,7 @@ class Neroman:
             else: self.database[experiment.id] = experiment
         self.config_parser.save_database(DATABASE_FILENAME, \
                                     self.database)
+        #FIXME: What does this line do exactly?
         if err: print('\n'.join(err), file=sys.stderr)
         return changed_exps
     

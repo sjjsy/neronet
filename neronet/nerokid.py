@@ -20,8 +20,6 @@ from __future__ import print_function
 import os
 import subprocess
 import shlex
-import time
-import sys
 import pickle
 
 import neronet.core
@@ -171,6 +169,9 @@ class Nerokid(neronet.daemon.Daemon):
 
 def main():
     """Create a CLI interface object and process CLI arguments."""
+
+    import sys
+    
     if len(sys.argv) < 2:
         print('Kid experiment ID required!')
         sys.exit(1)
