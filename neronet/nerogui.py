@@ -142,7 +142,9 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 	                pass
 
         if self.actions:
-            noneSelected = True
+            checkedAmount = map(lambda x: x.isChecked(), self.actions.values())
+            noneSelected = not any(checkedAmount)
+            #any returns true if single true is found, lambda goes thourght every action object to find anythin is checked
             for idx1, name in enumerate(names):
 	        self.paramTable.setItem(
 	            idx1,
@@ -162,7 +164,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 	                except KeyError:
 	                    pass
                     else:
-                        if not self.actions[param].isChecked:
+                        if not self.actions[param].isChecked():
                             continue
 	                try:
 	                    value = self.nero.database[
