@@ -1645,7 +1645,6 @@ Matias: fixing bugs; going to work on the cases
 Teemu: same thing
 Samuel: developed a Cluster class, worked on Slurm support; going to continue
 
-
 ## 02-12 300m Frifury
 
 Participants: Samuel, Matias
@@ -1664,43 +1663,6 @@ Things to deal with:
 - Tuomo's work (rendering plots)
 - How to proceed with Teemu & Matias
 
-
-## 02-24 360m Wedshop
-
-### Daily scrum
-
-Tuomo: 
-- went into daily scrum to get new missions, made parameter comparison work
-- no problems
-- should finish in time
-
-Matias:
-- did some slurm work
-
-Iiro:
-- reinstalled OS, matplotlib not really working
-
-
-## 02-26 300m Frifury
-
-### Sprint 4 retrospective
-
-Visiting and reviewing the commitments done in the last sprint retrospective
-
-- Employed CI with Travis
-- Continued holding daily scrums when necessary
-
-Identifying things the team should start doing
-
-  - Improving unit tests
-  - Report hours done to agilefant after each session
-  - Work more in the same room to improve communication
-
-Identifying things the team should continue doing
-
-- Continue improving testing and continuous integration
-
-
 ## 02-29 60m Progress review 2
 
 Participants: team + PO + Coach
@@ -1708,57 +1670,75 @@ Participants: team + PO + Coach
 Agenda:
 
 - 13:00 Presentation of progress report (35 minutes)
-- 13:35 Feedback and questions (10 minutes)
+- 13:35 Feedback and questions (10 minute
 
-### Feedback
+## 03-02 360m Wedshop
 
-- System internally: 5 -- usability, security, maintanablility
-- System externally: 5 -- functionality, etc.
-- Work practices: 4 -- pros: planningit, reviewet, flowdock, communication
-  methods pretty good cons: one sprint planning was chaotic, poorly tested
-  software releases; we need to improve in continuous integration and testing
-
-
-## 02-29 60m Sprint planning
-
-Participants: team + PO
+Participants: team
 
 Agenda:
+- 13:00 Development
+- 14:30 Task division
+- 15:00 Development
+- 16:50 Daily scrum
+- 17:10 Retrospective of progress review
+- 17:30 Review of artifacts
+- 18:20 Review of evaluation criteria
+- 18:30 Review of competitors' material
 
-- 14:00: Agenda
-- 14:05: Sprint team leader Teemu's word
-- 14:10: Discussing the budget
-- 14:15: Discussing the product backlog
-- 14:25: Selection of backlog items (BIs)
+### Daily scrum
 
-### Todo
+Teemu:
+- Made documentation better
+- Dominated the team
+- No problems
+- Continue
 
-- Documentation
-- Error handling, communication with the user, improving user experience
-- Teemu prefers to work in seperate rooms, Matias likes to know where people are
-- Comparison of experiments via GUI
-- Explore ways to allow collaborative usage
+Tuomo:
+- Finished two user stories: As a user I want a big table and As a user I want to filter
+- No problems
+- Will start to filter
 
-## 03-04 60m Sprint planning
+Matias:
+- Tried to study something
+- No problems
+- Continue
 
-Participants: team + PO
+Samuel:
+- Reviewed course schedule and evaluation criteria
+- Opimized the project schedule (must be discussed on Friday)
+- Updated process overview
+- Wants to have a team review of the evaluation criteria and all the artifacts
 
-Agenda:
+Joona:
+- Updated the user manual
+- No problems
+- Will start doing something
 
-- 14:00: Agenda
-- 14:05: Discussing the budget and the product backlog
-- 14:15: Selection of backlog items (BIs)
-- 14:35: Definition of the sprint goal
-- 14:45: Clarification of BIs (user guide)
-- 14:55: Committing to the sprint goals
+Iiro: Not present
 
-### Discussing the product backlog
+### Feelings of the project review
 
-Work suggestions by the PO
-- linkki quick start guideen githubissa rikki
-- pidemmässä user guidessa voisi olla hyvä aloittaa klusteri-määrittelyllä, ja sitten vasta tulla eksperimentit -- eli että noudattaisi samaa järjestystä kuin quick user guide
-- hyvä lisätä assert jos parametrit väärin spesifioitu yamlissa
-- nerocli --clean olisi hyvä pyytää lisävarmistus ettei voi liian helposti vahingossa tuhota kaikkea
-- yksinkertainen esimerkki tiedostosta joka ottaa argumentteja voisi olla hyvä lisätä johonkin
-- alkaa olla hyvin lähellä käytettävää versiota
-- gui tulee olemaan varmasti hyödyllinen; olisko mahdollista että olisi vain tuo compare-param taulukko jossa voisi valita myös experimentit? eli tuota experiments-boksia ei näkyisi ollenkaan, ja saman toiminnallisuuden voisi tehdä compare param taulukossa? toi cluster name, cluster address, cluster port -boksi voisi olla myös hyvä siirtää johonkin muuhun näkymään; niitä tuskin tarvitsee kuitenkaan jatkuvasti muutella
+- We felt that the coach and PO were very satisfied but the instructor was
+  less so.
+
+Challenges
+- working efficiency
+- user testing
+
+Todo
+- Everyone must check that the CI build passes everytime they push! 
+
+### Artifacts review
+
+We reviewed the progress report, the process overview, and the definition of
+done.
+
+### Review of evaluation criteria
+
+We're gonna get 5 for sure.
+
+### Review of competitors' material
+
+We need to make more diagrams and stuff to make our presentations more
+impressive. Otherwise we're the best.
