@@ -9,6 +9,7 @@ import itertools
 import yaml
 
 import neronet.core
+import neronet.experiment
 
 EXPERIMENT_CONFIG_FILENAME = 'config.yaml'
 NERONET_DIR = os.path.expanduser('~') + '/.neronet/'
@@ -357,7 +358,7 @@ class ConfigParser():
                                 condition['name'] = condition_name
                                 condition['killvalue'] = float(condition['killvalue'])
                                 conditions[condition_name] = \
-                                    neronet.core.ExperimentWarning(**condition)
+                                    neronet.experiment.ExperimentWarning(**condition)
                             experiment[field] = conditions
                         else:
                             experiment[field] = new_scope[field]
@@ -372,7 +373,7 @@ class ConfigParser():
                             experiment['experiment_id'] = name
                         else:
                             experiment['experiment_id'] = experiment_id
-                        experiments.append(neronet.core.Experiment(**experiment))
+                        experiments.append(neronet.experiment.Experiment(**experiment))
                 _read_experiments(new_scope)
         _read_experiments(data)
 

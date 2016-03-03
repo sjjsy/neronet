@@ -147,7 +147,7 @@ class Neroman:
         updated instance of it.
 
         Parameters:
-            new_experiment (neronet.core.Experiment): the experiment object
+            new_experiment (neronet.experiment.Experiment): the experiment object
                     to be put in the database in place of the old one.
         """
         self.database[new_experiment.id] = new_experiment
@@ -254,7 +254,7 @@ class Neroman:
         #            % (exp.cluster_id))
         # Update experiment info
         exp.cluster_id = cluster_id
-        exp.update_state(neronet.core.Experiment.State.submitted)
+        exp.update_state(neronet.experiment.Experiment.State.submitted)
         # Define local path, where experiment currently exists
         local_exp_path = exp.path
         # Define the remote path into which the files will be transferred to,
@@ -322,9 +322,9 @@ class Neroman:
                 print('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
             # Clean the cluster
             exceptions = [exp.id for exp in experiments_to_check if exp.state
-                    in (neronet.core.Experiment.State.submitted,
-                    neronet.core.Experiment.State.submitted_to_kid,
-                    neronet.core.Experiment.State.running)]
+                    in (neronet.experiment.Experiment.State.submitted,
+                    neronet.experiment.Experiment.State.submitted_to_kid,
+                    neronet.experiment.Experiment.State.running)]
             try:
                 cluster.clean_experiments(exceptions)
             except RuntimeError:
@@ -335,15 +335,15 @@ class Neroman:
             exp_file = os.path.join(local_dir, exp.id, 'exp.pickle')
             if not os.path.exists(exp_file):
                 print('ERR: Experiment pickle missing!')
-                exp.update_state(neronet.core.Experiment.State.lost)
+                exp.update_state(neronet.experiment.Experiment.State.lost)
                 continue
             exp = self.database[exp.id] = pickle.loads(
                     neronet.core.read_file(exp_file))
-            if exp.state in (neronet.core.Experiment.State.finished,
-                        neronet.core.Experiment.State.lost):
+            if exp.state in (neronet.experiment.Experiment.State.finished,
+                        neronet.experiment.Experiment.State.lost):
                 exp.cluster_id = None
                 #TODO: Do output processing
-                if exp.state == neronet.core.Experiment.State.finished:
+                if exp.state == neronet.experiment.Experiment.State.finished:
                     results_dir = os.path.join(exp.path, 'results')
                     if not os.path.exists(results_dir):
                         os.mkdir(results_dir)
