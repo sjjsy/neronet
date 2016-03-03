@@ -33,8 +33,10 @@ import shutil
 import random
 import sys
 
-import neronet.core
 import neronet.config_parser
+import neronet.core
+import neronet.cluster
+import neronet.experiment
 
 DATABASE_FILENAME = 'default.yaml'
 PREFERENCES_FILENAME = 'preferences.yaml'
@@ -78,9 +80,9 @@ class Neroman:
             IOError: if the cluster type isn't unmanaged or slurm
 
         """
-        if not neronet.core.Cluster.Type.is_member(cluster_type):
+        if not neronet.cluster.Cluster.Type.is_member(cluster_type):
             raise IOError('Invalid cluster type "%s"!' % (cluster_type))
-        cluster = neronet.core.Cluster(cluster_id, cluster_type, ssh_address)
+        cluster = neronet.cluster.Cluster(cluster_id, cluster_type, ssh_address)
         try:
             cluster.test_connection()
             print('The cluster seems to be online!')
@@ -114,8 +116,11 @@ class Neroman:
         experiments = self.config_parser.parse_experiments(folder)
         err = []
         #Look for changes in the relevant fields and add them to changed_exps.
+        #TODO: Change this functionality so that the comaprison is done in the
+        #experiment side and not on neroman
         changed_exps = {}
-        relevant_fields = neronet.core.MANDATORY_FIELDS | neronet.core.OPTIONAL_FIELDS | set('path')
+        relevant_fields = neronet.config_parser.MANDATORY_FIELDS | \
+                        neronet.config_parser.OPTIONAL_FIELDS | set('path')
         for experiment in experiments:
             if experiment.id in self.database:
                 for key in experiment._fields:

@@ -22,11 +22,11 @@ long_description = 'Neronet is going to be a framework designed to facilitate th
 
 setup(
     name='neronet',
-    version='0.2.5',
+    version=find_version('neronet', 'version.py'),
     url='http://github.com/smarisa/neronet',
     license='MIT',
     author='The neronet team',
-    install_requires=['pyyaml>=3.11','argcomplete'],
+    install_requires=['pyyaml>=3.11'],
     author_email='samuel.marisa@aalto.fi',
     description='A tool for managing multiple computational experiments.',
     long_description=long_description,

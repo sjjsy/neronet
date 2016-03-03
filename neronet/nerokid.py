@@ -26,6 +26,7 @@ import pickle
 
 import neronet.core
 import neronet.daemon
+import neronet.experiment
 import neronet.neromum
 
 INTERVAL = 2.0

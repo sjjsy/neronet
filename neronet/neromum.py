@@ -13,7 +13,9 @@ import datetime
 import shutil
 
 import neronet.core
+import neronet.cluster
 import neronet.daemon
+import neronet.experiment
 import neronet.nerokid
 
 class Neromum(neronet.daemon.Daemon):
@@ -130,7 +132,7 @@ class Neromum(neronet.daemon.Daemon):
                 exp.log_output = {}
                 # Launch experiment
                 self.log('Launching experiment "%s"...' % (exp.id))
-                if self.cluster.ctype == neronet.core.Cluster.Type.slurm:
+                if self.cluster.ctype == neronet.cluster.Cluster.Type.slurm:
                     exp_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
                             'experiments', exp.id)
                     s = '#!/bin/bash\n'
