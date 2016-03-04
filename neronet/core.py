@@ -13,11 +13,17 @@ import importlib
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
-
-USER_DATA_DIR = '~/.neronet' # Remember to os.path.expanduser
+NERONET_DIR_NAME = '.neronet'
+USER_DATA_DIR = '~/' + NERONET_DIR_NAME # Remember to os.path.expanduser
 USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
 
 class Runresult: """A class for holding shell command execution results."""
+
+def remove_data():
+    """Removes the neronet data files
+    """
+    if os.path.exists(USER_DATA_DIR_ABS):
+        os.system('rm -r ' + USER_DATA_DIR_ABS)
 
 def osrunroe(cmd, vrb=True, inp=None):
     """Execute a shell command and return the return code, stdout and -err.

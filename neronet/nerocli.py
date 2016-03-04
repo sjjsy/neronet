@@ -9,6 +9,7 @@ import sys
 
 import neronet.neroman
 from neronet.core import create_config_template as cfgtemplate
+from neronet.core import remove_data
 from neronet.config_parser import FormatError
 
 def create_argument_parser():
@@ -61,6 +62,13 @@ def main():
     """Parses the command line arguments and starts Neroman."""
     parser = create_argument_parser()
     args = parser.parse_args()
+    if args.clean:
+        answer = raw_input('Do you really want to remove all neronet '
+                            'configuration files? (y/n) ')
+        if answer == 'y':
+            remove_data()
+            print('Removed neronet configuration files')
+        return
     nero = neronet.neroman.Neroman()
     if args.experiment:
         experiment_folder = args.experiment[0]
@@ -123,12 +131,6 @@ def main():
             nero.submit(experiment_id)
     if args.fetch:
         nero.fetch()
-    if args.clean:
-        answer = raw_input('Do you really want to remove all neronet '
-                            'configuration files? (y/n) ')
-        if answer == 'y':
-            nero.clean()
-            print('Removed neronet configuration files')
     if args.template:
         cfgtemplate(*args.template)
 
