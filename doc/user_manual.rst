@@ -364,18 +364,23 @@ You can also drag and drop multiple folders to the NeroGUI window to add them.
 
 
 **Submit experiments**
+
 You can submit experiments by selecting experiment and folder and hitting submit button.
 
 **Submit batches of experiments**
+
 You can select multiple experiments by holding ctrl and pressing every experiment you want to send.
 After selecting the experiments, choose cluster and hit submit.
 
 **Experiment status report**
+
 Selecting experiment will update log view with the information accosiated with experiment.
 
 **Collection status report**
+
 Hit refresh to update statu(e)s of the experiment(s).
 
 **manipulating experiments table**
+
 Right click will open menu where you can select parameters which you want to view.
 By pressing headers you can sort your experiments.
