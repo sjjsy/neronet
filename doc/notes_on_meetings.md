@@ -1742,3 +1742,30 @@ We're gonna get 5 for sure.
 
 We need to make more diagrams and stuff to make our presentations more
 impressive. Otherwise we're the best.
+
+## 03-04 45m Sprint planning part 2
+
+Participants: team + PO
+
+Agenda:
+- 17:15 Agenda
+- 17:20 BLIs
+- 17:30 Collaboration
+- 17:40 Sprint goal
+
+### Budget
+
+19sp
+
+22 h / person
+
+### BLIs
+
+### Collaboration
+
+- Make simple support for collaboration
+- Add explainations of how to fix problem situation.  
+
+### Sprint goal
+
+Fínish Neronet 1.0

@@ -344,19 +344,49 @@ GUI
 ===
 
 **Installation**
+As pyqt is not included with pip, it is required to be installed from package manager.
+You can download QT for python with ``apt-get install python-qt4``
+Make sure you have configured path correctly. You can check you current path with 
+``import sys
+print sys.path``
+
+Gui is included in pip install. You can open gui with ``nerogui``
 
 **Specify clusters**
+Specify clusters by writing clusters short name to cluster name field.
+Write clusters address and select its type from dropdown menu and hit add cluster to add it.
+
 
 **Specify experiments**
+Specify experiments by pressing "Add experiment"
+A dialog should open. Navigate to the folder where your experiment folder is (the one containing config.yaml) and hit open.
+Table with experiment will update if the importing was successful.
+
+You can also drag and drop multiple folders to the NeroGUI window to add them.
+
 
 **Submit experiments**
 
+You can submit experiments by selecting experiment and folder and hitting submit button.
+
 **Submit batches of experiments**
 
-**Monitoring log output**
+You can select multiple experiments by holding ctrl and pressing every experiment you want to send.
+After selecting the experiments, choose cluster and hit submit.
 
 **Experiment status report**
 
+Selecting experiment will update log view with the information accosiated with experiment.
+
+**Accessing status folder**
+
+You can get into the folder where experiment is defined by double clicking experiment.
+
 **Collection status report**
 
-**Neronet status report**
+Hit refresh to update statu(e)s of the experiment(s).
+
+**manipulating experiments table**
+
+Right click will open menu where you can select parameters which you want to view.
+By pressing headers you can sort your experiments.

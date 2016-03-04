@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Wed Mar  2 16:39:54 2016
+# Created: Fri Mar  4 15:39:14 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(1119, 594)
+        MainWindow.setAcceptDrops(True)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.submit_btn = QtGui.QPushButton(self.centralwidget)
@@ -85,7 +86,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
+        MainWindow.setWindowTitle(_translate("MainWindow", "NeroGUI", None))
         self.submit_btn.setText(_translate("MainWindow", "Submit", None))
         self.cluster_add_btn.setText(_translate("MainWindow", "Add cluster", None))
         self.cluster_type_combo.setItemText(0, _translate("MainWindow", "unmanaged", None))

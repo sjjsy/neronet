@@ -10,8 +10,11 @@
     <height>594</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>NeroGUI</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="submit_btn">
@@ -195,20 +198,6 @@
      <string>Clusters</string>
     </property>
    </widget>
-   <zorder>submit_btn</zorder>
-   <zorder>cluster_name_field</zorder>
-   <zorder>cluster_address_field</zorder>
-   <zorder>cluster_add_btn</zorder>
-   <zorder>cluster_type_combo</zorder>
-   <zorder>clusters</zorder>
-   <zorder>label</zorder>
-   <zorder>label_2</zorder>
-   <zorder>experiment_log</zorder>
-   <zorder>exp_add_btn</zorder>
-   <zorder>refresh_btn</zorder>
-   <zorder>paramTable</zorder>
-   <zorder>paramTable</zorder>
-   <zorder>label_3</zorder>
   </widget>
  </widget>
  <resources/>

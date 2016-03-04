@@ -47,6 +47,32 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.customContextMenuRequested.connect(self.openMenu)
 
 
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasUrls():
+             e.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.setDropAction(QtCore.Qt.CopyAction)
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.setDropAction(QtCore.Qt.CopyAction)
+            event.accept()
+            for url in event.mimeData().urls():
+                path =  url.toLocalFile().toLocal8Bit().data()
+                self.nero.specify_experiments(path)
+            self.init_labels()
+            self.init_menu()
+            self.add_to_param_table()
+        else:
+            event.ignore()
+
     def init_menu(self):
         self.menu = QtGui.QMenu(self)
         self.filteredLabels = set()
@@ -162,11 +188,10 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def open_config(self):
         """double clicking opens config file"""
-        print "?"
         row = self.paramTable.currentRow()
 	name = str(self.paramTable.item(row, 0).text())
         path = self.nero.database[name]._fields["path"]
-        webbrowser.open(path + "/config.yaml")
+        webbrowser.open(path)
 
     def fetch_exp(self):
         """fetches experiments statuses"""
