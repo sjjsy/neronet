@@ -176,6 +176,9 @@ class Neroman:
     def plot_experiment(self, experiment_id):
         experiment = self.database[experiment_id]
         experiment.plot_output()
+    
+    def terminate_experiment(self, experiment_id):
+        #TODO: send termination message to mum
 
     def status_gen(self, arg):
         """Creates a generator that generates the polled status
