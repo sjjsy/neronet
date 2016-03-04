@@ -30,7 +30,7 @@ setup(
     author_email='samuel.marisa@aalto.fi',
     description='A tool for managing multiple computational experiments.',
     long_description=long_description,
-    scripts=['bin/nerocli'],
+    scripts=['bin/nerocli', 'bin/nerogui'],
     packages=['neronet'],
     package_data={'neronet': ['nerokid', 'neromum']},
     platforms='unix',
