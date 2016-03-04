@@ -350,6 +350,8 @@ Make sure you have configured path correctly. You can check you current path wit
 ``import sys
 print sys.path``
 
+Gui is included in pip install. You can open gui with ``nerogui``
+
 **Specify clusters**
 Specify clusters by writing clusters short name to cluster name field.
 Write clusters address and select its type from dropdown menu and hit add cluster to add it.
@@ -375,6 +377,10 @@ After selecting the experiments, choose cluster and hit submit.
 **Experiment status report**
 
 Selecting experiment will update log view with the information accosiated with experiment.
+
+**Accessing status folder**
+
+You can get into the folder where experiment is defined by double clicking experiment.
 
 **Collection status report**
 

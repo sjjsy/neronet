@@ -68,6 +68,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
                 path =  url.toLocalFile().toLocal8Bit().data()
                 self.nero.specify_experiments(path)
             self.init_labels()
+            self.init_menu()
             self.add_to_param_table()
         else:
             event.ignore()
