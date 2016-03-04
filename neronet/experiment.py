@@ -35,7 +35,8 @@ class Experiment(object):
 
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
                     parameters, parameters_format, path, required_files=None,
-                    outputs="stdout", output_processor=None, collection=None, 
+                    outputs="stdout", output_line_processor=None,
+                    output_file_processor=None, collection=None, 
                     plot=None, conditions=None, sbatch_args=None):
         now = datetime.datetime.now()
         fields = {'run_command_prefix': run_command_prefix,
@@ -43,8 +44,8 @@ class Experiment(object):
                     'required_files': required_files if required_files else [],
                     'outputs': outputs if isinstance(outputs, list) else
                                 [outputs],
-                    'output_processor': output_processor,
-                    'output': None,
+                    'output_file_processor': output_file_processor,
+                    'output_line_processor': output_line_processor,
                     'plot': plot,
                     'parameters': parameters,
                     'parameters_format': parameters_format,
@@ -59,49 +60,91 @@ class Experiment(object):
                     'warnings' : [] }
         #MAGIC: Creates the attributes for the experiment class
         self.__dict__['_fields'] = fields
-        # Creates a function to process a line of output
-        if fields['output_processor']:
-            args = fields['output_processor'].split()
-            process_output_line = neronet.core.import_from(*args)
-            super(Experiment, self).__setattr__('process_output_line', \
-                                                process_output_line)
         #super(Experiment, self).__setattr__('_fields', fields)
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
         
+
+    def get_output(self):
+        results_dir = self.get_results_dir()
+        read_output = self.make_output_processor()
+        return read_output(os.path.join(results_dir, 'stdout.log'))
+
     def get_results_dir(self):
         """Returns the location of the directory of the experiment results
         """
-        #TODO: make safe for when files don't exist
         root = neronet.core.USER_DATA_DIR_ABS
         if self.state == Experiment.State.finished:
             root = self._fields['path']
         return os.path.join(root, 'results', self.id)
 
-    def get_output(self):
-        """Returns experiment output as a dict using user specified output
-        line parser
+    def make_output_processor(self):
+        """Returns a function that processes an experiment output file
+
+        Returns:
+            function: Function that processes experiment output files into
+                dicts
+        Raises:
+            IOError: If no output processor was defined
         """
-        #TODO: make safe for when files don't exist
-        filename = os.path.join(self.get_results_dir(), 'stdout.log')
-        with open(filename, 'r') as f:
-            lines = f.read().strip().split('\n')
-        data = {}
-        for line in lines:
-            datum = self.process_output_line(line)
-            for key, value in datum.items():
-                if key not in data:
-                    data[key] = [value]
-                else:
-                    data[key].append(value)
-        return data
+        if not self._fields['output_file_processor']:
+            if not self._fields['output_line_processor']:
+                raise IOError("No output processor defined")
+
+        def read_output(filename):
+            """Reads the experiment output file using user created functions
+            
+            Parameters:
+                filename (str): Name of the file to be read
+
+            Returns:
+                dict: File data read as dictionary
+
+            Raises:
+                TypeError: if the user given function didn't return a dict
+                ImportError: if importing the user given function failed
+            """
+            with open(filename, 'r') as f:
+                if self._fields['output_file_processor']:
+                    module_name, obj_name = \
+                        self._fields['output_file_processor'].split()
+                    processor = neronet.core.import_from(module_name, obj_name)
+                    data = processor(f.read())
+                    if not isinstance(line_data, dict):
+                        raise TypeError("Function %s returned wrong type"
+                            " of data. Should've been dict" % (obj_name))
+                elif self._fields['output_line_processor']:
+                    module_name, obj_name = \
+                        self._fields['output_line_processor'].split()
+                    processor = neronet.core.import_from(module_name, obj_name)
+                    data = {}
+                    for line in f:
+                        line_data = processor(line)
+                        if not isinstance(line_data, dict):
+                            raise TypeError("Function %s returned wrong type"
+                                " of data. Should've been dict" % (obj_name))
+                        for key,value in line_data.iteritems():
+                            if key not in data:
+                                data[key] = [value]
+                            else:
+                                data[key].append(value)
+            return data
+        return read_output
 
     def plot_output(self):
         """Plots the experiment output according to the user specified
         plotting function and output line parser
+        
+        Raises:
+            IOError: if no output processor was defined
+            TypeError: if the user defined output processor or plotting
+                function had problems
+            ImportError: if importing the user defined modules failed in some
+                way
         """
         #TODO: make safe for when files don't exist
-        output = self.get_output()
+        read_output = self.make_output_processor()
         results_dir = self.get_results_dir()
+        output = read_output(os.path.join(results_dir, 'stdout.log'))
         idx = 1
         for plot in self._fields['plot']:
             args = plot.split()

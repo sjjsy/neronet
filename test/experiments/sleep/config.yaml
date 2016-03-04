@@ -4,7 +4,7 @@ parameters:
     count: 6
     interval: 5.0
 parameters_format: '{count} {interval}'
-output_processor: sleep reader
+output_line_processor: sleep reader
 plot: 
     - sleep plot identity squared
     - sleep plot identity cubed

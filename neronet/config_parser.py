@@ -19,7 +19,8 @@ MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters',
                         'parameters_format'])
 """Set: Experiment fields required in every config.yaml"""
 
-OPTIONAL_FIELDS = set(['outputs', 'output_processor', 'plot', 'collection', 
+OPTIONAL_FIELDS = set(['outputs', 'output_line_processor',
+                        'output_file_processor', 'plot', 'collection', 
                         'required_files', 'conditions', 'sbatch_args'])
 """Set: Fields that Neronet uses but are not necessary"""
 
