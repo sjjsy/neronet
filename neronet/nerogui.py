@@ -112,7 +112,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
     def submit_exp(self):
         """submit button functionality"""
         cluster = str(self.clusters.currentItem().text())
-        if cluster is None:
+        if cluster is NoneType:
             return
         for exp in self.paramTable.selectionModel().selectedRows():
             name = str(self.paramTable.item(exp.row(), 0).text())
@@ -154,6 +154,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         """prints detailed info of one experiment"""
         self.experiment_log.clear()
         row = self.paramTable.currentRow()
+        if self.paramTable.item(row, 0) is None:
+            return
 	name = str(self.paramTable.item(row, 0).text())
         for line in self.nero.status_gen(name):
             self.experiment_log.insertPlainText(line)
