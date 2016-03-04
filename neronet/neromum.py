@@ -5,7 +5,6 @@
 # TODO: need database parsing
 
 import os
-import sys
 import pickle
 import glob
 import time
@@ -13,7 +12,9 @@ import datetime
 import shutil
 
 import neronet.core
+import neronet.cluster
 import neronet.daemon
+import neronet.experiment
 import neronet.nerokid
 
 class Neromum(neronet.daemon.Daemon):
@@ -69,7 +70,7 @@ class Neromum(neronet.daemon.Daemon):
         neronet.core.write_file(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                 'experiments', exp.id, 'exp.pickle'), pickle.dumps(exp))
         # Debugging
-        if exp.state == neronet.core.Experiment.State.finished:
+        if exp.state == neronet.experiment.Experiment.State.finished:
             self.log('Experiment "%s" has finished!' % (exp.id))
         self._reply['rv'] = 0
     
@@ -123,14 +124,14 @@ class Neromum(neronet.daemon.Daemon):
                 self.exp_dict[exp_id] = exp
         # Start an experiment if there is any to start
         for exp in self.exp_dict.values():
-            if exp.state == neronet.core.Experiment.State.submitted_to_kid:
+            if exp.state == neronet.experiment.Experiment.State.submitted_to_kid:
                 pass
-            elif exp.state == neronet.core.Experiment.State.submitted:
+            elif exp.state == neronet.experiment.Experiment.State.submitted:
                 # Initialize the log output container
                 exp.log_output = {}
                 # Launch experiment
                 self.log('Launching experiment "%s"...' % (exp.id))
-                if self.cluster.ctype == neronet.core.Cluster.Type.slurm:
+                if self.cluster.ctype == neronet.cluster.Cluster.Type.slurm:
                     exp_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
                             'experiments', exp.id)
                     s = '#!/bin/bash\n'
@@ -153,21 +154,21 @@ class Neromum(neronet.daemon.Daemon):
                     time.sleep(3.0)
                     nerokid.query('configure', host='localhost', port=self._port)
                 # Update the experiment state and timestamp
-                exp.update_state(neronet.core.Experiment.State.submitted_to_kid)
+                exp.update_state(neronet.experiment.Experiment.State.submitted_to_kid)
                 exp.time_modified = now = datetime.datetime.now()
                 return # pace submission by launching only one at a time
         # Compute the number of lost experiments
         lost_count = 0
         now = datetime.datetime.now()
         for exp in self.exp_dict.values():
-            if exp.state in (neronet.core.Experiment.State.submitted_to_kid, neronet.core.Experiment.State.running) \
+            if exp.state in (neronet.experiment.Experiment.State.submitted_to_kid, neronet.experiment.Experiment.State.running) \
                     and exp.time_modified < now - datetime.timedelta(minutes=1):
-                exp.update_state(neronet.core.Experiment.State.lost)
+                exp.update_state(neronet.experiment.Experiment.State.lost)
                 lost_count += 1
         # Compute the number of finished experiments
         finished_count = 0
         for exp in self.exp_dict.values():
-            if exp.state == neronet.core.Experiment.State.finished:
+            if exp.state == neronet.experiment.Experiment.State.finished:
                 finished_count += 1
         # Exit if all known (submitted) experiments are either finished or
         # lost and we've been idling for at least 5 minutes

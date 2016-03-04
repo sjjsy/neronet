@@ -20,12 +20,11 @@ from __future__ import print_function
 import os
 import subprocess
 import shlex
-import time
-import sys
 import pickle
 
 import neronet.core
 import neronet.daemon
+import neronet.experiment
 import neronet.neromum
 
 INTERVAL = 2.0
@@ -97,7 +96,7 @@ class Nerokid(neronet.daemon.Daemon):
     def ontimeout(self):
         """Writes information about the process into a log file on set intervals"""
         # If the experiment is defined and running
-        if self.exp and self.exp.state == neronet.core.Experiment.State.running:
+        if self.exp and self.exp.state == neronet.experiment.Experiment.State.running:
             # Collect any data that the child process has output
             log_output = {}
             terminated = False
@@ -111,7 +110,7 @@ class Nerokid(neronet.daemon.Daemon):
                     for row in rows:
                         result = self.exp.get_action(row)
                         if result[0] == 'kill':
-                            self.exp.update_state(neronet.core.Experiment.State.terminated)
+                            self.exp.update_state(neronet.experiment.Experiment.State.terminated)
                             self.log('Termination condition ' + result[1] + ' was met. The experiment will be terminated.')
                             self.qry_stop()
                             terminated = True
@@ -127,7 +126,7 @@ class Nerokid(neronet.daemon.Daemon):
             # If the process has stopped
             if self.process.poll() != None and terminated == False:
                 self.log('Experiment has finished!')
-                self.exp.update_state(neronet.core.Experiment.State.finished)
+                self.exp.update_state(neronet.experiment.Experiment.State.finished)
                 # Flag the daemon for exit
                 self.qry_stop()
             # Send any information to Neromum
@@ -166,10 +165,13 @@ class Nerokid(neronet.daemon.Daemon):
                 close_fds=True, bufsize=1)
             os.chdir(cwd)
             self.log('Experiment PID: %s' % (self.process.pid))
-            self.exp.update_state(neronet.core.Experiment.State.running)
+            self.exp.update_state(neronet.experiment.Experiment.State.running)
 
 def main():
     """Create a CLI interface object and process CLI arguments."""
+
+    import sys
+    
     if len(sys.argv) < 2:
         print('Kid experiment ID required!')
         sys.exit(1)

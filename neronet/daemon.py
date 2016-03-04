@@ -72,6 +72,7 @@ class Daemon(object):
 
     def __init__(self, name, tdo=TIMEOUT):
         self._name = name
+        #FIXME: Remove ~/.neronet and make daemon accept any folder
         self._pdir = os.path.join(os.path.expanduser('~/.neronet'), self._name)
         self._pfin = os.path.join(self._pdir, 'in')
         self._pfout = os.path.join(self._pdir, 'out')

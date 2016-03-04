@@ -26,15 +26,18 @@ defined in its config:
 import os
 import time
 import datetime
-import os.path
+#FIXME: (collections) Can we do without this module?
 import collections
 import pickle
 import shutil
+#FIXME: (random) Can we do without this module?
 import random
 import sys
 
-import neronet.core
 import neronet.config_parser
+import neronet.core
+import neronet.cluster
+import neronet.experiment
 
 DATABASE_FILENAME = 'default.yaml'
 PREFERENCES_FILENAME = 'preferences.yaml'
@@ -78,9 +81,9 @@ class Neroman:
             IOError: if the cluster type isn't unmanaged or slurm
 
         """
-        if not neronet.core.Cluster.Type.is_member(cluster_type):
+        if not neronet.cluster.Cluster.Type.is_member(cluster_type):
             raise IOError('Invalid cluster type "%s"!' % (cluster_type))
-        cluster = neronet.core.Cluster(cluster_id, cluster_type, ssh_address)
+        cluster = neronet.cluster.Cluster(cluster_id, cluster_type, ssh_address)
         try:
             cluster.test_connection()
             print('The cluster seems to be online!')
@@ -114,8 +117,11 @@ class Neroman:
         experiments = self.config_parser.parse_experiments(folder)
         err = []
         #Look for changes in the relevant fields and add them to changed_exps.
+        #FIXME: Change this functionality so that the comaprison is done in the
+        #experiment side and not on neroman
         changed_exps = {}
-        relevant_fields = neronet.core.MANDATORY_FIELDS | neronet.core.OPTIONAL_FIELDS | set('path')
+        relevant_fields = neronet.config_parser.MANDATORY_FIELDS | \
+                        neronet.config_parser.OPTIONAL_FIELDS | set('path')
         for experiment in experiments:
             if experiment.id in self.database:
                 for key in experiment._fields:
@@ -131,6 +137,7 @@ class Neroman:
             else: self.database[experiment.id] = experiment
         self.config_parser.save_database(DATABASE_FILENAME, \
                                     self.database)
+        #FIXME: What does this line do exactly?
         if err: print('\n'.join(err), file=sys.stderr)
         return changed_exps
     
@@ -147,7 +154,7 @@ class Neroman:
         updated instance of it.
 
         Parameters:
-            new_experiment (neronet.core.Experiment): the experiment object
+            new_experiment (neronet.experiment.Experiment): the experiment object
                     to be put in the database in place of the old one.
         """
         self.database[new_experiment.id] = new_experiment
@@ -254,7 +261,7 @@ class Neroman:
         #            % (exp.cluster_id))
         # Update experiment info
         exp.cluster_id = cluster_id
-        exp.update_state(neronet.core.Experiment.State.submitted)
+        exp.update_state(neronet.experiment.Experiment.State.submitted)
         # Define local path, where experiment currently exists
         local_exp_path = exp.path
         # Define the remote path into which the files will be transferred to,
@@ -322,9 +329,9 @@ class Neroman:
                 print('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
             # Clean the cluster
             exceptions = [exp.id for exp in experiments_to_check if exp.state
-                    in (neronet.core.Experiment.State.submitted,
-                    neronet.core.Experiment.State.submitted_to_kid,
-                    neronet.core.Experiment.State.running)]
+                    in (neronet.experiment.Experiment.State.submitted,
+                    neronet.experiment.Experiment.State.submitted_to_kid,
+                    neronet.experiment.Experiment.State.running)]
             try:
                 cluster.clean_experiments(exceptions)
             except RuntimeError:
@@ -335,15 +342,15 @@ class Neroman:
             exp_file = os.path.join(local_dir, exp.id, 'exp.pickle')
             if not os.path.exists(exp_file):
                 print('ERR: Experiment pickle missing!')
-                exp.update_state(neronet.core.Experiment.State.lost)
+                exp.update_state(neronet.experiment.Experiment.State.lost)
                 continue
             exp = self.database[exp.id] = pickle.loads(
                     neronet.core.read_file(exp_file))
-            if exp.state in (neronet.core.Experiment.State.finished,
-                        neronet.core.Experiment.State.lost):
+            if exp.state in (neronet.experiment.Experiment.State.finished,
+                        neronet.experiment.Experiment.State.lost):
                 exp.cluster_id = None
                 #TODO: Do output processing
-                if exp.state == neronet.core.Experiment.State.finished:
+                if exp.state == neronet.experiment.Experiment.State.finished:
                     results_dir = os.path.join(exp.path, 'results')
                     if not os.path.exists(results_dir):
                         os.mkdir(results_dir)
