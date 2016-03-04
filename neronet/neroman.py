@@ -171,7 +171,7 @@ class Neroman:
 
     def plot_experiment(self, experiment_id):
         experiment = self.database[experiment_id]
-        experiment.plot_output()
+        experiment.plot_outputs()
 
     def status_gen(self, arg):
         """Creates a generator that generates the polled status
@@ -352,7 +352,9 @@ class Neroman:
                         os.mkdir(results_dir)
                     shutil.move(os.path.join(local_dir, exp.id), \
                                 os.path.join(results_dir, exp.id))
-                    exp.plot_output()
+                    if exp.output_line_processor or exp.output_file_processor:
+                        if exp.plot:
+                            exp.plot_outputs()
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
 
     #def tail_log(self, exp_id=None):
