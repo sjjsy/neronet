@@ -63,10 +63,6 @@ class Neroman:
             self.config_parser.load_configurations(CLUSTERS_FILENAME, \
                             PREFERENCES_FILENAME, DATABASE_FILENAME)
 
-    def clean(self):
-        """Removes all neronet related data"""
-        self.config_parser.remove_data()
-
     def specify_cluster(self, cluster_id, cluster_type, ssh_address):
         """Specify clusters so that Neroman is aware of them.
 
@@ -356,9 +352,7 @@ class Neroman:
                         os.mkdir(results_dir)
                     shutil.move(os.path.join(local_dir, exp.id), \
                                 os.path.join(results_dir, exp.id))
-                    print(exp.output_processor)
-                    if exp.output_processor:
-                        exp.plot_output()
+                    exp.plot_output()
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
 
     #def tail_log(self, exp_id=None):

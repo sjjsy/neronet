@@ -13,13 +13,13 @@ import neronet.cluster
 import neronet.experiment
 
 EXPERIMENT_CONFIG_FILENAME = 'config.yaml'
-NERONET_DIR = os.path.expanduser('~') + '/.neronet/'
 
 MANDATORY_FIELDS = set(['run_command_prefix', 'main_code_file', 'parameters', 
                         'parameters_format'])
 """Set: Experiment fields required in every config.yaml"""
 
-OPTIONAL_FIELDS = set(['outputs', 'output_processor', 'plot', 'collection', 
+OPTIONAL_FIELDS = set(['outputs', 'output_line_processor',
+                        'output_file_processor', 'plot', 'collection', 
                         'required_files', 'conditions', 'sbatch_args'])
 """Set: Fields that Neronet uses but are not necessary"""
 
@@ -62,12 +62,15 @@ class ConfigParser():
         Raises:
             FormatError: if the data wasn't correctly formated
         """
-        if not os.path.exists(NERONET_DIR):
-            os.makedirs(NERONET_DIR)
-        if not os.path.exists(NERONET_DIR + filename):
-            self.write_yaml(NERONET_DIR + filename, default)
+        if not os.path.exists(neronet.core.USER_DATA_DIR_ABS):
+            os.makedirs(neronet.core.USER_DATA_DIR_ABS)
+        if not os.path.exists(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
+                                filename)):
+            self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
+                                filename), default)
             return default
-        data = self.load_yaml(NERONET_DIR + filename)
+        data = self.load_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
+                            filename))
         check(data, *args)
         return data
 
@@ -208,17 +211,13 @@ class ConfigParser():
             raise FormatError(errors)
         return clusters, preferences, database
 
-    def remove_data(self):
-        """Removes the neronet data files
-        """
-        if os.path.exists(NERONET_DIR):
-            os.system('rm -r ' + NERONET_DIR)
-
     def save_database(self, database_filename, database):
-        self.write_yaml(NERONET_DIR + database_filename, database)
+        self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
+                        database_filename), database)
 
     def save_preferences(self, preferences_filename, preferences):
-        self.write_yaml(NERONET_DIR + preferences_filename, preferences)
+        self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
+                        preferences_filename), preferences)
 
     def save_clusters(self, clusters_filename, clusters):
         cluster_field_dict = {}
@@ -229,7 +228,8 @@ class ConfigParser():
             cluster_field_dict[k] = dct
         clusters_data = {'clusters': cluster_field_dict,
                 'groups': clusters['groups']}
-        self.write_yaml(NERONET_DIR + clusters_filename, clusters_data)
+        self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
+                        clusters_filename), clusters_data)
 
     def load_yaml(self, filename):
         """Loads yaml file"""

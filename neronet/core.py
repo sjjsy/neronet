@@ -13,11 +13,17 @@ import importlib
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
 """
-
-USER_DATA_DIR = '~/.neronet' # Remember to os.path.expanduser
+NERONET_DIR_NAME = '.neronet'
+USER_DATA_DIR = '~/' + NERONET_DIR_NAME # Remember to os.path.expanduser
 USER_DATA_DIR_ABS = os.path.expanduser(USER_DATA_DIR)
 
 class Runresult: """A class for holding shell command execution results."""
+
+def remove_data():
+    """Removes the neronet data files
+    """
+    if os.path.exists(USER_DATA_DIR_ABS):
+        os.system('rm -r ' + USER_DATA_DIR_ABS)
 
 def osrunroe(cmd, vrb=True, inp=None):
     """Execute a shell command and return the return code, stdout and -err.
@@ -72,6 +78,21 @@ def read_file(filepath, default=None):
         pass
     return result
 
+#Warning copies the whole construct so might take a lot of memory if the
+#original construct was large
+def lod_to_dol(self, lod):
+    """Convert a list of dicts to a dict of lists
+    """
+    dol = {}
+    for dict_item in lod:
+        for key, value in dict_item.items():
+            if key not in dol:
+                key[dol] = [value]
+            else:
+                key[dol].appen(value)
+    return dol
+
+#IMPORTANT: This function shouldn't be used if the module cannot be imported
 def import_from(module_name, obj_name):
     """Import object from module, tries to first find module from
     neronet/scripts
@@ -84,16 +105,33 @@ def import_from(module_name, obj_name):
         object: The object to be imported
     
     Raises:
-        ImportError: If the module to be imported doesn't exist
-        AttributeError: If the module doesn't contain an object named obj_name
+        ImportError: If the module to be imported couldn't be imported
     """
+    #FIXME: Remove dependancy for neronet.scripts.
+    if can_import(module_name, obj_name):
+        module = importlib.import_module("neronet.scripts." + module_name)
+        obj = getattr(module, obj_name)
+        return obj
+    raise ImportError("Something went wrong while trying to "
+                        "import %s from %s" % (obj_name, module_name))
+
+def can_import(module_name, obj_name):
+    """Checks if object can be imported from module or if the module exists
+
+    Parameters:
+        module (str): name of the module to be imported from
+        obj_name (str): name of the object to be imported
+
+    Returns:
+        boolean: True if the object can be imported
+    """
+    #FIXME: Remove dependancy for neronet.scripts.
     try:
         module = importlib.import_module("neronet.scripts." + module_name)
-    except Exception as err:
-        print '%s\nNeronet failed to process script "%s". Please fix it!' \
-                % (err, module_name)
-        sys.exit(1)
-    return getattr(module, obj_name)
+        obj = getattr(module, obj_name)
+    except:
+        return False
+    return True
 
 def create_config_template(expid='exp_id', runcmdprefix='python', maincodefile='main.py', *params):
     # Creates a config file with the required fields.
