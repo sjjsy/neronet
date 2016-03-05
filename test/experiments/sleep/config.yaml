@@ -4,8 +4,9 @@ parameters:
     count: [6,3,2,100,1,20]
     interval: [5.0,2,4]
 parameters_format: '{count} {interval}'
-output_line_processor: sleep reader
+output_line_processor: 
+    stdout.log: sleep reader "identity squared cubed"
 plot: 
-    - sleep plot identity squared
-    - sleep plot identity cubed
+    squared.png: sleep plot stdout.log identity squared
+    cubed.png: sleep plot stdout.log identity cubed
 sleep1:

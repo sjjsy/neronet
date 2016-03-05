@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import datetime
 import os
+import shlex
 
 import neronet.core
 
@@ -35,7 +38,7 @@ class Experiment(object):
 
     def __init__(self, experiment_id, run_command_prefix, main_code_file,
                     parameters, parameters_format, path, required_files=None,
-                    outputs="stdout", output_line_processor=None,
+                    outputs="stdout.log", output_line_processor=None,
                     output_file_processor=None, collection=None, 
                     plot=None, conditions=None, sbatch_args=None):
         now = datetime.datetime.now()
@@ -63,12 +66,6 @@ class Experiment(object):
         #super(Experiment, self).__setattr__('_fields', fields)
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
         
-
-    def get_output(self):
-        results_dir = self.get_results_dir()
-        read_output = self.make_output_processor()
-        return read_output(os.path.join(results_dir, 'stdout.log'))
-
     def get_results_dir(self):
         """Returns the location of the directory of the experiment results
         """
@@ -77,88 +74,124 @@ class Experiment(object):
             root = self._fields['path']
         return os.path.join(root, 'results', self.id)
 
-    def make_output_processor(self):
-        """Returns a function that processes an experiment output file
+    def get_output(self, filename):
+        """Returns the output data of the output file as a dict
 
         Returns:
-            function: Function that processes experiment output files into
-                dicts
+            dict: The output file as a dictionary
+
         Raises:
-            IOError: If no output processor was defined
+            TypeError: if the user given function didn't return a dict
+            ImportError: if importing the user given function failed
+            IOError: if the output file doesn't have a processor defined or
+            the user defined output reader made an error
         """
-        if not self._fields['output_file_processor']:
-            if not self._fields['output_line_processor']:
-                raise IOError("No output processor defined")
-
-        def read_output(filename):
-            """Reads the experiment output file using user created functions
+        data = None
+        #Checks which output reader type is specified for the file type
+        #Prefers processor that read the whole file
+        for processor_type in ['output_file_processor',
+                                'output_line_processor']:
+            if not self._fields[processor_type] or \
+                filename not in self._fields[processor_type]:
+                continue
+            #Constructs the output reader and arguments
+            args = \
+                shlex.split(self._fields[processor_type][filename])
+            module_name = args[0]
+            reader_name = args[1]
+            reader_args = args[2:]
+            reader = neronet.core.import_from(module_name, reader_name)
             
-            Parameters:
-                filename (str): Name of the file to be read
-
-            Returns:
-                dict: File data read as dictionary
-
-            Raises:
-                TypeError: if the user given function didn't return a dict
-                ImportError: if importing the user given function failed
-            """
-            with open(filename, 'r') as f:
-                if self._fields['output_file_processor']:
-                    module_name, obj_name = \
-                        self._fields['output_file_processor'].split()
-                    processor = neronet.core.import_from(module_name, obj_name)
-                    data = processor(f.read())
-                    if not isinstance(line_data, dict):
+            #Gets the location of the results folder. 
+            #Changes when the experiment has finnished
+            results_dir = self.get_results_dir()
+            
+            #Opens the output file and processes the output data
+            with open(os.path.join(results_dir, filename), 'r') as f:
+                if processor_type == 'output_file_processor':
+                    try:
+                        data = reader(f.read(), *reader_args)
+                    except:
+                        raise IOError("Couldn't read %s with %s" \
+                                        % (filename, reader_name))
+                    if not isinstance(data, dict):
                         raise TypeError("Function %s returned wrong type"
                             " of data. Should've been dict" % (obj_name))
-                elif self._fields['output_line_processor']:
-                    module_name, obj_name = \
-                        self._fields['output_line_processor'].split()
-                    processor = neronet.core.import_from(module_name, obj_name)
+                else:
                     data = {}
                     for line in f:
-                        line_data = processor(line)
-                        if not isinstance(line_data, dict):
+                        try:
+                            line_data = reader(line, *reader_args)
+                        except:
+                            raise IOError("Couldn't read %s with %s" \
+                                            % (filename, reader_name))
+                        if not isinstance(data, dict):
                             raise TypeError("Function %s returned wrong type"
                                 " of data. Should've been dict" % (obj_name))
-                        for key,value in line_data.iteritems():
+                        for key, value in line_data.iteritems():
                             if key not in data:
                                 data[key] = [value]
                             else:
                                 data[key].append(value)
-            return data
-        return read_output
+        if not data:
+            raise IOError("No output processor defined for %s" % filename)
+        return data
 
-    def plot_output(self):
+    def plot_outputs(self):
         """Plots the experiment output according to the user specified
         plotting function and output line parser
         
         Raises:
-            IOError: if no output processor was defined
+            IOError: if no output processor was defined for a outputfile
             TypeError: if the user defined output processor or plotting
                 function had problems
             ImportError: if importing the user defined modules failed in some
                 way
         """
-        #TODO: make safe for when files don't exist
-        read_output = self.make_output_processor()
-        results_dir = self.get_results_dir()
-        output = read_output(os.path.join(results_dir, 'stdout.log'))
-        idx = 1
-        for plot in self._fields['plot']:
-            args = plot.split()
+        plots = self._fields['plot']
+        for plot_filename, args in plots.iteritems():
+            #Construct the plotter and arguments
+            args = shlex.split(args)
+            print(args)
             module_name = args[0]
             plotter_name = args[1]
-            args = args[2:]
             plotter = neronet.core.import_from(module_name, plotter_name)
-            data = []
-            for arg in args:
-                data.append(output[arg])
-            name = '-'.join(args)
-            plotter(os.path.join(results_dir, 'output%d__%s.png' % (idx,
-                    name)), name, *data)
-            idx += 1
+            output_filename = args[2]
+            plot_args = args[3:]
+            self.plot_file(plot_filename, plotter, output_filename, plot_args)
+            
+    def plot_file(self, plot_name, plotter, output_filename, plot_args):
+        """Plots the outputfile into plot image using user defined plotting
+        and output reading functions
+
+        Parameters:
+            plot_name (str): Name of the plot image
+            plotter (function): Function to plot the output data
+            output_filename (str): Name of the output file
+            plot_args (list): list of arguments to the plotter function
+
+        Raises:
+            TypeError: if the user given function didn't return a dict
+            ImportError: if importing the user given function failed
+            IOError: if the output file doesn't have a processor defined or
+            the user defined function failed in some way
+
+        """
+        #Get the output data as dict from the output file
+        output = self.get_output(output_filename)
+
+        #Convert plot argument key words to values
+        plot_data = []
+        for plot_arg in plot_args:
+            if plot_arg in output:
+                plot_arg = output[plot_arg]
+            plot_data.append(plot_arg)
+        try:
+            results_dir = self.get_results_dir()
+            plotter(os.path.join(results_dir, plot_name), *plot_data)
+        except:
+            raise IOError("Couldn't plot %s, maybe there's something wrong"
+                            " with your function?" % plot_name)
 
     def get_action(self, logrow):
         init_action = ('no action', '')
@@ -264,10 +297,12 @@ class Experiment(object):
         if self._fields['cluster_id']:
             yield "  Cluster: " + self._fields['cluster_id'] + '\n'
         if self.state in (Experiment.State.running, Experiment.State.finished):
-            output = self.get_output()
             yield "  Output:\n"
-            for field in output:
-                yield "    %s: " % field + str(output[field]) + "\n"
+            for output_file in self._fields['outputs']:
+                yield "    " + output_file + ":\n"
+                output = self.get_output(output_file)
+                for field in output:
+                    yield "      %s: " % field + str(output[field]) + "\n"
         yield "  Last modified: %s\n" % self._fields['time_modified']
         if self._fields['conditions']:            
             conds = '  Conditions:\n'
