@@ -108,15 +108,19 @@ class Neromum(neronet.daemon.Daemon):
                     del self.exp_dict[exp_id]
                     experiments_cleaned_count += 1
                 msg += '%d experiments cleaned.\n' % (experiments_cleaned_count)
+            elif action = 'terminate_exp':
+                exp_id = data["exp_id"]
+                if exp_id in self.kids:
+                    kid = self.kids[exp_id]
+                    kid.query('terminate')
+                    self.log('Terminating experiment "%s"' % (exp_id))
+                    msg += 'Experiment "%s" terminated' % (exp_id)
+                else:
+                    msg += '"%s", No such experiment' % (exp_id)                
         self._reply['data'] = answer
         self._reply['msgbody'] = msg
         self._reply['rv'] = 0
     
-    def qry_terminate(self, exp_id):
-        if exp_id in self.kids:
-            kid = self.kids[exp_id]
-            kid.query('terminate')
-        
     def ontimeout(self):
         """Load and start any unstarted received experiments."""
         # Load all experiments into the dict that have not yet been loaded
