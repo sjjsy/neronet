@@ -99,6 +99,13 @@ class Cluster(object):
         print(res.out)
         if res.err:
             print('Error: %s\n' % (res.err))
+    
+    def terminate_exp(self, exp_id):
+        data = {'action': 'terminate_exp', 'exp_id': exp_id}
+        res = self.sshrun('neromum --input', inp=pickle.dumps(data, -1))
+        print(res.out)
+        if res.err:
+            print('Error: %s\n' % (res.err))
 
     def yield_status(self):
         data = {'action': 'fetch', 'msg': 'I love honeybees!'}

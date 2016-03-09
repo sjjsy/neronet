@@ -55,6 +55,10 @@ def create_argument_parser():
                         nargs='+',
                         help='Creates a config template file with the \
                         required fields')
+    parser.add_argument('--terminate',
+                        metavar='experiment_id',
+                        nargs=1,
+                        help='Terminates the given experiment')
     return parser
 
 
@@ -133,6 +137,9 @@ def main():
         nero.fetch()
     if args.template:
         cfgtemplate(*args.template)
+    if args.terminate:
+        experiment_id = args.terminate[0]
+        nero.terminate_experiment(experiment_id)
 
 def remove_dir(path):
     os.system('rm -r ' + path)

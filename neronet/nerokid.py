@@ -73,7 +73,9 @@ class Nerokid(neronet.daemon.Daemon):
         self.exp_id = exp_id
         self.exp = None
         self.process = None
+        self.terminated = False
         self.add_query('configure', self.qry_configure)
+        self.add_query('terminate', self.qry_stop)
 
     def qry_configure(self, host, port):
         """Connect with Neromum.
@@ -89,9 +91,23 @@ class Nerokid(neronet.daemon.Daemon):
     def qry_stop(self):
         """Terminate the experiment"""
         if self.process and self.process.poll() == None:
+            self.exp.update_state(neronet.experiment.Experiment.State.terminated)
+            self.terminated = True
             self.log('Killing the experiment...')
             self.process.kill()
+            self.update_neromum({})
         super(Nerokid, self).qry_stop()
+    
+    def update_neromum(self, log_output):
+        """Sends information to neromum"""
+        try:
+            self.log('Updating Neromum...')
+            self.log('Query: %s, (%s, %s out: %s)' % ('exp_update',
+                    self.exp_id, self.exp.state, log_output))
+            self.neromum.query('exp_update', self.exp_id,
+                    self.exp.state, log_output)
+        except RuntimeError as err:
+            self.err('Cannot communicate with Neromum!', err)
 
     def ontimeout(self):
         """Writes information about the process into a log file on set intervals"""
@@ -99,7 +115,6 @@ class Nerokid(neronet.daemon.Daemon):
         if self.exp and self.exp.state == neronet.experiment.Experiment.State.running:
             # Collect any data that the child process has output
             log_output = {}
-            terminated = False
             for log_file in self.log_files:
                 if not os.path.exists(log_file.path):
                     self.log('No output file %s!' % (log_file.path))
@@ -110,12 +125,10 @@ class Nerokid(neronet.daemon.Daemon):
                     for row in rows:
                         result = self.exp.get_action(row)
                         if result[0] == 'kill':
-                            self.exp.update_state(neronet.experiment.Experiment.State.terminated)
-                            self.log('Termination condition ' + result[1] + ' was met. The experiment will be terminated.')
-                            self.qry_stop()
-                            terminated = True
+                            self.log('Termination condition ' + result[1] + ' was met. The experiment will be terminated.')                            
                             changes += '\nTermination condition \'' + result[1] + '\' was met. The experiment will be terminated.\n'
-                        elif result[0] == 'warn' and not terminated:
+                            self.qry_stop()
+                        elif result[0] == 'warn' and not self.terminated:
                             self.exp.set_warning(result[1])
                             changes += '\nWARNING: condition ' + result[1] + ' was met.\n'
                             self.log('WARNING: condition ' + result[1] + ' was met.')
@@ -124,20 +137,13 @@ class Nerokid(neronet.daemon.Daemon):
                                 self.exp.get_warnings())
                     log_output[log_file.path[len(self.exp_dir)+1:]] = changes
             # If the process has stopped
-            if self.process.poll() != None and terminated == False:
+            if self.process.poll() != None and self.terminated == False:
                 self.log('Experiment has finished!')
                 self.exp.update_state(neronet.experiment.Experiment.State.finished)
                 # Flag the daemon for exit
                 self.qry_stop()
             # Send any information to Neromum
-            try:
-                self.log('Updating Neromum...')
-                self.log('Query: %s, (%s, %s out: %s)' % ('exp_update',
-                        self.exp_id, self.exp.state, log_output))
-                self.neromum.query('exp_update', self.exp_id,
-                        self.exp.state, log_output)
-            except RuntimeError as err:
-                self.err('Cannot communicate with Neromum!', err)
+            self.update_neromum(log_output)
         # If the experiment is not defined and we have Neromum defined, start
         # the experiment!
         elif not self.exp and self.neromum:

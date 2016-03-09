@@ -171,7 +171,19 @@ class Neroman:
 
     def plot_experiment(self, experiment_id):
         experiment = self.database[experiment_id]
-        experiment.plot_outputs()
+        experiment.plot_output()
+    
+    def terminate_experiment(self, experiment_id):
+        if experiment_id in self.database:            
+            cluster_id = self.database[experiment_id]._fields['cluster_id']
+            if cluster_id:
+                cluster = self.clusters['clusters'][cluster_id]
+                cluster.terminate_exp(experiment_id)
+            else:
+                print('"%s", No such experiment' % (exp_id))
+        else:
+            print('"%s", No such experiment' % (exp_id))
+
 
     def status_gen(self, arg):
         """Creates a generator that generates the polled status
