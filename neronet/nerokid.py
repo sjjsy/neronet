@@ -95,7 +95,19 @@ class Nerokid(neronet.daemon.Daemon):
             self.terminated = True
             self.log('Killing the experiment...')
             self.process.kill()
+            self.update_neromum({})
         super(Nerokid, self).qry_stop()
+    
+    def update_neromum(self, log_output):
+        """Sends information to neromum"""
+        try:
+            self.log('Updating Neromum...')
+            self.log('Query: %s, (%s, %s out: %s)' % ('exp_update',
+                    self.exp_id, self.exp.state, log_output))
+            self.neromum.query('exp_update', self.exp_id,
+                    self.exp.state, log_output)
+        except RuntimeError as err:
+            self.err('Cannot communicate with Neromum!', err)
 
     def ontimeout(self):
         """Writes information about the process into a log file on set intervals"""
@@ -131,14 +143,7 @@ class Nerokid(neronet.daemon.Daemon):
                 # Flag the daemon for exit
                 self.qry_stop()
             # Send any information to Neromum
-            try:
-                self.log('Updating Neromum...')
-                self.log('Query: %s, (%s, %s out: %s)' % ('exp_update',
-                        self.exp_id, self.exp.state, log_output))
-                self.neromum.query('exp_update', self.exp_id,
-                        self.exp.state, log_output)
-            except RuntimeError as err:
-                self.err('Cannot communicate with Neromum!', err)
+            self.update_neromum(log_output)
         # If the experiment is not defined and we have Neromum defined, start
         # the experiment!
         elif not self.exp and self.neromum:

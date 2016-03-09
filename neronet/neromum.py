@@ -108,7 +108,7 @@ class Neromum(neronet.daemon.Daemon):
                     del self.exp_dict[exp_id]
                     experiments_cleaned_count += 1
                 msg += '%d experiments cleaned.\n' % (experiments_cleaned_count)
-            elif action = 'terminate_exp':
+            elif action == 'terminate_exp':
                 exp_id = data["exp_id"]
                 if exp_id in self.kids:
                     kid = self.kids[exp_id]
