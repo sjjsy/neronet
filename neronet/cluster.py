@@ -15,6 +15,7 @@ class Cluster(object):
         sbatch_args (str): Slurm SBATCH arguments.
     """
 
+
     class Type:
         """A simple class to represent the possible cluster types"""
         unmanaged = 'unmanaged'
@@ -32,9 +33,11 @@ class Cluster(object):
         self.ssh_address = ssh_address
         self.sbatch_args = sbatch_args
         self.dir = usr_dir
+        self.average_load = None
+        self.experiment_count = 0
 
     def __str__(self):
-        return '%s (%s, %s)' % (self.cid, self.ctype, self.ssh_address)
+        return '%s (%s, %s, %s, %d)' % (self.cid, self.ctype, self.ssh_address, self.average_load, self.experiment_count)
 
     def sshrun(self, cmd, inp=None):
         """Execute a shell command via SSH on the remote Neronet cluster.
@@ -104,5 +107,11 @@ class Cluster(object):
         data = {'action': 'fetch', 'msg': 'I love honeybees!'}
         res = self.sshrun('neromum --input', inp=pickle.dumps(data, -1))
         yield 'Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out)
+        
+    def update_average_load(self, load):
+    	self.average_load = load
+   	
+   	def update_exp_count(self, expnum):
+		self.experiment_count += expnum
 
 

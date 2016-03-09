@@ -210,6 +210,12 @@ class Neroman:
             yield 'No clusters defined\n'
         else:
             for cid, cluster in self.clusters['clusters'].iteritems():
+            	print(cluster)
+            	try:
+            		cluster.update_average_load(cluster.sshrun('uptime').out[-5:-1])
+            	except RuntimeError:
+            		cluster.update_average_load("undefined")
+            	self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
                 yield '- %s\n' % (cluster)
             if self.clusters['groups']:
                 yield "Cluster groups:\n"
@@ -262,6 +268,8 @@ class Neroman:
         # Update experiment info
         exp.cluster_id = cluster_id
         exp.update_state(neronet.experiment.Experiment.State.submitted)
+        cluster.experiment_count += 1
+        self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
         # Define local path, where experiment currently exists
         local_exp_path = exp.path
         # Define the remote path into which the files will be transferred to,
@@ -348,6 +356,7 @@ class Neroman:
                     neronet.core.read_file(exp_file))
             if exp.state in (neronet.experiment.Experiment.State.finished,
                         neronet.experiment.Experiment.State.lost):
+                #cluster.experiment_count -= 1
                 exp.cluster_id = None
                 #TODO: Do output processing
                 if exp.state == neronet.experiment.Experiment.State.finished:
