@@ -1764,8 +1764,28 @@ Agenda:
 ### Collaboration
 
 - Make simple support for collaboration
-- Add explainations of how to fix problem situation.  
+- Add explainations of how to fix problem situation.
 
 ### Sprint goal
 
 Fínish Neronet 1.0
+
+## 03-09 360m Wedshop
+
+Participants: team
+
+Agenda:
+- 18:25 Agenda
+
+### Daily scrum
+
+- Joona: Finished cancel experiments, but will work on error handling; No
+  problems.
+- Tuomo: Has done some minor finishing with the GUI; Is waiting for a peer
+  review and comments from the PO
+- Matias: Has almost finished the resource information story; No problems.
+- Samuel: Has pondered about the rest of the project while writing the diary.
+  Has been very busy with other work.
+- Teemu: Is proud of his learning diary; Worked on the cluster status
+  functionality. Has difficulty guessing what would the user want to have.
+- Iiro: absent
