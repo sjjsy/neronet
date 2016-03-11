@@ -1,0 +1,3 @@
+nerocli --submit experiment
+making a cluster which is offline
+submitting to such cluster
