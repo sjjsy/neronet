@@ -51,6 +51,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.exp_add_btn.clicked.connect(self.add_file)
         self.submit_btn.clicked.connect(self.submit_exp)
         self.refresh_btn.clicked.connect(self.fetch_exp)
+        self.terminate_btn.clicked.connect(self.terminate_exp)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.openMenu)
 
@@ -210,6 +211,12 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         """fetches experiments statuses"""
         self.nero.fetch()
 
+    def terminate_exp(self):
+        for exp in self.paramTable.selectionModel().selectedRows():
+            name = str(self.paramTable.item(exp.row(), 0).text())
+            for line in self.nero.terminate_experiment(name):
+                print line
+	self.add_to_param_table()
 
 def main():
     app = QtGui.QApplication(sys.argv)

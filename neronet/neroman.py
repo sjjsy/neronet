@@ -180,13 +180,13 @@ class Neroman:
                 cluster = self.clusters['clusters'][cluster_id]
                 try:
                     cluster.terminate_exp(experiment_id)
-                    print('Experiment "%s" has been successfully terminated' % (experiment_id))
+                    yield 'Experiment "%s" has been successfully terminated' % (experiment_id)
                 except RuntimeError:
-                    print('Failed to terminate the given experiment. This could be a result of the experiment already being terminated or finished.')                
+                    yield 'Failed to terminate the given experiment. This could be a result of the experiment already being terminated or finished.'                
             else:
-                print('"%s" hasn\'t been submitted to cluster' % (experiment_id))
+                yield '"%s" hasn\'t been submitted to cluster' % (experiment_id)
         else:
-            print('"%s", No such experiment' % (experiment_id))
+            yield '"%s", No such experiment' % (experiment_id) 
 
 
     def status_gen(self, arg):
