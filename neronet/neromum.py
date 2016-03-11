@@ -36,6 +36,7 @@ class Neromum(neronet.daemon.Daemon):
     def __init__(self):
         super(Neromum, self).__init__('neromum')
         self.exp_dict = {}
+        self.kids = {}
         self.add_query('list_exps', self.qry_list_exps)
         self.add_query('exp_update', self.qry_exp_update)
         self.add_query('exp_set_warning', self.qry_exp_warning)
@@ -107,6 +108,15 @@ class Neromum(neronet.daemon.Daemon):
                     del self.exp_dict[exp_id]
                     experiments_cleaned_count += 1
                 msg += '%d experiments cleaned.\n' % (experiments_cleaned_count)
+            elif action == 'terminate_exp':
+                exp_id = data["exp_id"]
+                if exp_id in self.kids:
+                    kid = self.kids[exp_id]
+                    kid.query('terminate')
+                    self.log('Terminating experiment "%s"' % (exp_id))
+                    msg += 'Experiment "%s" terminated' % (exp_id)
+                else:
+                    msg += '"%s", No such experiment' % (exp_id)                
         self._reply['data'] = answer
         self._reply['msgbody'] = msg
         self._reply['rv'] = 0
@@ -153,6 +163,8 @@ class Neromum(neronet.daemon.Daemon):
                     # Try to configure the kid
                     time.sleep(3.0)
                     nerokid.query('configure', host='localhost', port=self._port)
+                    #Add kid to self.kids so that it's possible to send messages to it later
+                    self.kids[exp.id] = nerokid
                 # Update the experiment state and timestamp
                 exp.update_state(neronet.experiment.Experiment.State.submitted_to_kid)
                 exp.time_modified = now = datetime.datetime.now()
