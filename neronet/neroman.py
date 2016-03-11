@@ -165,6 +165,8 @@ class Neroman:
         Raises:
             KeyError: if the experiment with the given id doesn't exist
         """
+        if self.database[experiment_id]._fields['cluster_id']:
+            self.terminate_experiment(experiment_id)
         self.database.pop(experiment_id)
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
