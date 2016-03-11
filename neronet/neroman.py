@@ -194,15 +194,11 @@ class Neroman:
         """
         if arg != 'all':
             if arg == 'clusters':
+                if not self.clusters['clusters']:
+                    yield "No clusters defined\n"
+                    raise StopIteration
                 for key in self.clusters['clusters']:
-                    cluster = self.clusters['clusters'][key]
-                    yield "%s\n" % cluster.cid
-                    yield "===========\n"
-                    yield "Experiments in %s:\n" % cluster.cid
-                    for exp in self.database:
-                        if self.database[exp].cluster_id == cluster.cid:
-                            yield "%s" % exp
-                    for ln in cluster.yield_status():
+                    for ln in self.status_gen(key):
                         yield ln
                 raise StopIteration
             elif arg in self.database:
@@ -212,8 +208,14 @@ class Neroman:
                 raise StopIteration
             elif arg in self.clusters['clusters']:
                 cluster = self.clusters['clusters'][arg]
-                for ln in cluster.yield_status():
-                    yield ln
+                yield "\n%s\n" % cluster.cid
+                yield "===========\n"
+                yield "SSH Address: %s\n" % cluster.ssh_address
+                yield "Type: %s\n" % cluster.ctype
+                yield "Experiments:\n" % cluster.cid
+                for exp in self.database:
+                    if self.database[exp].cluster_id == cluster.cid:
+                        yield "Experiment id: %s, Status: %s\ņ" % (exp, self.database[exp].state)
                 raise StopIteration
             else:
                 raise IOError('No experiment or cluster named "%s"!' % (arg))
