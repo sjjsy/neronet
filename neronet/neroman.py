@@ -178,11 +178,15 @@ class Neroman:
             cluster_id = self.database[experiment_id]._fields['cluster_id']
             if cluster_id:
                 cluster = self.clusters['clusters'][cluster_id]
-                cluster.terminate_exp(experiment_id)
+                try:
+                    cluster.terminate_exp(experiment_id)
+                    print('Experiment "%s" has been successfully terminated' % (experiment_id))
+                except RuntimeError:
+                    print('Failed to terminate the given experiment. This could be a result of the experiment already being terminated or finished.')                
             else:
-                print('"%s", No such experiment' % (exp_id))
+                print('"%s" hasn\'t been submitted to cluster' % (experiment_id))
         else:
-            print('"%s", No such experiment' % (exp_id))
+            print('"%s", No such experiment' % (experiment_id))
 
 
     def status_gen(self, arg):
@@ -355,7 +359,8 @@ class Neroman:
             exp = self.database[exp.id] = pickle.loads(
                     neronet.core.read_file(exp_file))
             if exp.state in (neronet.experiment.Experiment.State.finished,
-                        neronet.experiment.Experiment.State.lost):
+                        neronet.experiment.Experiment.State.lost, 
+                        neronet.experiment.Experiment.State.terminated):
                 exp.cluster_id = None
                 #TODO: Do output processing
                 if exp.state == neronet.experiment.Experiment.State.finished:
