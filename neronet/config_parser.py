@@ -223,7 +223,7 @@ class ConfigParser():
     def save_clusters(self, clusters_filename, clusters):
         cluster_field_dict = {}
         for k, v in clusters['clusters'].items():
-            dct = {'type': v.ctype, 'ssh_address': v.ssh_address, 'average_load': v.average_load, 'experiment_count':v.experiment_count}
+            dct = {'type': v.ctype, 'ssh_address': v.ssh_address, 'average_load': v.average_load}
             if v.sbatch_args:
                 dct['sbatch_args'] = v.sbatch_args
             cluster_field_dict[k] = dct

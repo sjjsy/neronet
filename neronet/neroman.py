@@ -205,18 +205,17 @@ class Neroman:
             yield "Default Cluster: %s\n" % self.preferences['default_cluster']
         yield "\n"
         yield "================Clusters================\n"
-        yield 'Clusters:\n'
+        yield 'Name       Type       Address    Load\n'
         if not self.clusters['clusters']:
             yield 'No clusters defined\n'
         else:
             for cid, cluster in self.clusters['clusters'].iteritems():
-            	print(cluster)
-            	try:
-            		cluster.update_average_load(cluster.sshrun('uptime').out[-5:-1])
-            	except RuntimeError:
-            		cluster.update_average_load("undefined")
-            	self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
-                yield '- %s\n' % (cluster)
+                try:
+                    cluster.update_average_load(cluster.sshrun('uptime').out[-5:-1])
+                except RuntimeError:
+                    cluster.update_average_load("undefined")
+                self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
+                yield '%s\n' % (cluster)
             if self.clusters['groups']:
                 yield "Cluster groups:\n"
                 groups = self.clusters['groups']
@@ -253,8 +252,30 @@ class Neroman:
         # Determine the cluster
         if not cluster_id:
             cluster_id = self.preferences['default_cluster']
+            if cluster_id == "":
+                raise AttributeError('No default cluster defined')
+        #if cluster_id in self.clusters['groups']:
+           # cluster_id = random.choice(self.clusters['groups'][cluster_id])
         if cluster_id in self.clusters['groups']:
-            cluster_id = random.choice(self.clusters['groups'][cluster_id])
+            avg_load = 999.0
+            cl_id = None
+            for cl in self.clusters['groups'][cluster_id]:
+                try:
+                    cluster = self.clusters['clusters'][cl]
+                    cluster.update_average_load(cluster.sshrun('uptime').out[-5:-1])
+                except RuntimeError:
+                    cluster.update_average_load("undefined")
+                    continue
+                self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
+                if float(cluster.average_load) < avg_load:
+                    avg_load = cluster.average_load
+                    cl_id = cl
+                else:
+                    continue
+            if cl_id == None:
+                raise AttributeError('No valid clusters in the cluster group')
+            else:
+                cluster_id = cl_id
         if cluster_id not in self.clusters['clusters']:
             raise AttributeError('The given cluster ID "%s" is not valid!' %
                     (cluster_id))
@@ -268,7 +289,6 @@ class Neroman:
         # Update experiment info
         exp.cluster_id = cluster_id
         exp.update_state(neronet.experiment.Experiment.State.submitted)
-        cluster.experiment_count += 1
         self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
         # Define local path, where experiment currently exists
         local_exp_path = exp.path
@@ -356,7 +376,6 @@ class Neroman:
                     neronet.core.read_file(exp_file))
             if exp.state in (neronet.experiment.Experiment.State.finished,
                         neronet.experiment.Experiment.State.lost):
-                #cluster.experiment_count -= 1
                 exp.cluster_id = None
                 #TODO: Do output processing
                 if exp.state == neronet.experiment.Experiment.State.finished:
