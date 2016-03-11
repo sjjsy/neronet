@@ -1,7 +1,6 @@
 language: python
 script:
-  - cd neronet
-  - python -m unittest -v core_test
+  - python -m unittest -v neronet.neronet_test
 notifications:
   flowdock:
     secure: ENCRYPTED-FLOW-API-TOKEN

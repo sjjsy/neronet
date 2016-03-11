@@ -8,6 +8,14 @@ import design
 import neronet.neroman
 import os.path
 
+color_coding ={'defined': QtGui.QColor(0,0,0),
+'submitted' : QtGui.QColor(11,139,181),
+'lost' : QtGui.QColor(204,167,0),
+'terminated': QtGui.QColor(255,0,0),
+'running': QtGui.QColor(204,167,0),
+'finished': QtGui.QColor(0,255,0)
+}
+
 class MyTableWidgetItem(QTableWidgetItem):
     def __lt__(self, other):
         if ( isinstance(other, QTableWidgetItem) ):
@@ -43,6 +51,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.exp_add_btn.clicked.connect(self.add_file)
         self.submit_btn.clicked.connect(self.submit_exp)
         self.refresh_btn.clicked.connect(self.fetch_exp)
+        self.terminate_btn.clicked.connect(self.terminate_exp)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.openMenu)
 
@@ -138,11 +147,12 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
     def submit_exp(self):
         """submit button functionality"""
         cluster = str(self.clusters.currentItem().text())
-        if cluster is NoneType:
+        if cluster is None:
             return
         for exp in self.paramTable.selectionModel().selectedRows():
             name = str(self.paramTable.item(exp.row(), 0).text())
             self.nero.submit(name, cluster)
+	self.show_one_experiment()
 
     def add_to_param_table(self):
         """inserts values from database to comparison table"""
@@ -159,11 +169,15 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.paramTable.setColumnWidth(0,200)
         self.paramTable.setHorizontalHeaderLabels(tuple(["Name",] + list(insertedLabels)))
 	for yAxis, name in enumerate(expNames):
+            item = MyTableWidgetItem(
+	           QtCore.QString("%1").arg(name))
+            status = self.nero.database[
+	                name]._fields["states_info"][-1][0] #latest status
+            item.setTextColor(color_coding[status])
 	    self.paramTable.setItem(
 	        yAxis,
 	        0,
-	        MyTableWidgetItem(
-	           QtCore.QString("%1").arg(name)))
+	        item)
 	    for xAxis, param in enumerate(insertedLabels):
 	        try:
 	            value = self.nero.database[
@@ -197,6 +211,12 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         """fetches experiments statuses"""
         self.nero.fetch()
 
+    def terminate_exp(self):
+        for exp in self.paramTable.selectionModel().selectedRows():
+            name = str(self.paramTable.item(exp.row(), 0).text())
+            for line in self.nero.terminate_experiment(name):
+                print line
+	self.add_to_param_table()
 
 def main():
     app = QtGui.QApplication(sys.argv)

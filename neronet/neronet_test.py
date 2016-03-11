@@ -1,7 +1,8 @@
 import unittest
-from core import ExperimentWarning, Cluster, Experiment
+from neronet.cluster import Cluster
+from neronet.experiment import Experiment, ExperimentWarning
 
-class Core_test(unittest.TestCase):
+class Neronet_test(unittest.TestCase):
     
     def test_experiment_warning(self):
         
