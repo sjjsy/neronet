@@ -123,9 +123,6 @@ class Neroman:
                 for key in experiment._fields:
                     if key in relevant_fields and self.database[experiment.id].__getattr__(key) \
                                                     != experiment.__getattr__(key):
-                        #(debug)print('Key: %s, Old: %s, New: %s' % (key, \
-                        #        self.database[experiment.id].__getattr__(key), 
-                        #        experiment.__getattr__(key)))
                         changed_exps[experiment.id] = experiment
                         break
                 err.append("Experiment named %s already in the database" \
@@ -180,7 +177,19 @@ class Neroman:
             str: A line of neroman status
         """
         if arg != 'all':
-            if arg in self.database:
+            if arg == 'clusters':
+                for key in self.clusters['clusters']:
+                    cluster = self.clusters['clusters'][key]
+                    yield "%s\n" % cluster.cid
+                    yield "===========\n"
+                    yield "Experiments in %s:\n" % cluster.cid
+                    for exp in self.database:
+                        if self.database[exp].cluster_id == cluster.cid:
+                            yield "%s" % exp
+                    for ln in cluster.yield_status():
+                        yield ln
+                raise StopIteration
+            elif arg in self.database:
                 experiment = self.database[arg]
                 for line in experiment.as_gen():
                     yield line
