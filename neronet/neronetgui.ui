@@ -10,6 +10,12 @@
     <height>595</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>1117</width>
+    <height>595</height>
+   </size>
+  </property>
   <property name="acceptDrops">
    <bool>true</bool>
   </property>
@@ -17,226 +23,231 @@
    <string>NeroGUI</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPlainTextEdit" name="experiment_log">
-    <property name="geometry">
-     <rect>
-      <x>770</x>
-      <y>10</y>
-      <width>341</width>
-      <height>321</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTableWidget" name="paramTable">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>741</width>
-      <height>561</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
-    <property name="editTriggers">
-     <set>QAbstractItemView::NoEditTriggers</set>
-    </property>
-    <property name="selectionBehavior">
-     <enum>QAbstractItemView::SelectRows</enum>
-    </property>
-    <property name="sortingEnabled">
-     <bool>true</bool>
-    </property>
-    <attribute name="verticalHeaderDefaultSectionSize">
-     <number>22</number>
-    </attribute>
-    <attribute name="verticalHeaderMinimumSectionSize">
-     <number>22</number>
-    </attribute>
-   </widget>
-   <widget class="QTabWidget" name="tabWidget">
-    <property name="geometry">
-     <rect>
-      <x>760</x>
-      <y>330</y>
-      <width>351</width>
-      <height>251</height>
-     </rect>
-    </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Tab 1</string>
-     </attribute>
-     <widget class="QListWidget" name="clusters">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>20</y>
-        <width>171</width>
-        <height>151</height>
-       </rect>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0" rowspan="2">
+     <widget class="QTableWidget" name="paramTable">
+      <property name="minimumSize">
+       <size>
+        <width>741</width>
+        <height>561</height>
+       </size>
       </property>
-     </widget>
-     <widget class="QLineEdit" name="cluster_name_field">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>20</y>
-        <width>113</width>
-        <height>27</height>
-       </rect>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
       </property>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>0</y>
-        <width>91</width>
-        <height>21</height>
-       </rect>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
       </property>
-      <property name="text">
-       <string>cluster name</string>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
       </property>
-     </widget>
-     <widget class="QPushButton" name="terminate_btn">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>180</y>
-        <width>111</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Terminate</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_2">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>50</y>
-        <width>101</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>cluster address</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="submit_btn">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>140</y>
-        <width>111</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Submit</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="cluster_add_btn">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>100</y>
-        <width>111</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Add cluster</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="cluster_address_field">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>70</y>
-        <width>113</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="refresh_btn">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>180</y>
-        <width>111</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Refresh</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="exp_add_btn">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>180</y>
-        <width>111</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Add experiment</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_3">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>64</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Clusters</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="cluster_type_combo">
-      <property name="enabled">
+      <property name="sortingEnabled">
        <bool>true</bool>
       </property>
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>250</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <item>
-       <property name="text">
-        <string>unmanaged</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>slurm</string>
-       </property>
-      </item>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>22</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>22</number>
+      </attribute>
      </widget>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Tab 2</string>
-     </attribute>
-    </widget>
-   </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPlainTextEdit" name="experiment_log">
+      <property name="maximumSize">
+       <size>
+        <width>352</width>
+        <height>286</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="maximumSize">
+       <size>
+        <width>352</width>
+        <height>285</height>
+       </size>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <widget class="QListWidget" name="clusters">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>20</y>
+          <width>171</width>
+          <height>151</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="cluster_name_field">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>20</y>
+          <width>113</width>
+          <height>27</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>0</y>
+          <width>91</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>cluster name</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="terminate_btn">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>180</y>
+          <width>111</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Terminate</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>50</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>cluster address</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="submit_btn">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>140</y>
+          <width>111</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Submit</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="cluster_add_btn">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>100</y>
+          <width>111</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add cluster</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="cluster_address_field">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>70</y>
+          <width>113</width>
+          <height>27</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="refresh_btn">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>180</y>
+          <width>111</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Refresh</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="exp_add_btn">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>180</y>
+          <width>111</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add experiment</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>64</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Clusters</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="cluster_type_combo">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>250</y>
+          <width>16</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>unmanaged</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>slurm</string>
+         </property>
+        </item>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Tab 2</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+   <zorder>paramTable</zorder>
+   <zorder>tabWidget</zorder>
+   <zorder>experiment_log</zorder>
   </widget>
  </widget>
  <resources/>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Fri Mar 11 16:18:48 2016
+# Created: Fri Mar 11 16:49:29 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,14 +27,14 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(1117, 595)
+        MainWindow.setMinimumSize(QtCore.QSize(1117, 595))
         MainWindow.setAcceptDrops(True)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.experiment_log = QtGui.QPlainTextEdit(self.centralwidget)
-        self.experiment_log.setGeometry(QtCore.QRect(770, 10, 341, 321))
-        self.experiment_log.setObjectName(_fromUtf8("experiment_log"))
+        self.gridLayout = QtGui.QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.paramTable = QtGui.QTableWidget(self.centralwidget)
-        self.paramTable.setGeometry(QtCore.QRect(10, 10, 741, 561))
+        self.paramTable.setMinimumSize(QtCore.QSize(741, 561))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.paramTable.setFont(font)
@@ -45,8 +45,13 @@ class Ui_MainWindow(object):
         self.paramTable.setRowCount(0)
         self.paramTable.verticalHeader().setDefaultSectionSize(22)
         self.paramTable.verticalHeader().setMinimumSectionSize(22)
+        self.gridLayout.addWidget(self.paramTable, 0, 0, 2, 1)
+        self.experiment_log = QtGui.QPlainTextEdit(self.centralwidget)
+        self.experiment_log.setMaximumSize(QtCore.QSize(352, 286))
+        self.experiment_log.setObjectName(_fromUtf8("experiment_log"))
+        self.gridLayout.addWidget(self.experiment_log, 0, 1, 1, 1)
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(760, 330, 351, 251))
+        self.tabWidget.setMaximumSize(QtCore.QSize(352, 285))
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
@@ -93,6 +98,7 @@ class Ui_MainWindow(object):
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
+        self.gridLayout.addWidget(self.tabWidget, 1, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
