@@ -48,12 +48,14 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.paramTable.itemSelectionChanged.connect(self.show_one_experiment)
         self.paramTable.verticalHeader().sectionDoubleClicked.connect(self.open_config)
         self.paramTable.doubleClicked.connect(self.open_config)
+        self.paramTable.cellChanged.connect(self.change_cell)
         self.exp_add_btn.clicked.connect(self.add_file)
         self.submit_btn.clicked.connect(self.submit_exp)
         self.refresh_btn.clicked.connect(self.fetch_exp)
         self.terminate_btn.clicked.connect(self.terminate_exp)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.openMenu)
+        self.paramTable.customContextMenuRequested.connect(self.openMenu)
+        QtGui.QShortcut(QtGui.QKeySequence("Delete"), self.paramTable, self.del_exp, context=QtCore.Qt.WidgetShortcut)
 
 
     def dragEnterEvent(self, e):
@@ -156,6 +158,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def add_to_param_table(self):
         """inserts values from database to comparison table"""
+        self.paramTable.blockSignals(True)
         expNames = self.nero.database.keys()
         insertedLabels = set()
         if len(self.filteredLabels) == len(self.allLabels):
@@ -165,30 +168,36 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.paramTable.setRowCount(0)
         self.paramTable.setColumnCount(0)
         self.paramTable.setRowCount(len(expNames))
-        self.paramTable.setColumnCount(len(insertedLabels)+1)
+        self.paramTable.setColumnCount(len(insertedLabels)+2)
         self.paramTable.setColumnWidth(0,200)
-        self.paramTable.setHorizontalHeaderLabels(tuple(["Name",] + list(insertedLabels)))
+        self.paramTable.setHorizontalHeaderLabels(tuple(["Name", "Submitted"] + list(insertedLabels)))
 	for yAxis, name in enumerate(expNames):
             item = MyTableWidgetItem(
 	           QtCore.QString("%1").arg(name))
             status = self.nero.database[
 	                name]._fields["states_info"][-1][0] #latest status
             item.setTextColor(color_coding[status])
-	    self.paramTable.setItem(
-	        yAxis,
-	        0,
-	        item)
+            self.paramTable.setItem(yAxis, 0, item)
+            submitted = ""
+            try:
+                submitted = str(self.nero.database[
+	                name]._fields["states_info"][1][1])
+            except IndexError:
+                pass
+            item = MyTableWidgetItem(QtCore.QString("%1").arg(submitted))
+	    self.paramTable.setItem(yAxis, 1, item)
 	    for xAxis, param in enumerate(insertedLabels):
 	        try:
 	            value = self.nero.database[
 	                name]._fields["parameters"][param]
 	            self.paramTable.setItem(
 	                yAxis,
-	                xAxis+1,
+	                xAxis+2,
 	                MyTableWidgetItem(
 	                    QtCore.QString("%1").arg(value)))
 	        except KeyError:
 	            pass
+        self.paramTable.blockSignals(False)
 
     def show_one_experiment(self):
         """prints detailed info of one experiment"""
@@ -216,6 +225,28 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             name = str(self.paramTable.item(exp.row(), 0).text())
             for line in self.nero.terminate_experiment(name):
                 print line
+	self.add_to_param_table()
+
+    def change_cell(self,y,x):
+        insertedLabels = set()
+        if len(self.filteredLabels) == len(self.allLabels):
+            insertedLabels = self.allLabels
+        else:
+            insertedLabels = self.allLabels - self.filteredLabels
+        if x > 1:
+            name = str(self.paramTable.item(y, 0).text())
+            param = tuple(insertedLabels)[x-2]
+            if not param in self.nero.database[name]._fields["parameters"]:
+                self.add_to_param_table()
+                return
+            newParam = str(self.paramTable.item(y, x).text())
+            self.nero.replace_experiment(self.nero.database[name])
+            self.add_to_param_table()
+
+    def del_exp(self):
+        for exp in self.paramTable.selectionModel().selectedRows():
+            name = str(self.paramTable.item(exp.row(), 0).text())
+            self.nero.delete_experiment(name)
 	self.add_to_param_table()
 
 def main():

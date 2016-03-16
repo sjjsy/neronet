@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Fri Mar 11 16:49:29 2016
+# Created: Wed Mar 16 14:25:32 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,23 +33,6 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.paramTable = QtGui.QTableWidget(self.centralwidget)
-        self.paramTable.setMinimumSize(QtCore.QSize(741, 561))
-        font = QtGui.QFont()
-        font.setPointSize(9)
-        self.paramTable.setFont(font)
-        self.paramTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        self.paramTable.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-        self.paramTable.setObjectName(_fromUtf8("paramTable"))
-        self.paramTable.setColumnCount(0)
-        self.paramTable.setRowCount(0)
-        self.paramTable.verticalHeader().setDefaultSectionSize(22)
-        self.paramTable.verticalHeader().setMinimumSectionSize(22)
-        self.gridLayout.addWidget(self.paramTable, 0, 0, 2, 1)
-        self.experiment_log = QtGui.QPlainTextEdit(self.centralwidget)
-        self.experiment_log.setMaximumSize(QtCore.QSize(352, 286))
-        self.experiment_log.setObjectName(_fromUtf8("experiment_log"))
-        self.gridLayout.addWidget(self.experiment_log, 0, 1, 1, 1)
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
         self.tabWidget.setMaximumSize(QtCore.QSize(352, 285))
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
@@ -99,6 +82,24 @@ class Ui_MainWindow(object):
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.gridLayout.addWidget(self.tabWidget, 1, 1, 1, 1)
+        self.experiment_log = QtGui.QPlainTextEdit(self.centralwidget)
+        self.experiment_log.setMaximumSize(QtCore.QSize(352, 286))
+        self.experiment_log.setObjectName(_fromUtf8("experiment_log"))
+        self.gridLayout.addWidget(self.experiment_log, 0, 1, 1, 1)
+        self.paramTable = QtGui.QTableWidget(self.centralwidget)
+        self.paramTable.setMinimumSize(QtCore.QSize(741, 561))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.paramTable.setFont(font)
+        self.paramTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.paramTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed)
+        self.paramTable.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.paramTable.setObjectName(_fromUtf8("paramTable"))
+        self.paramTable.setColumnCount(0)
+        self.paramTable.setRowCount(0)
+        self.paramTable.verticalHeader().setDefaultSectionSize(22)
+        self.paramTable.verticalHeader().setMinimumSectionSize(22)
+        self.gridLayout.addWidget(self.paramTable, 0, 0, 2, 1)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -107,7 +108,6 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "NeroGUI", None))
-        self.paramTable.setSortingEnabled(True)
         self.label.setText(_translate("MainWindow", "cluster name", None))
         self.terminate_btn.setText(_translate("MainWindow", "Terminate", None))
         self.label_2.setText(_translate("MainWindow", "cluster address", None))
@@ -120,4 +120,5 @@ class Ui_MainWindow(object):
         self.cluster_type_combo.setItemText(1, _translate("MainWindow", "slurm", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Tab 1", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Tab 2", None))
+        self.paramTable.setSortingEnabled(True)
 
