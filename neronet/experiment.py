@@ -323,11 +323,12 @@ class Experiment(object):
     def __str__(self):
         return "%s %s" % (self._experiment_id, self._fields['state'][-1][0])
 
-WARNING_FIELDS = set(['variablename', 'killvalue', 'comparator', 'when', \
-                        'action'])
 
 class ExperimentWarning:
-    
+
+    WARNING_FIELDS = set(['variablename', 'killvalue', 'comparator', 'when', \
+                        'action'])
+
     def __init__(self, name, variablename, killvalue, comparator, when, action):
         self.name = name.strip()
         self.varname = variablename.strip()
