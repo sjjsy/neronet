@@ -47,10 +47,10 @@ class Neronet_test(unittest.TestCase):
     def test_cluster_str(self):
         
         c = Cluster("triton","slurm", "triton.aalto.fi")
-        self.assertEqual(c.__str__(), "triton (slurm, triton.aalto.fi)")
+        self.assertEqual(c.__str__(), "triton     slurm      triton.aal None ")
         
         c = Cluster("kosh","unmanaged", "kosh.aalto.fi")
-        self.assertEqual(c.__str__(), "kosh (unmanaged, kosh.aalto.fi)")
+        self.assertEqual(c.__str__(), "kosh       unmanaged  kosh.aalto None ")
         
         #TODO: write more tests for different cluster methods
         
