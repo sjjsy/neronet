@@ -1775,7 +1775,10 @@ Fínish Neronet 1.0
 Participants: team
 
 Agenda:
+- 13:00 Development
 - 18:25 Agenda
+- 18:35 Daily scrum
+- 18:50 Discussions
 
 ### Daily scrum
 
@@ -1789,3 +1792,43 @@ Agenda:
 - Teemu: Is proud of his learning diary; Worked on the cluster status
   functionality. Has difficulty guessing what would the user want to have.
 - Iiro: absent
+
+## 03-11 300m Frifury
+
+Participants: team
+
+Agenda:
+- 13:00 Development
+- 16:45 Daily scrum
+- 17:00 Peer team testing
+
+### Daily scrum
+
+- Matias: Worked on cluster status report, CPU load based choice of node.
+  Is going to fix some tests. Does not know what to do next.
+- Joona: Manual experiment cancellation is ready, tests are updated.
+  Thinks about starting the collaborative story but does not have any idea
+  how.
+- Iiro: has continued developing the plot feature user experience. Would like
+  us to have some issue tracking system in place.
+- Samuel: has been interviewed by Varvana conserning our architecture. Is
+  going to help consult everyone about their work
+- Tuomo: Continued developing the GUI: added coloring; disagrees with the PO
+  about how plots should be accessed.
+- Teemu: Has worked on his story but is unsure of what the PO wants. Is going
+  to contact him.
+
+### Peer team testing
+
+- It would be nice to have them test our work related to the current stories.
+- However, we need time to correct any bugs
+- Let's propose the next Friday and the one after
+
+### Load average info
+
+Information
+- Total share of CPU idling
+- RAM use ratio
+- Disk space ratio
+
+Potential info source: `top -n 1|head -n4`
