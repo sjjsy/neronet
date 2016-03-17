@@ -296,13 +296,14 @@ class Experiment(object):
         yield "  State: %s\n" % self.state
         if self._fields['cluster_id']:
             yield "  Cluster: " + self._fields['cluster_id'] + '\n'
-        if self.state in (Experiment.State.running, Experiment.State.finished):
-            yield "  Output:\n"
-            for output_file in self._fields['outputs']:
-                yield "    " + output_file + ":\n"
-                output = self.get_output(output_file)
-                for field in output:
-                    yield "      %s: " % field + str(output[field]) + "\n"
+#       if self.state in (Experiment.State.running, Experiment.State.finished):
+#            yield "  Output:\n"
+#            for output_file in self._fields['outputs']:
+#                yield "    " + output_file + ":\n"
+#                output = self.get_output(output_file)
+#                for field in output:
+#                    yield "      %s: " % field + str(output[field]) + "\n""""
+
         yield "  Last modified: %s\n" % self._fields['time_modified']
         if self._fields['conditions']:            
             conds = '  Conditions:\n'
