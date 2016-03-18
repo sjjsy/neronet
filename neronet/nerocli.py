@@ -143,7 +143,7 @@ def main():
         else:
             print(''.join(nero.submit(experiment_id)), end="")
     if args.fetch:
-        nero.fetch()
+        print(''.join(nero.fetch()), end="")
     if args.template:
         cfgtemplate(*args.template)
     if args.terminate:

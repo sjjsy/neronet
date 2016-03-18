@@ -122,8 +122,6 @@ class Neroman:
                 This is then later used to prompt the user if they
                 want to replace the old experiment(s) with the new one(s).
         """
-
-
         experiments = self.config_parser.parse_experiments(folder)
         err = []
         #Look for changes in the relevant fields and add them to changed_exps.
