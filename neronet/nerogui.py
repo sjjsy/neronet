@@ -45,9 +45,11 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         # bind signals and slots
         self.cluster_add_btn.clicked.connect(self.add_cluster)
         self.clusters.itemSelectionChanged.connect(self.update_cluster_fields)
+        self.clusters.itemSelectionChanged.connect(self.show_cluster_status)
         self.paramTable.itemSelectionChanged.connect(self.show_one_experiment)
         self.paramTable.verticalHeader().sectionDoubleClicked.connect(self.open_config)
-        self.paramTable.doubleClicked.connect(self.open_config)
+        self.paramTable.cellClicked.connect(self.highlight_row)
+        self.paramTable.cellDoubleClicked.connect(self.open_config)
         self.paramTable.cellChanged.connect(self.change_cell)
         self.exp_add_btn.clicked.connect(self.add_file)
         self.submit_btn.clicked.connect(self.submit_exp)
@@ -171,10 +173,11 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.paramTable.setRowCount(len(expNames))
         self.paramTable.setColumnCount(len(insertedLabels)+4)
         self.paramTable.setColumnWidth(0,200)
-        self.paramTable.setHorizontalHeaderLabels(tuple(["Name", "message", "Submitted", "status"] + list(insertedLabels)))
+        self.paramTable.setHorizontalHeaderLabels(tuple(["Name", "Note", "Submitted", "status"] + list(insertedLabels)))
 	for yAxis, name in enumerate(expNames):
             item = MyTableWidgetItem(
 	           QtCore.QString("%1").arg(name))
+            item.setFlags(item.flags() & ~QtCore.Qt.ItemIsEditable)
             status = self.nero.database[
 	                name]._fields["states_info"][-1][0] #latest status
             item.setTextColor(color_coding[status])
@@ -186,8 +189,10 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             except IndexError:
                 pass
             item = MyTableWidgetItem(QtCore.QString("%1").arg(submitted))
+            item.setFlags(item.flags() & ~QtCore.Qt.ItemIsEditable)
 	    self.paramTable.setItem(yAxis, 2, item)
             item = MyTableWidgetItem(QtCore.QString("%1").arg(status))
+            item.setFlags(item.flags() & ~QtCore.Qt.ItemIsEditable)
 	    self.paramTable.setItem(yAxis, 3, item)
             message = str(self.nero.database[
 	                name]._fields["custom_msg"])
@@ -216,8 +221,16 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         for line in self.nero.status_gen(name):
             self.experiment_log.insertPlainText(line)
 
-    def open_config(self):
+    def show_cluster_status(self):
+        self.experiment_log.clear()
+	name = str(self.clusters.currentItem().text())
+        for line in self.nero.status_gen(name):
+            self.experiment_log.insertPlainText(line)    
+
+    def open_config(self,y,x):
         """double clicking opens config file"""
+        if x != 0:
+            return
         row = self.paramTable.currentRow()
 	name = str(self.paramTable.item(row, 0).text())
         path = self.nero.database[name]._fields["path"]
@@ -237,11 +250,9 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def change_cell(self,y,x):
         insertedLabels = set()
-        print y, x
         if x == 1:
             name = str(self.paramTable.item(y, 0).text())
             newParam = str(self.paramTable.item(y, x).text())
-            print newParam
             self.nero.database[name]._fields["custom_msg"] = newParam
             self.nero.replace_experiment(self.nero.database[name])
             self.add_to_param_table()
@@ -252,7 +263,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             insertedLabels = self.allLabels - self.filteredLabels
         if x > 3:
             name = str(self.paramTable.item(y, 0).text())
-            param = tuple(insertedLabels)[x-2]
+            param = tuple(insertedLabels)[x-4]
             if not param in self.nero.database[name]._fields["parameters"]:
                 self.add_to_param_table()
                 return
@@ -266,6 +277,12 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             name = str(self.paramTable.item(exp.row(), 0).text())
             self.nero.delete_experiment(name)
 	self.add_to_param_table()
+
+    def highlight_row(self, y, x):
+        if x == 0:
+            self.paramTable.selectRow(y)
+        else:
+            self.paramTable.item(x,y)
 
 def main():
     app = QtGui.QApplication(sys.argv)
