@@ -169,9 +169,9 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.paramTable.setRowCount(0)
         self.paramTable.setColumnCount(0)
         self.paramTable.setRowCount(len(expNames))
-        self.paramTable.setColumnCount(len(insertedLabels)+2)
+        self.paramTable.setColumnCount(len(insertedLabels)+3)
         self.paramTable.setColumnWidth(0,200)
-        self.paramTable.setHorizontalHeaderLabels(tuple(["Name", "Submitted"] + list(insertedLabels)))
+        self.paramTable.setHorizontalHeaderLabels(tuple(["Name", "Submitted", "status"] + list(insertedLabels)))
 	for yAxis, name in enumerate(expNames):
             item = MyTableWidgetItem(
 	           QtCore.QString("%1").arg(name))
@@ -187,13 +187,15 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
                 pass
             item = MyTableWidgetItem(QtCore.QString("%1").arg(submitted))
 	    self.paramTable.setItem(yAxis, 1, item)
+            item = MyTableWidgetItem(QtCore.QString("%1").arg(status))
+	    self.paramTable.setItem(yAxis, 2, item)
 	    for xAxis, param in enumerate(insertedLabels):
 	        try:
 	            value = self.nero.database[
 	                name]._fields["parameters"][param]
 	            self.paramTable.setItem(
 	                yAxis,
-	                xAxis+2,
+	                xAxis+3,
 	                MyTableWidgetItem(
 	                    QtCore.QString("%1").arg(value)))
 	        except KeyError:
