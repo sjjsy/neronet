@@ -45,6 +45,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         # bind signals and slots
         self.cluster_add_btn.clicked.connect(self.add_cluster)
         self.clusters.itemSelectionChanged.connect(self.update_cluster_fields)
+        self.clusters.itemSelectionChanged.connect(self.show_cluster_status)
         self.paramTable.itemSelectionChanged.connect(self.show_one_experiment)
         self.paramTable.verticalHeader().sectionDoubleClicked.connect(self.open_config)
         self.paramTable.doubleClicked.connect(self.open_config)
@@ -216,6 +217,12 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         for line in self.nero.status_gen(name):
             self.experiment_log.insertPlainText(line)
 
+    def show_cluster_status(self):
+        self.experiment_log.clear()
+	name = str(self.clusters.currentItem().text())
+        for line in self.nero.status_gen(name):
+            self.experiment_log.insertPlainText(line)    
+
     def open_config(self):
         """double clicking opens config file"""
         row = self.paramTable.currentRow()
@@ -252,7 +259,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             insertedLabels = self.allLabels - self.filteredLabels
         if x > 3:
             name = str(self.paramTable.item(y, 0).text())
-            param = tuple(insertedLabels)[x-2]
+            print tuple(insertedLabels)
+            param = tuple(insertedLabels)[x-4]
             if not param in self.nero.database[name]._fields["parameters"]:
                 self.add_to_param_table()
                 return
