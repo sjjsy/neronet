@@ -169,9 +169,9 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.paramTable.setRowCount(0)
         self.paramTable.setColumnCount(0)
         self.paramTable.setRowCount(len(expNames))
-        self.paramTable.setColumnCount(len(insertedLabels)+3)
+        self.paramTable.setColumnCount(len(insertedLabels)+4)
         self.paramTable.setColumnWidth(0,200)
-        self.paramTable.setHorizontalHeaderLabels(tuple(["Name", "Submitted", "status"] + list(insertedLabels)))
+        self.paramTable.setHorizontalHeaderLabels(tuple(["Name", "message", "Submitted", "status"] + list(insertedLabels)))
 	for yAxis, name in enumerate(expNames):
             item = MyTableWidgetItem(
 	           QtCore.QString("%1").arg(name))
@@ -186,16 +186,20 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             except IndexError:
                 pass
             item = MyTableWidgetItem(QtCore.QString("%1").arg(submitted))
-	    self.paramTable.setItem(yAxis, 1, item)
-            item = MyTableWidgetItem(QtCore.QString("%1").arg(status))
 	    self.paramTable.setItem(yAxis, 2, item)
+            item = MyTableWidgetItem(QtCore.QString("%1").arg(status))
+	    self.paramTable.setItem(yAxis, 3, item)
+            message = str(self.nero.database[
+	                name]._fields["custom_msg"])
+            item = MyTableWidgetItem(QtCore.QString("%1").arg(message))
+	    self.paramTable.setItem(yAxis, 1, item)
 	    for xAxis, param in enumerate(insertedLabels):
 	        try:
 	            value = self.nero.database[
 	                name]._fields["parameters"][param]
 	            self.paramTable.setItem(
 	                yAxis,
-	                xAxis+3,
+	                xAxis+4,
 	                MyTableWidgetItem(
 	                    QtCore.QString("%1").arg(value)))
 	        except KeyError:
@@ -233,11 +237,20 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def change_cell(self,y,x):
         insertedLabels = set()
+        print y, x
+        if x == 1:
+            name = str(self.paramTable.item(y, 0).text())
+            newParam = str(self.paramTable.item(y, x).text())
+            print newParam
+            self.nero.database[name]._fields["custom_msg"] = newParam
+            self.nero.replace_experiment(self.nero.database[name])
+            self.add_to_param_table()
+            
         if len(self.filteredLabels) == len(self.allLabels):
             insertedLabels = self.allLabels
         else:
             insertedLabels = self.allLabels - self.filteredLabels
-        if x > 1:
+        if x > 3:
             name = str(self.paramTable.item(y, 0).text())
             param = tuple(insertedLabels)[x-2]
             if not param in self.nero.database[name]._fields["parameters"]:
