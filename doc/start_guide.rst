@@ -44,7 +44,7 @@ The neronet is then downloaded and installed to your local machine.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To avoid inputting your password every time Neronet uses a SSH connection
-for something, it is advisable to set up passwordless SSH login.
+for something, it is advisable to set up passwordless SSH login for your clusters.
 
 `Here 
 <http://www.linuxproblem.org/art_9.html>`_ is a simple guide on how to do it.
@@ -57,164 +57,20 @@ Configure your clusters with the following command
 
 ::
 
-    nerocli --cluster cluster_id type ssh_address
-
-where type can be ``unmanaged`` (or ``slurm`` later when supported).
+    nerocli --addnode cluster_id ssh_address
 
 For example, to configure kosh.aalto.fi as an unmanaged cluster,
 you can type
 
 ::
     
-    nerocli --cluster kosh unmanaged kosh.aalto.fi
-
-Configure your user details with the command
-
-::
-
-    nerocli --user name email
-
-where the user name should be enclosed in quotation marks if it contains
-spaces
-
-
+    nerocli --addnode kosh kosh.aalto.fi
 
 Step 2: Specifying and submitting experiments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 2.1 Creating Neronet-compatible experiments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
--  Your experiments must be runnable in a terminal with a command of the
-   format: ``run_command_prefix main_code_file parameter_string`` where
-   **run\_command\_prefix**, **main\_code\_file** and **parameter\_string** are
-   specified on the next step in config.yaml file.
-
-2.2 Adding config.yaml to your experiment folder
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To configure your experiments to work with Neronet it is necessary to
-add a configuration file named config.yaml to your experiment folder.
-The format is as follows:
-
--  The config file follows standard yaml format conventions
--  Each config file should contain at least one experiment
--  Each experiment should have a unique name and the following
-   variables:
-
--  run\_command\_prefix: the program used for running your experiment
-   code file
--  main\_code\_file: name of the main code file
--  parameters: name value pairs of parameter values
--  parameters\_format: Specifies the parameter string parameter names
-   written within parenthesis are replaced with the corresponding
-   parameter values.
-
-To create the basic required config.yaml, the ``nerocli --template`` can be used.
-For example:
-
-::
-
-    nerocli --template test_experiment python test_exp.py x y z
-
-This would create the example config.yaml below, only without the parameters defined.
-The user can then add the preferred parameter values.
-
-
-An example of a proper config.yaml:
-
-::
-
-    test_experiment:
-        run_command_prefix: python
-        main_code_file: test_exp.py
-        parameters:
-            x: 12
-            y: 17
-            z: 'test'
-        parameters_format: '{x} {y} {z} '
-
-From this config file Neronet would create an experiment named test_experiment that would be run with the
-command
-
-
-
-::
-
-    python test_exp.py 12 17 test
-
-Neronet will notify if the config file is not correctly formated
-
-2.3 Specifying the experiments so that Neronet knows of their existence
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To complete specifying your experiments, type the following command
-
-::
-
-    nerocli --experiment ./relative/path/to/my/experimentfolder
-
-Neronet will notify if the specifying of experiments fails for some
-reason or another.
-
-2.4 Reviewing status information
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To see a basic status report of which clusters and experiments Neronet
-knows of and what are the experiments’ state, type
-
-::
-
-    nerocli --status
-
-To view more specific information on an experiment you can use
-
-::
-
-    nerocli --status experiment_id
-
-2.5 Submitting experiments to computing clusters
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-After you have successfully configured your experiments you can submit them to computing clusters with the
-following command:
-
-::
-
-    nerocli --submit experiment_id cluster_id
-
-Where cluster\_id is one of the previously defined clusters and
-experiment\_id is one of the experiments specified.
-
-2.6 Fetching data of submitted experiments
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To fetch data of submitted experiments, type
-
-::
-
-    nerocli --fetch
-
-This will attempt to fetch data on all submitted experiments.
-
-2.7: Other important Neronet CLI commands
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-::
-
-    nerocli --delete experiment_id
-
-Deletes a specified experiment from Neronet’s database.
-
-::
-
-    nerocli --clean
-
-Wipes all Neronet related files e.g. Neronet’s database, user
-configurations
-
-Step 3: A simple use case
-~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As an example, I have a folder ``experiments/theanotest`` under my home directory.
 Inside this folder is a Python script that takes 3 commandline parameters:
@@ -224,14 +80,14 @@ N, feats, training_steps in that order, and would be run with, for example:
 
     python theanotest.py 400 784 10000
 
-To make Neronet able to recognize this as an experiment, I create a ``config.yaml``
-in the folder by using 
+To make Neronet able to recognize this as an experiment, I 
+create a ``config.yaml`` by using `nerocli --template` as such:
 
 ::
 
     nerocli --template theanotest python theanotest.py N feats training_steps
 
-Which results in the following file being created:
+Which results in the following ``config.yaml`` being created in the current working directory:
 
 ::
 
@@ -257,19 +113,27 @@ Then I edit the file to give values to the parameters:
             training_steps: 10000
         parameters_format: '{N} {feats} {training_steps} '
 
+For more information on what can be done with the config files, see the user manual.
 
-Then I make Neronet recognize it with ``nerocli --experiment <relativepath>``:
+2.3 Specifying the experiments so that Neronet knows of their existence
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To make Neronet recognize my experiment, I use `nerocli --addexp <relativepath>`:
+
+::
+
+    blomqvt1@sromu:~$ nerocli --addexp experiments/theanotest
+    Experiment(s) successfully defined.
+
+2.4 Reviewing status information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To see a basic status report of which clusters and experiments Neronet
+knows of and what are the experiments’ state, I use `nerocli --status`:
 
 ::
     
-    blomqvt1@sromu:~$ nerocli --experiment experiments/theanotest
-
-Then with ``nerocli --status`` I can check what Neronet knows.
-
-::
-
-    blomqvt1@sromu:~$ nerocli --status
-
+    blomqvt1@sromu:~/projects/neronet$ nerocli --status
     ================Neroman=================
 
     ================User====================
@@ -277,15 +141,13 @@ Then with ``nerocli --status`` I can check what Neronet knows.
     Email: 
 
     ================Clusters================
-    Clusters:
-    No clusters defined
+    kosh (kosh.aalto.fi, unmanaged)
 
     ================Experiments=============
     Defined:
     - theanotest
 
-And with ``nerocli --status experiment_id`` you can get more specific
-information about the experiment:
+To view more specific information on an experiment I use `nerocli --status <exp_id>`:
 
 ::
 
@@ -299,17 +161,13 @@ information about the experiment:
       State: defined
       Last modified: 2016-02-26 14:02:03.935378
 
-Then, define a cluster:
 
-::
 
-    blomqvt1@sromu:~$ nerocli --cluster kosh unmanaged kosh.aalto.fi
+2.5 Submitting experiments to computing clusters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    > ssh kosh.aalto.fi "cd ~/.neronet; PATH="~/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="~/.neronet" python -V"
-    The cluster seems to be online!
-    Defined a new cluster named kosh
-
-Now that everything is set up, we can submit the experiment.
+After you have successfully configured your experiments you can submit them to computing clusters with
+`nerocli --submit <experiment_id> <cluster_id>` as such:
 
 ::
 
@@ -322,7 +180,10 @@ Now that everything is set up, we can submit the experiment.
     Neromum daemon started...
     Experiment theanotest successfully submitted to kosh
 
-Then you can update the status of all experiments with ``nerocli --fetch``:
+2.6 Fetching data of submitted experiments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To fetch data of submitted experiments, `nerocli --fetch` is used
 
 ::
 
@@ -345,26 +206,18 @@ Then you can update the status of all experiments with ``nerocli --fetch``:
     
     Updating experiment "theanotest"...
 
-Changes to the experiment statuses can be followed by using ``nerocli --status`` as demonstrated before.
+2.7: Other important Neronet CLI commands
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
-    blomqvt1@sromu:~$ nerocli --status
-    ================Neroman=================
-    
-    ================User====================
-    Name: 
-    Email: 
-    
-    ================Clusters================
-    Clusters:
-    - kosh (unmanaged, kosh.aalto.fi)
-    
-    ================Experiments=============
-    Finished:
-    - theanotest
+    nerocli --delexp experiment_id
 
-Intermediate results can be found in the folder ``~/.neronet/results/experiment_id``.
+Deletes a specified experiment from Neronet’s database.
 
-When the experiment is finished the final results are then moved under the original experiment folder, in this example
-to ``~/experiments/theanotest/results/theanotest/``.
+::
+
+    nerocli --clean
+
+Wipes all Neronet related files e.g. Neronet’s database, user
+configurations
