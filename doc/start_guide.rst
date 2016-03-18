@@ -59,12 +59,13 @@ Configure your clusters with the following command
 
     nerocli --addnode cluster_id ssh_address
 
-For example, to configure kosh.aalto.fi as an unmanaged cluster,
-you can type
+For example, to configure kosh.aalto.fi as a usable node:
 
 ::
     
-    nerocli --addnode kosh kosh.aalto.fi
+    blomqvt1@sromu:~$ nerocli --addnode kosh kosh.aalto.fi
+    > ssh kosh.aalto.fi "cd ~/.neronet; PATH="~/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="~/.neronet" python -V"
+    Cluster successfully accessed! Adding it...Defined a new cluster with ID "kosh"
 
 Step 2: Specifying and submitting experiments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,13 +82,13 @@ N, feats, training_steps in that order, and would be run with, for example:
     python theanotest.py 400 784 10000
 
 To make Neronet able to recognize this as an experiment, I 
-create a ``config.yaml`` by using `nerocli --template` as such:
+create a **config.yaml** by using ``nerocli --template`` as such:
 
 ::
 
     nerocli --template theanotest python theanotest.py N feats training_steps
 
-Which results in the following ``config.yaml`` being created in the current working directory:
+Which results in the following **config.yaml** being created in the current working directory
 
 ::
 
@@ -100,7 +101,7 @@ Which results in the following ``config.yaml`` being created in the current work
             training_steps:
         parameters_format: '{N} {feats} {training_steps} '
 
-Then I edit the file to give values to the parameters:
+Then I edit the file to give values to the parameters
 
 ::
 
@@ -113,12 +114,12 @@ Then I edit the file to give values to the parameters:
             training_steps: 10000
         parameters_format: '{N} {feats} {training_steps} '
 
-For more information on what can be done with the config files, see the user manual.
+Finally, I move the file to ``experiments/theanotest/``.
 
 2.3 Specifying the experiments so that Neronet knows of their existence
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To make Neronet recognize my experiment, I use `nerocli --addexp <relativepath>`:
+To make Neronet recognize my experiment, I use ``nerocli --addexp <relativepath>``:
 
 ::
 
@@ -129,11 +130,11 @@ To make Neronet recognize my experiment, I use `nerocli --addexp <relativepath>`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To see a basic status report of which clusters and experiments Neronet
-knows of and what are the experiments’ state, I use `nerocli --status`:
+knows of and what are the experiments’ state, I use ``nerocli --status``:
 
 ::
     
-    blomqvt1@sromu:~/projects/neronet$ nerocli --status
+    blomqvt1@sromu:~$ nerocli --status
     ================Neroman=================
 
     ================User====================
@@ -147,7 +148,7 @@ knows of and what are the experiments’ state, I use `nerocli --status`:
     Defined:
     - theanotest
 
-To view more specific information on an experiment I use `nerocli --status <exp_id>`:
+To view more specific information on an experiment I use ``nerocli --status <exp_id>``:
 
 ::
 
@@ -167,7 +168,7 @@ To view more specific information on an experiment I use `nerocli --status <exp_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 After you have successfully configured your experiments you can submit them to computing clusters with
-`nerocli --submit <experiment_id> <cluster_id>` as such:
+``nerocli --submit <experiment_id> <cluster_id>`` as such:
 
 ::
 
@@ -183,7 +184,7 @@ After you have successfully configured your experiments you can submit them to c
 2.6 Fetching data of submitted experiments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To fetch data of submitted experiments, `nerocli --fetch` is used
+To fetch data of submitted experiments, ``nerocli --fetch`` is used
 
 ::
 
