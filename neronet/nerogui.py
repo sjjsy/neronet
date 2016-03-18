@@ -123,10 +123,12 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def add_cluster(self):
         """add cluster to neroman configs"""
+        self.experiment_log.clear()
         addr = str(self.cluster_address_field.text())
         nm = str(self.cluster_name_field.text())
         type = str(self.cluster_type_combo.currentText())
-        self.nero.specify_cluster(nm, type, addr)
+        for line in self.nero.specify_cluster(nm, type, addr):
+            self.experiment_log.insertPlainText(line)
         self.init_clusters()
 
     def update_cluster_fields(self):
@@ -150,13 +152,19 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def submit_exp(self):
         """submit button functionality"""
+        self.experiment_log.clear()
         cluster = str(self.clusters.currentItem().text())
         if cluster is None:
+            print "?"
             return
-        for exp in self.paramTable.selectionModel().selectedRows():
-            name = str(self.paramTable.item(exp.row(), 0).text())
-            self.nero.submit(name, cluster)
-	self.show_one_experiment()
+        rows = sorted(set(index.row() for index in
+                  self.paramTable.selectedIndexes()))
+        print rows
+        for exp in rows:
+            name = str(self.paramTable.item(exp, 0).text())
+            for line in self.nero.submit(name, cluster):
+                self.experiment_log.insertPlainText(line + "\n")
+	#self.show_one_experiment()
         self.add_to_param_table()
 
     def add_to_param_table(self):
@@ -238,14 +246,18 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def fetch_exp(self):
         """fetches experiments statuses"""
-        self.nero.fetch()
+        self.experiment_log.clear()
+        for line in self.nero.fetch():
+            self.experiment_log.insertPlainText(line)
 	self.add_to_param_table()
 
     def terminate_exp(self):
+        self.experiment_log.clear()
         for exp in self.paramTable.selectionModel().selectedRows():
             name = str(self.paramTable.item(exp.row(), 0).text())
             for line in self.nero.terminate_experiment(name):
-                print line
+                self.experiment_log.insertPlainText(line)
+
 	self.add_to_param_table()
 
     def change_cell(self,y,x):

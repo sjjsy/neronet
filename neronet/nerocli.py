@@ -85,6 +85,8 @@ def main():
             changed_exps = nero.specify_experiments(experiment_folder)
         except (IOError, FormatError) as e:
             print(e)
+            return
+        print('Experiment(s) successfully defined')
         if changed_exps:
             for experiment in changed_exps.values():
                 print('Changes detected in experiment: %s' % experiment.id)
