@@ -34,15 +34,17 @@ Testing data to be used is simply the example experiments we have prepared.
 
 To be filled!
 
-- SESSION START TIME:
-- DURATION (hours):
-- TESTER:
-- BUILD:
-- ENVIRONMENT: UNIX system
+- SESSION START TIME: 13:00
+- DURATION (hours): 4h
+- TESTER: Kaarlo, Olli, Joni
+- BUILD: 0.3.1
+- ENVIRONMENT: Teemu's and Tuomo's Linux laptops
 
 ## 4.1 Data files
 
-Any used or created test data files
+- test/experiments/sleep
+- test/experiments/sleep001
+- test/experiments/theanotest
 
 ## 4.2 Test notes
 
