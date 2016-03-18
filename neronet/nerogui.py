@@ -155,6 +155,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             name = str(self.paramTable.item(exp.row(), 0).text())
             self.nero.submit(name, cluster)
 	self.show_one_experiment()
+        self.add_to_param_table()
 
     def add_to_param_table(self):
         """inserts values from database to comparison table"""
@@ -219,6 +220,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
     def fetch_exp(self):
         """fetches experiments statuses"""
         self.nero.fetch()
+	self.add_to_param_table()
 
     def terminate_exp(self):
         for exp in self.paramTable.selectionModel().selectedRows():
@@ -240,6 +242,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.add_to_param_table()
                 return
             newParam = str(self.paramTable.item(y, x).text())
+            self.nero.database[name]._fields["parameters"][param] = newParam
             self.nero.replace_experiment(self.nero.database[name])
             self.add_to_param_table()
 
