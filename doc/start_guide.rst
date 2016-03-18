@@ -49,7 +49,7 @@ Configure your clusters with the following command
 
     nerocli --cluster cluster_id type ssh_address
 
-where type can be unmanaged or slurm.
+where type can be ``unmanaged`` (or ``slurm`` later when supported).
 
 For example, to configure kosh.aalto.fi as an unmanaged cluster,
 you can type
@@ -73,7 +73,7 @@ Step 2: Specifying and submitting experiments
 2.1 Creating Neronet-compatible experiments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  Your experiments must be runnable in Terminal with a command of the
+-  Your experiments must be runnable in a terminal with a command of the
    format: ``run_command_prefix main_code_file parameter_string`` where
    **run\_command\_prefix**, **main\_code\_file** and **parameter\_string** are
    specified on the next step in config.yaml file.

@@ -123,9 +123,6 @@ class Neroman:
                 for key in experiment._fields:
                     if key in relevant_fields and self.database[experiment.id].__getattr__(key) \
                                                     != experiment.__getattr__(key):
-                        #(debug)print('Key: %s, Old: %s, New: %s' % (key, \
-                        #        self.database[experiment.id].__getattr__(key), 
-                        #        experiment.__getattr__(key)))
                         changed_exps[experiment.id] = experiment
                         break
                 err.append("Experiment named %s already in the database" \
@@ -198,15 +195,29 @@ class Neroman:
             str: A line of neroman status
         """
         if arg != 'all':
-            if arg in self.database:
+            if arg == 'clusters':
+                if not self.clusters['clusters']:
+                    yield "No clusters defined\n"
+                    raise StopIteration
+                for key in self.clusters['clusters']:
+                    for ln in self.status_gen(key):
+                        yield ln
+                raise StopIteration
+            elif arg in self.database:
                 experiment = self.database[arg]
                 for line in experiment.as_gen():
                     yield line
                 raise StopIteration
             elif arg in self.clusters['clusters']:
                 cluster = self.clusters['clusters'][arg]
-                for ln in cluster.yield_status():
-                    yield ln
+                yield "\n%s\n" % cluster.cid
+                yield "===========\n"
+                yield "SSH Address: %s\n" % cluster.ssh_address
+                yield "Type: %s\n" % cluster.ctype
+                yield "Experiments:\n"
+                for exp in self.database:
+                    if self.database[exp].cluster_id == cluster.cid:
+                        yield "Experiment id: %s, Status: %s\ņ" % (exp, self.database[exp].state)
                 raise StopIteration
             else:
                 raise IOError('No experiment or cluster named "%s"!' % (arg))
