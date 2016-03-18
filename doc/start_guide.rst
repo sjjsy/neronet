@@ -40,7 +40,17 @@ computer’s terminal:
 
 The neronet is then downloaded and installed to your local machine.
 
-1.2: Configuring your settings
+1.2 Setting up SSH login without password
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To avoid inputting your password every time Neronet uses a SSH connection
+for something, it is advisable to set up passwordless SSH login.
+
+`Here 
+<http://www.linuxproblem.org/art_9.html>`_ is a simple guide on how to do it.
+
+
+1.3 Configuring your settings
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Configure your clusters with the following command
@@ -66,6 +76,8 @@ Configure your user details with the command
 
 where the user name should be enclosed in quotation marks if it contains
 spaces
+
+
 
 Step 2: Specifying and submitting experiments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,9 +110,18 @@ The format is as follows:
    written within parenthesis are replaced with the corresponding
    parameter values.
 
-Example
+To create the basic required config.yaml, the ``nerocli --template`` can be used.
+For example:
 
-config.yaml:
+::
+
+    nerocli --template test_experiment python test_exp.py x y z
+
+This would create the example config.yaml below, only without the parameters defined.
+The user can then add the preferred parameter values.
+
+
+An example of a proper config.yaml:
 
 ::
 
@@ -108,16 +129,19 @@ config.yaml:
         run_command_prefix: python
         main_code_file: test_exp.py
         parameters:
-                    n: 12
-                    x: 17
-        parameters_format: '-- {n} {x}'
+            x: 12
+            y: 17
+            z: 'test'
+        parameters_format: '{x} {y} {z} '
 
 From this config file Neronet would create an experiment named test_experiment that would be run with the
 command
 
+
+
 ::
 
-    python test_exp.py -- 12 17
+    python test_exp.py 12 17 test
 
 Neronet will notify if the config file is not correctly formated
 
@@ -201,21 +225,40 @@ N, feats, training_steps in that order, and would be run with, for example:
     python theanotest.py 400 784 10000
 
 To make Neronet able to recognize this as an experiment, I create a ``config.yaml``
-in the folder as such: 
+in the folder by using 
+
+::
+
+    nerocli --template theanotest python theanotest.py N feats training_steps
+
+Which results in the following file being created:
 
 ::
 
     theanotest:
         run_command_prefix: python
         main_code_file: theanotest.py
-        outputs: 'results'
-        parameters_format: '{N} {feats} {training_steps}'
         parameters:
-            N: 400 
+            N: 
+            feats:
+            training_steps:
+        parameters_format: '{N} {feats} {training_steps} '
+
+Then I edit the file to give values to the parameters:
+
+::
+
+    theanotest:
+        run_command_prefix: python
+        main_code_file: theanotest.py
+        parameters:
+            N: 400
             feats: 784
             training_steps: 10000
+        parameters_format: '{N} {feats} {training_steps} '
 
-Then I make Neronet recognize it with ``nerocli --experiment relativepath``:
+
+Then I make Neronet recognize it with ``nerocli --experiment <relativepath>``:
 
 ::
     
