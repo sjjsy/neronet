@@ -15,12 +15,12 @@ from neronet.config_parser import FormatError
 def create_argument_parser():
     """Create and return an argument parser."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('--experiment',
+    parser.add_argument('--addexp',
                         metavar='folder',
                         nargs=1,
                         help='Creates experiments according to the config'
                         'file found in the folder')
-    parser.add_argument('--delete',
+    parser.add_argument('--delexp',
                         metavar='experiment_id',
                         nargs=1,
                         help='Deletes the experiment with the given ID')
@@ -28,10 +28,14 @@ def create_argument_parser():
                         metavar='experiment_id',
                         nargs=1,
                         help='Plots the experiment with the given ID')
-    parser.add_argument('--cluster',
-                        metavar=('cluster_id', 'type', 'ssh_address'),
+    parser.add_argument('--addnode',
+                        metavar=('cluster_id', 'ssh_address'),
                         nargs=argparse.REMAINDER,
                         help='Specify a new cluster for computing')
+    parser.add_argument('--delnode',
+                        metavar='cluster_id',
+                        nargs=1,
+                        help='Deletes the cluster with the given ID')
     parser.add_argument('--user',
                         metavar=('name', 'email'),
                         nargs=2,
@@ -74,8 +78,8 @@ def main():
             print('Removed neronet configuration files')
         return
     nero = neronet.neroman.Neroman()
-    if args.experiment:
-        experiment_folder = args.experiment[0]
+    if args.addexp:
+        experiment_folder = args.addexp[0]
         changed_exps = {}
         try:
             changed_exps = nero.specify_experiments(experiment_folder)
@@ -91,48 +95,53 @@ def main():
                         nero.replace_experiment(experiment)
                         break
                     elif answer in ['no', 'n']: break
-    if args.delete:
-        experiment_id = args.delete[0]
+    if args.delexp:
+        experiment_id = args.delexp[0]
         try:
-            nero.delete_experiment(experiment_id)
+            print(''.join(nero.delete_experiment(experiment_id)), end="")
         except KeyError:
-            print("No experiment named %s" % experiment_id)
+            print('No experiment with ID "%s"' % experiment_id)
     if args.plot:
         experiment_id = args.plot[0]
         try:
-            nero.plot_experiment(experiment_id)
+            print(''.join(nero.plot_experiment(experiment_id)), end="")
         except KeyError:
-            print("No experiment named %s" % experiment_id)
-    if args.cluster:
-        if len(args.cluster) < 3:
-            print("Please specify the required arguments: cluster Id, cluster type and ssh address")
+            print('No experiment with ID "%s"' % experiment_id)
+    if args.addnode:
+        if len(args.addnode) < 2:
+            print("Please specify the required arguments: cluster ID and ssh address")
             return
-        cluster_id = args.cluster[0]
-        cluster_type = args.cluster[1]
-        ssh_address = args.cluster[2]
+        cluster_id = args.addnode[0]
+        ssh_address = args.addnode[1]
+        cluster_type = 'unmanaged'
         try:
-            nero.specify_cluster(cluster_id, cluster_type, ssh_address)
-            print("Defined a new cluster named " + cluster_id)
+            print(''.join(nero.specify_cluster(cluster_id, cluster_type, ssh_address)), end="")
+            print('Defined a new cluster with ID "%s"' % cluster_id)
         except IOError as e:
             print(e)
             return
+    if args.delnode:
+        cluster_id = args.delnode[0]
+        try:
+            print(''.join(nero.delete_cluster(cluster_id)), end="")
+        except KeyError:
+            print('No cluster with ID "%s"' % cluster_id)
     if args.user:
         name = args.user[0]
         email = args.user[1]
         nero.specify_user(name, email)
     if args.status:
         try:
-            status_gen = nero.status_gen(args.status)
-            print(''.join(status_gen), end="")
+            print(''.join(nero.status_gen(args.status)), end="")
         except IOError as e:
             print(e)
     if args.submit:
         experiment_id = args.submit[0]
         if len(args.submit) > 1:
             cluster_id = args.submit[1]
-            nero.submit(experiment_id, cluster_id)
+            print(''.join(nero.submit(experiment_id, cluster_id)), end="")
         else:
-            nero.submit(experiment_id)
+            print(''.join(nero.submit(experiment_id)), end="")
     if args.fetch:
         nero.fetch()
     if args.template:

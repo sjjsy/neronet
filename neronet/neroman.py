@@ -82,11 +82,25 @@ class Neroman:
         cluster = neronet.cluster.Cluster(cluster_id, cluster_type, ssh_address)
         try:
             cluster.test_connection()
-            print('The cluster seems to be online!')
+            yield('Cluster successfully accessed! Adding it...')
+            self.clusters['clusters'][cluster_id] = cluster
+            self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
         except RuntimeError as e:
-            print('Warning: %s' % (e))
-        self.clusters['clusters'][cluster_id] = cluster
-        self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
+            yield('Error: %s' % (e))
+            sys.exit(1)
+
+    def delete_cluster(self, cluster_id):
+        """Deletes the cluster with the given cluster ID
+
+        Parameters:
+            cluster_id (str): ID of the cluster to be deleted
+        Raises:
+            KeyError: if the cluster with the given ID doesn't exist
+        """
+        if cluster_id in self.clusters['clusters']:
+            del self.clusters['clusters'][cluster_id]
+            self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
+            yield('Cluster "%s" deleted.' % (cluster_id))
 
     def specify_experiments(self, folder):
         """Specify experiments so that Neroman is aware of them.
@@ -347,7 +361,7 @@ class Neroman:
                 (local_tmp_dir, cluster.ssh_address, remote_dir))
             # Start the Neromum daemon
             cluster.start_neromum()
-            print("Experiment " + exp_id + " successfully submitted to " + cluster_id)
+            yield("Experiment " + exp_id + " successfully submitted to " + cluster_id)
         finally:
             # Remove the temporary directory
             shutil.rmtree(local_tmp_dir)
@@ -371,7 +385,7 @@ class Neroman:
                 'results')
         # Fetch the changes from the clusters
         for cluster_id in clusters_to_fetch:
-            print('Fetching changes from cluster "%s"...' % (cluster_id))
+            yield('Fetching changes from cluster "%s"...' % (cluster_id))
             # Load cluster details
             cluster = self.clusters['clusters'][cluster_id]
             # Fetch the files from the remote server
@@ -379,7 +393,7 @@ class Neroman:
                 neronet.core.osrun('rsync -az -e "ssh" "%s:%s/" "%s"' %
                     (cluster.ssh_address, remote_dir, local_dir))
             except RuntimeError:
-                print('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
+                yield('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
             # Clean the cluster
             exceptions = [exp.id for exp in experiments_to_check if exp.state
                     in (neronet.experiment.Experiment.State.submitted,
@@ -388,13 +402,13 @@ class Neroman:
             try:
                 cluster.clean_experiments(exceptions)
             except RuntimeError:
-                print('Note: Failed to clean the experiments at the cluster.')
+                yield('Note: Failed to clean the experiments at the cluster.')
         # Update the experiments
         for exp in experiments_to_check:
-            print('Updating experiment "%s"...' % (exp.id))
+            yield('Updating experiment "%s"...' % (exp.id))
             exp_file = os.path.join(local_dir, exp.id, 'exp.pickle')
             if not os.path.exists(exp_file):
-                print('ERR: Experiment pickle missing!')
+                yield('ERR: Experiment pickle missing!')
                 exp.update_state(neronet.experiment.Experiment.State.lost)
                 continue
             exp = self.database[exp.id] = pickle.loads(
