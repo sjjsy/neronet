@@ -150,12 +150,14 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def submit_exp(self):
         """submit button functionality"""
+        self.experiment_table.clear()
         cluster = str(self.clusters.currentItem().text())
         if cluster is None:
             return
         for exp in self.paramTable.selectionModel().selectedRows():
             name = str(self.paramTable.item(exp.row(), 0).text())
-            self.nero.submit(name, cluster)
+            for line in self.nero.submit(name, cluster):
+                self.experiment_log.insertPlainText(line)
 	self.show_one_experiment()
         self.add_to_param_table()
 
@@ -238,14 +240,18 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def fetch_exp(self):
         """fetches experiments statuses"""
-        self.nero.fetch()
+        self.experiment_log.clear()
+        for line in self.nero.fetch():
+            self.experiment_log.insertPlainText(line)
 	self.add_to_param_table()
 
     def terminate_exp(self):
+        self.experiment_log.clear()
         for exp in self.paramTable.selectionModel().selectedRows():
             name = str(self.paramTable.item(exp.row(), 0).text())
             for line in self.nero.terminate_experiment(name):
-                print line
+                self.experiment_log.insertPlainText(line)
+
 	self.add_to_param_table()
 
     def change_cell(self,y,x):
