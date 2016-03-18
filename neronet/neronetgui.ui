@@ -212,6 +212,9 @@
         <height>286</height>
        </size>
       </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
     <item row="0" column="0" rowspan="2">
@@ -231,10 +234,7 @@
        <enum>Qt::CustomContextMenu</enum>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::AnyKeyPressed</set>
-      </property>
-      <property name="selectionBehavior">
-       <enum>QAbstractItemView::SelectRows</enum>
+       <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
       </property>
       <property name="sortingEnabled">
        <bool>true</bool>
