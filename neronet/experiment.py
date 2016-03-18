@@ -60,7 +60,8 @@ class Experiment(object):
                     'time_modified': now,
                     'states_info': [(Experiment.State.defined, now)],
                     'cluster_id': None,
-                    'warnings' : [] }
+                    'warnings' : [],
+                    'custom_msg': "" }
         #MAGIC: Creates the attributes for the experiment class
         self.__dict__['_fields'] = fields
         #super(Experiment, self).__setattr__('_fields', fields)

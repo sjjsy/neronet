@@ -210,8 +210,22 @@ class Neroman:
         """
         if arg != 'all':
             if arg == 'clusters':
+                yield 'Name       Type       Address    Load\n'
                 if not self.clusters['clusters']:
-                    yield "No clusters defined\n"
+                    yield 'No clusters defined\n'
+                else:
+                    for cid, cluster in self.clusters['clusters'].iteritems():
+                        try:
+                            cluster.update_average_load(cluster.sshrun('uptime').out[-5:-1])
+                        except RuntimeError:
+                            cluster.update_average_load("undefined")
+                        self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
+                        yield '%s\n' % (cluster)
+                    if self.clusters['groups']:
+                        yield "Cluster groups:\n"
+                        groups = self.clusters['groups']
+                        for group_id, group_clusters in groups.iteritems():
+                            yield '- %s: %s\n' % (group_id, ', '.join(cluster for cluster in group_clusters))
                     raise StopIteration
                 for key in self.clusters['clusters']:
                     for ln in self.status_gen(key):
@@ -244,22 +258,16 @@ class Neroman:
             yield "Default Cluster: %s\n" % self.preferences['default_cluster']
         yield "\n"
         yield "================Clusters================\n"
-        yield 'Name       Type       Address    Load\n'
         if not self.clusters['clusters']:
             yield 'No clusters defined\n'
         else:
-            for cid, cluster in self.clusters['clusters'].iteritems():
-                try:
-                    cluster.update_average_load(cluster.sshrun('uptime').out[-5:-1])
-                except RuntimeError:
-                    cluster.update_average_load("undefined")
-                self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
-                yield '%s\n' % (cluster)
-            if self.clusters['groups']:
-                yield "Cluster groups:\n"
-                groups = self.clusters['groups']
-                for group_id, group_clusters in groups.iteritems():
-                    yield '- %s: %s\n' % (group_id, ', '.join(cluster for cluster in group_clusters))
+            for cluster in self.clusters['clusters'].itervalues():
+                yield '%s (%s, %s)\n' % (cluster.cid, cluster.ssh_address, cluster.ctype)
+        if self.clusters['groups']:
+            yield "Cluster groups:\n"
+            groups = self.clusters['groups']
+            for group_id, group_clusters in groups.iteritems():
+                yield '- %s: %s\n' % (group_id, ', '.join(cluster for cluster in group_clusters))
         yield "\n"
         yield "================Experiments=============\n"
         if not len(self.database):

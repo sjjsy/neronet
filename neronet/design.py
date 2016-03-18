@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Wed Mar 16 14:25:32 2016
+# Created: Fri Mar 18 17:11:24 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -84,6 +84,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.tabWidget, 1, 1, 1, 1)
         self.experiment_log = QtGui.QPlainTextEdit(self.centralwidget)
         self.experiment_log.setMaximumSize(QtCore.QSize(352, 286))
+        self.experiment_log.setReadOnly(True)
         self.experiment_log.setObjectName(_fromUtf8("experiment_log"))
         self.gridLayout.addWidget(self.experiment_log, 0, 1, 1, 1)
         self.paramTable = QtGui.QTableWidget(self.centralwidget)
@@ -92,8 +93,7 @@ class Ui_MainWindow(object):
         font.setPointSize(9)
         self.paramTable.setFont(font)
         self.paramTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.paramTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed)
-        self.paramTable.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.paramTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked)
         self.paramTable.setObjectName(_fromUtf8("paramTable"))
         self.paramTable.setColumnCount(0)
         self.paramTable.setRowCount(0)
