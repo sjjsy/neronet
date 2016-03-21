@@ -400,7 +400,7 @@ class ConfigParser():
 
     def check_conditions(self, conditions):
         err = []
-        for field in neronet.experiment.WARNING_FIELDS:
+        for field in neronet.experiment.ExperimentWarning.WARNING_FIELDS:
             if field not in conditions:
                 err.append("Experiment warning doesn't have field %s" % field)
             elif field == 'when' and 'time' in conditions[field]:

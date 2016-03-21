@@ -1,3 +1,10 @@
-nerocli --submit experiment
-making a cluster which is offline
-submitting to such cluster
+Potential issues:
+
+Handling the submitting of an experiment that has already been submitted.
+
+Error handling when defining or submitting to invalid clusters.
+
+- Color coding bug
+- Think about what is interesting enough to take space in the GUI
+- Fetch should happen automatically when changes are made
+- Submit and other core buttons/stuff should be highlighted

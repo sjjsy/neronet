@@ -14,7 +14,7 @@ import shutil
 import neronet.core
 import neronet.cluster
 import neronet.daemon
-import neronet.experiment
+from neronet.experiment import Experiment as Exp
 import neronet.nerokid
 
 class Neromum(neronet.daemon.Daemon):
@@ -71,7 +71,7 @@ class Neromum(neronet.daemon.Daemon):
         neronet.core.write_file(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                 'experiments', exp.id, 'exp.pickle'), pickle.dumps(exp))
         # Debugging
-        if exp.state == neronet.experiment.Experiment.State.finished:
+        if exp.state == Exp.State.finished:
             self.log('Experiment "%s" has finished!' % (exp.id))
         self._reply['rv'] = 0
     
@@ -110,7 +110,7 @@ class Neromum(neronet.daemon.Daemon):
                 msg += '%d experiments cleaned.\n' % (experiments_cleaned_count)
             elif action == 'terminate_exp':
                 exp_id = data["exp_id"]
-                if exp_id in self.kids:
+                if exp_id in self.kids and self.exp_dict[exp_id].state != Exp.state.running:
                     kid = self.kids[exp_id]
                     kid.query('terminate')
                     self.log('Terminating experiment "%s"' % (exp_id))
@@ -134,9 +134,9 @@ class Neromum(neronet.daemon.Daemon):
                 self.exp_dict[exp_id] = exp
         # Start an experiment if there is any to start
         for exp in self.exp_dict.values():
-            if exp.state == neronet.experiment.Experiment.State.submitted_to_kid:
+            if exp.state == Exp.State.submitted_to_kid:
                 pass
-            elif exp.state == neronet.experiment.Experiment.State.submitted:
+            elif exp.state == Exp.State.submitted:
                 # Initialize the log output container
                 exp.log_output = {}
                 # Launch experiment
@@ -166,21 +166,21 @@ class Neromum(neronet.daemon.Daemon):
                     #Add kid to self.kids so that it's possible to send messages to it later
                     self.kids[exp.id] = nerokid
                 # Update the experiment state and timestamp
-                exp.update_state(neronet.experiment.Experiment.State.submitted_to_kid)
+                exp.update_state(Exp.State.submitted_to_kid)
                 exp.time_modified = now = datetime.datetime.now()
                 return # pace submission by launching only one at a time
         # Compute the number of lost experiments
         lost_count = 0
         now = datetime.datetime.now()
         for exp in self.exp_dict.values():
-            if exp.state in (neronet.experiment.Experiment.State.submitted_to_kid, neronet.experiment.Experiment.State.running) \
+            if exp.state in (Exp.State.submitted_to_kid, Exp.State.running) \
                     and exp.time_modified < now - datetime.timedelta(minutes=1):
-                exp.update_state(neronet.experiment.Experiment.State.lost)
+                exp.update_state(Exp.State.lost)
                 lost_count += 1
         # Compute the number of finished experiments
         finished_count = 0
         for exp in self.exp_dict.values():
-            if exp.state == neronet.experiment.Experiment.State.finished:
+            if exp.state == Exp.State.finished:
                 finished_count += 1
         # Exit if all known (submitted) experiments are either finished or
         # lost and we've been idling for at least 5 minutes

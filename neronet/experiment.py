@@ -60,7 +60,8 @@ class Experiment(object):
                     'time_modified': now,
                     'states_info': [(Experiment.State.defined, now)],
                     'cluster_id': None,
-                    'warnings' : [] }
+                    'warnings' : [],
+                    'custom_msg': "" }
         #MAGIC: Creates the attributes for the experiment class
         self.__dict__['_fields'] = fields
         #super(Experiment, self).__setattr__('_fields', fields)
@@ -296,13 +297,14 @@ class Experiment(object):
         yield "  State: %s\n" % self.state
         if self._fields['cluster_id']:
             yield "  Cluster: " + self._fields['cluster_id'] + '\n'
-        if self.state in (Experiment.State.running, Experiment.State.finished):
-            yield "  Output:\n"
-            for output_file in self._fields['outputs']:
-                yield "    " + output_file + ":\n"
-                output = self.get_output(output_file)
-                for field in output:
-                    yield "      %s: " % field + str(output[field]) + "\n"
+#       if self.state in (Experiment.State.running, Experiment.State.finished):
+#            yield "  Output:\n"
+#            for output_file in self._fields['outputs']:
+#                yield "    " + output_file + ":\n"
+#                output = self.get_output(output_file)
+#                for field in output:
+#                    yield "      %s: " % field + str(output[field]) + "\n""""
+
         yield "  Last modified: %s\n" % self._fields['time_modified']
         if self._fields['conditions']:            
             conds = '  Conditions:\n'
@@ -323,11 +325,12 @@ class Experiment(object):
     def __str__(self):
         return "%s %s" % (self._experiment_id, self._fields['state'][-1][0])
 
-WARNING_FIELDS = set(['variablename', 'killvalue', 'comparator', 'when', \
-                        'action'])
 
 class ExperimentWarning:
-    
+
+    WARNING_FIELDS = set(['variablename', 'killvalue', 'comparator', 'when', \
+                        'action'])
+
     def __init__(self, name, variablename, killvalue, comparator, when, action):
         self.name = name.strip()
         self.varname = variablename.strip()
