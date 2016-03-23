@@ -449,7 +449,7 @@ class ConfigParser():
 
             for experiment_id in experiment_ids:
                 experiment_scope = scope[experiment_id]
-                
+                experiment_id = experiment_id[1:]
                 #Turn empty experiment scope from None to a dict
                 if not experiment_scope:
                     experiment_scope = {}
@@ -494,15 +494,12 @@ class ConfigParser():
                     experiment_data['path'] = os.path.abspath(folder)
                     for param in params:
                         experiment_data['parameters'] = param
-                        experiment_id = experiment_id[1:]
                         if len(params) > 1:
                             keys = sorted(param)
                             param_strings = [key + '-' + \
                                             str(param[key]) for key in keys]
                             name = '_'.join([experiment_id] + param_strings)
                             experiment_data['experiment_id'] = name
-                        else:
-                            experiment_data['experiment_id'] = experiment_id
                         experiments.append( \
                             neronet.experiment.Experiment(**experiment_data))
                 _process_data(experiment_scope) 
