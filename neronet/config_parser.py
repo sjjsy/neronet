@@ -433,26 +433,18 @@ class ConfigParser():
             if 'custom_msg' in data:
                 check_type('custom_msg', 'string')
 
-        def check_exp_fields(exp_id, experiment_scope):
-            if not isinstance(experiment_scope, dict):
-                errors.append("Experiment id %s is misformed" % experiment_id)
-                return False
-            else:
-                experiment_ids = set(experiment_scope) - definable_fields
-                defined_fields = set(experiment_scope) - experiment_ids
-                if defined_fields:
-                    return True
-                for experiment_id in experiment_ids:
-                    check_exp_fields(experiment_id, \
-                                experiment_scope[experiment_if])
-
-
         def _process_data(scope):
             #Find experiment ids
-            experiment_ids = set(scope) - definable_fields
+            potential_exp_ids = set(scope) - definable_fields
+            experiment_ids = set()
+            for exp in potential_exp_ids:
+                if exp[0] != '+':
+                    errors.append("Invalid field '%s'" % exp)
+                else:
+                    experiment_ids.add(exp)
             
             #Find already defined fields
-            defined_fields = set(scope) - experiment_ids
+            defined_fields = set(scope) - potential_exp_ids
 
             for experiment_id in experiment_ids:
                 experiment_scope = scope[experiment_id]
@@ -460,10 +452,7 @@ class ConfigParser():
                 #Turn empty experiment scope from None to a dict
                 if not experiment_scope:
                     experiment_scope = {}
-                else:
-                    if not check_exp_fields(experiment_id, experiment_scope):
-                        continue
-                
+                               
                 #Populate experiment scope with scope
                 for field in defined_fields:
                     if field not in experiment_scope:
