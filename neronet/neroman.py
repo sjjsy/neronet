@@ -335,9 +335,7 @@ class Neroman:
         if exp.cluster_id != None:
             raise Exception('Experiment already submitted to "%s"! '
                     % (exp.cluster_id)  +
-             'If you wish to re-submit the same experiment, you need to erase the old' +
-             ' version with "nerocli --delexp ID" and specify it again' +
-             ' with "nerocli --addexp FOLDER".')
+             'If you wish to re-submit the same experiment, you need to wait for your experiment to finish or terminate it with "nerocli --terminate ID" where ID is the id of your experiment.')
         # Update experiment info
         exp.cluster_id = cluster_id
         exp.update_state(neronet.experiment.Experiment.State.submitted)
