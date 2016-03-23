@@ -78,7 +78,7 @@ class Neroman:
 
         """
         if not neronet.cluster.Cluster.Type.is_member(cluster_type):
-            raise IOError('Invalid cluster type "%s"!' % (cluster_type))
+            raise IOError('Neroman: invalid cluster type "%s"!' % (cluster_type))
         cluster = neronet.cluster.Cluster(cluster_id, cluster_type, ssh_address)
         try:
             cluster.test_connection()
@@ -174,7 +174,7 @@ class Neroman:
             KeyError: if the experiment with the given id doesn't exist
         """
         if experiment_id not in self.database:
-            raise IOError("%s is not in databse" % experiment_id)
+            raise IOError("Neroman: %s is not in database" % experiment_id)
         if self.database[experiment_id]._fields['cluster_id']:
             self.terminate_experiment(experiment_id)
         self.database.pop(experiment_id)
@@ -184,9 +184,10 @@ class Neroman:
 
     def duplicate_experiment(self, experiment_id, new_experiment_id):
         if experiment_id not in self.database:
-            raise IOError("%s is not in database" % experiment_id) 
+            raise IOError("Neronet: %s is not in database" % experiment_id) 
         if new_experiment_id in self.database:
-            raise IOError("%s already in database" % new_experiment_id)
+            raise IOError("Neronet: %s already in database" \
+                            % new_experiment_id)
         experiment = self.database[experiment_id]
         duplicated_experiment = neronet.experiment.duplicate_experiment( \
                                             experiment, new_experiment_id)
@@ -262,10 +263,12 @@ class Neroman:
                 yield "Experiments:\n"
                 for exp in self.database:
                     if self.database[exp].cluster_id == cluster.cid:
-                        yield "Experiment id: %s, Status: %s\ņ" % (exp, self.database[exp].state)
+                        yield "Experiment id: %s, Status: %s\ņ" \
+                                % (exp, self.database[exp].state)
                 raise StopIteration
             else:
-                raise IOError('No experiment or cluster named "%s"!' % (arg))
+                raise IOError('Neroman: no experiment or cluster named "%s"!'\
+                                % (arg))
         yield "================Neroman=================\n"
         yield "\n"
         yield "================User====================\n"
@@ -317,7 +320,7 @@ class Neroman:
         if not cluster_id:
             cluster_id = self.preferences['default_cluster']
             if cluster_id == "":
-                raise AttributeError('No default cluster defined')
+                raise AttributeError('no default cluster defined')
         #if cluster_id in self.clusters['groups']:
            # cluster_id = random.choice(self.clusters['groups'][cluster_id])
         if cluster_id in self.clusters['groups']:
@@ -450,7 +453,8 @@ class Neroman:
                     shutil.move(os.path.join(local_dir, exp.id), result_destination) 
                     exp.run_results.append(result_destination)
                     try:
-                        exp.plot_outputs()
+                        if exp.plot:
+                            exp.plot_outputs()
                     except Exception as e:
                         yield str(e)
         self.config_parser.save_database(DATABASE_FILENAME, self.database)

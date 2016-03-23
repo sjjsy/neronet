@@ -329,15 +329,24 @@ class Experiment(object):
         if self._fields['cluster_id']:
             yield "  Cluster: " + self._fields['cluster_id'] + '\n'
         if self.state in (Experiment.State.running, Experiment.State.finished):
-            yield "  Output:\n"
+            can_process = False
             for output_file in self._fields['outputs']:
-                try:
-                    output = self.get_output(output_file)
-                    yield "    " + output_file + ":\n"
-                    for field in output:
-                        yield "      %s: " % field + str(output[field]) + "\n"
-                except OutputReadError as e:
-                    yield "    %s\n" % str(e)
+                if self._fields['output_line_processor']:
+                    if output_file in self._fields['output_line_processor']:
+                        can_process = True
+                if self._fields['output_file_processor']:
+                    if output_file in self._fields['output_file_processor']:
+                        can_process = True
+            if can_process:
+                yield "  Output:\n"
+                for output_file in self._fields['outputs']:
+                    try:
+                        output = self.get_output(output_file)
+                        yield "    " + output_file + ":\n"
+                        for field in output:
+                            yield "      %s: " % field + str(output[field]) + "\n"
+                    except OutputReadError as e:
+                        pass
         yield "  Last modified: %s\n" % self._fields['time_modified']
         if self._fields['conditions']:            
             conds = '  Conditions:\n'

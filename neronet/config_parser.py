@@ -90,13 +90,14 @@ class ConfigParser():
         clusters = clusters_data.get('clusters', {})
         for cluster_id, fields in clusters.iteritems():
             if 'type' not in fields:
-                errors.append('No type specified for cluster "%s"' % cluster_id)
+                errors.append('%s: no type specified for cluster' \
+                                % cluster_id)
             elif not neronet.cluster.Cluster.Type.is_member(fields['type']):
-                errors.append('Invalid type "%s" for cluster "%s"' % \
-                                (fields['type'], cluster_id))
+                errors.append('%s: invalid type "%s" for cluster' % \
+                                (cluster_id, fields['type']))
             if 'ssh_address' not in fields:
-                errors.append('No ssh address specified for cluster "%s"' % \
-                                                            cluster_id)
+                errors.append('%s: no ssh address specified for cluster' \
+                                % cluster_id)
             if 'sbatch_args' not in fields:
                 fields['sbatch_args'] = None
 
@@ -109,7 +110,7 @@ class ConfigParser():
         for group_name, group_clusters in groups.iteritems():
             for cluster in group_clusters:
                 if cluster not in clusters.keys():
-                    errors.append('Group "%s" cluster "%s" is not defined' % \
+                    errors.append('%s: cluster "%s" is not defined for group' % \
                                     (group_name, cluster))
         if errors:
             raise FormatError(errors)
@@ -143,7 +144,7 @@ class ConfigParser():
         clusters = clusters_data.get('clusters', {})
         default_cluster = preferences_data['default_cluster']
         if default_cluster not in clusters and default_cluster:
-            raise FormatError(['Default cluster %s not defined' % \
+            raise FormatError(['default cluster %s  is not defined' % \
                                 default_cluster])
 
     def load_database(self, database_filename):
@@ -250,13 +251,13 @@ class ConfigParser():
 
         #Check that the input is valid
         if not os.path.isdir(folder):
-            raise IOError('No such folder')
+            raise IOError('no such folder')
         config_file = os.path.join(folder, EXPERIMENT_CONFIG_FILENAME)
         if not os.path.exists(config_file):
-            raise IOError('No config file in folder')
+            raise IOError('no config file in folder')
         
         if os.stat(config_file).st_size == 0:
-            raise FormatError(['Empty config file'])
+            raise FormatError(['empty config file'])
         
         with open(config_file, 'r') as file:
             data = yaml.load(file.read())
@@ -493,6 +494,7 @@ class ConfigParser():
                     experiment_data['path'] = os.path.abspath(folder)
                     for param in params:
                         experiment_data['parameters'] = param
+                        experiment_id = experiment_id[1:]
                         if len(params) > 1:
                             keys = sorted(param)
                             param_strings = [key + '-' + \
@@ -511,7 +513,7 @@ class ConfigParser():
         if experiments:
             return experiments
         else:
-            raise FormatError(['No experiments defined in config file'])
+            raise FormatError(['no experiments defined in config file'])
 
     def check_conditions(self, conditions):
         err = []

@@ -87,6 +87,7 @@ def main():
         try:
             changed_exps = nero.specify_experiments(experiment_folder)
         except (IOError, FormatError) as e:
+            print("Failed to specify experiments:", end="")
             print(e)
             return
         print('Experiment(s) successfully defined')
