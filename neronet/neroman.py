@@ -180,7 +180,7 @@ class Neroman:
         self.database.pop(experiment_id)
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
-        yield "Deleted experiment %s" % experiment_id
+        yield "Experiment '%s' successfully deleted"
 
     def duplicate_experiment(self, experiment_id, new_experiment_id):
         if experiment_id not in self.database:
@@ -210,11 +210,11 @@ class Neroman:
                 cluster = self.clusters['clusters'][cluster_id]
                 try:
                     cluster.terminate_exp(experiment_id)
-                    yield 'Experiment "%s" has been successfully terminated' % (experiment_id)
+                    yield 'Termination message successfully sent to neromum'
                 except RuntimeError:
                     yield 'Failed to terminate the given experiment. This could be a result of the experiment already being terminated or finished.'                
             else:
-                yield '"%s" hasn\'t been submitted to cluster' % (experiment_id)
+                yield '"%s" hasn\'t been submitted to cluster or has already finished running' % (experiment_id)
         else:
             yield '"%s", No such experiment' % (experiment_id) 
 
@@ -340,16 +340,20 @@ class Neroman:
                 raise AttributeError('No valid clusters in the cluster group')
             else:
                 cluster_id = cl_id
-        if cluster_id not in self.clusters['clusters']:
+        elif cluster_id not in self.clusters['clusters']:
             raise AttributeError('The given cluster ID "%s" is not valid!' %
                     (cluster_id))
         cluster = self.clusters["clusters"][cluster_id]
         # Load the experiment
+        if exp_id not in self.database:
+            raise AttributeError('The given experiment ID "%s" is not valid!' %
+                    (exp_id))
         exp = self.database[exp_id]
-        #TODO: offer to cancel the current experiment submission
-        #if exp.cluster_id != None: # (Commented for debugging)
-        #    raise Exception('Experiment already submitted to "%s"!'
-        #            % (exp.cluster_id))
+
+        if exp.cluster_id != None:
+            raise Exception('Experiment already submitted to "%s"! '
+                    % (exp.cluster_id)  +
+             'If you wish to re-submit the same experiment, you need to wait for your experiment to finish or terminate it with "nerocli --terminate ID" where ID is the id of your experiment.')
         # Update experiment info
         exp.cluster_id = cluster_id
         exp.update_state(neronet.experiment.Experiment.State.submitted)

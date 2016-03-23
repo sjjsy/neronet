@@ -310,6 +310,7 @@ class Experiment(object):
                 self._fields['conditions'][c].start_time = datetime.datetime.now()
         self._fields['states_info'].append((state, datetime.datetime.now()))
 
+        
     def as_gen(self):
         """Creates a generate that generates info about the experiment
         Yields:
