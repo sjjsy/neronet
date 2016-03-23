@@ -128,8 +128,8 @@ class Neroman:
         #FIXME: Change this functionality so that the comaprison is done in the
         #experiment side and not on neroman
         changed_exps = {}
-        relevant_fields = neronet.config_parser.MANDATORY_FIELDS | \
-                        neronet.config_parser.OPTIONAL_FIELDS | set('path')
+        relevant_fields = neronet.experiment.MANDATORY_FIELDS | \
+                        neronet.experiment.OPTIONAL_FIELDS | set('path')
         for experiment in experiments:
             if experiment.id in self.database:
                 for key in experiment._fields:
@@ -142,8 +142,7 @@ class Neroman:
             else: self.database[experiment.id] = experiment
         self.config_parser.save_database(DATABASE_FILENAME, \
                                     self.database)
-        #FIXME: What does this line do exactly?
-        if err: print('\n'.join(err), file=sys.stderr)
+        if err: raise IOError('\n'.join(err))
         return changed_exps
     
     def specify_user(self, name, email, default_cluster = ""):
@@ -174,15 +173,35 @@ class Neroman:
         Raises:
             KeyError: if the experiment with the given id doesn't exist
         """
+        if experiment_id not in self.database:
+            raise IOError("%s is not in databse" % experiment_id)
         if self.database[experiment_id]._fields['cluster_id']:
             self.terminate_experiment(experiment_id)
         self.database.pop(experiment_id)
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
+        yield "Deleted experiment %s" % experiment_id
+
+    def duplicate_experiment(self, experiment_id, new_experiment_id):
+        if experiment_id not in self.database:
+            raise IOError("%s is not in database" % experiment_id) 
+        if new_experiment_id in self.database:
+            raise IOError("%s already in database" % new_experiment_id)
+        experiment = self.database[experiment_id]
+        duplicated_experiment = neronet.experiment.duplicate_experiment( \
+                                            experiment, new_experiment_id)
+        self.database[new_experiment_id] = duplicated_experiment
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                        self.database)
+        yield "Copied experiment %s into %s" % (experiment_id, \
+                                                new_experiment_id)
 
     def plot_experiment(self, experiment_id):
+        """ Plots the experiemnt according to plotting specifications
+        """
         experiment = self.database[experiment_id]
-        experiment.plot_output()
+        experiment.plot_outputs()
+        yield "Plotted experiment %s" % experiment_id
     
     def terminate_experiment(self, experiment_id):
         if experiment_id in self.database:            
@@ -410,6 +429,7 @@ class Neroman:
             except RuntimeError:
                 yield('Note: Failed to clean the experiments at the cluster.')
         # Update the experiments
+        plot_errors = []
         for exp in experiments_to_check:
             yield('Updating experiment "%s"...' % (exp.id))
             exp_file = os.path.join(local_dir, exp.id, 'exp.pickle')
@@ -423,16 +443,16 @@ class Neroman:
                         neronet.experiment.Experiment.State.lost, 
                         neronet.experiment.Experiment.State.terminated):
                 exp.cluster_id = None
-                #TODO: Do output processing
                 if exp.state == neronet.experiment.Experiment.State.finished:
                     results_dir = os.path.join(exp.path, 'results')
                     if not os.path.exists(results_dir):
                         os.mkdir(results_dir)
                     shutil.move(os.path.join(local_dir, exp.id), \
                                 os.path.join(results_dir, exp.id))
-                    if exp.output_line_processor or exp.output_file_processor:
-                        if exp.plot:
-                            exp.plot_outputs()
+                    try:
+                        exp.plot_outputs()
+                    except Exception as e:
+                        yield str(e)
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
 
     #def tail_log(self, exp_id=None):
