@@ -144,7 +144,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
 	run_command_prefix: python3
 	main_code_file: main.py
 	logoutput: stdout
-	lang_exp1:
+	+lang_exp1:
 		parameters:
 			hyperparamx: [1,2,34,20]
 			hyperparamy: 2
@@ -165,11 +165,11 @@ Start by writing your experiment code and save all experiments you deem somehow 
 				when: time 6000
 				action: warn
 
-		lang_exp3:
+		+lang_exp3:
 			parameters:
 				hyperparamz: 2
 
-	lang_exp2:
+	+lang_exp2:
 		run_command_prefix: python2
 		main_code_file: main2.py
 		parameters:
