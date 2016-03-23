@@ -5,6 +5,7 @@ configuration files and the relating error class
 
 import os
 import itertools
+import copy
 
 import yaml
 
@@ -448,7 +449,7 @@ class ConfigParser():
             defined_fields = set(scope) - potential_exp_ids
 
             for experiment_id in experiment_ids:
-                experiment_scope = scope[experiment_id]
+                experiment_scope = copy.deepcopy(scope[experiment_id])
                 experiment_id = experiment_id[1:]
                 #Turn empty experiment scope from None to a dict
                 if not experiment_scope:
@@ -457,9 +458,9 @@ class ConfigParser():
                 #Populate experiment scope with scope
                 for field in defined_fields:
                     if field not in experiment_scope:
-                        experiment_scope[field] = scope[field]
+                        experiment_scope[field] = copy.deepcopy(scope[field])
                     if field == 'parameters':
-                        parameters = scope['parameters']
+                        parameters = copy.deepcopy(scope['parameters'])
                         if field in experiment_scope:
                             for name, value in \
                                     experiment_scope['parameters'].items():
