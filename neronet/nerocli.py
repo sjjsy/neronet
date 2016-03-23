@@ -150,7 +150,7 @@ def main():
         cfgtemplate(*args.template)
     if args.terminate:
         experiment_id = args.terminate[0]
-        nero.terminate_experiment(experiment_id)
+        print(''.join(nero.terminate_experiment(experiment_id)), end="")
 
 def remove_dir(path):
     os.system('rm -r ' + path)
