@@ -424,15 +424,7 @@ class Neroman:
             except RuntimeError:
                 yield('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
             # Clean the cluster
-            exceptions = [exp.id for exp in experiments_to_check if exp.state
-                    in (neronet.experiment.Experiment.State.submitted,
-                    neronet.experiment.Experiment.State.submitted_to_kid,
-                    neronet.experiment.Experiment.State.running)]
-            try:
-                cluster.clean_experiments(exceptions)
-            except RuntimeError:
-                yield('Note: Failed to clean the experiments at the cluster.')
-        # Update the experiments
+                    # Update the experiments
         plot_errors = []
         for exp in experiments_to_check:
             yield('Updating experiment "%s"...' % (exp.id))
@@ -462,6 +454,18 @@ class Neroman:
                     except Exception as e:
                         yield str(e)
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
+        #Try to clean finished/terminated/lost experiments from remote clusters
+        for cluster in clusters_to_fetch:
+            cluster.start_neromum()
+            exceptions = [exp.id for exp in experiments_to_check if exp.state
+                            in (neronet.experiment.Experiment.State.submitted,
+                            neronet.experiment.Experiment.State.submitted_to_kid,
+                            neronet.experiment.Experiment.State.running)]
+            try:
+                cluster.clean_experiments(exceptions)
+            except RuntimeError:
+                yield('Note: Failed to clean the experiments at the cluster.')
+
 
     #def tail_log(self, exp_id=None):
     #    """List latest log file lines of submitted experiments."""
