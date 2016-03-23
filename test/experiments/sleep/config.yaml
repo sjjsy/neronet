@@ -2,24 +2,25 @@ run_command_prefix: python3
 main_code_file: main.py
 parameters:
     count: 5
-    interval: 0.2
+    interval: 1
 parameters_format: '{count} {interval}'
-sleep1:
++sleep1:
     output_line_processor: 
         stdout.log: example reader "identity squared cubed"
     plot: 
-        squared.png: example plot stdout.log identity squared
-        cubed.png: example plot stdout.log identity cubed
-sleep2:
+        squared.svg: example plot stdout.log identity squared
+        cubed.svg: example plot stdout.log identity cubed
++sleep2:
     parameters:
         count: 10
-        interval: 0.1
-sleep3:
+        interval: 0.5
++sleep3:
     parameters:
         count: 6
     output_line_processor: 
         stdout.log: example reader "identity squared cubed"
     plot: 
-        squared_to_cubed.png: example plot stdout.log squared cubed
+        squared_to_cubed.svg: example plot stdout.log squared cubed
 
-sleep4:
++sleep4:
+
