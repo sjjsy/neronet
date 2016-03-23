@@ -30,7 +30,7 @@ def create_argument_parser():
                         help='Plots the experiment with the given ID')
     parser.add_argument('--addnode',
                         metavar=('cluster_id', 'ssh_address'),
-                        nargs=argparse.REMAINDER,
+                        nargs=2,
                         help='Specify a new cluster for computing')
     parser.add_argument('--delnode',
                         metavar='cluster_id',

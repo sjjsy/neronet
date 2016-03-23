@@ -153,7 +153,6 @@ class Experiment(object):
         for plot_filename, args in plots.iteritems():
             #Construct the plotter and arguments
             args = shlex.split(args)
-            print(args)
             module_name = args[0]
             plotter_name = args[1]
             plotter = neronet.core.import_from(module_name, plotter_name)
