@@ -58,6 +58,7 @@ class Experiment(object):
                     'path': path,
                     'time_created': now,
                     'time_modified': now,
+                    'run_results': [],
                     'states_info': [(Experiment.State.defined, now)],
                     'cluster_id': None,
                     'warnings' : [],
@@ -68,11 +69,11 @@ class Experiment(object):
         super(Experiment, self).__setattr__('_experiment_id', experiment_id)
         
     def get_results_dir(self):
-        """Returns the location of the directory of the experiment results
+        """Returns the location of the directory of the latest experiment results
         """
         root = neronet.core.USER_DATA_DIR_ABS
         if self.state == Experiment.State.finished:
-            root = self._fields['path']
+            return self.run_results[-1]
         return os.path.join(root, 'results', self.id)
 
     def get_output(self, filename):

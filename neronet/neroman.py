@@ -429,10 +429,11 @@ class Neroman:
                     if not os.path.exists(results_dir):
                         os.mkdir(results_dir)
                     now = datetime.datetime.now()
-                    shutil.move(os.path.join(local_dir, exp.id), \
-                                os.path.join(results_dir, '%s-%d-%d-%d-%d-%d' \
+                    result_destination = os.path.join(results_dir, '%s-%d-%d-%d-%d-%d' \
                                 % (exp.id, now.year, now.month, now.day, \
-                                now.hour, now.minute)))
+                                now.hour, now.minute))
+                    shutil.move(os.path.join(local_dir, exp.id), result_destination) 
+                    exp.run_results.append(result_destination)
                     if exp.output_line_processor or exp.output_file_processor:
                         if exp.plot:
                             exp.plot_outputs()
