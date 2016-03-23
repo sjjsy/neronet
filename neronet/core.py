@@ -139,7 +139,7 @@ def create_config_template(expid='exp_id', runcmdprefix='python', maincodefile='
         print('A config.yaml file already exists in this folder.')
         return
     with open('config.yaml', 'w') as f:
-        f.write('%s:\n' % expid)
+        f.write('+%s:\n' % expid)
         f.write('    run_command_prefix: %s\n' % runcmdprefix)
         f.write('    main_code_file: %s\n' % maincodefile)
         f.write('    parameters:\n')
