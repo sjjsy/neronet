@@ -45,12 +45,13 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         # bind signals and slots
         self.cluster_add_btn.clicked.connect(self.add_cluster)
         self.clusters.itemSelectionChanged.connect(self.update_cluster_fields)
-        self.clusters.itemSelectionChanged.connect(self.show_cluster_status)
+        self.clusters.itemClicked.connect(self.show_cluster_status)
         self.paramTable.itemSelectionChanged.connect(self.show_one_experiment)
         self.paramTable.verticalHeader().sectionDoubleClicked.connect(self.open_config)
         self.paramTable.cellClicked.connect(self.highlight_row)
         self.paramTable.cellDoubleClicked.connect(self.open_config)
         self.paramTable.cellChanged.connect(self.change_cell)
+        self.paramTable.cellClicked.connect(self.update_plot_params)
         self.exp_add_btn.clicked.connect(self.add_file)
         self.submit_btn.clicked.connect(self.submit_exp)
         self.refresh_btn.clicked.connect(self.fetch_exp)
@@ -295,6 +296,13 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             self.paramTable.selectRow(y)
         else:
             self.paramTable.item(x,y)
+    
+    def update_plot_params(self, y, x):
+        self.PlotParamTable.clear()
+        name = str(self.paramTable.item(y,0).text())
+	dic = self.nero.database[name].get_output("stdout.log")
+        for item in dic.keys():
+            self.PlotParamTable.addItem(item)
 
 def main():
     app = QtGui.QApplication(sys.argv)
