@@ -25,7 +25,7 @@ def remove_data():
     if os.path.exists(USER_DATA_DIR_ABS):
         os.system('rm -r ' + USER_DATA_DIR_ABS)
 
-def osrunroe(cmd, vrb=True, inp=None):
+def osrunroe(cmd, verbose=True, inp=None):
     """Execute a shell command and return the return code, stdout and -err.
 
     Args:
@@ -35,7 +35,7 @@ def osrunroe(cmd, vrb=True, inp=None):
     Returns
         Runresult: The result object of the executed command.
     """
-    if vrb: print('> %s' % (cmd))
+    if verbose: print('> %s' % (cmd))
     if type(cmd) == str:
         cmd = shlex.split(cmd)
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
@@ -46,15 +46,15 @@ def osrunroe(cmd, vrb=True, inp=None):
     res.rv = proc.poll()
     return res
 
-def osrun(cmd, vrb=True):
-    res = osrunroe(cmd, vrb)
+def osrun(cmd, verbose=True):
+    res = osrunroe(cmd, verbose)
     if res.rv != 0:
         raise RuntimeError('osrun(%s) failed! Err: "%s", Out: "%s".' \
                 % (res.cmd, res.err, res.out))
     return res
 
 def osrunq(cmd):
-    return osrun(cmd, vrb=False)
+    return osrun(cmd, verbose=True)
 
 def get_hostname():
     return osrunq('hostname').out.strip()

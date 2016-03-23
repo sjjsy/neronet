@@ -180,7 +180,7 @@ class Neroman:
         self.database.pop(experiment_id)
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
-        yield "Experiment '%s' successfully deleted"
+        yield "Experiment '%s' successfully deleted\n" % experiment_id
 
     def duplicate_experiment(self, experiment_id, new_experiment_id):
         if experiment_id not in self.database:
@@ -309,7 +309,7 @@ class Neroman:
                 experiments_by_state[experiment.state].append(experiment)
         return experiments_by_state
 
-    def submit(self, exp_id, cluster_id=""):
+    def submit(self, exp_id, cluster_id="", verbose=False):
         """Submit an experiment to a cluster using SSH.
 
         Args:
@@ -376,11 +376,11 @@ class Neroman:
         neronet_root_dir = os.path.dirname(os.path.abspath(__file__))
         # Add Neronet source code files and executables to the temporary dir
         neronet.core.osrun('rsync -az "%s" "%s"' %
-                (neronet_root_dir, local_tmp_dir))
+                (neronet_root_dir, local_tmp_dir), verbose)
         # Add the experiment files
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
-                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
+                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir), verbose)
         # Serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
@@ -390,7 +390,7 @@ class Neroman:
         # Transfer the files to the remote server
         try:
             neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
-                (local_tmp_dir, cluster.ssh_address, remote_dir))
+                (local_tmp_dir, cluster.ssh_address, remote_dir), verbose)
             # Start the Neromum daemon
             cluster.start_neromum()
             yield("Experiment " + exp_id + " successfully submitted to " + cluster_id + "\n")
@@ -429,8 +429,9 @@ class Neroman:
             # Clean the cluster
                     # Update the experiments
         plot_errors = []
+        #Update Neroman database contents from the fetched pickles
         for exp in experiments_to_check:
-            yield('Updating experiment "%s"...' % (exp.id))
+            yield('Updating experiment "%s"...\n' % (exp.id))
             exp_file = os.path.join(local_dir, exp.id, 'exp.pickle')
             if not os.path.exists(exp_file):
                 yield('ERR: Experiment pickle missing!')
@@ -438,6 +439,7 @@ class Neroman:
                 continue
             exp = self.database[exp.id] = pickle.loads(
                     neronet.core.read_file(exp_file))
+            
             if exp.state in (neronet.experiment.Experiment.State.finished,
                         neronet.experiment.Experiment.State.lost, 
                         neronet.experiment.Experiment.State.terminated):
@@ -459,12 +461,13 @@ class Neroman:
                         yield str(e)
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
         #Try to clean finished/terminated/lost experiments from remote clusters
-        for cluster in clusters_to_fetch:
+        for cluster_id in clusters_to_fetch:
+            cluster = self.clusters['clusters'][cluster_id]
             cluster.start_neromum()
-            exceptions = [exp.id for exp in experiments_to_check if exp.state
+            exceptions = [exp.id for exp in self.database.values() if exp.state
                             in (neronet.experiment.Experiment.State.submitted,
                             neronet.experiment.Experiment.State.submitted_to_kid,
-                            neronet.experiment.Experiment.State.running)]
+                            neronet.experiment.Experiment.State.running) and exp.cluster_id == cluster_id]
             try:
                 cluster.clean_experiments(exceptions)
             except RuntimeError:
