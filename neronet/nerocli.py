@@ -24,6 +24,10 @@ def create_argument_parser():
                         metavar='experiment_id',
                         nargs=1,
                         help='Deletes the experiment with the given ID')
+    parser.add_argument('--copyexp',
+                        metavar=('experiment_id', 'duplicated_experiment_id'),
+                        nargs=2,
+                        help='Creates a duplicate of the experiment')
     parser.add_argument('--plot',
                         metavar='experiment_id',
                         nargs=1,
@@ -65,7 +69,6 @@ def create_argument_parser():
                         help='Terminates the given experiment')
     return parser
 
-
 def main():
     """Parses the command line arguments and starts Neroman."""
     parser = create_argument_parser()
@@ -101,13 +104,21 @@ def main():
         experiment_id = args.delexp[0]
         try:
             print(''.join(nero.delete_experiment(experiment_id)), end="")
-        except KeyError:
+        except IOError:
             print('No experiment with ID "%s"' % experiment_id)
+    if args.copyexp:
+        experiment_id = args.copyexp[0]
+        new_experiment_id = args.copyexp[1]
+        try:
+            print(''.join(nero.duplicate_experiment(experiment_id, \
+                        new_experiment_id)), end="") 
+        except IOError as e:
+            print(e)
     if args.plot:
         experiment_id = args.plot[0]
         try:
             print(''.join(nero.plot_experiment(experiment_id)), end="")
-        except KeyError:
+        except IOError:
             print('No experiment with ID "%s"' % experiment_id)
     if args.addnode:
         if len(args.addnode) < 2:
