@@ -97,7 +97,7 @@ class Neromum(neronet.daemon.Daemon):
                 for exp_dir in glob.glob(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                         'experiments/*')):
                     exp_id = os.path.basename(exp_dir)
-                    # Skip deletion if not yet read or Neromun might have not
+                    # Skip deletion if not yet read or Neroman might have not
                     # fetched its results
                     if exp_id not in self.exp_dict or exp_id in exceptions:
                         continue
@@ -115,6 +115,7 @@ class Neromum(neronet.daemon.Daemon):
                     kid.query('terminate')
                     self.log('Terminating experiment "%s"' % (exp_id))
                     msg += 'Experiment "%s" terminated' % (exp_id)
+                    self.exp_dict[exp_id].state = Exp.state.terminated
                 else:
                     msg += '"%s", No such experiment' % (exp_id)                
         self._reply['data'] = answer

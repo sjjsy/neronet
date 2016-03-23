@@ -386,7 +386,7 @@ class Neroman:
                 (local_tmp_dir, cluster.ssh_address, remote_dir))
             # Start the Neromum daemon
             cluster.start_neromum()
-            yield("Experiment " + exp_id + " successfully submitted to " + cluster_id)
+            yield("Experiment " + exp_id + " successfully submitted to " + cluster_id + "\n")
         finally:
             # Remove the temporary directory
             shutil.rmtree(local_tmp_dir)
@@ -447,8 +447,11 @@ class Neroman:
                     results_dir = os.path.join(exp.path, 'results')
                     if not os.path.exists(results_dir):
                         os.mkdir(results_dir)
+                    now = datetime.datetime.now()
                     shutil.move(os.path.join(local_dir, exp.id), \
-                                os.path.join(results_dir, exp.id))
+                                os.path.join(results_dir, '%s-%d-%d-%d-%d-%d' \
+                                % (exp.id, now.year, now.month, now.day, \
+                                now.hour, now.minute)))
                     try:
                         exp.plot_outputs()
                     except Exception as e:
