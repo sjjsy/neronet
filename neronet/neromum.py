@@ -115,7 +115,6 @@ class Neromum(neronet.daemon.Daemon):
                     kid.query('terminate')
                     self.log('Terminating experiment "%s"' % (exp_id))
                     msg += 'Experiment "%s" terminated' % (exp_id)
-                    self.exp_dict[exp_id].state = Exp.state.terminated
                 else:
                     msg += '"%s", No such experiment' % (exp_id)                
         self._reply['data'] = answer
