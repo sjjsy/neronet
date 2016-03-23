@@ -98,7 +98,7 @@ class Neromum(neronet.daemon.Daemon):
                 for exp_dir in glob.glob(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                         'experiments/*')):
                     exp_id = os.path.basename(exp_dir)
-                    # Skip deletion if not yet read or Neromun might have not
+                    # Skip deletion if not yet read or Neroman might have not
                     # fetched its results
                     if exp_id not in self.exp_dict or exp_id in exceptions:
                         continue
