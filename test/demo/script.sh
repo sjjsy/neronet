@@ -1,9 +1,9 @@
 #!/bin/bash
 # script.sh
-nerocli --addnode kosh unmanaged akosh
-nerocli --addnode brute unmanaged abrute
-nerocli --addnode mozart unmanaged amozart
-nerocli --addnode mahler unmanaged amahler
-nerocli --addnode thoth unmanaged athoth
+nerocli --addnode kosh akosh
+nerocli --addnode brute abrute
+nerocli --addnode mozart amozart
+nerocli --addnode mahler amahler
+nerocli --addnode thoth athoth
 
 nerocli --addexp test/experiments/fibonacci

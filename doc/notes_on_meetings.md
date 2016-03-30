@@ -1798,6 +1798,7 @@ Agenda:
 Participants: team
 
 Agenda:
+
 - 13:00 Development
 - 16:45 Daily scrum
 - 17:00 Peer team testing
@@ -1832,3 +1833,39 @@ Information
 - Disk space ratio
 
 Potential info source: `top -n 1|head -n4`
+
+## 03-18 300m Frifury
+
+Participants: team
+
+Agenda:
+
+- Peer testing
+
+## 03-30 75m Sprint change 5
+
+Participants: team + PO (Skype)
+
+Agenda:
+
+- Agenda
+- Results
+- Demo
+- Planning
+
+### Results
+
+Slideshow
+
+### Demo
+
+Live demo
+
+### Planning
+
+Sprint goal:
+
+Main tasks:
+
+- a
+- b

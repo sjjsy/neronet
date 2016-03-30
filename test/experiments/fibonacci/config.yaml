@@ -4,4 +4,4 @@ parameters:
     n: [10, 100, 1000, 10000]
     breaktime: 0.1
 parameters_format: '{n} {breaktime}'
-fibonacci:
++fibonacci:
