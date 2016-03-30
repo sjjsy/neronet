@@ -29,7 +29,7 @@ def osrunroe(cmd, verbose=True, inp=None):
     """Execute a shell command and return the return code, stdout and -err.
 
     Args:
-        vrb (boolean): Whether to print command or not.
+        verbose (boolean): Whether to print command or not.
         inp (str): Input string for the sub process.
 
     Returns

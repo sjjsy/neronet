@@ -98,6 +98,17 @@ class Cluster(object):
             raise RuntimeError('Incorrect Python version at "%s": "%s"!' % (self.cid, res.err))
         return True
 
+    def gather_resource_info(self):
+        #Gather resource information in a dictionary
+        results = {}
+        #Line 0 of info is output of uptime, rest are free's output
+        info = self.sshrun('uptime; free -m').out.split('\n')
+        results['avgload'] = info[0].split()[-1].replace(',', '.')
+        memoryusage = info[2].split()
+        results['totalmem'] = memoryusage[1]
+        results['usedmem'] = memoryusage[2]
+        return results
+
     def start_neromum(self):
         res = self.sshrun('neromum --start')
         print('Result of neromum --start: %d, "%s", "%s"' % (res.rv, res.err, res.out))
