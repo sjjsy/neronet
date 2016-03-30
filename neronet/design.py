@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Fri Mar 18 17:11:24 2016
+# Created: Wed Mar 23 15:06:07 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,6 +80,14 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
+        self.PlotParamTable = QtGui.QListWidget(self.tab_2)
+        self.PlotParamTable.setGeometry(QtCore.QRect(10, 0, 256, 192))
+        self.PlotParamTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.PlotParamTable.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.PlotParamTable.setObjectName(_fromUtf8("PlotParamTable"))
+        self.plot_btn = QtGui.QPushButton(self.tab_2)
+        self.plot_btn.setGeometry(QtCore.QRect(10, 200, 93, 29))
+        self.plot_btn.setObjectName(_fromUtf8("plot_btn"))
         self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
         self.gridLayout.addWidget(self.tabWidget, 1, 1, 1, 1)
         self.experiment_log = QtGui.QPlainTextEdit(self.centralwidget)
@@ -94,6 +102,7 @@ class Ui_MainWindow(object):
         self.paramTable.setFont(font)
         self.paramTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.paramTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked)
+        self.paramTable.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.paramTable.setObjectName(_fromUtf8("paramTable"))
         self.paramTable.setColumnCount(0)
         self.paramTable.setRowCount(0)
@@ -103,7 +112,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -118,7 +127,8 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Clusters", None))
         self.cluster_type_combo.setItemText(0, _translate("MainWindow", "unmanaged", None))
         self.cluster_type_combo.setItemText(1, _translate("MainWindow", "slurm", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Tab 1", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Tab 2", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "General", None))
+        self.plot_btn.setText(_translate("MainWindow", "Plot", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Plot", None))
         self.paramTable.setSortingEnabled(True)
 

@@ -78,7 +78,7 @@ class Neroman:
 
         """
         if not neronet.cluster.Cluster.Type.is_member(cluster_type):
-            raise IOError('Invalid cluster type "%s"!' % (cluster_type))
+            raise IOError('Neroman: invalid cluster type "%s"!' % (cluster_type))
         cluster = neronet.cluster.Cluster(cluster_id, cluster_type, ssh_address)
         try:
             cluster.test_connection()
@@ -128,8 +128,8 @@ class Neroman:
         #FIXME: Change this functionality so that the comaprison is done in the
         #experiment side and not on neroman
         changed_exps = {}
-        relevant_fields = neronet.config_parser.MANDATORY_FIELDS | \
-                        neronet.config_parser.OPTIONAL_FIELDS | set('path')
+        relevant_fields = neronet.experiment.MANDATORY_FIELDS | \
+                        neronet.experiment.OPTIONAL_FIELDS | set('path')
         for experiment in experiments:
             if experiment.id in self.database:
                 for key in experiment._fields:
@@ -142,8 +142,7 @@ class Neroman:
             else: self.database[experiment.id] = experiment
         self.config_parser.save_database(DATABASE_FILENAME, \
                                     self.database)
-        #FIXME: What does this line do exactly?
-        if err: print('\n'.join(err), file=sys.stderr)
+        if err: raise IOError('\n'.join(err))
         return changed_exps
     
     def specify_user(self, name, email, default_cluster = ""):
@@ -174,15 +173,36 @@ class Neroman:
         Raises:
             KeyError: if the experiment with the given id doesn't exist
         """
+        if experiment_id not in self.database:
+            raise IOError("Neroman: %s is not in database" % experiment_id)
         if self.database[experiment_id]._fields['cluster_id']:
             self.terminate_experiment(experiment_id)
         self.database.pop(experiment_id)
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
+        yield "Experiment '%s' successfully deleted\n" % experiment_id
+
+    def duplicate_experiment(self, experiment_id, new_experiment_id):
+        if experiment_id not in self.database:
+            raise IOError("Neronet: %s is not in database" % experiment_id) 
+        if new_experiment_id in self.database:
+            raise IOError("Neronet: %s already in database" \
+                            % new_experiment_id)
+        experiment = self.database[experiment_id]
+        duplicated_experiment = neronet.experiment.duplicate_experiment( \
+                                            experiment, new_experiment_id)
+        self.database[new_experiment_id] = duplicated_experiment
+        self.config_parser.save_database(DATABASE_FILENAME, \
+                                        self.database)
+        yield "Copied experiment %s into %s" % (experiment_id, \
+                                                new_experiment_id)
 
     def plot_experiment(self, experiment_id):
+        """ Plots the experiemnt according to plotting specifications
+        """
         experiment = self.database[experiment_id]
-        experiment.plot_output()
+        experiment.plot_outputs()
+        yield "Plotted experiment %s" % experiment_id
     
     def terminate_experiment(self, experiment_id):
         if experiment_id in self.database:            
@@ -191,11 +211,11 @@ class Neroman:
                 cluster = self.clusters['clusters'][cluster_id]
                 try:
                     cluster.terminate_exp(experiment_id)
-                    yield 'Experiment "%s" has been successfully terminated' % (experiment_id)
+                    yield 'Termination message successfully sent to neromum'
                 except RuntimeError:
                     yield 'Failed to terminate the given experiment. This could be a result of the experiment already being terminated or finished.'                
             else:
-                yield '"%s" hasn\'t been submitted to cluster' % (experiment_id)
+                yield '"%s" hasn\'t been submitted to cluster or has already finished running' % (experiment_id)
         else:
             yield '"%s", No such experiment' % (experiment_id) 
 
@@ -243,10 +263,12 @@ class Neroman:
                 yield "Experiments:\n"
                 for exp in self.database:
                     if self.database[exp].cluster_id == cluster.cid:
-                        yield "Experiment id: %s, Status: %s\ņ" % (exp, self.database[exp].state)
+                        yield "Experiment id: %s, Status: %s\ņ" \
+                                % (exp, self.database[exp].state)
                 raise StopIteration
             else:
-                raise IOError('No experiment or cluster named "%s"!' % (arg))
+                raise IOError('Neroman: no experiment or cluster named "%s"!'\
+                                % (arg))
         yield "================Neroman=================\n"
         yield "\n"
         yield "================User====================\n"
@@ -287,7 +309,7 @@ class Neroman:
                 experiments_by_state[experiment.state].append(experiment)
         return experiments_by_state
 
-    def submit(self, exp_id, cluster_id=""):
+    def submit(self, exp_id, cluster_id="", verbose=False):
         """Submit an experiment to a cluster using SSH.
 
         Args:
@@ -298,7 +320,7 @@ class Neroman:
         if not cluster_id:
             cluster_id = self.preferences['default_cluster']
             if cluster_id == "":
-                raise AttributeError('No default cluster defined')
+                raise AttributeError('no default cluster defined')
         #if cluster_id in self.clusters['groups']:
            # cluster_id = random.choice(self.clusters['groups'][cluster_id])
         if cluster_id in self.clusters['groups']:
@@ -321,16 +343,20 @@ class Neroman:
                 raise AttributeError('No valid clusters in the cluster group')
             else:
                 cluster_id = cl_id
-        if cluster_id not in self.clusters['clusters']:
+        elif cluster_id not in self.clusters['clusters']:
             raise AttributeError('The given cluster ID "%s" is not valid!' %
                     (cluster_id))
         cluster = self.clusters["clusters"][cluster_id]
         # Load the experiment
+        if exp_id not in self.database:
+            raise AttributeError('The given experiment ID "%s" is not valid!' %
+                    (exp_id))
         exp = self.database[exp_id]
-        #TODO: offer to cancel the current experiment submission
-        #if exp.cluster_id != None: # (Commented for debugging)
-        #    raise Exception('Experiment already submitted to "%s"!'
-        #            % (exp.cluster_id))
+
+        if exp.cluster_id != None:
+            raise Exception('Experiment already submitted to "%s"! '
+                    % (exp.cluster_id)  +
+             'If you wish to re-submit the same experiment, you need to wait for your experiment to finish or terminate it with "nerocli --terminate ID" where ID is the id of your experiment.')
         # Update experiment info
         exp.cluster_id = cluster_id
         exp.update_state(neronet.experiment.Experiment.State.submitted)
@@ -350,11 +376,11 @@ class Neroman:
         neronet_root_dir = os.path.dirname(os.path.abspath(__file__))
         # Add Neronet source code files and executables to the temporary dir
         neronet.core.osrun('rsync -az "%s" "%s"' %
-                (neronet_root_dir, local_tmp_dir))
+                (neronet_root_dir, local_tmp_dir), verbose)
         # Add the experiment files
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
-                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
+                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir), verbose)
         # Serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
@@ -364,10 +390,10 @@ class Neroman:
         # Transfer the files to the remote server
         try:
             neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
-                (local_tmp_dir, cluster.ssh_address, remote_dir))
+                (local_tmp_dir, cluster.ssh_address, remote_dir), verbose)
             # Start the Neromum daemon
             cluster.start_neromum()
-            yield("Experiment " + exp_id + " successfully submitted to " + cluster_id)
+            yield("Experiment " + exp_id + " successfully submitted to " + cluster_id + "\n")
         finally:
             # Remove the temporary directory
             shutil.rmtree(local_tmp_dir)
@@ -401,17 +427,11 @@ class Neroman:
             except RuntimeError:
                 yield('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
             # Clean the cluster
-            exceptions = [exp.id for exp in experiments_to_check if exp.state
-                    in (neronet.experiment.Experiment.State.submitted,
-                    neronet.experiment.Experiment.State.submitted_to_kid,
-                    neronet.experiment.Experiment.State.running)]
-            try:
-                cluster.clean_experiments(exceptions)
-            except RuntimeError:
-                yield('Note: Failed to clean the experiments at the cluster.')
-        # Update the experiments
+                    # Update the experiments
+        plot_errors = []
+        #Update Neroman database contents from the fetched pickles
         for exp in experiments_to_check:
-            yield('Updating experiment "%s"...' % (exp.id))
+            yield('Updating experiment "%s"...\n' % (exp.id))
             exp_file = os.path.join(local_dir, exp.id, 'exp.pickle')
             if not os.path.exists(exp_file):
                 yield('ERR: Experiment pickle missing!')
@@ -419,21 +439,40 @@ class Neroman:
                 continue
             exp = self.database[exp.id] = pickle.loads(
                     neronet.core.read_file(exp_file))
+            
             if exp.state in (neronet.experiment.Experiment.State.finished,
                         neronet.experiment.Experiment.State.lost, 
                         neronet.experiment.Experiment.State.terminated):
                 exp.cluster_id = None
-                #TODO: Do output processing
                 if exp.state == neronet.experiment.Experiment.State.finished:
                     results_dir = os.path.join(exp.path, 'results')
                     if not os.path.exists(results_dir):
                         os.mkdir(results_dir)
-                    shutil.move(os.path.join(local_dir, exp.id), \
-                                os.path.join(results_dir, exp.id))
-                    if exp.output_line_processor or exp.output_file_processor:
+                    now = datetime.datetime.now()
+                    result_destination = os.path.join(results_dir, '%s-%d-%d-%d-%d-%d' \
+                                % (exp.id, now.year, now.month, now.day, \
+                                now.hour, now.minute))
+                    shutil.move(os.path.join(local_dir, exp.id), result_destination) 
+                    exp.run_results.append(result_destination)
+                    try:
                         if exp.plot:
                             exp.plot_outputs()
+                    except Exception as e:
+                        yield str(e)
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
+        #Try to clean finished/terminated/lost experiments from remote clusters
+        for cluster_id in clusters_to_fetch:
+            cluster = self.clusters['clusters'][cluster_id]
+            cluster.start_neromum()
+            exceptions = [exp.id for exp in self.database.values() if exp.state
+                            in (neronet.experiment.Experiment.State.submitted,
+                            neronet.experiment.Experiment.State.submitted_to_kid,
+                            neronet.experiment.Experiment.State.running) and exp.cluster_id == cluster_id]
+            try:
+                cluster.clean_experiments(exceptions)
+            except RuntimeError:
+                yield('Note: Failed to clean the experiments at the cluster.')
+
 
     #def tail_log(self, exp_id=None):
     #    """List latest log file lines of submitted experiments."""

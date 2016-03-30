@@ -92,7 +92,7 @@ Which results in the following **config.yaml** being created in the current work
 
 ::
 
-    theanotest:
+    +theanotest:
         run_command_prefix: python
         main_code_file: theanotest.py
         parameters:
@@ -105,7 +105,7 @@ Then I edit the file to give values to the parameters
 
 ::
 
-    theanotest:
+    +theanotest:
         run_command_prefix: python
         main_code_file: theanotest.py
         parameters:

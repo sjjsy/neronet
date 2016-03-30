@@ -77,6 +77,7 @@ class Neromum(neronet.daemon.Daemon):
     
     def qry_exp_warning(self, exp_id, warnings):
         # FIXME is this function necessary? -Samuel
+        # it is -Joona
         exp = self.exp_dict[exp_id]
         exp.set_multiple_warnings(warnings)
         neronet.core.write_file(os.path.join(neronet.core.USER_DATA_DIR_ABS,
@@ -97,7 +98,7 @@ class Neromum(neronet.daemon.Daemon):
                 for exp_dir in glob.glob(os.path.join(neronet.core.USER_DATA_DIR_ABS,
                         'experiments/*')):
                     exp_id = os.path.basename(exp_dir)
-                    # Skip deletion if not yet read or Neromun might have not
+                    # Skip deletion if not yet read or Neroman might have not
                     # fetched its results
                     if exp_id not in self.exp_dict or exp_id in exceptions:
                         continue
@@ -110,11 +111,14 @@ class Neromum(neronet.daemon.Daemon):
                 msg += '%d experiments cleaned.\n' % (experiments_cleaned_count)
             elif action == 'terminate_exp':
                 exp_id = data["exp_id"]
-                if exp_id in self.kids and self.exp_dict[exp_id].state != Exp.state.running:
+                if exp_id in self.kids:
                     kid = self.kids[exp_id]
-                    kid.query('terminate')
-                    self.log('Terminating experiment "%s"' % (exp_id))
-                    msg += 'Experiment "%s" terminated' % (exp_id)
+                    try:
+                        kid.query('terminate')
+                        self.log('Terminating experiment "%s"' % (exp_id))
+                        msg += 'Experiment "%s" terminated' % (exp_id)
+                    except:
+                        msg += 'Failed to terminate the experiment "%s"' % (exp_id)                 
                 else:
                     msg += '"%s", No such experiment' % (exp_id)                
         self._reply['data'] = answer
