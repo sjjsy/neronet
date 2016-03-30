@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Wed Mar 23 15:06:07 2016
+# Created: Wed Mar 30 14:58:05 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -83,7 +83,7 @@ class Ui_MainWindow(object):
         self.PlotParamTable = QtGui.QListWidget(self.tab_2)
         self.PlotParamTable.setGeometry(QtCore.QRect(10, 0, 256, 192))
         self.PlotParamTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        self.PlotParamTable.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.PlotParamTable.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self.PlotParamTable.setObjectName(_fromUtf8("PlotParamTable"))
         self.plot_btn = QtGui.QPushButton(self.tab_2)
         self.plot_btn.setGeometry(QtCore.QRect(10, 200, 93, 29))

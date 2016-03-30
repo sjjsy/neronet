@@ -25,17 +25,17 @@ def remove_data():
     if os.path.exists(USER_DATA_DIR_ABS):
         os.system('rm -r ' + USER_DATA_DIR_ABS)
 
-def osrunroe(cmd, vrb=True, inp=None):
+def osrunroe(cmd, verbose=True, inp=None):
     """Execute a shell command and return the return code, stdout and -err.
 
     Args:
-        vrb (boolean): Whether to print command or not.
+        verbose (boolean): Whether to print command or not.
         inp (str): Input string for the sub process.
 
     Returns
         Runresult: The result object of the executed command.
     """
-    if vrb: print('> %s' % (cmd))
+    if verbose: print('> %s' % (cmd))
     if type(cmd) == str:
         cmd = shlex.split(cmd)
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
@@ -46,15 +46,15 @@ def osrunroe(cmd, vrb=True, inp=None):
     res.rv = proc.poll()
     return res
 
-def osrun(cmd, vrb=True):
-    res = osrunroe(cmd, vrb)
+def osrun(cmd, verbose=True):
+    res = osrunroe(cmd, verbose)
     if res.rv != 0:
         raise RuntimeError('osrun(%s) failed! Err: "%s", Out: "%s".' \
                 % (res.cmd, res.err, res.out))
     return res
 
 def osrunq(cmd):
-    return osrun(cmd, vrb=False)
+    return osrun(cmd, verbose=True)
 
 def get_hostname():
     return osrunq('hostname').out.strip()
@@ -139,7 +139,7 @@ def create_config_template(expid='exp_id', runcmdprefix='python', maincodefile='
         print('A config.yaml file already exists in this folder.')
         return
     with open('config.yaml', 'w') as f:
-        f.write('%s:\n' % expid)
+        f.write('+%s:\n' % expid)
         f.write('    run_command_prefix: %s\n' % runcmdprefix)
         f.write('    main_code_file: %s\n' % maincodefile)
         f.write('    parameters:\n')
