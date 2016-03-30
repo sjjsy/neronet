@@ -17,6 +17,7 @@ color_coding ={'defined': QtGui.QColor(0,0,0),
 }
 
 class MyTableWidgetItem(QTableWidgetItem):
+    """neccessary class for numerical sort"""
     def __lt__(self, other):
         if ( isinstance(other, QTableWidgetItem) ):
             my_value, my_ok = self.data(Qt.EditRole).toInt()
@@ -35,6 +36,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.allLabels = set()
         self.filteredLabels = set()
         self.actions = {}
+        self.globalName = ""
         self.setupUi(self)
         self.nero = neronet.neroman.Neroman()
         self.menu = QtGui.QMenu(self)
@@ -56,18 +58,21 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.submit_btn.clicked.connect(self.submit_exp)
         self.refresh_btn.clicked.connect(self.fetch_exp)
         self.terminate_btn.clicked.connect(self.terminate_exp)
+        self.plot_btn.clicked.connect(self.openPlot)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.paramTable.customContextMenuRequested.connect(self.openMenu)
         QtGui.QShortcut(QtGui.QKeySequence("Delete"), self.paramTable, self.del_exp, context=QtCore.Qt.WidgetShortcut)
 
 
     def dragEnterEvent(self, e):
+        """prevents fro cancelling folder dragging"""
         if e.mimeData().hasUrls():
              e.acceptProposedAction()
         else:
             event.ignore()
 
     def dragMoveEvent(self, event):
+        """prevents fro cancelling folder dragging"""
         if event.mimeData().hasUrls():
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
@@ -75,6 +80,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             event.ignore()
 
     def dropEvent(self, event):
+        """save path of the dragged folder and add the experiment"""
         if event.mimeData().hasUrls():
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
@@ -88,6 +94,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             event.ignore()
 
     def init_menu(self):
+        """clears right click menu and populates it with exp parameters"""
         self.menu = QtGui.QMenu(self)
         self.filteredLabels = set()
         for name in self.allLabels:
@@ -98,6 +105,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
     
     @QtCore.pyqtSlot(QtCore.QPoint)
     def openMenu(self, pos):
+        """bind functionalities to context menu"""
         self.filteredLabels = set()
         self.menu.popup(self.mapToGlobal(pos))
         selectedAction = self.menu.exec_(self.mapToGlobal(pos))
@@ -111,6 +119,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.add_to_param_table()
 
     def init_labels(self):
+        """initialilze all experiment labels"""
         self.allLabels = set() #prepare label list
         for exp in self.nero.database.keys():
             self.allLabels |= set(
@@ -154,13 +163,12 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
     def submit_exp(self):
         """submit button functionality"""
         self.experiment_log.clear()
-        cluster = str(self.clusters.currentItem().text())
+        cluster = self.clusters.currentItem()
         if cluster is None:
-            print "?"
             return
+        cluster = str(cluster.text())
         rows = sorted(set(index.row() for index in
                   self.paramTable.selectedIndexes()))
-        print rows
         for exp in rows:
             name = str(self.paramTable.item(exp, 0).text())
             for line in self.nero.submit(name, cluster):
@@ -231,6 +239,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             self.experiment_log.insertPlainText(line)
 
     def show_cluster_status(self):
+        """prints detailed info of one cluster"""
         self.experiment_log.clear()
 	name = str(self.clusters.currentItem().text())
         for line in self.nero.status_gen(name):
@@ -253,6 +262,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 	self.add_to_param_table()
 
     def terminate_exp(self):
+        """send terminate command to experiment"""
         self.experiment_log.clear()
         for exp in self.paramTable.selectionModel().selectedRows():
             name = str(self.paramTable.item(exp.row(), 0).text())
@@ -262,6 +272,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
 	self.add_to_param_table()
 
     def change_cell(self,y,x):
+        """if parameters experiments are edited, check and change them"""
         insertedLabels = set()
         if x == 1:
             name = str(self.paramTable.item(y, 0).text())
@@ -286,26 +297,44 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             self.add_to_param_table()
 
     def del_exp(self):
+        """delete experiment from table"""
         for exp in self.paramTable.selectionModel().selectedRows():
             name = str(self.paramTable.item(exp.row(), 0).text())
             self.nero.delete_experiment(name)
 	self.add_to_param_table()
 
     def highlight_row(self, y, x):
+        """higlights whole parameter row when first cell is clicked"""
         if x == 0:
             self.paramTable.selectRow(y)
         else:
             self.paramTable.item(x,y)
     
     def update_plot_params(self, y, x):
+        """populate plot parameter table when experiment is clicked"""
         self.PlotParamTable.clear()
-        name = str(self.paramTable.item(y,0).text())
-	dic = self.nero.database[name].get_output("stdout.log")
+        self.globalName = self.paramTable.item(y,0)
+        if self.globalName is None:
+            return
+        self.globalName = str(self.paramTable.item(y,0).text())
+        try:
+	    dic = self.nero.database[self.globalName].get_output("stdout.log")
+        except IOError:
+            return
         for item in dic.keys():
             self.PlotParamTable.addItem(item)
 
+    def openPlot(self):
+        """open selected plot"""
+        #name = str(self.paramTable.item(y,0).text())
+        if self.PlotParamTable.currentItem() is None or not self.globalName:
+            return
+        item = str(self.PlotParamTable.currentItem().text())
+        path = self.nero.database[self.globalName].get_results_dir()
+        webbrowser.open(path+ "/" + item + ".svg")
+
 def main():
     app = QtGui.QApplication(sys.argv)
-    form = Nerogui()
+    form = Nerogui()	
     form.show()
     app.exec_()
