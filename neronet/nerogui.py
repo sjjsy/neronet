@@ -6,6 +6,7 @@ from PyQt4.QtCore import Qt, QVariant
 from PyQt4.QtGui import QApplication, QTableWidget, QTableWidgetItem
 import design
 import neronet.neroman
+import neronet.core
 import os.path
 
 color_coding ={'defined': QtGui.QColor(0,0,0),
@@ -59,6 +60,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.refresh_btn.clicked.connect(self.fetch_exp)
         self.terminate_btn.clicked.connect(self.terminate_exp)
         self.plot_btn.clicked.connect(self.openPlot)
+        self.create_new_btn.clicked.connect(self.create_new_exp)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.paramTable.customContextMenuRequested.connect(self.openMenu)
         QtGui.QShortcut(QtGui.QKeySequence("Delete"), self.paramTable, self.del_exp, context=QtCore.Qt.WidgetShortcut)
@@ -332,6 +334,12 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         item = str(self.PlotParamTable.currentItem().text())
         path = self.nero.database[self.globalName].get_results_dir()
         webbrowser.open(path+ "/" + item)
+
+    def create_new_exp(self):
+        command = str(self.run_cmd_field.text()).split(" ")
+        neronet.core.create_config_template("RENAME_THIS_TO_EXP_ID", *command)
+        webbrowser.open("config.yaml")
+        print command
 
 def main():
     app = QtGui.QApplication(sys.argv)
