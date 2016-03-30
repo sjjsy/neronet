@@ -6,7 +6,7 @@ something wrong with importing or running the code.
 """
 import matplotlib.pyplot as plt
 
-def reader(line, names):
+def line_reader(line, names):
     """ Maps a line of output to names given as string
     
     Parameters:
@@ -22,6 +22,27 @@ def reader(line, names):
     vals = [int(val) for val in line.strip().split(', ') if val]
     #Maps the values to the keys and makes a dictionary
     return dict(zip(keys, vals))
+
+def file_reader(file_data, names):
+    """ Maps a line of output to names given as string
+    
+    Parameters:
+        file_data (str): output file as a string
+        names (str): names of the output file data
+    
+    Returns:
+        dict: The data in the line mapped to the names
+    """
+    keys = names.split()
+    data = {}
+    for key in keys:
+        data[key] = []
+    for line in file_data:
+        vals = [int(val) for val in line.strip().split(', ') if val]
+        for key, val in zip(keys, vals):
+            data[key].append(val)
+    return data
+
 
 def plot(filename, feedback, x, y):
     """ Plots the given values to file

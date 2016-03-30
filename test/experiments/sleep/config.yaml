@@ -6,7 +6,7 @@ parameters:
 parameters_format: '{count} {interval}'
 +sleep1:
     output_line_processor: 
-        stdout.log: example reader "identity squared cubed"
+        stdout.log: example line_reader "identity squared cubed"
     plot: 
         squared.svg: example plot stdout.log identity squared
         cubed.svg: example plot stdout.log identity cubed
@@ -18,7 +18,7 @@ parameters_format: '{count} {interval}'
     parameters:
         count: 6
     output_line_processor: 
-        stdout.log: example reader "identity squared cubed"
+        stdout.log: example line_reader "identity squared cubed"
     plot: 
         squared_to_cubed.svg: example plot stdout.log squared cubed
 

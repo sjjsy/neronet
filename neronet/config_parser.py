@@ -322,14 +322,14 @@ class ConfigParser():
                 if check_type('parameters', 'dict'):
                     if 'parameters_format' not in data:
                         errors.append("%s: parameters format not defined for"
-                                        "parameters" % exp_id)
+                                        " parameters" % exp_id)
 
             #Check the optional experiment parameters
             if 'parameters_format' in data:
                 if check_type('parameters_format', 'string'):
                     if 'parameters' not in data:
                         errors.append("%s: parameters not defined for"
-                                        "parameters format" % exp_id)
+                                        " parameters format" % exp_id)
                     else:
                         #Check that the parameters fit the format
                         try:
@@ -341,47 +341,47 @@ class ConfigParser():
             if 'outputs' in data: 
                 check_type('outputs', 'list')
             if 'output_line_processor' in data:
-                check_type('output_line_processor', 'dict')
-                for output_file, pstring in \
-                        data['output_line_processor'].items():
-                    if 'outputs' in data and \
-                        output_file not in data['outputs']:
-                        errors.append("%s: no output file named %s defined in"
-                                " outputs for output line processor" \
-                                % exp_id)
-                    try:
-                        plist = pstring.split()
-                        module = plist[0]
-                        function = plist[1]
-                    except:
-                        errors.append("%s: couldn't get module or function"
-                                    " from output line processor arguments" \
-                                    % exp_id)
-                    if not neronet.core.can_import(module, function):
-                        errors.append("%s: can't import %s from %s" 
+                if check_type('output_line_processor', 'dict'):
+                    for output_file, pstring in \
+                            data['output_line_processor'].items():
+                        if 'outputs' not in data or \
+                            output_file not in data['outputs']:
+                            errors.append("%s: no output file named %s "
+                                    "defined in outputs for output line "
+                                    "processor" % (exp_id, output_file))
+                        try:
+                            plist = pstring.split()
+                            module = plist[0]
+                            function = plist[1]
+                            if not neronet.core.can_import(module, function):
+                                errors.append("%s: can't import %s from %s" 
                                         " for output line processor" \
-                                        % (exp_id, module, function))
+                                        % (exp_id, function, module))
+                        except:
+                            errors.append("%s: could not parse module or "
+                                    "function from output line processor "
+                                    "arguments" % exp_id)
             if 'output_file_processor' in data:
-                check_type('output_file_processor', 'dict')
-                for output_file, pstring in \
-                        data['output_file_processor'].items():
-                    if 'outputs' in data and \
-                        output_file not in data['outputs']:
-                        errors.append("%s: no output file named %s defined in"
-                                " outputs for output file processor" \
-                                % exp_id)
-                    try:
-                        plist = pstring.split()
-                        module = plist[0]
-                        function = plist[1]
-                    except:
-                        errors.append("%s: couldn't get module or function"
-                                    " from output file processor arguments" \
-                                    % exp_id)
-                    if not neronet.core.can_import(module, function):
-                        errors.append("%s: can't import %s from %s" 
+                if check_type('output_file_processor', 'dict'):
+                    for output_file, pstring in \
+                            data['output_file_processor'].items():
+                        if 'outputs' not in data or \
+                            output_file not in data['outputs']:
+                            errors.append("%s: no output file named %s "
+                                    "defined in outputs for output file "
+                                    "processor" % (exp_id, output_file))
+                        try:
+                            plist = pstring.split()
+                            module = plist[0]
+                            function = plist[1]
+                            if not neronet.core.can_import(module, function):
+                                errors.append("%s: can't import %s from %s" 
                                         " for output file processor" \
-                                        % (exp_id, module, function))
+                                        % (exp_id, function, module))
+                        except:
+                            errors.append("%s: could not parse module or "
+                                    "function from output file processor "
+                                    "arguments" % exp_id)
                     
             if 'plot' in data:
                 check_type('plot', 'dict')
@@ -406,7 +406,7 @@ class ConfigParser():
                         if not neronet.core.can_import(module, function):
                             errors.append("%s: can't import %s from %s"
                                             " for plot" \
-                                            % (exp_id, module, function))
+                                            % (exp_id, function, module))
                     except:
                         errors.append("%s: couldn't get module, function or"
                                         " output file from plot arguments" \
@@ -466,6 +466,13 @@ class ConfigParser():
                                     experiment_scope['parameters'].items():
                                 parameters[name] = value
                         experiment_scope['parameters'] = parameters
+                    if field == 'outputs':
+                        if isinstance(experiment_scope['outputs'], list) and \
+                                'stdout.log' not in experiment_scope['outputs']:
+                            experiment_scope['outputs'].append('stdout.log')
+                    else:
+                        experiment_scope['outputs'] = ['stdout.log']
+                        
                 
                 #Create experiment data dict
                 experiment_data = {field: value for field, value in \
@@ -505,6 +512,7 @@ class ConfigParser():
                             neronet.experiment.Experiment(**experiment_data))
                 _process_data(experiment_scope) 
         _process_data(data)
+        print(experiments)
  
         if errors:
             raise FormatError(errors)
