@@ -68,7 +68,7 @@ class Experiment(object):
         fields = {'run_command_prefix': run_command_prefix,
                     'main_code_file': main_code_file,
                     'required_files': required_files if required_files else [],
-                    'outputs': outputs if outputs else ['stdout.log'],
+                    'outputs': outputs,
                     'output_file_processor': output_file_processor,
                     'output_line_processor': output_line_processor,
                     'plot': plot,
