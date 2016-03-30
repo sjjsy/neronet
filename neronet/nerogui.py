@@ -318,7 +318,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             return
         self.globalName = str(self.paramTable.item(y,0).text())
         try:
-	    dic = self.nero.database[self.globalName].get_output("stdout.log")
+	    dic = self.nero.database[self.globalName].plot
         except IOError:
             return
         for item in dic.keys():
@@ -331,7 +331,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             return
         item = str(self.PlotParamTable.currentItem().text())
         path = self.nero.database[self.globalName].get_results_dir()
-        webbrowser.open(path+ "/" + item + ".svg")
+        webbrowser.open(path+ "/" + item)
 
 def main():
     app = QtGui.QApplication(sys.argv)
