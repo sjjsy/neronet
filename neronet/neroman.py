@@ -234,7 +234,7 @@ class Neroman:
                 else:
                     for cid, cluster in self.clusters['clusters'].iteritems():
                         try:
-                            cluster.update_average_load(cluster.sshrun('uptime').out[-5:-1])
+                            cluster.update_average_load(cluster.sshrun('uptime').out.split()[-1])
                         except RuntimeError:
                             cluster.update_average_load("undefined")
                         self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
@@ -260,11 +260,17 @@ class Neroman:
                 yield "===========\n"
                 yield "SSH Address: %s\n" % cluster.ssh_address
                 yield "Type: %s\n" % cluster.ctype
-                yield "Experiments:\n"
+                yield "Experiments in cluster:\n"
+                noexperiments = True
                 for exp in self.database:
                     if self.database[exp].cluster_id == cluster.cid:
-                        yield "Experiment id: %s, Status: %s\ņ" \
+                        noexperiments = False
+                        yield "  Experiment id: %s, Status: %s\ņ" \
                                 % (exp, self.database[exp].state)
+                if noexperiments: yield "  No experiments in cluster.\n"
+                resources = cluster.gather_resource_info()
+                yield "Average load 15min: %s\n" % resources['avgload']
+                yield "Memory usage in MiB: %s out of %s total.(%.2f%%)\n" % (resources['usedmem'], resources['totalmem'], 100.0*int(resources['usedmem'])/int(resources['totalmem'])) 
                 raise StopIteration
             else:
                 raise IOError('Neroman: no experiment or cluster named "%s"!'\
