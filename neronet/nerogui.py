@@ -140,6 +140,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         addr = str(self.cluster_address_field.text())
         nm = str(self.cluster_name_field.text())
         type = str(self.cluster_type_combo.currentText())
+        if not addr or not nm:
+            return
         for line in self.nero.specify_cluster(nm, type, addr):
             self.experiment_log.insertPlainText(line)
         self.init_clusters()
@@ -157,6 +159,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             QtGui.QFileDialog.getExistingDirectory(
                 self,
                 "Select Directory"))
+        if not file_path:
+            return
         self.nero.specify_experiments(file_path)
         self.init_labels()
         self.init_menu()
@@ -172,6 +176,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         cluster = str(cluster.text())
         rows = sorted(set(index.row() for index in
                   self.paramTable.selectedIndexes()))
+        if not rows:
+            return
         for exp in rows:
             name = str(self.paramTable.item(exp, 0).text())
             for line in self.nero.submit(name, cluster):
@@ -304,6 +310,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         """delete experiment from table"""
         rows = sorted(set(index.row() for index in
                   self.paramTable.selectedIndexes()))
+        if not rows:
+            return
         for exp in rows:
             name = str(self.paramTable.item(exp, 0).text())
             for line in self.nero.delete_experiment(name):
@@ -349,6 +357,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.experiment_log.clear()
         rows = sorted(set(index.row() for index in
                   self.paramTable.selectedIndexes()))
+        if not rows:
+            return
         for exp in rows:
             name = str(self.paramTable.item(exp, 0).text())
             for line in self.nero.duplicate_experiment(name, name+"-copy"):
