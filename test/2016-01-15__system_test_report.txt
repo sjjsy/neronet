@@ -90,10 +90,3 @@ General notes after testing session:
   increases after each submit very rapily.
 - Neromum and kids apparently contain some hardcoded python3-commands so they
   don't work with earlier python versions.
-  
-  
-  
-  
-  
-  
-  
