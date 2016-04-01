@@ -61,6 +61,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.terminate_btn.clicked.connect(self.terminate_exp)
         self.plot_btn.clicked.connect(self.openPlot)
         self.create_new_btn.clicked.connect(self.create_new_exp)
+        self.dupli_btn.clicked.connect(self.duplicate_exp)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.paramTable.customContextMenuRequested.connect(self.openMenu)
         QtGui.QShortcut(QtGui.QKeySequence("Delete"), self.paramTable, self.del_exp, context=QtCore.Qt.WidgetShortcut)
@@ -279,8 +280,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         if x == 1:
             name = str(self.paramTable.item(y, 0).text())
             newParam = str(self.paramTable.item(y, x).text())
-            self.nero.database[name]._fields["custom_msg"] = newParam
-            self.nero.replace_experiment(self.nero.database[name])
+            self.nero.database[name]._fields["custom_msg"]= newParam
+            self.nero.replace_experiment(self.nnerero.database[name])
             self.add_to_param_table()
             
         if len(self.filteredLabels) == len(self.allLabels):
@@ -299,10 +300,14 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             self.add_to_param_table()
 
     def del_exp(self):
+        self.experiment_log.clear()
         """delete experiment from table"""
-        for exp in self.paramTable.selectionModel().selectedRows():
-            name = str(self.paramTable.item(exp.row(), 0).text())
-            self.nero.delete_experiment(name)
+        rows = sorted(set(index.row() for index in
+                  self.paramTable.selectedIndexes()))
+        for exp in rows:
+            name = str(self.paramTable.item(exp, 0).text())
+            for line in self.nero.delete_experiment(name):
+                self.experiment_log.insertPlainText(line)
 	self.add_to_param_table()
 
     def highlight_row(self, y, x):
@@ -339,7 +344,16 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         command = str(self.run_cmd_field.text()).split(" ")
         neronet.core.create_config_template("RENAME_THIS_TO_EXP_ID", *command)
         webbrowser.open("config.yaml")
-        print command
+
+    def duplicate_exp(self):
+        self.experiment_log.clear()
+        rows = sorted(set(index.row() for index in
+                  self.paramTable.selectedIndexes()))
+        for exp in rows:
+            name = str(self.paramTable.item(exp, 0).text())
+            for line in self.nero.duplicate_experiment(name, name+"-copy"):
+                self.experiment_log.insertPlainText(line)
+        self.add_to_param_table()
 
 def main():
     app = QtGui.QApplication(sys.argv)

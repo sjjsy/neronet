@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'neronetgui.ui'
 #
-# Created: Wed Mar 30 18:24:27 2016
+# Created: Fri Apr  1 13:19:54 2016
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -119,6 +119,9 @@ class Ui_MainWindow(object):
         self.terminate_btn = QtGui.QPushButton(self.tab_3)
         self.terminate_btn.setGeometry(QtCore.QRect(230, 210, 111, 27))
         self.terminate_btn.setObjectName(_fromUtf8("terminate_btn"))
+        self.dupli_btn = QtGui.QPushButton(self.tab_3)
+        self.dupli_btn.setGeometry(QtCore.QRect(10, 170, 111, 29))
+        self.dupli_btn.setObjectName(_fromUtf8("dupli_btn"))
         self.tabWidget.addTab(self.tab_3, _fromUtf8(""))
         self.gridLayout.addWidget(self.tabWidget, 1, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -145,5 +148,6 @@ class Ui_MainWindow(object):
         self.exp_add_btn.setText(_translate("MainWindow", "Import exp", None))
         self.refresh_btn.setText(_translate("MainWindow", "Fetch exp", None))
         self.terminate_btn.setText(_translate("MainWindow", "Terminate exp", None))
+        self.dupli_btn.setText(_translate("MainWindow", "Duplicate exp", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Experiment", None))
 

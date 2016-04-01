@@ -317,6 +317,19 @@
          <string>Terminate exp</string>
         </property>
        </widget>
+       <widget class="QPushButton" name="dupli_btn">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>170</y>
+          <width>111</width>
+          <height>29</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Duplicate exp</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
