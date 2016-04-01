@@ -8,13 +8,13 @@ defined in its config:
 * experiment_id: The unique identifier for the experiment
 * run_command_prefix: The run command of the experiment
 * main_code_file: The code file to be run
-* destination_folder: Folder that the experiment is run in on the cluster.
+* destination_folder: Folder that the experiment is run in on the node.
 * parameters: The definition of the experiment parameters
 * parameters_format: The format of the experiment parameters
 * logoutput: The location the experiment outputs its output
 * state: A tuple of the experiment state which is set to 'defined' by this
   function and the time changed
-* cluster: The cluster that the experiment is running on. Set to
+* node: The node that the experiment is running on. Set to
   None by this function
 * time_created: Sets the current time as the creation time
 * time_modified: The time the experiment was last modified. Sets
@@ -36,19 +36,19 @@ import sys
 
 import neronet.config_parser
 import neronet.core
-import neronet.cluster
+import neronet.node
 import neronet.experiment
 
 DATABASE_FILENAME = 'default.yaml'
 PREFERENCES_FILENAME = 'preferences.yaml'
-CLUSTERS_FILENAME = 'clusters.yaml'
+NODES_FILENAME = 'nodes.yaml'
 
 class Neroman:
 
     """The part of Neronet that handles user side things.
 
     Attributes:
-        clusters (Dict): A dictionary containing the specified clusters
+        nodes (Dict): A dictionary containing the specified nodes
         database (Dict): A dictionary containing the specified experiments
         preferences (Dict): A dictionary containing the preferences
     """
@@ -59,48 +59,48 @@ class Neroman:
         Reads the contents of its attributes from yaml files or creates them
         """
         self.config_parser = neronet.config_parser.ConfigParser()
-        self.clusters, self.preferences, self.database = \
-            self.config_parser.load_configurations(CLUSTERS_FILENAME, \
+        self.nodes, self.preferences, self.database = \
+            self.config_parser.load_configurations(NODES_FILENAME, \
                             PREFERENCES_FILENAME, DATABASE_FILENAME)
 
-    def specify_cluster(self, cluster_id, cluster_type, ssh_address):
-        """Specify clusters so that Neroman is aware of them.
+    def specify_node(self, node_id, node_type, ssh_address):
+        """Specify nodes so that Neroman is aware of them.
 
-        Writes cluster name, address and type to the clusters config file
+        Writes node name, address and type to the nodes config file
 
         Args:
-            cluster_id (str): The name of the cluster, should be unique
-            cluster_type (str): Type of the cluster. Either slurm or unmanaged
-            ssh_address (str): SSH address of the cluster
+            node_id (str): The name of the node, should be unique
+            node_type (str): Type of the node. Either slurm or unmanaged
+            ssh_address (str): SSH address of the node
 
         Raises:
-            IOError: if the cluster type isn't unmanaged or slurm
+            IOError: if the node type isn't unmanaged or slurm
 
         """
-        if not neronet.cluster.Cluster.Type.is_member(cluster_type):
-            raise IOError('Neroman: invalid cluster type "%s"!' % (cluster_type))
-        cluster = neronet.cluster.Cluster(cluster_id, cluster_type, ssh_address)
+        if not neronet.node.Node.Type.is_member(node_type):
+            raise IOError('Neroman: invalid node type "%s"!' % (node_type))
+        node = neronet.node.Node(node_id, node_type, ssh_address)
         try:
-            cluster.test_connection()
-            yield('Cluster successfully accessed! Adding it...')
-            self.clusters['clusters'][cluster_id] = cluster
-            self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
+            node.test_connection()
+            yield('Node successfully accessed! Adding it...')
+            self.nodes['nodes'][node_id] = node
+            self.config_parser.save_nodes(NODES_FILENAME, self.nodes)
         except RuntimeError as e:
             yield('Error: %s' % (e))
             sys.exit(1)
 
-    def delete_cluster(self, cluster_id):
-        """Deletes the cluster with the given cluster ID
+    def delete_node(self, node_id):
+        """Deletes the node with the given node ID
 
         Parameters:
-            cluster_id (str): ID of the cluster to be deleted
+            node_id (str): ID of the node to be deleted
         Raises:
-            KeyError: if the cluster with the given ID doesn't exist
+            KeyError: if the node with the given ID doesn't exist
         """
-        if cluster_id in self.clusters['clusters']:
-            del self.clusters['clusters'][cluster_id]
-            self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
-            yield('Cluster "%s" deleted.' % (cluster_id))
+        if node_id in self.nodes['nodes']:
+            del self.nodes['nodes'][node_id]
+            self.config_parser.save_nodes(NODES_FILENAME, self.nodes)
+            yield('Node "%s" deleted.' % (node_id))
 
     def specify_experiments(self, folder):
         """Specify experiments so that Neroman is aware of them.
@@ -145,11 +145,11 @@ class Neroman:
         if err: raise IOError('\n'.join(err))
         return changed_exps
     
-    def specify_user(self, name, email, default_cluster = ""):
+    def specify_user(self, name, email, default_node = ""):
         """Update user data"""
         self.preferences['name'] = name
         self.preferences['email'] = email
-        self.preferences['default_cluster'] = default_cluster
+        self.preferences['default_node'] = default_node
         self.config_parser.save_preferences(PREFERENCES_FILENAME, \
                                             self.preferences)
 
@@ -175,7 +175,7 @@ class Neroman:
         """
         if experiment_id not in self.database:
             raise IOError("Neroman: %s is not in database" % experiment_id)
-        if self.database[experiment_id]._fields['cluster_id']:
+        if self.database[experiment_id]._fields['node_id']:
             self.terminate_experiment(experiment_id)
         self.database.pop(experiment_id)
         self.config_parser.save_database(DATABASE_FILENAME, \
@@ -206,16 +206,16 @@ class Neroman:
     
     def terminate_experiment(self, experiment_id):
         if experiment_id in self.database:            
-            cluster_id = self.database[experiment_id]._fields['cluster_id']
-            if cluster_id:
-                cluster = self.clusters['clusters'][cluster_id]
+            node_id = self.database[experiment_id]._fields['node_id']
+            if node_id:
+                node = self.nodes['nodes'][node_id]
                 try:
-                    cluster.terminate_exp(experiment_id)
+                    node.terminate_exp(experiment_id)
                     yield 'Termination message successfully sent to neromum'
                 except RuntimeError:
                     yield 'Failed to terminate the given experiment. This could be a result of the experiment already being terminated or finished.'                
             else:
-                yield '"%s" hasn\'t been submitted to cluster or has already finished running' % (experiment_id)
+                yield '"%s" hasn\'t been submitted to node or has already finished running' % (experiment_id)
         else:
             yield '"%s", No such experiment' % (experiment_id) 
 
@@ -227,25 +227,25 @@ class Neroman:
             str: A line of neroman status
         """
         if arg != 'all':
-            if arg == 'clusters':
+            if arg == 'nodes':
                 yield 'Name       Type       Address    Load\n'
-                if not self.clusters['clusters']:
-                    yield 'No clusters defined\n'
+                if not self.nodes['nodes']:
+                    yield 'No nodes defined\n'
                 else:
-                    for cid, cluster in self.clusters['clusters'].iteritems():
+                    for cid, node in self.nodes['nodes'].iteritems():
                         try:
-                            cluster.update_average_load(cluster.sshrun('uptime').out.split()[-1])
+                            node.update_average_load(node.sshrun('uptime').out.split()[-1])
                         except RuntimeError:
-                            cluster.update_average_load("undefined")
-                        self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
-                        yield '%s\n' % (cluster)
-                    if self.clusters['groups']:
-                        yield "Cluster groups:\n"
-                        groups = self.clusters['groups']
-                        for group_id, group_clusters in groups.iteritems():
-                            yield '- %s: %s\n' % (group_id, ', '.join(cluster for cluster in group_clusters))
+                            node.update_average_load("undefined")
+                        self.config_parser.save_nodes(NODES_FILENAME, self.nodes)
+                        yield '%s\n' % (node)
+                    if self.nodes['groups']:
+                        yield "Node groups:\n"
+                        groups = self.nodes['groups']
+                        for group_id, group_nodes in groups.iteritems():
+                            yield '- %s: %s\n' % (group_id, ', '.join(node for node in group_nodes))
                     raise StopIteration
-                for key in self.clusters['clusters']:
+                for key in self.nodes['nodes']:
                     for ln in self.status_gen(key):
                         yield ln
                 raise StopIteration
@@ -254,46 +254,46 @@ class Neroman:
                 for line in experiment.as_gen():
                     yield line
                 raise StopIteration
-            elif arg in self.clusters['clusters']:
-                cluster = self.clusters['clusters'][arg]
-                yield "\n%s\n" % cluster.cid
+            elif arg in self.nodes['nodes']:
+                node = self.nodes['nodes'][arg]
+                yield "\n%s\n" % node.cid
                 yield "===========\n"
-                yield "SSH Address: %s\n" % cluster.ssh_address
-                yield "Type: %s\n" % cluster.ctype
-                yield "Experiments in cluster:\n"
+                yield "SSH Address: %s\n" % node.ssh_address
+                yield "Type: %s\n" % node.ctype
+                yield "Experiments in node:\n"
                 noexperiments = True
                 for exp in self.database:
-                    if self.database[exp].cluster_id == cluster.cid:
+                    if self.database[exp].node_id == node.cid:
                         noexperiments = False
                         yield "  Experiment id: %s, Status: %s\ņ" \
                                 % (exp, self.database[exp].state)
-                if noexperiments: yield "  No experiments in cluster.\n"
-                resources = cluster.gather_resource_info()
+                if noexperiments: yield "  No experiments in node.\n"
+                resources = node.gather_resource_info()
                 yield "Average load 15min: %s\n" % resources['avgload']
                 yield "Memory usage in MiB: %s out of %s total.(%.2f%%)\n" % (resources['usedmem'], resources['totalmem'], 100.0*int(resources['usedmem'])/int(resources['totalmem'])) 
                 raise StopIteration
             else:
-                raise IOError('Neroman: no experiment or cluster named "%s"!'\
+                raise IOError('Neroman: no experiment or node named "%s"!'\
                                 % (arg))
         yield "================Neroman=================\n"
         yield "\n"
         yield "================User====================\n"
         yield "Name: %s\n" % self.preferences['name']
         yield "Email: %s\n" % self.preferences['email']
-        if self.preferences['default_cluster']:
-            yield "Default Cluster: %s\n" % self.preferences['default_cluster']
+        if self.preferences['default_node']:
+            yield "Default Node: %s\n" % self.preferences['default_node']
         yield "\n"
-        yield "================Clusters================\n"
-        if not self.clusters['clusters']:
-            yield 'No clusters defined\n'
+        yield "================Nodes================\n"
+        if not self.nodes['nodes']:
+            yield 'No nodes defined\n'
         else:
-            for cluster in self.clusters['clusters'].itervalues():
-                yield '%s (%s, %s)\n' % (cluster.cid, cluster.ssh_address, cluster.ctype)
-        if self.clusters['groups']:
-            yield "Cluster groups:\n"
-            groups = self.clusters['groups']
-            for group_id, group_clusters in groups.iteritems():
-                yield '- %s: %s\n' % (group_id, ', '.join(cluster for cluster in group_clusters))
+            for node in self.nodes['nodes'].itervalues():
+                yield '%s (%s, %s)\n' % (node.cid, node.ssh_address, node.ctype)
+        if self.nodes['groups']:
+            yield "Node groups:\n"
+            groups = self.nodes['groups']
+            for group_id, group_nodes in groups.iteritems():
+                yield '- %s: %s\n' % (group_id, ', '.join(node for node in group_nodes))
         yield "\n"
         yield "================Experiments=============\n"
         if not len(self.database):
@@ -315,58 +315,58 @@ class Neroman:
                 experiments_by_state[experiment.state].append(experiment)
         return experiments_by_state
 
-    def submit(self, exp_id, cluster_id="", verbose=False):
-        """Submit an experiment to a cluster using SSH.
+    def submit(self, exp_id, node_id="", verbose=False):
+        """Submit an experiment to a node using SSH.
 
         Args:
             exp_id (str): the ID of the experiment.
-            cluster_id (str): the ID of the cluster.
+            node_id (str): the ID of the node.
         """
-        # Determine the cluster
-        if not cluster_id:
-            cluster_id = self.preferences['default_cluster']
-            if cluster_id == "":
-                raise AttributeError('no default cluster defined')
-        #if cluster_id in self.clusters['groups']:
-           # cluster_id = random.choice(self.clusters['groups'][cluster_id])
-        if cluster_id in self.clusters['groups']:
+        # Determine the node
+        if not node_id:
+            node_id = self.preferences['default_node']
+            if node_id == "":
+                raise AttributeError('no default node defined')
+        #if node_id in self.nodes['groups']:
+           # node_id = random.choice(self.nodes['groups'][node_id])
+        if node_id in self.nodes['groups']:
             avg_load = 999.0
             cl_id = None
-            for cl in self.clusters['groups'][cluster_id]:
+            for cl in self.nodes['groups'][node_id]:
                 try:
-                    cluster = self.clusters['clusters'][cl]
-                    cluster.update_average_load(cluster.sshrun('uptime').out[-5:-1])
+                    node = self.nodes['nodes'][cl]
+                    node.update_average_load(node.sshrun('uptime').out[-5:-1])
                 except RuntimeError:
-                    cluster.update_average_load("undefined")
+                    node.update_average_load("undefined")
                     continue
-                self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
-                if float(cluster.average_load) < avg_load:
-                    avg_load = cluster.average_load
+                self.config_parser.save_nodes(NODES_FILENAME, self.nodes)
+                if float(node.average_load) < avg_load:
+                    avg_load = node.average_load
                     cl_id = cl
                 else:
                     continue
             if cl_id == None:
-                raise AttributeError('No valid clusters in the cluster group')
+                raise AttributeError('No valid nodes in the node group')
             else:
-                cluster_id = cl_id
-        elif cluster_id not in self.clusters['clusters']:
-            raise AttributeError('The given cluster ID "%s" is not valid!' %
-                    (cluster_id))
-        cluster = self.clusters["clusters"][cluster_id]
+                node_id = cl_id
+        elif node_id not in self.nodes['nodes']:
+            raise AttributeError('The given node ID "%s" is not valid!' %
+                    (node_id))
+        node = self.nodes["nodes"][node_id]
         # Load the experiment
         if exp_id not in self.database:
             raise AttributeError('The given experiment ID "%s" is not valid!' %
                     (exp_id))
         exp = self.database[exp_id]
 
-        if exp.cluster_id != None:
+        if exp.node_id != None:
             raise Exception('Experiment already submitted to "%s"! '
-                    % (exp.cluster_id)  +
+                    % (exp.node_id)  +
              'If you wish to re-submit the same experiment, you need to wait for your experiment to finish or terminate it with "nerocli --terminate ID" where ID is the id of your experiment.')
         # Update experiment info
-        exp.cluster_id = cluster_id
+        exp.node_id = node_id
         exp.update_state(neronet.experiment.Experiment.State.submitted)
-        self.config_parser.save_clusters(CLUSTERS_FILENAME, self.clusters)
+        self.config_parser.save_nodes(NODES_FILENAME, self.nodes)
         # Define local path, where experiment currently exists
         local_exp_path = exp.path
         # Define the remote path into which the files will be transferred to,
@@ -390,16 +390,16 @@ class Neroman:
         # Serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
-        # Finally, serialize the cluster object into the tmp folder
-        neronet.core.write_file(os.path.join(local_tmp_dir, 'cluster.pickle'),
-                pickle.dumps(cluster))
+        # Finally, serialize the node object into the tmp folder
+        neronet.core.write_file(os.path.join(local_tmp_dir, 'node.pickle'),
+                pickle.dumps(node))
         # Transfer the files to the remote server
         try:
             neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
-                (local_tmp_dir, cluster.ssh_address, remote_dir), verbose)
+                (local_tmp_dir, node.ssh_address, remote_dir), verbose)
             # Start the Neromum daemon
-            cluster.start_neromum()
-            yield("Experiment " + exp_id + " successfully submitted to " + cluster_id + "\n")
+            node.start_neromum()
+            yield("Experiment " + exp_id + " successfully submitted to " + node_id + "\n")
         finally:
             # Remove the temporary directory
             shutil.rmtree(local_tmp_dir)
@@ -409,30 +409,30 @@ class Neroman:
     def fetch(self):
         """Fetch results of submitted experiments."""
         experiments_to_check = set()
-        clusters_to_fetch = set()
-        # Find out the experiments that have been submitted to some cluster
-        # and the associated clusters
+        nodes_to_fetch = set()
+        # Find out the experiments that have been submitted to some node
+        # and the associated nodes
         for exp in self.database.values():
-            if exp.cluster_id != None:
+            if exp.node_id != None:
                 experiments_to_check.add(exp)
-                clusters_to_fetch.add(exp.cluster_id)
+                nodes_to_fetch.add(exp.node_id)
         # Define source and destination directories
         remote_dir = os.path.join(neronet.core.USER_DATA_DIR,
                 'experiments')
         local_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
                 'results')
-        # Fetch the changes from the clusters
-        for cluster_id in clusters_to_fetch:
-            yield('Fetching changes from cluster "%s"...' % (cluster_id))
-            # Load cluster details
-            cluster = self.clusters['clusters'][cluster_id]
+        # Fetch the changes from the nodes
+        for node_id in nodes_to_fetch:
+            yield('Fetching changes from node "%s"...' % (node_id))
+            # Load node details
+            node = self.nodes['nodes'][node_id]
             # Fetch the files from the remote server
             try:
                 neronet.core.osrun('rsync -az -e "ssh" "%s:%s/" "%s"' %
-                    (cluster.ssh_address, remote_dir, local_dir))
+                    (node.ssh_address, remote_dir, local_dir))
             except RuntimeError:
-                yield('Err: Failed to fetch experiment results from cluster "%s".' % (cluster.cid))
-            # Clean the cluster
+                yield('Err: Failed to fetch experiment results from node "%s".' % (node.cid))
+            # Clean the node
                     # Update the experiments
         plot_errors = []
         #Update Neroman database contents from the fetched pickles
@@ -449,7 +449,7 @@ class Neroman:
             if exp.state in (neronet.experiment.Experiment.State.finished,
                         neronet.experiment.Experiment.State.lost, 
                         neronet.experiment.Experiment.State.terminated):
-                exp.cluster_id = None
+                exp.node_id = None
                 if exp.state == neronet.experiment.Experiment.State.finished:
                     results_dir = os.path.join(exp.path, 'results')
                     if not os.path.exists(results_dir):
@@ -466,21 +466,21 @@ class Neroman:
                     except Exception as e:
                         yield str(e)
         self.config_parser.save_database(DATABASE_FILENAME, self.database)
-        #Try to clean finished/terminated/lost experiments from remote clusters
-        for cluster_id in clusters_to_fetch:
-            cluster = self.clusters['clusters'][cluster_id]
-            cluster.start_neromum()
+        #Try to clean finished/terminated/lost experiments from remote nodes
+        for node_id in nodes_to_fetch:
+            node = self.nodes['nodes'][node_id]
+            node.start_neromum()
             exceptions = [exp.id for exp in self.database.values() if exp.state
                             in (neronet.experiment.Experiment.State.submitted,
                             neronet.experiment.Experiment.State.submitted_to_kid,
-                            neronet.experiment.Experiment.State.running) and exp.cluster_id == cluster_id]
+                            neronet.experiment.Experiment.State.running) and exp.node_id == node_id]
             try:
-                cluster.clean_experiments(exceptions)
+                node.clean_experiments(exceptions)
             except RuntimeError:
-                yield('Note: Failed to clean the experiments at the cluster.')
+                yield('Note: Failed to clean the experiments at the node.')
 
 
     #def tail_log(self, exp_id=None):
     #    """List latest log file lines of submitted experiments."""
     #    for exp in self.database.values():
-    #        if exp.cluster_id != None:
+    #        if exp.node_id != None:

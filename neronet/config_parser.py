@@ -10,7 +10,7 @@ import copy
 import yaml
 
 import neronet.core
-import neronet.cluster
+import neronet.node
 import neronet.experiment
 
 EXPERIMENT_CONFIG_FILENAME = 'config.yaml'
@@ -62,65 +62,65 @@ class ConfigParser():
         check(data, *args)
         return data
 
-    def load_clusters(self, clusters_filename):
-        """Loads the clusters file
+    def load_nodes(self, nodes_filename):
+        """Loads the nodes file
 
         Parameters:
-            clusters_filename (str): name of the clusters file
+            nodes_filename (str): name of the nodes file
         
         Returns:
-            dict: data of the clusters
+            dict: data of the nodes
 
         Raises:
             FormatError: if the data wasn't correctly formated
         """
-        cluster_default = {'clusters': {}, 'groups': {}}
-        return self.load_config(clusters_filename, cluster_default, 
-                                self.check_clusters)
+        node_default = {'nodes': {}, 'groups': {}}
+        return self.load_config(nodes_filename, node_default, 
+                                self.check_nodes)
 
-    def check_clusters(self, clusters_data):
-        """Checks the format of the cluster data
+    def check_nodes(self, nodes_data):
+        """Checks the format of the node data
         
         Parameters:
-            clusters_data (dict): data of the clusters
+            nodes_data (dict): data of the nodes
 
         Raises:
             FormatError: if the data wasn't correctly formated
         """
         errors = []
-        clusters = clusters_data.get('clusters', {})
-        for cluster_id, fields in clusters.iteritems():
+        nodes = nodes_data.get('nodes', {})
+        for node_id, fields in nodes.iteritems():
             if 'type' not in fields:
-                errors.append('%s: no type specified for cluster' \
-                                % cluster_id)
-            elif not neronet.cluster.Cluster.Type.is_member(fields['type']):
-                errors.append('%s: invalid type "%s" for cluster' % \
-                                (cluster_id, fields['type']))
+                errors.append('%s: no type specified for node' \
+                                % node_id)
+            elif not neronet.node.Node.Type.is_member(fields['type']):
+                errors.append('%s: invalid type "%s" for node' % \
+                                (node_id, fields['type']))
             if 'ssh_address' not in fields:
-                errors.append('%s: no ssh address specified for cluster' \
-                                % cluster_id)
+                errors.append('%s: no ssh address specified for node' \
+                                % node_id)
             if 'sbatch_args' not in fields:
                 fields['sbatch_args'] = None
 
             if not errors:
-                clusters[cluster_id] = neronet.cluster.Cluster(cluster_id,
+                nodes[node_id] = neronet.node.Node(node_id,
                         fields['type'], fields['ssh_address'],
                         fields['sbatch_args'])
 
-        groups = clusters_data.get('groups', {})
-        for group_name, group_clusters in groups.iteritems():
-            for cluster in group_clusters:
-                if cluster not in clusters.keys():
-                    errors.append('%s: cluster "%s" is not defined for group' % \
-                                    (group_name, cluster))
+        groups = nodes_data.get('groups', {})
+        for group_name, group_nodes in groups.iteritems():
+            for node in group_nodes:
+                if node not in nodes.keys():
+                    errors.append('%s: node "%s" is not defined for group' % \
+                                    (group_name, node))
         if errors:
             raise FormatError(errors)
 
-    def load_preferences(self, preferences_filename, clusters_data):
+    def load_preferences(self, preferences_filename, nodes_data):
         """Loads the preferences file
         Parameters:
             preferences_filename (str): name of the preferences file
-            clusters_data (dict): data of the clusters
+            nodes_data (dict): data of the nodes
 
         Returns:
             dict: data of the preferences
@@ -128,25 +128,25 @@ class ConfigParser():
         Raises:
             FormatError: if the data wasn't correctly formated
         """
-        preferences_default = {'name': '', 'email': '', 'default_cluster': ''}
+        preferences_default = {'name': '', 'email': '', 'default_node': ''}
         return self.load_config(preferences_filename, preferences_default, \
-                            self.check_preferences, clusters_data)
+                            self.check_preferences, nodes_data)
 
-    def check_preferences(self, preferences_data, clusters_data):
+    def check_preferences(self, preferences_data, nodes_data):
         """Checks the preferences data
 
         Parameters:
             preferences_data (dict): data of the preferences
-            clusters_data (dict): data of the clusters
+            nodes_data (dict): data of the nodes
 
         Raises:
             FormatError: if the data wasn't correctly formated
         """
-        clusters = clusters_data.get('clusters', {})
-        default_cluster = preferences_data['default_cluster']
-        if default_cluster not in clusters and default_cluster:
-            raise FormatError(['default cluster %s  is not defined' % \
-                                default_cluster])
+        nodes = nodes_data.get('nodes', {})
+        default_node = preferences_data['default_node']
+        if default_node not in nodes and default_node:
+            raise FormatError(['default node %s  is not defined' % \
+                                default_node])
 
     def load_database(self, database_filename):
         """Loads the database file
@@ -164,32 +164,32 @@ class ConfigParser():
     def check_database(self, database_data):
         pass
 
-    def load_configurations(self, clusters_filename, 
+    def load_configurations(self, nodes_filename, 
                                     preferences_filename,
                                     database_filename):
         """Loads all the configurations
 
         Parameters:
-            clusters_filename (str): name of the clusters file
+            nodes_filename (str): name of the nodes file
             preferences_filename (str): name of the preferences file
             database_filename (str): name of the database file
 
         Returns:
-            tuple of dicts: a tuple containing the data of clusters,
+            tuple of dicts: a tuple containing the data of nodes,
             preferences and database as dicts
 
         Raises:
             FormatError: if the data wasn't correctly formated
         """
         errors = []
-        clusters = {}
+        nodes = {}
         try:
-            clusters = self.load_clusters(clusters_filename)
+            nodes = self.load_nodes(nodes_filename)
         except FormatError as e:
             errors += e.error_msgs
         try:
             preferences = self.load_preferences(preferences_filename, \
-                                                clusters)
+                                                nodes)
         except FormatError as e:
             errors += e.error_msgs
         try:
@@ -198,7 +198,7 @@ class ConfigParser():
             errors += e.error_msgs
         if errors:
             raise FormatError(errors)
-        return clusters, preferences, database
+        return nodes, preferences, database
 
     def save_database(self, database_filename, database):
         self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
@@ -208,17 +208,17 @@ class ConfigParser():
         self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
                         preferences_filename), preferences)
 
-    def save_clusters(self, clusters_filename, clusters):
-        cluster_field_dict = {}
-        for k, v in clusters['clusters'].items():
+    def save_nodes(self, nodes_filename, nodes):
+        node_field_dict = {}
+        for k, v in nodes['nodes'].items():
             dct = {'type': v.ctype, 'ssh_address': v.ssh_address, 'average_load': v.average_load}
             if v.sbatch_args:
                 dct['sbatch_args'] = v.sbatch_args
-            cluster_field_dict[k] = dct
-        clusters_data = {'clusters': cluster_field_dict,
-                'groups': clusters['groups']}
+            node_field_dict[k] = dct
+        nodes_data = {'nodes': node_field_dict,
+                'groups': nodes['groups']}
         self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
-                        clusters_filename), clusters_data)
+                        nodes_filename), nodes_data)
 
     def load_yaml(self, filename):
         """Loads yaml file"""
@@ -512,7 +512,6 @@ class ConfigParser():
                             neronet.experiment.Experiment(**experiment_data))
                 _process_data(experiment_scope) 
         _process_data(data)
-        print(experiments)
  
         if errors:
             raise FormatError(errors)
