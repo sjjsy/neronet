@@ -1863,9 +1863,19 @@ Live demo
 
 ### Planning
 
-Sprint goal:
+Sprint goal: Wrap things up.
 
-Main tasks:
+High priority tasks:
 
-- a
-- b
+- General debugging, stress management and error handling MATIAS
+- Updating user guide, manual and documentation JOONA
+
+Lower priority tasks:
+
+- Add experiment from GUI TUOMO
+- Disk space to the node resource info MATIAS
+- Export info from Agilefant to the repo SAMUEL
+- Prepare and practice the progress 3 review, ie. project review JOONA
+- Prepare a screencapture video for the review and to complement user guide/marketing SAMUEL
+- Allow plot combination (a variable from multiple exps to the same plot) IIRO
+- Switch rsync to scp for file transfer IIRO
