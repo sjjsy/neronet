@@ -122,8 +122,8 @@ You can specify clusters either via command line or by manually updating the clu
 
 *To add clusters via command line use the following format:*
 ::
-	Usage: nerocli --cluster ID TYPE SSH_ADDRESS
-	Example: nerocli --cluster triton slurm triton.cs.hut.fi
+	Usage: nerocli --addnode ID TYPE SSH_ADDRESS
+	Example: nerocli --addnode triton slurm triton.cs.hut.fi
 
 
 ID is a user defined id of the cluster, SSH_ADDRESS is the ssh address of the cluster, TYPE is either 'slurm' or 'unmanaged'
@@ -136,7 +136,15 @@ Specifying and Configuring Experiments in Neronet CLI
 
 Neronet supports experiments written using any programming language or framework as long as the experiments are runnable with a command of the format 'RUN_COMMAND-PREFIX CODE_FILE PARAMETERS', f.ex. 'python2.7 main.py 1 2 3 4 file.txt'
 
-Start by writing your experiment code and save all experiments you deem somehow related to a single folder. Then include a YAML configuration file in your folder and name it 'config.yaml'. In the configuration file you are to specify all the different experiments you want to run using the following format. Please read this section carefully for it contains a ton of important information.
+Start by writing your experiment code and save all experiments you deem somehow related to a single folder. Then include a YAML configuration file in your folder and name it 'config.yaml'. It is also possible to create the YAML configuration file template with the following command:
+
+*Example:*
+::
+	Usage: nerocli --template EXP_ID RUN_COMMAND-PREFIX CODE_FILE PARAMETERS
+	Example: nerocli --template theanotest python theanotest.py N feats training_steps
+
+
+In the configuration file you are to specify all the different experiments you want to run using the following format. Please read this section carefully for it contains plenty of important information.
 
 *Example:*
 ::
@@ -205,8 +213,8 @@ After your experiment folder contains the config file of the correct format and 
 
 *Example:*
 ::
-	Usage: nerocli --experiment FOLDER
-	Example: nerocli --experiment ~/experiments/lang_exp
+	Usage: nerocli --addexp FOLDER
+	Example: nerocli --addexp ~/experiments/lang_exp
 
 **Reserved Words:**
 ::
@@ -232,7 +240,7 @@ To delete a specified experiment from your Neronet application's database you ca
 
 *Example:*
 ::
-	nerocli --delete EXPERIMENT_ID
+	nerocli --delexp EXPERIMENT_ID
 
 EXPERIMENT_ID is the 'ID' attribute defined on the topmost row of the experiment folder's config.yaml. Alternatively, if you only want to delete a certain experiment within a folder, you can use the format 'ID/experiment_Id' (see *specifying experiments* to find out what these attributes are). Commands of the format 'delete ID/experiment_Id' don't affect the experiment's children or parents.
 
@@ -306,7 +314,7 @@ Assume we have folder ``~/mytheanotest`` which contains an experiment named
 there. We proceed as follows:
 
 Define a cluster where the experiment is to be run:
-``nerocli --cluster kosh kosh.aalto.fi unmanaged``
+``nerocli --addnode kosh kosh.aalto.fi unmanaged``
 
 Neronet requires some information about each experiment, which is why we
 create the file ``~/mytheanotest/config.yaml`` with the following content::
@@ -325,7 +333,7 @@ create the file ``~/mytheanotest/config.yaml`` with the following content::
 		```
 
 Now we let Neronet know about the experiment by registering it:
-``nerocli --experiment ~/mytheanotest``
+``nerocli --addexp ~/mytheanotest``
 
 Finally, we submit the experiment to be run in the cluster:
 ``nerocli --submit kosh theanotest``
@@ -384,9 +392,9 @@ You can get into the folder where experiment is defined by double clicking exper
 
 **Collection status report**
 
-Hit refresh to update statu(e)s of the experiment(s).
+Hit refresh to update status(es) of the experiment(s).
 
 **manipulating experiments table**
 
-Right click will open menu where you can select parameters which you want to view.
+Right clicking will open menu where you can select parameters which you want to view.
 By pressing headers you can sort your experiments.
