@@ -1,7 +1,6 @@
 Todo:
 
 - iss010 Error handling when defining or submitting to invalid clusters.
-- iss011 Color coding bug
 - iss012 Think about what is interesting enough to take space in the GUI
 - iss013 Fetch should happen automatically when changes are made
 - iss014 Submit and other core buttons/stuff should be highlighted
@@ -26,5 +25,13 @@ Todo:
 - iss033 Making a cluster with a same name
 - iss034 Better explanation what experiment id is (same for clusters) perhaps exp name instead
 - iss035 Where to see that data after fetching
+- iss036 Running nerocli wihtout parameters produces no results
 
 Done:
+
+- iss011 Color coding bug
+- iss023 GUI change highlight color
+- iss024 GUI accepts empty fields
+- iss025 GUI move errors to GUI
+- iss020 Status label to GUI
+- iss028 Highlight all if name is clicked, else cell
