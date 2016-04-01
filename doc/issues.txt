@@ -20,6 +20,7 @@ Todo:
 - iss033 making a cluster with a same name
 - iss034 better explanation what experiment id is (same for clusters) perhaps exp name instead
 - iss035 where to see that data after fetching
+- iss036 running nerocli wihtout parameters produces no results
 
 Done:
 
