@@ -43,6 +43,11 @@ DATABASE_FILENAME = 'default.yaml'
 PREFERENCES_FILENAME = 'preferences.yaml'
 NODES_FILENAME = 'nodes.yaml'
 
+def formatstr(s, length):
+    """return the string s so that it is lenght characters long adding spaces or truncating as necessary
+    """
+    return ("{:<"+str(length)+"}").format(s)[:length]
+
 class Neroman:
 
     """The part of Neronet that handles user side things.
@@ -219,7 +224,6 @@ class Neroman:
         else:
             yield '"%s", No such experiment' % (experiment_id) 
 
-
     def status_gen(self, arg):
         """Creates a generator that generates the polled status
 
@@ -228,26 +232,17 @@ class Neroman:
         """
         if arg != 'all':
             if arg == 'nodes':
-                yield 'Name       Type       Address    Load\n'
                 if not self.nodes['nodes']:
                     yield 'No nodes defined\n'
                 else:
                     for cid, node in self.nodes['nodes'].iteritems():
                         try:
-                            node.update_average_load(node.sshrun('uptime').out.split()[-1])
+                            node.average_load = float(node.sshrun('uptime').out.split()[-1])
                         except RuntimeError:
-                            node.update_average_load("undefined")
-                        self.config_parser.save_nodes(NODES_FILENAME, self.nodes)
-                        yield '%s\n' % (node)
-                    if self.nodes['groups']:
-                        yield "Node groups:\n"
-                        groups = self.nodes['groups']
-                        for group_id, group_nodes in groups.iteritems():
-                            yield '- %s: %s\n' % (group_id, ', '.join(node for node in group_nodes))
-                    raise StopIteration
-                for key in self.nodes['nodes']:
-                    for ln in self.status_gen(key):
-                        yield ln
+                            node.average_load = None
+                    yield '{0:<11} {1:<11} {2:<11} {3:<6}\n'.format('Name','Type','Address','Load')
+                    for node in self.nodes['nodes'].values():
+                        yield '{0:<11} {1:<11} {2:<11} {3:<6}\n'.format(node.cid, node.ctype, node.ssh_address, node.average_load)
                 raise StopIteration
             elif arg in self.database:
                 experiment = self.database[arg]
@@ -275,32 +270,31 @@ class Neroman:
             else:
                 raise IOError('Neroman: no experiment or node named "%s"!'\
                                 % (arg))
-        yield "================Neroman=================\n"
-        yield "\n"
-        yield "================User====================\n"
-        yield "Name: %s\n" % self.preferences['name']
-        yield "Email: %s\n" % self.preferences['email']
+        #yield "================User====================\n"
+        #yield "Name: %s\n" % self.preferences['name']
+        #yield "Email: %s\n" % self.preferences['email']
         if self.preferences['default_node']:
             yield "Default Node: %s\n" % self.preferences['default_node']
-        yield "\n"
-        yield "================Nodes================\n"
+        #yield "\n"
+        yield "=> Nodes =>\n"
         if not self.nodes['nodes']:
             yield 'No nodes defined\n'
         else:
-            for node in self.nodes['nodes'].itervalues():
-                yield '%s (%s, %s)\n' % (node.cid, node.ssh_address, node.ctype)
+            # Sort in descending order by ID
+            for node in sorted(self.nodes['nodes'].itervalues(), key=lambda n: n.cid):
+                yield '- %s (%s)\n' % (node.cid, node.ssh_address)
         if self.nodes['groups']:
             yield "Node groups:\n"
             groups = self.nodes['groups']
             for group_id, group_nodes in groups.iteritems():
                 yield '- %s: %s\n' % (group_id, ', '.join(node for node in group_nodes))
-        yield "\n"
-        yield "================Experiments=============\n"
+        yield "\n=> Experiments =>\n"
         if not len(self.database):
             yield "No experiments defined\n"
         else:
             experiments_by_state = self._experiments_by_state(self.database)
             current = ""
+            # Sort in descending order by state and then by ID
             for state, experiments in sorted(experiments_by_state.iteritems()):
                 yield "%s:\n" % state.capitalize()
                 for experiment in sorted(experiments, key=lambda e: e.id):
@@ -326,7 +320,7 @@ class Neroman:
         if not node_id:
             node_id = self.preferences['default_node']
             if node_id == "":
-                raise AttributeError('no default node defined')
+                raise AttributeError('No default node defined')
         #if node_id in self.nodes['groups']:
            # node_id = random.choice(self.nodes['groups'][node_id])
         if node_id in self.nodes['groups']:

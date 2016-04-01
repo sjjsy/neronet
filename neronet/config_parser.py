@@ -211,7 +211,7 @@ class ConfigParser():
     def save_nodes(self, nodes_filename, nodes):
         node_field_dict = {}
         for k, v in nodes['nodes'].items():
-            dct = {'type': v.ctype, 'ssh_address': v.ssh_address, 'average_load': v.average_load}
+            dct = {'type': v.ctype, 'ssh_address': v.ssh_address}
             if v.sbatch_args:
                 dct['sbatch_args'] = v.sbatch_args
             node_field_dict[k] = dct

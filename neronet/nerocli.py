@@ -151,11 +151,14 @@ def main():
             print(e)
     if args.submit:
         experiment_id = args.submit[0]
-        if len(args.submit) > 1:
-            node_id = args.submit[1]
-            print(''.join(nero.submit(experiment_id, node_id)), end="")
-        else:
-            print(''.join(nero.submit(experiment_id)), end="")
+        try:
+            if len(args.submit) > 1:
+                node_id = args.submit[1]
+                print(''.join(nero.submit(experiment_id, node_id)), end="")
+            else:
+                print(''.join(nero.submit(experiment_id)), end="")
+        except Exception as err:
+            print('Submission failed! Error: %s' % (err))
     if args.fetch:
         print(''.join(nero.fetch()), end="")
     if args.template:

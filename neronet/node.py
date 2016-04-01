@@ -31,18 +31,7 @@ class Node(object):
         self.ssh_address = ssh_address
         self.sbatch_args = sbatch_args
         self.dir = usr_dir
-        self.average_load = None
-        #self.experiment_count = 0
-
-    def __str__(self):
-        return '%s %s %s %s' % (self.formatstr((self.cid),10), self.formatstr((self.ctype),10), self.formatstr((self.ssh_address),10), self.formatstr((self.average_load),5))
-
-    
-    def formatstr(self, s, length):
-        """return the string s so that it is lenght characters long adding spaces or truncating as necessary
-        """
-        return ("{:<"+str(length)+"}").format(s)[:length]
-    
+        #self.experiment_count = 0    
     
     def sshrun(self, cmd, inp=None):
         """Execute a shell command via SSH on the remote Neronet node.
@@ -129,8 +118,3 @@ class Node(object):
         data = {'action': 'fetch', 'msg': 'I love honeybees!'}
         res = self.sshrun('neromum --input', inp=pickle.dumps(data, -1))
         yield 'Finished: %d, "%s", "%s"' % (res.rv, res.err, res.out)
-        
-    def update_average_load(self, load):
-        self.average_load = load
-
-
