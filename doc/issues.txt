@@ -1,3 +1,5 @@
+Todo:
+
 - iss010 Error handling when defining or submitting to invalid clusters.
 - iss011 Color coding bug
 - iss012 Think about what is interesting enough to take space in the GUI
@@ -24,3 +26,5 @@
 - iss033 making a cluster with a same name
 - iss034 better explanation what experiment id is (same for clusters) perhaps exp name instead
 - iss035 where to see that data after fetching
+
+Done:
