@@ -1930,7 +1930,7 @@ High priority tasks:
 Lower priority tasks:
 
 - Add experiment from GUI TUOMO
-- Disk space to the node resource info MATIAS
+- Disk space to the node resource info TEEMU
 - Export info from Agilefant to the repo SAMUEL
 - Prepare and practice the progress 3 review, ie. project review JOONA
 - Prepare a screencapture video for the review and to complement user guide/marketing SAMUEL
