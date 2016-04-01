@@ -386,6 +386,10 @@ After selecting the experiments, choose cluster and hit submit.
 
 Selecting experiment will update log view with the information accosiated with experiment.
 
+**Cluster status report**
+
+Selecting experiment will update log view with the information accosiated with cluster.
+
 **Accessing status folder**
 
 You can get into the folder where experiment is defined by double clicking experiment.
@@ -394,7 +398,23 @@ You can get into the folder where experiment is defined by double clicking exper
 
 Hit refresh to update status(es) of the experiment(s).
 
+**Deleting experiments**
+
+You can delte experiments by selecting experiment(s) and pressing delete key
+
 **manipulating experiments table**
 
 Right clicking will open menu where you can select parameters which you want to view.
 By pressing headers you can sort your experiments.
+
+**Plotting experiments**
+
+You can plot some function of your experiment by pressing the experiment and selecting plots in plot-tab.
+
+**Create new experiment**
+
+Navigate to experiment tab and type command you wish to run your experiment f.ex "python test.py x y". Program will create you a template config.yaml.
+
+**Duplicate experiment**
+
+Select experiment and press duplicate buton in experiment-tab.

@@ -41,14 +41,14 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setupUi(self)
         self.nero = neronet.neroman.Neroman()
         self.menu = QtGui.QMenu(self)
-        self.init_clusters()
+        self.init_nodes()
         self.init_labels()
         self.init_menu()
         self.add_to_param_table()
         # bind signals and slots
-        self.cluster_add_btn.clicked.connect(self.add_cluster)
-        self.clusters.itemSelectionChanged.connect(self.update_cluster_fields)
-        self.clusters.itemClicked.connect(self.show_cluster_status)
+        self.node_add_btn.clicked.connect(self.add_node)
+        self.nodes.itemSelectionChanged.connect(self.update_node_fields)
+        self.nodes.itemClicked.connect(self.show_node_status)
         self.paramTable.itemSelectionChanged.connect(self.show_one_experiment)
         self.paramTable.verticalHeader().sectionDoubleClicked.connect(self.open_config)
         self.paramTable.cellClicked.connect(self.highlight_row)
@@ -128,30 +128,30 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             self.allLabels |= set(
                 self.nero.database[exp]._fields["parameters"].keys())        
 
-    def init_clusters(self):
-        """add each cluster to view"""
-        self.clusters.clear()
-        for cluster in self.nero.clusters["clusters"]:
-            self.clusters.addItem(cluster)
+    def init_nodes(self):
+        """add each node to view"""
+        self.nodes.clear()
+        for node in self.nero.nodes["nodes"]:
+            self.nodes.addItem(node)
 
-    def add_cluster(self):
-        """add cluster to neroman configs"""
+    def add_node(self):
+        """add node to neroman configs"""
         self.experiment_log.clear()
-        addr = str(self.cluster_address_field.text())
-        nm = str(self.cluster_name_field.text())
-        type = str(self.cluster_type_combo.currentText())
+        addr = str(self.node_address_field.text())
+        nm = str(self.node_name_field.text())
+        type = str(self.node_type_combo.currentText())
         if not addr or not nm:
             return
-        for line in self.nero.specify_cluster(nm, type, addr):
+        for line in self.nero.specify_node(nm, type, addr):
             self.experiment_log.insertPlainText(line)
-        self.init_clusters()
+        self.init_nodes()
 
-    def update_cluster_fields(self):
-        """add clusters view"""
-        cluster = str(self.clusters.currentItem().text())
-        self.cluster_name_field.setText(cluster)
-        self.cluster_address_field.setText(
-            self.nero.clusters["clusters"][cluster].ssh_address)
+    def update_node_fields(self):
+        """add nodes view"""
+        node = str(self.nodes.currentItem().text())
+        self.node_name_field.setText(node)
+        self.node_address_field.setText(
+            self.nero.nodes["nodes"][node].ssh_address)
 
     def add_file(self):
         """add folder to neroman database"""
@@ -170,17 +170,17 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
     def submit_exp(self):
         """submit button functionality"""
         self.experiment_log.clear()
-        cluster = self.clusters.currentItem()
-        if cluster is None:
+        node = self.nodes.currentItem()
+        if node is None:
             return
-        cluster = str(cluster.text())
+        node = str(node.text())
         rows = sorted(set(index.row() for index in
                   self.paramTable.selectedIndexes()))
         if not rows:
             return
         for exp in rows:
             name = str(self.paramTable.item(exp, 0).text())
-            for line in self.nero.submit(name, cluster):
+            for line in self.nero.submit(name, node):
                 self.experiment_log.insertPlainText(line + "\n")
 	#self.show_one_experiment()
         self.add_to_param_table()
@@ -247,10 +247,10 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         for line in self.nero.status_gen(name):
             self.experiment_log.insertPlainText(line)
 
-    def show_cluster_status(self):
-        """prints detailed info of one cluster"""
+    def show_node_status(self):
+        """prints detailed info of one node"""
         self.experiment_log.clear()
-	name = str(self.clusters.currentItem().text())
+	name = str(self.nodes.currentItem().text())
         for line in self.nero.status_gen(name):
             self.experiment_log.insertPlainText(line)    
 

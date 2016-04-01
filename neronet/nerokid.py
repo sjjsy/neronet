@@ -60,7 +60,7 @@ class Nerokid(neronet.daemon.Daemon):
 
     """A class to specify the Nerokid object.
 
-    Runs in a cluster node and manages and monitors the experiment given.
+    Runs in a node node and manages and monitors the experiment given.
 
     Gets host as the 1st command line argument
     Port as the 2nd

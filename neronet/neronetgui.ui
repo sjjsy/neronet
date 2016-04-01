@@ -83,9 +83,9 @@
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Cluster</string>
+        <string>Node</string>
        </attribute>
-       <widget class="QListWidget" name="clusters">
+       <widget class="QListWidget" name="nodes">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -95,7 +95,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QLineEdit" name="cluster_name_field">
+       <widget class="QLineEdit" name="node_name_field">
         <property name="geometry">
          <rect>
           <x>230</x>
@@ -115,7 +115,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>cluster name</string>
+         <string>node name</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_2">
@@ -128,10 +128,10 @@
          </rect>
         </property>
         <property name="text">
-         <string>cluster address</string>
+         <string>node address</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="cluster_add_btn">
+       <widget class="QPushButton" name="node_add_btn">
         <property name="geometry">
          <rect>
           <x>230</x>
@@ -141,10 +141,10 @@
          </rect>
         </property>
         <property name="text">
-         <string>Add cluster</string>
+         <string>Add node</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="cluster_address_field">
+       <widget class="QLineEdit" name="node_address_field">
         <property name="geometry">
          <rect>
           <x>230</x>
@@ -164,10 +164,10 @@
          </rect>
         </property>
         <property name="text">
-         <string>Clusters</string>
+         <string>Nodes</string>
         </property>
        </widget>
-       <widget class="QComboBox" name="cluster_type_combo">
+       <widget class="QComboBox" name="node_type_combo">
         <property name="enabled">
          <bool>true</bool>
         </property>
