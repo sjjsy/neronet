@@ -1,7 +1,6 @@
 Todo:
 
 - iss010 Error handling when defining or submitting to invalid clusters.
-- iss011 Color coding bug
 - iss012 Think about what is interesting enough to take space in the GUI
 - iss013 Fetch should happen automatically when changes are made
 - iss014 Submit and other core buttons/stuff should be highlighted
@@ -10,15 +9,10 @@ Todo:
 - iss017 sending multiple experiments via cli
 - iss018 nerocli should print help commands given no other parameters
 - iss019 cluster help is inadequate
-- iss020 status label to GUI
 - iss021 handling status reports after the size of the table increases (so that the status report isnt 100+ lines)
 - iss022 submitting an experiment multiple times causes stdlog to do something
-- iss023 gui change highlight color
-- iss024 gui accepts empty fields
-- iss025 gui move errors to gui
 - iss026 hide experiments by rightclicking label
 - iss027 hide params by right clicking labels
-- iss028 highlight all if name is clicked, else cell
 - iss029 experiment file must be on the experiment folder
 - iss030 better distinction between fixed parameters and user defined parameters
 - iss031 experiment command is confusing maybe "add experiment instead" also for clusters
@@ -28,3 +22,11 @@ Todo:
 - iss035 where to see that data after fetching
 
 Done:
+
+- iss011 Color coding bug
+- iss023 gui change highlight color
+- iss024 gui accepts empty fields
+- iss025 gui move errors to gui
+- iss020 status label to GUI
+- iss028 highlight all if name is clicked, else cell
+
