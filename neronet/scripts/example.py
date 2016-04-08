@@ -43,7 +43,6 @@ def file_reader(file_data, names):
             data[key].append(val)
     return data
 
-
 def plot(filename, feedback, x, y):
     """ Plots the given values to file
 
@@ -56,15 +55,19 @@ def plot(filename, feedback, x, y):
     Returns:
         axes object: an axes object that can be used to combine the plots
     """
-    #Creates and plots the current figure
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.plot(x,y)
-    fig.savefig(filename)
-    
     if feedback:
         #Adds the plot to the combined axes
         feedback.plot(x,y)
         return feedback
     else:
+        #Creates and plots the current figure
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(x[1],y[1])
+        ax.set_xlabel(x[0])
+        ax.set_ylabel(y[0])
+        fig.savefig(filename)
         return ax
+
+def plot_final(filename, feedback):
+    ax.get_figure().savefig(filename)

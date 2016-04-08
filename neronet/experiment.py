@@ -169,57 +169,64 @@ class Experiment(object):
         return data
 
     def plot_outputs(self):
-        """Plots the experiment output according to the user specified
-        plotting function and output line parser
+        """Plots the experiment outputs according to the user specified
+        plotting functions and output line parser
         
         Raises:
             OutputReaderror: if a output file couldn't be read
             PlotError: if plotting failed
         """
         plots = self._fields['plot']
-        for plot_filename, args in plots.iteritems():
+        for plot_name in plots:
             #Construct the plotter and arguments
-            args = shlex.split(args)
-            try:
-                module_name = args[0]
-                plotter_name = args[1]
-                output_filename = args[2]
-                plot_args = args[3:]
-            except:
-                raise PlotError("%s: couldn't parse plot arguments" % self.id)
-            try:
-                plotter = neronet.core.import_from(module_name, plotter_name)
-            except:
-                raise PlotError("%s: couldn't import %s from %s" \
-                                % (self.id, plotter_name, module_name))
-            self.plot_file(plot_filename, plotter, output_filename, plot_args)
-            
-    def plot_file(self, plot_name, plotter, output_filename, plot_args):
+            self.plotter(plot_name)
+
+    def plotter(self, plot_name, feedback=None):
         """Plots the outputfile into plot image using user defined plotting
         and output reading functions
 
         Parameters:
             plot_name (str): Name of the plot image
-            plotter (function): Function to plot the output data
-            output_filename (str): Name of the output file
-            plot_args (list): list of arguments to the plotter function
+            feedback (obj): a feedback object fed into the plotting function
+
+        Returns:
+            feedback (obj): Object that can be fed back to the 
+                            plotting function
 
         Raises:
             OutputReadError: When the output couldn't be read
             PlotError: When the plotting failed
         """
+        if plot_name not in self.plot:
+            raise PlotError("%s: no plot named %s defined" \
+                                % (self.id, plot_name))
         #Get the output data as dict from the output file
+        args = shlex.split(self.plot[plot_name])
+        try:
+            module_name = args[0]
+            plotter_name = args[1]
+            output_filename = args[2]
+            plot_args = args[3:]
+        except:
+            raise PlotError("%s: couldn't parse plot arguments" % self.id)
+        try:
+            plotter = neronet.core.import_from(module_name, plotter_name)
+        except:
+            raise PlotError("%s: couldn't import %s from %s" \
+                                % (self.id, plotter_name, module_name))
+        #Reads the output file using user defined output reading function
         output = self.get_output(output_filename)
 
         #Convert plot argument key words to values
         plot_data = []
         for plot_arg in plot_args:
             if plot_arg in output:
-                plot_arg = output[plot_arg]
+                plot_arg = (plot_arg, output[plot_arg])
             plot_data.append(plot_arg)
         try:
             results_dir = self.get_results_dir()
-            plotter(os.path.join(results_dir, plot_name), None, *plot_data)
+            return plotter(os.path.join(results_dir, plot_name), \
+                            feedback, *plot_data)
         except:
             raise PlotError("%s: couldn't plot %s, maybe something is wrong"
                             " with the plot function?" % (self.id, plot_name))

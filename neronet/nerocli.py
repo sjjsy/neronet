@@ -7,6 +7,8 @@ import os.path
 import argparse
 import sys
 
+import traceback
+
 import neronet.neroman
 from neronet.core import create_config_template as cfgtemplate
 from neronet.core import remove_data
@@ -30,7 +32,7 @@ def create_argument_parser():
                         help='Creates a duplicate of the experiment')
     parser.add_argument('--plot',
                         metavar='experiment_id',
-                        nargs=1,
+                        nargs='+',
                         help='Plots the experiment with the given ID')
     parser.add_argument('--addnode',
                         metavar=('cluster_id', 'ssh_address'),
@@ -114,13 +116,22 @@ def main():
             print(''.join(nero.duplicate_experiment(experiment_id, \
                         new_experiment_id)), end="") 
         except IOError as e:
-            print(e)
+            print(str(e))
     if args.plot:
-        experiment_id = args.plot[0]
-        try:
-            print(''.join(nero.plot_experiment(experiment_id)), end="")
-        except IOError:
-            print('No experiment with ID "%s"' % experiment_id)
+        if len(args.plot) == 1:
+            experiment_id = args.plot[0]
+            try:
+                print(''.join(nero.plot_experiment(experiment_id)), end="")
+            except Exception as e:
+                print(str(e))
+                traceback.print_exc()
+        else:
+            experiment_ids = args.plot
+            try:
+                print(''.join(nero.combined_plot(experiment_ids)), end="")
+            except Exception as e:
+                print(str(e))
+                traceback.print_exc()
     if args.addnode:
         if len(args.addnode) < 2:
             print("Please specify the required arguments: cluster ID and ssh address")

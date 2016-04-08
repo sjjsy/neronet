@@ -200,10 +200,41 @@ class Neroman:
     def plot_experiment(self, experiment_id):
         """ Plots the experiemnt according to plotting specifications
         """
+        if experiment_id not in self.database:
+            raise IOError("Neronet: %s is not in database" % experiment_id)
         experiment = self.database[experiment_id]
         experiment.plot_outputs()
         yield "Plotted experiment %s" % experiment_id
     
+    def combined_plot(self, experiment_ids):
+        experiments = []
+        plots = None
+        first = True
+        for experiment_id in experiment_ids:
+            if experiment_id not in self.database:
+                raise IOError("Neronet: %s is not in database" \
+                                % experiment_id)
+            experiment = self.database[experiment_id]
+            if first:
+                if experiment.plot:
+                    plots = experiment.plot
+            else:
+                if experiment.plot:
+                    for plot in plots:
+                        if plot not in experiment.plot or \
+                                plots[plot] != experiment.plot[plot]:
+                            del plots[plot]
+                        
+            experiments.append(experiment)
+            first = False
+        if not plots:
+            raise IOError("Neroman: no combinable plots")
+        for plot in plots:
+            plots[plot] = None
+        for experiment in experiments:
+            for plot in plots:
+                plots[plot] = experiment.plotter(plot, plots[plot])
+        yield "Successfully plotted experiments"
     def terminate_experiment(self, experiment_id):
         if experiment_id in self.database:            
             cluster_id = self.database[experiment_id]._fields['cluster_id']

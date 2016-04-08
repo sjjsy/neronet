@@ -143,7 +143,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
 	collection: lang_exp
 	run_command_prefix: python3
 	main_code_file: main.py
-	logoutput: stdout
+	outputs: stdout
 	+lang_exp1:
 		parameters:
 			hyperparamx: [1,2,34,20]
@@ -185,7 +185,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
 - Each different experiment specification must have the following attributes
 	- main_code_file: The path to the code file that is to be run when executing the experiment
 	- run_command_prefix: The prefix of the run command f.ex 'python2'
-	- logoutput: The location to which the log output of the experiment is to be written. Can be either stdout or a file path.
+	- outputs: The location to which the log output of the experiment is to be written. Can be either stdout or a file path.
 	- parameters: This attribute is followed by a block containing all the unique parameters of this specific experiment. Parameter names can be arbitrary.
 	- parameter_format: Specifies the order in which the parameters are given to the experiment code file in the form of a string. Write the attribute value within single quotes. Parameter names written within braces will be replaced by their values defined in the *parameters* section. F.ex in the example above lang_exp2 --parameter_format defines a parameter string 'kh nyt data/2.txt 400'. You can escape braces and special characters with backslashes in case your parameter names contain braces.
 	- Your experiments should be runnable with a command of the form 'RUN_COMMAND_PREFIX MAIN_CODE_FILE PARAMETER_STRING' F.ex in the example above lang_exp2 must be runnable with the command 'python2 main2.py kh nyt data/2.txt 400'**
@@ -198,7 +198,7 @@ Start by writing your experiment code and save all experiments you deem somehow 
  	- when: The value of this attribute can be either 'immediately' or 'time MINUTES' where MINUTES is the time interval in minutes after which the warning condition is checked and action performed.
  	- action: Specifies what you want neronet to do when the warning condition is fulfilled. The value of this attribute is either 'kill' (if you want the experiment to be terminated when the warning condition is fulfilled) or 'warn' (if you want to see a warning message when the condition is fullfilled)
  	- The log output from the experiment code must contain rows of the format: 'VARIABLENAME VALUE'. So that neronet is able to follow the variable values. F.ex. in the example above the log output of lang_exp1 must contain rows of the form 'error_rate 24.3334', 'error_rate 49', 'error_rate 67.01', etc... The row must not contain anything else.
-- If multiple experiments have the same attribute values, it is not necessary to re-write every attribute for every experiment. The experiments defined in inner blocks automatically inherit all the attribute values specified in outer blocks. For example in the example above 'lang_exp1' and 'lang_exp2' inherit the run_command_prefix, main_code_file and logoutput values from the outmost block and lang_exp3 inherits all the parameter values from lang_exp1. If you don't want to inherit a specific value, just specify it again in the inner block and it is automatically overwritten. For example in the example above lang_exp3 uses different hyperparamz and parameter_format values than its parent lang_exp1.
+- If multiple experiments have the same attribute values, it is not necessary to re-write every attribute for every experiment. The experiments defined in inner blocks automatically inherit all the attribute values specified in outer blocks. For example in the example above 'lang_exp1' and 'lang_exp2' inherit the run_command_prefix, main_code_file and outputs values from the outmost block and lang_exp3 inherits all the parameter values from lang_exp1. If you don't want to inherit a specific value, just specify it again in the inner block and it is automatically overwritten. For example in the example above lang_exp3 uses different hyperparamz and parameter_format values than its parent lang_exp1.
 - If you place multiple parameter values within brackets and separated by a comma (like in the example above lang_exp1 -- hyperparamx: [1,2,34,20])Neronet will automatically generate different experiments for each value specified within brackets. (f.ex lang_exp1 would be run with the parameters '1 2 data/1.txt 2', '2 2 data/1.txt 2', '34 2 data/1.txt 2' and '20 2 data/1.txt 2')
 
 After your experiment folder contains the config file of the correct format and all the code and parameter files, you can then submit the folder to your Neronet application with the following command.
@@ -210,13 +210,21 @@ After your experiment folder contains the config file of the correct format and 
 
 **Reserved Words:**
 ::
-	ID
+	experiment_id
 	run_command_prefix
 	main_code_file
-	logoutput
 	parameters
 	parameter_format
-	warning:
+	outputs
+	output_line_processor
+	output_file_processor
+	plot
+	collection
+	required_files
+	conditions
+	custom_msg
+	path
+	warning
 	variablename
 	killvalue
 	comparator

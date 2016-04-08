@@ -512,7 +512,6 @@ class ConfigParser():
                             neronet.experiment.Experiment(**experiment_data))
                 _process_data(experiment_scope) 
         _process_data(data)
-        print(experiments)
  
         if errors:
             raise FormatError(errors)
