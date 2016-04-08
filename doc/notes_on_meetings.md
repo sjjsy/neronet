@@ -1376,7 +1376,7 @@ Agenda:
 
 - Merging
 - Integration
-- Cli help/usage
+- CLI help/usage
 - Neroman-mum SSH data transmission
 - Peer review
 
@@ -1743,6 +1743,32 @@ We're gonna get 5 for sure.
 We need to make more diagrams and stuff to make our presentations more
 impressive. Otherwise we're the best.
 
+### Sprint 4 retrospective
+
+#### Visiting and updating the team's DoD:
+
+No updates, after the last update the result was good
+
+#### Visiting and reviewing the commitments done in the last sprint retrospective
+
+- Employed CI with Travis
+- Continued holding daily scrums when necessary
+
+#### Identifying things the team should start doing
+
+- Improving unit tests
+- Report hours done to agilefant after each session
+- Work more in the same room to improve communication
+
+#### Identifying things the team should continue doing
+
+- Continue improving testing and continuous integration
+
+#### Listing actionable commitments
+
+- Everybody starts marking the hours spent after each session
+- Joona continues writing tests to be used with travis CI
+
 ## 03-04 45m Sprint planning part 2
 
 Participants: team + PO
@@ -1798,6 +1824,7 @@ Agenda:
 Participants: team
 
 Agenda:
+
 - 13:00 Development
 - 16:45 Daily scrum
 - 17:00 Peer team testing
@@ -1832,3 +1859,135 @@ Information
 - Disk space ratio
 
 Potential info source: `top -n 1|head -n4`
+
+## 03-18 300m Frifury
+
+Participants: team
+
+Agenda:
+
+- Peer testing
+
+### Peer testing
+
+During peer team testing we identified the following bugs/improvement areas:
+
+- iss010 Error handling when defining or submitting to invalid clusters.
+- iss011 Color coding bug
+- iss012 Think about what is interesting enough to take space in the GUI
+- iss013 Fetch should happen automatically when changes are made
+- iss014 Submit and other core buttons/stuff should be highlighted
+- iss015 More feedback from the CLI and GUI (when deleting is successful etc, experiment succesfully defined)
+- iss016 Submit could also define the experiment given a experiment folder
+- iss017 Sending multiple experiments via CLI
+- iss018 Nerocli should print help commands given no other parameters
+- iss019 Cluster help is inadequate
+- iss020 Status label to GUI
+- iss021 Handling status reports after the size of the table increases (so that the status report isnt 100+ lines)
+- iss022 Submitting an experiment multiple times causes stdlog to do something
+- iss023 GUI change highlight color
+- iss024 GUI accepts empty fields
+- iss025 GUI move errors to GUI
+- iss026 Hide experiments by rightclicking label
+- iss027 Hide params by right clicking labels
+- iss028 Highlight all if name is clicked, else cell
+- iss029 Experiment file must be on the experiment folder
+- iss030 Better distinction between fixed parameters and user defined parameters
+- iss031 Experiment command is confusing maybe "add experiment instead" also for clusters
+- iss032 Load explanation
+- iss033 Making a cluster with a same name
+- iss034 Better explanation what experiment id is (same for clusters) perhaps exp name instead
+- iss035 Where to see that data after fetching
+
+## 03-30 75m Sprint change 5
+
+Participants: team + PO (Skype)
+
+Agenda:
+
+- Agenda
+- Results
+- Demo
+- Planning
+
+### Results
+
+Slideshow
+
+### Demo
+
+Live demo
+
+### Planning
+
+Sprint goal: Wrap things up.
+
+High priority tasks:
+
+- General debugging, stress management and error handling MATIAS
+- Updating user guide, manual and documentation JOONA
+
+Lower priority tasks:
+
+- Add experiment from GUI TUOMO
+- Disk space to the node resource info TEEMU
+- Export info from Agilefant to the repo SAMUEL
+- Prepare and practice the progress 3 review, ie. project review JOONA
+- Prepare a screencapture video for the review and to complement user guide/marketing SAMUEL
+- Allow plot combination (a variable from multiple exps to the same plot) IIRO
+- Switch rsync to scp for file transfer IIRO
+
+## 04-01 300m Frifury
+
+Participants: team
+
+Agenda:
+
+- Individual work
+- Sprint 5 retrospective
+
+### Sprint 5 retrospective
+
+Agenda:
+
+- Visiting and updating the team's DoD
+- Visiting and reviewing the commitments
+  done in the last sprint retrospective
+- Identifying things the team should start doing
+- Identifying things the team should stop doing
+- Identifying things the team should continue doing
+- Listing actionable commitments (Actionable = has clear
+  steps to completion and acceptance criteria. f.ex
+  "Check in code at least twice per day: before lunch
+  and before going home")
+
+#### Visiting and updating the team's DoD
+
+- Added Google Python Syntax to code style criteria
+- Acknowledged that the DoD for BI level is good, but our performance in
+  fullfilling it could be better
+- Relaxed the system testing requirement to make it less of a pain; the
+  changes were made to make achieving the quality criteria more realistic
+
+#### Visiting and reviewing the commitments done in the last sprint retrospective
+
+- We have worked on improving unit tests 
+- We have improved in reporting hours to agilefant after each session
+- We have not been able to increase the amount of weekly face-to-face time
+- We have continued improving testing and continuous integration
+
+#### Post project thoughts
+
+- The development would have been more effective if Matias and Joona would
+  have had Linux laptops. Also Teemu had to use Samuel's legacy laptop.
+- Tuomo thinks the availability of refreshments would have increased efficacy
+- Matias proposed that we could have had implemented a scheme where people
+  arriving late would have to compensate by offering others refreshments or
+  pizza.
+- Teemu thinks that the planning and implementation of pair work practices
+  could have been better. We started to work independently after sprint 3
+  without much discussions.
+- Samuel thinks the project was very long, tiring and difficult. Distribution
+  of work was very difficult in the very beginning when people had little
+  understanding of the domain. Getting various DoD practices applied required
+  a lot of effort. Later only the most essential practices were followed.

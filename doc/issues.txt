@@ -1,0 +1,37 @@
+Todo:
+
+- iss010 Error handling when defining or submitting to invalid clusters.
+- iss012 Think about what is interesting enough to take space in the GUI
+- iss013 Fetch should happen automatically when changes are made
+- iss014 Submit and other core buttons/stuff should be highlighted
+- iss015 More feedback from the CLI and GUI (when deleting is successful etc, experiment succesfully defined)
+- iss016 Submit could also define the experiment given a experiment folder
+- iss017 Sending multiple experiments via cli
+- iss018 Nerocli should print help commands given no other parameters
+- iss019 Cluster help is inadequate
+- iss020 Status label to GUI
+- iss021 Handling status reports after the size of the table increases (so that the status report isnt 100+ lines)
+- iss022 Submitting an experiment multiple times causes stdlog to do something
+- iss023 Gui change highlight color
+- iss024 Gui accepts empty fields
+- iss025 Gui move errors to gui
+- iss026 Hide experiments by rightclicking label
+- iss027 Hide params by right clicking labels
+- iss028 Highlight all if name is clicked, else cell
+- iss029 Experiment file must be on the experiment folder
+- iss030 Better distinction between fixed parameters and user defined parameters
+- iss031 Experiment command is confusing maybe "add experiment instead" also for clusters
+- iss032 Load explanation
+- iss033 Making a cluster with a same name
+- iss034 Better explanation what experiment id is (same for clusters) perhaps exp name instead
+- iss035 Where to see that data after fetching
+- iss036 Running nerocli wihtout parameters produces no results
+
+Done:
+
+- iss011 Color coding bug
+- iss023 GUI change highlight color
+- iss024 GUI accepts empty fields
+- iss025 GUI move errors to GUI
+- iss020 Status label to GUI
+- iss028 Highlight all if name is clicked, else cell

@@ -35,19 +35,19 @@ def create_argument_parser():
                         nargs='+',
                         help='Plots the experiment with the given ID')
     parser.add_argument('--addnode',
-                        metavar=('cluster_id', 'ssh_address'),
+                        metavar=('node_id', 'ssh_address'),
                         nargs=2,
-                        help='Specify a new cluster for computing')
+                        help='Specify a new node for computing')
     parser.add_argument('--delnode',
-                        metavar='cluster_id',
+                        metavar='node_id',
                         nargs=1,
-                        help='Deletes the cluster with the given ID')
+                        help='Deletes the node with the given ID')
     parser.add_argument('--user',
                         metavar=('name', 'email'),
                         nargs=2,
                         help='Updates user information')
     parser.add_argument('--submit',
-                        metavar=('experiment', 'cluster'),
+                        metavar=('experiment', 'node'),
                         nargs="+",
                         help='Submits an experiment to be run')
     parser.add_argument('--fetch',
@@ -134,23 +134,23 @@ def main():
                 traceback.print_exc()
     if args.addnode:
         if len(args.addnode) < 2:
-            print("Please specify the required arguments: cluster ID and ssh address")
+            print("Please specify the required arguments: node ID and ssh address")
             return
-        cluster_id = args.addnode[0]
+        node_id = args.addnode[0]
         ssh_address = args.addnode[1]
-        cluster_type = 'unmanaged'
+        node_type = 'unmanaged'
         try:
-            print(''.join(nero.specify_cluster(cluster_id, cluster_type, ssh_address)), end="")
-            print('Defined a new cluster with ID "%s"' % cluster_id)
+            print(''.join(nero.specify_node(node_id, node_type, ssh_address)), end="")
+            print('Defined a new node with ID "%s"' % node_id)
         except IOError as e:
             print(e)
             return
     if args.delnode:
-        cluster_id = args.delnode[0]
+        node_id = args.delnode[0]
         try:
-            print(''.join(nero.delete_cluster(cluster_id)), end="")
+            print(''.join(nero.delete_node(node_id)), end="")
         except KeyError:
-            print('No cluster with ID "%s"' % cluster_id)
+            print('No node with ID "%s"' % node_id)
     if args.user:
         name = args.user[0]
         email = args.user[1]
@@ -162,11 +162,14 @@ def main():
             print(e)
     if args.submit:
         experiment_id = args.submit[0]
-        if len(args.submit) > 1:
-            cluster_id = args.submit[1]
-            print(''.join(nero.submit(experiment_id, cluster_id)), end="")
-        else:
-            print(''.join(nero.submit(experiment_id)), end="")
+        try:
+            if len(args.submit) > 1:
+                node_id = args.submit[1]
+                print(''.join(nero.submit(experiment_id, node_id)), end="")
+            else:
+                print(''.join(nero.submit(experiment_id)), end="")
+        except Exception as err:
+            print('Submission failed! Error: %s' % (err))
     if args.fetch:
         print(''.join(nero.fetch()), end="")
     if args.template:
@@ -177,5 +180,3 @@ def main():
 
 def remove_dir(path):
     os.system('rm -r ' + path)
-if __name__ == '__main__':
-    main()
