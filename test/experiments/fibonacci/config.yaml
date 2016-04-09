@@ -1,4 +1,3 @@
-.
 run_command_prefix: python3
 main_code_file: main.py
 parameters:
