@@ -320,6 +320,14 @@ class ConfigParser():
             
             if 'parameters' in data:
                 if check_type('parameters', 'dict'):
+                    parameters =  data['parameters']
+                    for parameter, value in parameters.items():
+                        if isinstance(value, list):
+                            for val in value:
+                                if isinstance(val, list):
+                                    errors.append("%s: parameter %s list"
+                                    " element can't be a list" % (exp_id, \
+                                    parameter))
                     if 'parameters_format' not in data:
                         errors.append("%s: parameters format not defined for"
                                         " parameters" % exp_id)

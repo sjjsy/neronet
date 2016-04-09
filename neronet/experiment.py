@@ -107,6 +107,8 @@ class Experiment(object):
 
         Raises:
             OutputReadError: When reading of the output failed
+            ImportError: when importing the user defined output reading
+            function fails
         """
         data = None
         #Checks which output reader type is specified for the file type
@@ -126,11 +128,7 @@ class Experiment(object):
             except:
                 raise OutputReadError("%s: couldn't parse %s arguments" % \
                                         (self.id, processor_type))
-            try:
-                reader = neronet.core.import_from(module_name, reader_name)
-            except:
-                raise OutputReadError("%s: couldn't import %s from %s" % \
-                                        (self.id, module_name, reader_name))
+            reader = neronet.core.import_from(module_name, reader_name)
             #Gets the location of the results folder. 
             #Changes when the experiment has finnished
             results_dir = self.get_results_dir()
@@ -175,8 +173,11 @@ class Experiment(object):
         Raises:
             OutputReaderror: if a output file couldn't be read
             PlotError: if plotting failed
+            ImportError: When importing a user defined function fails.
         """
         plots = self._fields['plot']
+        if not plots:
+            raise PlotError("%s: no plots defined" % self.id)
         for plot_name in plots:
             #Construct the plotter and arguments
             self.plotter(plot_name)
@@ -196,6 +197,7 @@ class Experiment(object):
         Raises:
             OutputReadError: When the output couldn't be read
             PlotError: When the plotting failed
+            ImportError: When importing a user defined function fails.
         """
         if plot_name not in self.plot:
             raise PlotError("%s: no plot named %s defined" \
@@ -209,11 +211,7 @@ class Experiment(object):
             plot_args = args[3:]
         except:
             raise PlotError("%s: couldn't parse plot arguments" % self.id)
-        try:
-            plot_function = neronet.core.import_from(module_name, plotter_name)
-        except:
-            raise PlotError("%s: couldn't import %s from %s" \
-                                % (self.id, plotter_name, module_name))
+        plot_function = neronet.core.import_from(module_name, plotter_name)
         #Reads the output file using user defined output reading function
         output = self.get_output(output_filename)
 
@@ -225,7 +223,7 @@ class Experiment(object):
             plot_data.append(plot_arg)
         try:
             results_dir = self.get_results_dir()
-            return plot_functionr(os.path.join(results_dir, plot_name), \
+            return plot_function(os.path.join(results_dir, plot_name), \
                             feedback, save_image, *plot_data)
         except:
             raise PlotError("%s: couldn't plot %s, maybe something is wrong"

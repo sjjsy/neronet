@@ -176,3 +176,6 @@ def main():
 
 def remove_dir(path):
     os.system('rm -r ' + path)
+
+if __name__ == '__main__':
+    main()

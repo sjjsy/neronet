@@ -198,7 +198,7 @@ class Neroman:
         self.database[new_experiment_id] = duplicated_experiment
         self.config_parser.save_database(DATABASE_FILENAME, \
                                         self.database)
-        yield "Copied experiment %s into %s" % (experiment_id, \
+        yield "Copied experiment %s into %s\n" % (experiment_id, \
                                                 new_experiment_id)
 
     def plot_experiment(self, experiment_id):
@@ -208,7 +208,7 @@ class Neroman:
             raise IOError("Neronet: %s is not in database" % experiment_id)
         experiment = self.database[experiment_id]
         experiment.plot_outputs()
-        yield "Plotted experiment %s" % experiment_id
+        yield "Plotted experiment %s\n" % experiment_id
     
     def combined_plot(self, experiment_ids):
         experiments = []
@@ -243,7 +243,7 @@ class Neroman:
         for plot, feedback in zip(plots, feedbacks):
             experiment = experiments[-1]
             experiment.plotter(plot, feedback, True)
-        yield "Successfully plotted experiments"
+        yield "Successfully plotted experiments\n"
 
     def terminate_experiment(self, experiment_id):
         if experiment_id in self.database:            

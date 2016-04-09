@@ -61,7 +61,7 @@ def plot(filename, feedback, save_image, x, y, *args):
     if feedback:
         #Adds the plot to the combined axes
         feedback.plot(x,y)
-        if save_image
+        if save_image:
             fig = ax.get_figure()
             fig.savefig(filename)
         return feedback
@@ -72,6 +72,6 @@ def plot(filename, feedback, save_image, x, y, *args):
         ax.plot(x[1],y[1])
         ax.set_xlabel(x[0])
         ax.set_ylabel(y[0])
-        if save_image
+        if save_image:
             fig.savefig(filename)
         return ax
