@@ -7,8 +7,6 @@ import os.path
 import argparse
 import sys
 
-import traceback
-
 import neronet.neroman
 from neronet.core import create_config_template as cfgtemplate
 from neronet.core import remove_data
@@ -89,7 +87,7 @@ def main():
         try:
             changed_exps = nero.specify_experiments(experiment_folder)
         except (IOError, FormatError) as e:
-            print("Failed to specify experiments:", end="")
+            print("Failed to specify experiments:")
             print(e)
             return
         print('Experiment(s) successfully defined')
@@ -124,14 +122,12 @@ def main():
                 print(''.join(nero.plot_experiment(experiment_id)), end="")
             except Exception as e:
                 print(str(e))
-                traceback.print_exc()
         else:
             experiment_ids = args.plot
             try:
                 print(''.join(nero.combined_plot(experiment_ids)), end="")
             except Exception as e:
                 print(str(e))
-                traceback.print_exc()
     if args.addnode:
         if len(args.addnode) < 2:
             print("Please specify the required arguments: node ID and ssh address")

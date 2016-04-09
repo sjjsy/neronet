@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 """This module defines Neroman.
 
 To work with Neroman each experiment must have the following attributes
@@ -215,6 +214,7 @@ class Neroman:
         experiments = []
         plots = None
         first = True
+        feedbacks = {}
         for experiment_id in experiment_ids:
             if experiment_id not in self.database:
                 raise IOError("Neronet: %s is not in database" \
@@ -234,12 +234,17 @@ class Neroman:
             first = False
         if not plots:
             raise IOError("Neroman: no combinable plots")
+
         for plot in plots:
-            plots[plot] = None
-        for experiment in experiments:
-            for plot in plots:
-                plots[plot] = experiment.plotter(plot, plots[plot])
+            feedbacks[plot] = None
+        for experiment in experiments[:-1]:
+            for plot, feedback in zip(plots, feedbacks):
+                plots[plot] = experiment.plotter(plot, feedback[plot], False)
+        for plot, feedback in zip(plots, feedbacks):
+            experiment = experiments[-1]
+            experiment.plotter(plot, feedback, True)
         yield "Successfully plotted experiments"
+
     def terminate_experiment(self, experiment_id):
         if experiment_id in self.database:            
             node_id = self.database[experiment_id]._fields['node_id']

@@ -139,7 +139,7 @@ class Experiment(object):
             with open(os.path.join(results_dir, filename), 'r') as f:
                 if processor_type == 'output_file_processor':
                     try:
-                        data = reader(f.read(), *reader_args)
+                        data = reader(f, *reader_args)
                     except:
                         raise OutputReadError("%s: couldn't read %s with %s" \
                                         % (self.id, filename, reader_name))
@@ -181,7 +181,7 @@ class Experiment(object):
             #Construct the plotter and arguments
             self.plotter(plot_name)
 
-    def plotter(self, plot_name, feedback=None):
+    def plotter(self, plot_name, feedback=None, save_image=True):
         """Plots the outputfile into plot image using user defined plotting
         and output reading functions
 
@@ -210,7 +210,7 @@ class Experiment(object):
         except:
             raise PlotError("%s: couldn't parse plot arguments" % self.id)
         try:
-            plotter = neronet.core.import_from(module_name, plotter_name)
+            plot_function = neronet.core.import_from(module_name, plotter_name)
         except:
             raise PlotError("%s: couldn't import %s from %s" \
                                 % (self.id, plotter_name, module_name))
@@ -225,8 +225,8 @@ class Experiment(object):
             plot_data.append(plot_arg)
         try:
             results_dir = self.get_results_dir()
-            return plotter(os.path.join(results_dir, plot_name), \
-                            feedback, *plot_data)
+            return plot_functionr(os.path.join(results_dir, plot_name), \
+                            feedback, save_image, *plot_data)
         except:
             raise PlotError("%s: couldn't plot %s, maybe something is wrong"
                             " with the plot function?" % (self.id, plot_name))
