@@ -113,8 +113,7 @@ class ConfigParser():
                 if node not in nodes.keys():
                     errors.append('%s: node "%s" is not defined for group' % \
                                     (group_name, node))
-        nodes = nodes_data.get('nodes', {})
-        default_node = nodes_data['default_node']
+        default_node = nodes_data.get('default_node', None)
         if default_node not in nodes and default_node:
             raise FormatError(['default node %s  is not defined' % \
                                 default_node])

@@ -2010,4 +2010,11 @@ We need
 - Start with customer problems before solution
 - Summarize retros
 - Burn down charts!
-- 
+- Team member faces!
+- 10 slides of demo
+- technical architecture / overview
+
+Remarks
+- Sievo's project seemed too straightforward
+- Avoin had few successful sprints
+- F-Secure had professional support
