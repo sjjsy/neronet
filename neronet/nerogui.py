@@ -181,7 +181,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         for exp in rows:
             name = str(self.paramTable.item(exp, 0).text())
             for line in self.nero.submit(name, node):
-                self.experiment_log.insertPlainText(line + "\n")
+                self.experiment_log.insertPlainText(line)
+                app.processEvents()
 	#self.show_one_experiment()
         self.add_to_param_table()
 
@@ -268,6 +269,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.experiment_log.clear()
         for line in self.nero.fetch():
             self.experiment_log.insertPlainText(line)
+            app.processEvents()
+        self.experiment_log.insertPlainText("Done fetching\n")
 	self.add_to_param_table()
 
     def terminate_exp(self):
@@ -277,7 +280,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             name = str(self.paramTable.item(exp.row(), 0).text())
             for line in self.nero.terminate_experiment(name):
                 self.experiment_log.insertPlainText(line)
-
+                app.processEvents()  
 	self.add_to_param_table()
 
     def change_cell(self,y,x):
@@ -316,6 +319,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             name = str(self.paramTable.item(exp, 0).text())
             for line in self.nero.delete_experiment(name):
                 self.experiment_log.insertPlainText(line)
+                app.processEvents()
 	self.add_to_param_table()
 
     def highlight_row(self, y, x):

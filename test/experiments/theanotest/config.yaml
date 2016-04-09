@@ -1,9 +1,8 @@
-collection: None
 run_command_prefix: 'python'
 main_code_file: 'theanotest.py'
-outputs: 'results'
+outputs: ['results']
 parameters_format: '{N} {feats} {training_steps}'
-theanotest:
++theanotest:
     parameters:
         N: 400
         feats: 784
