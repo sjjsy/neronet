@@ -11,12 +11,17 @@ Contents
 - **Installation**
 - Command Line Interface:
 	- Using Neronet CLI
+	- Specifying Computing Nodes in Neronet CLI
+	- Specifying Clusters and Cluster Groups by Manually Updating Clusters.yaml
+	- Deleting Computing Nodes in Neronet CLI
 	- Specifying and Configuring Experiments in Neronet CLI
 	- Deleting Defined Experiments from Neronet
-	- Submitting Experiments and Batches of Experiments to Computing Clusters
-	- Specifying Clusters in Neronet CLI
-	- Monitoring Log Output in Neronet CLI
-	- Status report in Neronet CLI
+	- Submitting Experiments to Computing Clusters
+	- Fetching data about submitted experiments
+	- Terminating a Currently running experiment
+	- Status report
+	- Cleaning Neronet's databases
+	- Example use case
 - GUI:
 	- Starting Neronet GUI
 	- Specifying and Configuring Experiments in Neronet GUI
@@ -32,8 +37,8 @@ Introduction
 
 Neronet is a python-based, framework agnostic tool for computational researchers that is made to enable easy
 
+- specification of computational experiments and inheritance of parameter values
 - batch submission of experiment jobs to computing clusters
-- management of experiment queues
 - monitoring of logs and parameter values for ongoing experiments
 - access to experiment information during and after the run
 - configurable notifications on experiment state and progress
@@ -52,45 +57,15 @@ All components of the neronet application, including both the parts run in clust
 
 Start by running the command below on the command line of your local machine. Note: python 2.7 is required.
 
-*Example:*
+*Install neronet:*
 ::
 	sudo pip install neronet
 
 The command will load all components related to neronet and install them to the system. It will also create the folder '~/.neronet' that contain your preferences and cluster setup. Proceed by opening the folder and then defining your initial cluster setup and preferences in the respective files.
 
-**2. Setting up the Initial cluster setup:**
+**2. Setting up personal Information and preferences:**
 
-Open neronet/clusters.yaml file using your favorite text editor and fill in the following information.
-
-The format of clusters.yaml is as follows. From here on out we will explain the formats of important files by first showing an example file and then explaining the important points.
-
-*Example:*
-::
-    clusters:
-	    triton:
-	      ssh_address: triton.aalto.fi
-	      type: slurm
-	      hard_disk_space: 1000GB
-	    gpu1:
-	      ssh_address: gpu1
-	      type: unmanaged
-	    gpu2:
-	      ssh_address: gpu2
-	      type: unmanaged	    
-	groups:
-	    gpu: [gpu1, gpu2]
-
-
-
-The specification of a cluster must start with the user-specified cluster-id on a separate line. The following lines containing the cluster's information must be indented and contain at least the following attributes: ssh_address: (f.ex  triton.aalto.fi) and type: (either 'unmanaged' or 'slurm'). If the cluster uses Simple Linux Utility for Resource Management (SLURM), its type is 'slurm', otherwise use 'unmanaged'.
-
-Additionally, it is possible to specify optional information on the cluster such as the hard disk space for the cluster. Although these are purely for the user and are not used internally.
-
-It is also possible to group some of your clusters or unmanaged nodes under a single virtual cluster name using the following format: GROUP_ID: [NODE_ID, NODE_ID, ...] (f.ex 'gpu: [gpu1, gpu2]' in the example above). Then later on you can submit your experiments to that virtual cluster name and let neronet automatically divide the work between the actual nodes.
-
-**3. Setting up personal Information and preferences:**
-
-Open the file neronet/preferences.yaml and fill in your name, email and default cluster using the following format.
+Open the file ~/.neronet/preferences.yaml and fill in your name, email and default cluster using the following format.
 
 *Example:*
 ::
@@ -115,20 +90,63 @@ To start your Neronet CLI application, run nerocli on your local machine's comma
 	nerocli --status
 
 
-Specifying Clusters in Neronet CLI
+Specifying Computing Nodes in Neronet CLI
 ----------------------------------
 
-You can specify clusters either via command line or by manually updating the clusters.yaml file. See the section *Installation* for more information on the format when updating the clusters.yaml file manually.
+You can specify clusters either via command line or by manually updating the clusters.yaml file. See the next section for more information on the format when updating the clusters.yaml file manually.
 
-*To add clusters via command line use the following format:*
+*To add computing nodes via command line use the following format:*
 ::
-	Usage: nerocli --addnode ID TYPE SSH_ADDRESS
-	Example: nerocli --addnode triton slurm triton.cs.hut.fi
+	Usage: nerocli --addnode ID SSH_ADDRESS
+	Example: nerocli --addnode triton triton.cs.hut.fi
 
 
-ID is a user defined id of the cluster, SSH_ADDRESS is the ssh address of the cluster, TYPE is either 'slurm' or 'unmanaged'
+ID is a user defined id of the cluster, SSH_ADDRESS is the ssh address of the cluster.
 
-The information given via CLI is then automatically updated to clusters.yaml. If you want to save other information about a specific cluster besides the cluster's address, name and type, you must manually write them to the clusters.yaml file.
+The information given via CLI is then automatically updated to clusters.yaml. If you want to save other information about a specific cluster besides the cluster's address and id, you must manually write them to the clusters.yaml file.
+
+
+Specifying Clusters and Cluster Groups by Manually Updating Clusters.yaml
+-------------------------------------------------------------------------
+
+Although nodes can be easily specified via neronet CLI or GUI, manually updating the config files gives the user some additional options and is sometimes more versatile.
+
+Open ~/.neronet/clusters.yaml using your favorite text editor and fill in the following information.
+
+The format of clusters.yaml is as follows. From here on out we will explain the formats of important files by first showing an example file and then explaining the important points.
+
+*Example:*
+::
+    clusters:
+	    triton:
+	      ssh_address: triton.aalto.fi
+	      hard_disk_space: 1000GB
+	    gpu1:
+	      ssh_address: gpu1
+	    gpu2:
+	      ssh_address: gpu2
+	groups:
+	    gpu: [gpu1, gpu2]
+
+
+
+The specification of a cluster must start with the user-specified cluster-id on a separate line. The following lines containing the cluster's information must be indented and contain at least the ssh_address: (f.ex  triton.aalto.fi).
+
+Additionally, it is possible to specify optional information on the node such as the hard disk space. However, these are purely for the user and are not used internally.
+
+It is also possible to group some of your nodes under a single virtual cluster name using the following format: GROUP_ID: [NODE_ID, NODE_ID, ...] (f.ex 'gpu: [gpu1, gpu2]' in the example above). Then later on you can submit your experiments to that virtual cluster name and let neronet automatically divide the work between the actual nodes.
+
+
+Deleting Computing Nodes in Neronet CLI
+---------------------------------------
+
+If you want to remove all information regarding a specific computing node from neronet's database, type the following command:
+
+*Remove a computing node:*
+::
+    Usage: nerocli --delnode ID
+	Example: nerocli --delnode triton
+	
 
 
 Specifying and Configuring Experiments in Neronet CLI
@@ -136,9 +154,9 @@ Specifying and Configuring Experiments in Neronet CLI
 
 Neronet supports experiments written using any programming language or framework as long as the experiments are runnable with a command of the format 'RUN_COMMAND-PREFIX CODE_FILE PARAMETERS', f.ex. 'python2.7 main.py 1 2 3 4 file.txt'
 
-Start by writing your experiment code and save all experiments you deem somehow related to a single folder. Then include a YAML configuration file in your folder and name it 'config.yaml'. It is also possible to create the YAML configuration file template with the following command:
+Start by writing your experiment code and save all experiments you deem somehow related to a single folder. Then include a YAML configuration file in your folder and name it 'config.yaml'.It is also possible to create the YAML configuration file template with the following command:
 
-*Example:*
+*To create a config.yaml template use the following command:*
 ::
 	Usage: nerocli --template EXP_ID RUN_COMMAND-PREFIX CODE_FILE PARAMETERS
 	Example: nerocli --template theanotest python theanotest.py N feats training_steps
@@ -146,9 +164,8 @@ Start by writing your experiment code and save all experiments you deem somehow 
 
 In the configuration file you are to specify all the different experiments you want to run using the following format. Please read this section carefully for it contains plenty of important information.
 
-*Example:*
+*config.yaml:*
 ::
-	collection: lang_exp
 	run_command_prefix: python3
 	main_code_file: main.py
 	logoutput: stdout
@@ -189,7 +206,8 @@ In the configuration file you are to specify all the different experiments you w
 
 
 - The information on the config.yaml file is divided to blocks that have the same indentation.
-- Each experiment specification must begin with a row containing the experiment id (f.ex in the example above three experiments are specified: lang_exp1, lang_exp2 and lang_exp3) and be followed by a block containing all the experiment's attributes. Do not use the reserved words, list of which can be found at the end of this section. The experiment ids must be unique within the same config file.
+- Each experiment specification must begin with a row containing the experiment id (f.ex in the example above three experiments are specified: lang_exp1, lang_exp2 and lang_exp3) and be followed by a block containing the experiment's attributes. Do not use the reserved words, list of which can be found at the end of this section. The experiment ids must be unique.
+- Experiment ids must begin with '+' character, otherwise neronet won't recognise the new experiment.
 - Each different experiment specification must have the following attributes
 	- main_code_file: The path to the code file that is to be run when executing the experiment
 	- run_command_prefix: The prefix of the run command f.ex 'python2'
@@ -211,7 +229,7 @@ In the configuration file you are to specify all the different experiments you w
 
 After your experiment folder contains the config file of the correct format and all the code and parameter files, you can then submit the folder to your Neronet application with the following command.
 
-*Example:*
+*Submit the experiment folder to neronet locally:*
 ::
 	Usage: nerocli --addexp FOLDER
 	Example: nerocli --addexp ~/experiments/lang_exp
@@ -242,17 +260,15 @@ To delete a specified experiment from your Neronet application's database you ca
 ::
 	nerocli --delexp EXPERIMENT_ID
 
-EXPERIMENT_ID is the 'ID' attribute defined on the topmost row of the experiment folder's config.yaml. Alternatively, if you only want to delete a certain experiment within a folder, you can use the format 'ID/experiment_Id' (see *specifying experiments* to find out what these attributes are). Commands of the format 'delete ID/experiment_Id' don't affect the experiment's children or parents.
-
-Using the command above doesn't delete the experiment folder or any files within it. It only removes the experiment's information from Neronet's database. It also doesn't affect the children of the experiment.
+Using the command above doesn't delete the experiment folder or any files within it. It only removes the experiment's information from Neronet's database and if the experiment is running, terminates it. It also doesn't affect the experiment's child experiments.
 
 
 Submitting Experiments to Computing Clusters
------------------------------------------------------------------------
+--------------------------------------------
 
-The following command will submit an experiment to a specified cluster.
+The following command will submit an experiment to a specified computing node or cluster.
 
-*Example:*
+*Submit an experiment to a computing node or cluster:*
 ::
 	Usage: nerocli --submit EXPERIMENT_ID CLUSTER_ID 
 	Example: nerocli --submit lang_exp triton 
@@ -260,12 +276,12 @@ The following command will submit an experiment to a specified cluster.
 
 EXPERIMENT_ID is the name of the experiment you are about to submit.
 
-CLUSTER_ID can be any cluster id or cluster group id specified in the clusters.yaml file or via CLI.
+CLUSTER_ID can be any cluster id or cluster group id specified in the clusters.yaml file or via CLI or GUI.
 If you have specified a default cluster in preferences.yaml (see *Installation*), you can leave CLUSTER_ID blank to automatically submit your experiments to the specified default cluster. F.ex 'submit lang_exp'.
 
 
-Fetching data about submitted experiments:
-------------------------------------------
+Fetching data about submitted experiments
+-----------------------------------------
 
 To see the current state of the submitted experiments it is necessary to first fetch the data from clusters. In Neronet CLI this is done by typing the following command:
 
@@ -276,8 +292,18 @@ After that you can see the current state of your experiments by typing:
 
 ::
     nerocli --status
-    
 
+
+Terminating a Currently running experiment
+------------------------------------------
+
+If you need to manually terminate an experiment thst is currently running in a cluster, type the following command
+
+*Terminate an experiment:*
+::
+    nerocli --terminate EXPERIMENT_ID
+    
+ 
 
 Status report
 -------------
@@ -290,7 +316,7 @@ specified clusters and experiments.
 	Usage: nerocli --status [ARGS]
 
 
-ARGS can refer to experiment or cluster IDs, or be collection specifiers.
+ARGS can refer to experiment or cluster IDs.
 
 *Overall status:*
 ::
@@ -306,15 +332,25 @@ The command above will print the overall status information. That is, printing t
 ::
 	Usage: nerocli --status CLUSTER_ID
 	Example nerocli --status triton
+	
+Cleaning Neronet's databases
+----------------------------
 
-Example experiment
-------------------
+If you want to remove all data currently existing in neronet's databases, that is all specified experiments, their results and information on computing nodes and clusters, type the following command:
+
+*Clean neronet's databases*
+::
+    nerocli --clean
+
+
+Example use case
+----------------
 Assume we have folder ``~/mytheanotest`` which contains an experiment named
 ``script.py`` and we want to submit it to ``kosh.aalto.fi`` to be run
 there. We proceed as follows:
 
 Define a cluster where the experiment is to be run:
-``nerocli --addnode kosh kosh.aalto.fi unmanaged``
+``nerocli --addnode kosh kosh.aalto.fi``
 
 Neronet requires some information about each experiment, which is why we
 create the file ``~/mytheanotest/config.yaml`` with the following content::
@@ -336,16 +372,20 @@ Now we let Neronet know about the experiment by registering it:
 ``nerocli --addexp ~/mytheanotest``
 
 Finally, we submit the experiment to be run in the cluster:
-``nerocli --submit kosh theanotest``
+``nerocli --submit theanotest kosh``
 
 Before submitting of course you need to make sure that all the dependencies
 of the experiment file are available in the cluster.
 
-While the experiment is running, we can check its status with:
-``nerocli --status``
+While the experiment is running we can check its status by first fetching information:
+``nerocli --fetch``
 
-Eventually the experiment will show as ``finished`` and the results will be
-automatically synced to the ``~/.neronet/results/theanotest`` folder.
+And then checking the status with:
+``nerocli --status theanotest``
+
+Eventually the experiment state will show as ``finished`` and the results will be
+synced to the ``~/.neronet/results/theanotest`` folder.
+
 
 ===
 GUI
@@ -358,7 +398,7 @@ Make sure you have configured path correctly. You can check you current path wit
 ``import sys
 print sys.path``
 
-Gui is included in pip install. You can open gui with ``nerogui``
+Gui is included in pip install. You can open gui by typing ``nerogui``
 
 **Specify clusters**
 Specify clusters by writing clusters short name to cluster name field.
