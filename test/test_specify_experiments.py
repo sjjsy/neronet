@@ -21,7 +21,6 @@ class TestSpecifyExperiments(unittest.TestCase):
             f.write("experiment1:\n"
                     "   cluster: null\n"
                     "   collection: exps\n"
-                    "   logoutput: logfile\n"
                     "   main_code_file: party.py\n"
                     "   parameters:\n"
                     "        when: now\n"
@@ -41,7 +40,6 @@ class TestSpecifyExperiments(unittest.TestCase):
         with open(self.path, 'w') as f:
             f.write("run_command_prefix: python\n"
                     "main_code_file: sleep.py\n"
-                    "logoutput: output_file\n"
                     "collection: test\n"
                     "parameters:\n"
                     "   count: 5\n"

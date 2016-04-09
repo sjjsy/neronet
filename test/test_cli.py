@@ -24,14 +24,6 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(parsed.cluster[1], ssh_address)
         self.assertEqual(parsed.cluster[2], cluster_type)
 
-    def test_specify_user(self):
-        name = 'Juha Pekka'
-        email = 'juha.pekka@supermail.orz'
-        parsed = self.parser.parse_args(['--user', name, email])
-        self.assertTrue(parsed.user)
-        self.assertEqual(parsed.user[0], name)
-        self.assertEqual(parsed.user[1], email)
-
     def test_status(self):
         parsed = self.parser.parse_args(['--status'])
         self.assertTrue(parsed.status)

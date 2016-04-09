@@ -37,7 +37,6 @@ class TestStatusReport(unittest.TestCase):
             f.write("experiment_id: sleep_demo\n"
                     "run_command_prefix: python\n"
                     "main_code_file: sleep.py\n"
-                    "logoutput: logfile\n"
                     "parameters:\n"
                     "   count: 5\n"
                     "   interval: 5\n"
