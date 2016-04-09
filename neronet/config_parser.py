@@ -74,7 +74,7 @@ class ConfigParser():
         Raises:
             FormatError: if the data wasn't correctly formated
         """
-        node_default = {'nodes': {}, 'groups': {}}
+        node_default = {'nodes': {}, 'groups': {}, 'default_node': None}
         return self.load_config(nodes_filename, node_default, 
                                 self.check_nodes)
 
@@ -113,40 +113,13 @@ class ConfigParser():
                 if node not in nodes.keys():
                     errors.append('%s: node "%s" is not defined for group' % \
                                     (group_name, node))
-        if errors:
-            raise FormatError(errors)
-
-    def load_preferences(self, preferences_filename, nodes_data):
-        """Loads the preferences file
-        Parameters:
-            preferences_filename (str): name of the preferences file
-            nodes_data (dict): data of the nodes
-
-        Returns:
-            dict: data of the preferences
-
-        Raises:
-            FormatError: if the data wasn't correctly formated
-        """
-        preferences_default = {'name': '', 'email': '', 'default_node': ''}
-        return self.load_config(preferences_filename, preferences_default, \
-                            self.check_preferences, nodes_data)
-
-    def check_preferences(self, preferences_data, nodes_data):
-        """Checks the preferences data
-
-        Parameters:
-            preferences_data (dict): data of the preferences
-            nodes_data (dict): data of the nodes
-
-        Raises:
-            FormatError: if the data wasn't correctly formated
-        """
         nodes = nodes_data.get('nodes', {})
-        default_node = preferences_data['default_node']
+        default_node = nodes_data['default_node']
         if default_node not in nodes and default_node:
             raise FormatError(['default node %s  is not defined' % \
                                 default_node])
+        if errors:
+            raise FormatError(errors)
 
     def load_database(self, database_filename):
         """Loads the database file
@@ -164,19 +137,15 @@ class ConfigParser():
     def check_database(self, database_data):
         pass
 
-    def load_configurations(self, nodes_filename, 
-                                    preferences_filename,
-                                    database_filename):
+    def load_configurations(self, nodes_filename, database_filename):
         """Loads all the configurations
 
         Parameters:
             nodes_filename (str): name of the nodes file
-            preferences_filename (str): name of the preferences file
             database_filename (str): name of the database file
 
         Returns:
-            tuple of dicts: a tuple containing the data of nodes,
-            preferences and database as dicts
+            tuple of dicts: a tuple of node and database as dicts
 
         Raises:
             FormatError: if the data wasn't correctly formated
@@ -188,25 +157,16 @@ class ConfigParser():
         except FormatError as e:
             errors += e.error_msgs
         try:
-            preferences = self.load_preferences(preferences_filename, \
-                                                nodes)
-        except FormatError as e:
-            errors += e.error_msgs
-        try:
             database = self.load_database(database_filename)
         except FormatError as e:
             errors += e.error_msgs
         if errors:
             raise FormatError(errors)
-        return nodes, preferences, database
+        return nodes, database
 
     def save_database(self, database_filename, database):
         self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
                         database_filename), database)
-
-    def save_preferences(self, preferences_filename, preferences):
-        self.write_yaml(os.path.join(neronet.core.USER_DATA_DIR_ABS, \
-                        preferences_filename), preferences)
 
     def save_nodes(self, nodes_filename, nodes):
         node_field_dict = {}

@@ -11,7 +11,6 @@ defined in its config:
 * destination_folder: Folder that the experiment is run in on the node.
 * parameters: The definition of the experiment parameters
 * parameters_format: The format of the experiment parameters
-* logoutput: The location the experiment outputs its output
 * state: A tuple of the experiment state which is set to 'defined' by this
   function and the time changed
 * node: The node that the experiment is running on. Set to
@@ -40,7 +39,6 @@ import neronet.node
 import neronet.experiment
 
 DATABASE_FILENAME = 'default.yaml'
-PREFERENCES_FILENAME = 'preferences.yaml'
 NODES_FILENAME = 'nodes.yaml'
 
 def formatstr(s, length):
@@ -53,9 +51,8 @@ class Neroman:
     """The part of Neronet that handles user side things.
 
     Attributes:
-        nodes (Dict): A dictionary containing the specified nodes
-        database (Dict): A dictionary containing the specified experiments
-        preferences (Dict): A dictionary containing the preferences
+        nodes (dict): A dictionary containing the specified nodes
+        database (dict): A dictionary containing the specified experiments
     """
 
     def __init__(self):
@@ -64,9 +61,9 @@ class Neroman:
         Reads the contents of its attributes from yaml files or creates them
         """
         self.config_parser = neronet.config_parser.ConfigParser()
-        self.nodes, self.preferences, self.database = \
+        self.nodes, self.database = \
             self.config_parser.load_configurations(NODES_FILENAME, \
-                            PREFERENCES_FILENAME, DATABASE_FILENAME)
+                    DATABASE_FILENAME)
 
     def specify_node(self, node_id, node_type, ssh_address):
         """Specify nodes so that Neroman is aware of them.
@@ -149,14 +146,6 @@ class Neroman:
                                     self.database)
         if err: raise IOError('\n'.join(err))
         return changed_exps
-    
-    def specify_user(self, name, email, default_node = ""):
-        """Update user data"""
-        self.preferences['name'] = name
-        self.preferences['email'] = email
-        self.preferences['default_node'] = default_node
-        self.config_parser.save_preferences(PREFERENCES_FILENAME, \
-                                            self.preferences)
 
     def replace_experiment(self, new_experiment):
         """Replaces an experiment in the database with a new,
@@ -270,11 +259,6 @@ class Neroman:
             else:
                 raise IOError('Neroman: no experiment or node named "%s"!'\
                                 % (arg))
-        #yield "================User====================\n"
-        #yield "Name: %s\n" % self.preferences['name']
-        #yield "Email: %s\n" % self.preferences['email']
-        if self.preferences['default_node']:
-            yield "Default Node: %s\n" % self.preferences['default_node']
         #yield "\n"
         yield "=> Nodes =>\n"
         if not self.nodes['nodes']:
@@ -288,6 +272,8 @@ class Neroman:
             groups = self.nodes['groups']
             for group_id, group_nodes in groups.iteritems():
                 yield '- %s: %s\n' % (group_id, ', '.join(node for node in group_nodes))
+        if self.nodes['default_node']:
+            yield "Default Node: %s\n" % self.nodes['default_node']
         yield "\n=> Experiments =>\n"
         if not len(self.database):
             yield "No experiments defined\n"
@@ -318,7 +304,7 @@ class Neroman:
         """
         # Determine the node
         if not node_id:
-            node_id = self.preferences['default_node']
+            node_id = self.nodes['default_node']
             if node_id == "":
                 raise AttributeError('No default node defined')
         #if node_id in self.nodes['groups']:

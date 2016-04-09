@@ -40,10 +40,6 @@ def create_argument_parser():
                         metavar='node_id',
                         nargs=1,
                         help='Deletes the node with the given ID')
-    parser.add_argument('--user',
-                        metavar=('name', 'email'),
-                        nargs=2,
-                        help='Updates user information')
     parser.add_argument('--submit',
                         metavar=('experiment', 'node'),
                         nargs="+",
@@ -140,10 +136,6 @@ def main():
             print(''.join(nero.delete_node(node_id)), end="")
         except KeyError:
             print('No node with ID "%s"' % node_id)
-    if args.user:
-        name = args.user[0]
-        email = args.user[1]
-        nero.specify_user(name, email)
     if args.status:
         try:
             print(''.join(nero.status_gen(args.status)), end="")

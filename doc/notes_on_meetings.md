@@ -1991,3 +1991,23 @@ Agenda:
   of work was very difficult in the very beginning when people had little
   understanding of the domain. Getting various DoD practices applied required
   a lot of effort. Later only the most essential practices were followed.
+
+## 04-09 300m Satsurge
+
+Participants: Samuel, Joona, Iiro
+
+Agenda:
+
+- Refactoring
+- Competitor review
+- Agenda
+
+## Competitor review
+
+We need
+
+- More graphics
+- Start with customer problems before solution
+- Summarize retros
+- Burn down charts!
+- 
