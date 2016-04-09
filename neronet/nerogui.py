@@ -365,8 +365,13 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.experiment_log.insertPlainText(line)
         self.add_to_param_table()
 
+    def exceptionHook(self, type, value, tracebackObj):
+        self.experiment_log.clear()
+        self.experiment_log.insertPlainText("%s" % (value))
+
 def main():
     app = QtGui.QApplication(sys.argv)
-    form = Nerogui()	
+    form = Nerogui()
+    sys.excepthook = form.exceptionHook	
     form.show()
     app.exec_()
