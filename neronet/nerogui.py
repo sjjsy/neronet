@@ -50,11 +50,11 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.nodes.itemSelectionChanged.connect(self.update_node_fields)
         self.nodes.itemClicked.connect(self.show_node_status)
         self.paramTable.itemSelectionChanged.connect(self.show_one_experiment)
+        self.paramTable.itemSelectionChanged.connect(self.update_plot_params)
         self.paramTable.verticalHeader().sectionDoubleClicked.connect(self.open_config)
         self.paramTable.cellClicked.connect(self.highlight_row)
         self.paramTable.cellDoubleClicked.connect(self.open_config)
         self.paramTable.cellChanged.connect(self.change_cell)
-        self.paramTable.cellClicked.connect(self.update_plot_params)
         self.exp_add_btn.clicked.connect(self.add_file)
         self.submit_btn.clicked.connect(self.submit_exp)
         self.refresh_btn.clicked.connect(self.fetch_exp)
@@ -181,7 +181,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         for exp in rows:
             name = str(self.paramTable.item(exp, 0).text())
             for line in self.nero.submit(name, node):
-                self.experiment_log.insertPlainText(line + "\n")
+                self.experiment_log.insertPlainText(line)
+                QtGui.QApplication.processEvents()
 	#self.show_one_experiment()
         self.add_to_param_table()
 
@@ -268,6 +269,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         self.experiment_log.clear()
         for line in self.nero.fetch():
             self.experiment_log.insertPlainText(line)
+            QtGui.QApplication.processEvents()
+        self.experiment_log.insertPlainText("Done fetching\n")
 	self.add_to_param_table()
 
     def terminate_exp(self):
@@ -277,7 +280,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             name = str(self.paramTable.item(exp.row(), 0).text())
             for line in self.nero.terminate_experiment(name):
                 self.experiment_log.insertPlainText(line)
-
+                QtGui.QApplication.processEvents()  
 	self.add_to_param_table()
 
     def change_cell(self,y,x):
@@ -316,6 +319,7 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
             name = str(self.paramTable.item(exp, 0).text())
             for line in self.nero.delete_experiment(name):
                 self.experiment_log.insertPlainText(line)
+                QtGui.QApplication.processEvents()
 	self.add_to_param_table()
 
     def highlight_row(self, y, x):
@@ -325,9 +329,10 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.paramTable.item(x,y)
     
-    def update_plot_params(self, y, x):
+    def update_plot_params(self):
         """populate plot parameter table when experiment is clicked"""
         self.PlotParamTable.clear()
+        y = self.paramTable.currentRow()
         self.globalName = self.paramTable.item(y,0)
         if self.globalName is None:
             return
@@ -335,6 +340,8 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
         try:
 	    dic = self.nero.database[self.globalName].plot
         except IOError:
+            return
+        if dic is None:
             return
         for item in dic.keys():
             self.PlotParamTable.addItem(item)
@@ -365,8 +372,13 @@ class Nerogui(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.experiment_log.insertPlainText(line)
         self.add_to_param_table()
 
+    def exceptionHook(self, type, value, tracebackObj):
+        self.experiment_log.clear()
+        self.experiment_log.insertPlainText("%s" % (value))
+
 def main():
     app = QtGui.QApplication(sys.argv)
-    form = Nerogui()	
+    form = Nerogui()
+    #sys.excepthook = form.exceptionHook	
     form.show()
     app.exec_()

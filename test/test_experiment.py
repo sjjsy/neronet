@@ -9,7 +9,6 @@ class TestExperiment(unittest.TestCase):
                                 'main_code_file': 'exp.py',
                                 'parameters': {'x': 1, 'y': 2},
                                 'parameters_format': '{x} {y}',
-                                'logoutput': 'output',
                                 'collection': 'tests',
                                 'required_files': ['aux_file.txt'],
                                 'conditions': 'termination',

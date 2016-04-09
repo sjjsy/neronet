@@ -35,7 +35,6 @@ class Experiment(object):
         run_command_prefix (str): The run command of the experiment
         main_code_file (str): The code file to be run
         required_files (str): Other files required by the experiments
-        logoutput (str): File where the experiment outputs information
         parameters (dict): The Experiment parameters
         parameters_format (str): The format of the experiment parameters
         collection (str): The collection the experiment is part of
