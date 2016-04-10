@@ -123,6 +123,8 @@ class Neroman:
                 This is then later used to prompt the user if they
                 want to replace the old experiment(s) with the new one(s).
         """
+        if not os.path.isdir(folder):
+            folder = os.path.dirname(folder)
         experiments = self.config_parser.parse_experiments(folder)
         err = []
         #Look for changes in the relevant fields and add them to changed_exps.
@@ -308,7 +310,7 @@ class Neroman:
             groups = self.nodes['groups']
             for group_id, group_nodes in groups.iteritems():
                 yield '- %s: %s\n' % (group_id, ', '.join(node for node in group_nodes))
-        if self.nodes['default_node']:
+        if 'default_node' in self.nodes and self.nodes['default_node']:
             yield "Default Node: %s\n" % self.nodes['default_node']
         yield "\n=> Experiments =>\n"
         if not len(self.database):
@@ -470,10 +472,9 @@ class Neroman:
                     results_dir = os.path.join(exp.path, 'results')
                     if not os.path.exists(results_dir):
                         os.mkdir(results_dir)
-                    now = datetime.datetime.now()
-                    result_destination = os.path.join(results_dir, '%s-%d-%d-%d-%d-%d' \
-                                % (exp.id, now.year, now.month, now.day, \
-                                now.hour, now.minute))
+                    result_destination = os.path.join(results_dir, '%s-%s'
+                            % (exp.id, time.strftime('%Y-%m-%d-%H-%M-%S',
+                            time.localtime())))
                     shutil.move(os.path.join(local_dir, exp.id), result_destination) 
                     exp.run_results.append(result_destination)
                     try:

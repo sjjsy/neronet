@@ -74,7 +74,9 @@ def main():
                             'configuration files? (y/n) ')
         if answer == 'y':
             remove_data()
-            print('Removed neronet configuration files')
+            print('Removed neronet configuration files!')
+        else:
+            print('Data removal cancelled.')
         return
     nero = neronet.neroman.Neroman()
     if args.addexp:

@@ -3,6 +3,7 @@
 import datetime
 import os
 import shlex
+import time
 
 import neronet.core
 
@@ -43,7 +44,7 @@ class Experiment(object):
         node_id (str): The ID of the node where the experiment is run
         time_created (datetime): Timestamp of when the experiment was created
         time_modified (datetime): Timestamp of when the experiment was modified
-        last
+            last
         path (str): Path to the experiment folder
     """
 
@@ -316,7 +317,7 @@ class Experiment(object):
 
         
     def as_gen(self):
-        """Creates a generate that generates info about the experiment
+        """Yields info about the experiment
         Yields:
             str: A line of experiment status
         """
@@ -367,6 +368,23 @@ class Experiment(object):
             for warn in self._fields['warnings']:
                 warns += '    ' + warn + '\n'
             yield warns
+        out_file = os.path.join(self.get_results_dir(), 'stdout.log')
+        err_file = os.path.join(self.get_results_dir(), 'stderr.log')
+        yield '  Logs:\n'
+        for log_file in (out_file, err_file,):
+            if os.path.exists(log_file):
+                yield '    Path: %s\n' % (log_file)
+                lines = []
+                with open(log_file, 'r') as f:
+                    lines = f.readlines()
+                nlines = len(lines)
+                yield '    Specs: tmod: %s; linecount: %d; size: %d;\n' % (time.strftime(
+                    '%F %T', time.localtime(os.path.getmtime(log_file))),
+                    nlines, os.path.getsize(log_file))
+                if lines:
+                    yield '    Tail:\n'
+                    for i in range(max(0, nlines-10), nlines):
+                        yield '      L%04d: %s\n' % (i+1, lines[i].rstrip())
 
     def __str__(self):
         return "%s %s" % (self._experiment_id, self._fields['state'][-1][0])
