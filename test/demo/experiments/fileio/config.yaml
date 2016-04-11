@@ -1,0 +1,14 @@
+run_command_prefix: 'python'
+main_code_file: 'main.py'
+parameters_format: '{pfi} {pfo}'
+sbatch_args: '--time=0-00:02:00 --mem-per-cpu=20 -p play'
++fileio1:
+  required_files: ['in1.txt',]
+  parameters:
+      pfi: in1.txt
+      pfo: out2.txt
++fileio2:
+  required_files: ['in2.txt',]
+  parameters:
+      pfi: in2.txt
+      pfo: out2.txt

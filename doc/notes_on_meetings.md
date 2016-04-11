@@ -1992,17 +1992,17 @@ Agenda:
   understanding of the domain. Getting various DoD practices applied required
   a lot of effort. Later only the most essential practices were followed.
 
-## 04-09 300m Satsurge
+## 04-09 180m Satsurge
 
-Participants: Samuel, Joona, Iiro
+Participants: Samuel, Joona, Tuomo, Iiro
 
 Agenda:
 
 - Refactoring
 - Competitor review
-- Agenda
+- Finishing & presentation
 
-## Competitor review
+### Competitor review
 
 We need
 
@@ -2018,3 +2018,12 @@ Remarks
 - Sievo's project seemed too straightforward
 - Avoin had few successful sprints
 - F-Secure had professional support
+
+## 04-09 180m Sunsurge
+
+Participants: Samuel, Tuomo, Joona, Matias
+
+Agenda:
+
+- Team photos
+- Finishing & presentation

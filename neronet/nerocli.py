@@ -135,8 +135,8 @@ def main():
         node_type = 'unmanaged'
         try:
             print(''.join(nero.specify_node(node_id, node_type, ssh_address)), end="")
-            print('Defined a new node with ID "%s"' % node_id)
-        except IOError as e:
+            print('Defined a new node with ID "%s"' % (node_id))
+        except Exception as e:
             print(e)
             return
     if args.delnode:

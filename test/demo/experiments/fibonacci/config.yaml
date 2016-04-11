@@ -1,0 +1,7 @@
+run_command_prefix: python3
+main_code_file: main.py
+parameters:
+    n: [10, 100, 200, 1000, 10000]
+    breaktime: 0.1
+parameters_format: '{n} {breaktime}'
++fibonacci:

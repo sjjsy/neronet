@@ -439,8 +439,7 @@ class ConfigParser():
                             experiment_scope['outputs'].append('stdout.log')
                     else:
                         experiment_scope['outputs'] = ['stdout.log']
-                        
-                
+
                 #Create experiment data dict
                 experiment_data = {field: value for field, value in \
                                     experiment_scope.items() \

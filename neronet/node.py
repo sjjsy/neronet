@@ -77,11 +77,12 @@ class Node(object):
         
         Returns:
             bool: True if successful"""
-        res = self.sshrun('python -V')
-        if res.rv != 0:
+        try:
+            res = self.sshrun('python -V')
+        except RuntimeError:
             raise RuntimeError('Failed to run Python via SSH at "%s"!' % (self.cid))
         #TODO: Make version checking smarter
-        elif not 'Python 2.7' in res.err:
+        if not 'Python 2.7' in res.err:
             raise RuntimeError('Incorrect Python version at "%s": "%s"!' % (self.cid, res.err))
         return True
 

@@ -451,10 +451,10 @@ class Neroman:
             except RuntimeError:
                 yield('Err: Failed to fetch experiment results from node "%s".' % (node.cid))
             # Clean the node
-                    # Update the experiments
         plot_errors = []
         #Update Neroman database contents from the fetched pickles
         for exp in experiments_to_check:
+            # Update the experiments
             yield('Updating experiment "%s"...\n' % (exp.id))
             exp_file = os.path.join(local_dir, exp.id, 'exp.pickle')
             if not os.path.exists(exp_file):
