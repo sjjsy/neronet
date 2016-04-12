@@ -334,7 +334,7 @@ class Neroman:
                 experiments_by_state[experiment.state].append(experiment)
         return experiments_by_state
 
-    def submit(self, exp_id, node_id="", verbose=False):
+    def submit(self, exp_id, node_id=""):
         """Submit an experiment to a node using SSH.
 
         Args:
@@ -401,11 +401,11 @@ class Neroman:
         neronet_root_dir = os.path.dirname(os.path.abspath(__file__))
         # Add Neronet source code files and executables to the temporary dir
         neronet.core.osrun('rsync -az "%s" "%s"' %
-                (neronet_root_dir, local_tmp_dir), verbose)
+                (neronet_root_dir, local_tmp_dir))
         # Add the experiment files
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
-                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir), verbose)
+                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
         # Serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
@@ -415,7 +415,7 @@ class Neroman:
         # Transfer the files to the remote server
         try:
             neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
-                (local_tmp_dir, node.ssh_address, remote_dir), verbose)
+                (local_tmp_dir, node.ssh_address, remote_dir))
             # Start the Neromum daemon
             node.start_neromum()
             yield("Experiment " + exp_id + " successfully submitted to " + node_id + "\n")
