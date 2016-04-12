@@ -1920,7 +1920,7 @@ Live demo
 
 ### Planning
 
-Sprint goal: Wrap things up.
+Sprint goal: Grab the quality award
 
 High priority tasks:
 
