@@ -12,7 +12,7 @@ import datetime
 import shutil
 
 import neronet.core
-import neronet.cluster
+import neronet.node
 import neronet.daemon
 from neronet.experiment import Experiment as Exp
 import neronet.nerokid
@@ -21,7 +21,7 @@ class Neromum(neronet.daemon.Daemon):
 
     """A class to specify the Neromum object.
 
-    Runs in the cluster and manages and monitors all the nodes.
+    Runs in the node and manages and monitors all the nodes.
 
     Gets the experiment as the 1st command line argument
     Experiment parameters from 2nd onwards.
@@ -30,7 +30,7 @@ class Neromum(neronet.daemon.Daemon):
         exp_dict (dict): A dict of all experiments submitted to this mum by
             experiment ID.
         idling (bool): A boolean that tells if the daemon is idling.
-        cluster (Cluster): The cluster object related to this server.
+        node (Node): The node object related to this server.
     """
 
     def __init__(self):
@@ -42,9 +42,9 @@ class Neromum(neronet.daemon.Daemon):
         self.add_query('exp_set_warning', self.qry_exp_warning)
         self.add_query('input', self.qry_input)
         self.idling = False
-        self.cluster = pickle.loads(neronet.core.read_file(os.path.join(
-                neronet.core.USER_DATA_DIR_ABS, 'cluster.pickle')))
-        self._host = self.cluster.ssh_address
+        self.node = pickle.loads(neronet.core.read_file(os.path.join(
+                neronet.core.USER_DATA_DIR_ABS, 'node.pickle')))
+        self._host = self.node.ssh_address
 
     def qry_list_exps(self): # primarily for debugging
         """List all experiments submitted to this mum."""
@@ -145,12 +145,12 @@ class Neromum(neronet.daemon.Daemon):
                 exp.log_output = {}
                 # Launch experiment
                 self.log('Launching experiment "%s"...' % (exp.id))
-                if self.cluster.ctype == neronet.cluster.Cluster.Type.slurm:
+                if self.node.ctype == neronet.node.Node.Type.slurm:
                     exp_dir = os.path.join(neronet.core.USER_DATA_DIR_ABS,
                             'experiments', exp.id)
                     s = '#!/bin/bash\n'
                     s += '#SBATCH -J %s -D %s -o slurm.log\n' % (exp.id, exp_dir)
-                    if self.cluster.sbatch_args: s += '#SBATCH %s\n' % (self.cluster.sbatch_args)
+                    if self.node.sbatch_args: s += '#SBATCH %s\n' % (self.node.sbatch_args)
                     if exp.sbatch_args: s += '#SBATCH %s\n' % (exp.sbatch_args)
                     s += 'module load python/2.7.4\n'
                     s += 'nerokid %s --start; sleep 4;\n' % (exp.id)

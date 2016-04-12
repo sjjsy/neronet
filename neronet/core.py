@@ -9,6 +9,7 @@ import datetime
 import subprocess
 import shlex
 import importlib
+import traceback
 
 TIME_OUT = 5.0
 """float: how long the socket waits before failing when sending data
@@ -108,12 +109,14 @@ def import_from(module_name, obj_name):
         ImportError: If the module to be imported couldn't be imported
     """
     #FIXME: Remove dependancy for neronet.scripts.
-    if can_import(module_name, obj_name):
+    try:
         module = importlib.import_module("neronet.scripts." + module_name)
         obj = getattr(module, obj_name)
         return obj
-    raise ImportError("Something went wrong while trying to "
-                        "import %s from %s" % (obj_name, module_name))
+    except:
+        raise ImportError("Something went wrong while trying to "
+                        "import %s from %s:\n" % (obj_name, module_name) + \
+                            traceback.format_exc())
 
 def can_import(module_name, obj_name):
     """Checks if object can be imported from module or if the module exists

@@ -1,23 +1,201 @@
 %% Define document class, variables and frontmatter
 \documentclass{beamer}
-\title{Progress report}
+\usepackage{tikz}
+\title{Project report}
+\def\showoutlineatsection{true}
 \input{tex/beamer.tex}
 \def\Done{\textcolor{green}{Done}}
 \def\Undone{\textcolor{red}{Undone}}
+%% Structure
+% ---- INTRO
+% #) Pyry's statement as an interest booster: best group so far, professional results
+% #) Team -- team photo, description
+% #) Pyry -- photo of Pyry, role, background
+% ---- PROJECT
+% #) Pyry's problem; our challenge
+% #) Vision
+% #) Technical challenges, ASRs
+% #) Solution -- architecture
+% #) Outcome summary: what Neronet can do now?
+% #) Demo
+% ---- PROCESS
+% #) Process overview; schedule; used tools
+% #) Definition of done
+% #) Testing and QA
+% #) Overview of sprints: goals
+% #) Stories done by sprint and sprint goals; challenges and found solutions
+% #) Peer team feedback
+% #) User feedback
+% #) Quality attributes
+% #) Retrospective summaries
+% #) Overall project summary
+% #) Overall project challenges: Pyry, topic, experience
+% #) Summary of technical and sprint challenges and solutions
+% #) Future as an OS project
+% #) Thanks to our team, Eero, Pyry, Simo, Jelena, course staff
+% Notes:
+% - Lots of content: We have to train a lot in order to fit it all into 35 minutes.
+% - Key things to mention must be printed on paper
 %% Content pages
-\section{Introduction} \bgset{gfx/neural1__bgmod.jpg}
-\begin{frame}{Introduction}{Goals} % Joona
-  Our goal is to develop a tool for computational researchers to enable easy
+
+
+\begin{frame}{Forecitation}
+  I have supervised several bachelors' theses and other student projects.
+
+  \vspace*{1cm}
+  You surprised me with your \alert{commitment} and \alert{effort}.
+
+  \vspace*{1cm}
+  Pyry Takala, PO
+\end{frame}
+
+\section{People} \bgset{gfx/neural2__bgmod.jpg}
+
+\begin{frame}{Team}
+  \begin{figure}
+    \centering\includegraphics[width=1\columnwidth]{gfx/team.jpg}
+  \end{figure}
+  At the start of the course, we were all both
   \begin{itemize}
-  \item specification and management of experiment queues
-  \item batch submission of experiment jobs to computing clusters
-  \item monitoring of ongoing experiments' logs and parameter values
-  \item access to experiment information during and after the run
-  \item configurable notifications on experiment state and progress
-  \item configurable criteria for experiment autotermination
-  \item logging of experiment history
+  \item \alert{terrified}, and 
+  \item \alert{inspired}
+  \end{itemize}
+  by our project topic!
+\end{frame}
+\begin{frame}{Product owner}
+  \begin{figure}
+    \centering\includegraphics[width=0.4\columnwidth]{gfx/pyry.jpg}
+  \end{figure}
+  \begin{itemize}
+  \item Machine learning researcher at Aalto
+  \item Past: Amazon, McKinsey \& Company, Goldman Sachs, August...
+  \item A great PO!
   \end{itemize}
 \end{frame}
+\begin{frame}{Agile coach}
+  \begin{figure}
+    \centering\includegraphics[width=0.4\columnwidth]{gfx/eero.jpg}
+  \end{figure}
+  \begin{itemize}
+  \item Continuous Delivery researcher at Aalto
+  \item Past: Prosys PMS Ltd, WiRCA-miehet, Aalto...
+  \item A great coach!
+  \end{itemize}
+\end{frame}
+
+\section{Project} \bgset{gfx/neural1__bgmod.jpg}
+
+\begin{frame}{Pyry's problem}
+  Challenges in training neural networks
+  \begin{itemize}
+  \item Takes forever!
+  \item Might anything be wrong?
+  \item If yes, what?
+  \item Is it developing better than its precedants?
+  \item Why does it take forever?
+  \end{itemize}
+\end{frame}
+\begin{frame}{Vision}
+  A tool that would
+  \begin{itemize}
+  \item facilitate experiment management
+  \item provide information on ongoing experiments
+  \item be able to autoterminate experiments
+  \item archive all results
+  \item possibly even facilitate analysis
+  \end{itemize}
+\end{frame}
+\begin{frame}{Vision}
+  Other requirements
+  \begin{itemize}
+  \item lightweight
+  \item easily extensible
+  \item open source
+  \item good usability
+  \item framework agnostic
+  \end{itemize}
+\end{frame}
+\begin{frame}{Journey map}
+  \begin{figure}
+  \tikzset{
+    jmi/.append style={align=center,font=\tiny,shape=circle,draw,fill=gray!30,
+    minimum size=1.4cm}, jmc/.style={font=\normalsize},
+    man/.style={fill=blue!30}, mum/.style={draw=red,thick},
+    kid/.style={fill=green!30}, nm/.style={color=blue},
+    nj/.style={color=green}, jm/.style={color=red}
+  }
+  \resizebox{0.8\columnwidth}{!}{
+  \begin{tikzpicture}
+    \node (00)            [jmi,jmc]          {Research \\ journey};
+    \node (01) at (180:4) [jmi]              {Innovate \\ ideas};
+    \node (02) at (150:4) [jmi]              {Review \\ literature};
+    \node (03) at (120:4) [jmi]              {Write \\ code};
+    \node (04) at ( 90:4) [jmi,man]          {Embed \\ analytics};
+    \node (05) at ( 60:4) [jmi,man]          {Design \\ tests};
+    \node (06) at ( 30:4) [jmi,man,mum]      {Launch \\ tests};
+    \node (07) at (  0:4) [jmi,kid,mum]      {Check \\ progress};
+    \node (08) at (330:4) [jmi,kid,mum]      {Abort \\ failures};
+    \node (09) at (300:4) [jmi,kid,mum]      {Collect \\ results};
+    \node (10) at (270:4) [jmi,man]          {Analyse \\ results};
+    \node (12) at (225:4) [jmi]              {Publish/drop \\ results};
+    \foreach \a/\b in {00/01,01/02,02/03,03/04,04/05,05/06,06/07,07/08,08/09,09/10,10/01,10/12,12/00}
+      \draw [->] (\a) edge (\b);
+    \node (nm) at ( 30:2) [nm]               {\texttt{neroman}};
+    \node (nm) at (  0:2) [jm]               {\texttt{neromum}};
+    \node (nj) at (330:2) [nj]               {\texttt{nerokid}};
+  \end{tikzpicture}
+  }
+  \end{figure}
+\end{frame}
+\begin{frame}{Technical challenges \& ASRs} % Joona
+  \begin{itemize}
+  \item deeply technical and an advanced domain
+  \item remote computing nodes and cluster management
+  \item good usability? according to whom?
+  \item framework agnostic?
+  \end{itemize}
+\end{frame}
+\begin{frame}{Solution}
+  \begin{figure}
+  \tikzset{
+    ndom/.style={align=left}
+    ncmp/.style={align=center,font=\small,shape=circle,draw,minimum size=3cm},
+    ncmp/.style={align=center,font=\small,shape=circle,draw,minimum size=3cm},
+    nmum/.style={align=center,font=\small,shape=circle,draw,minimum size=2cm},
+    njob/.style={align=center,font=\tiny,shape=circle,draw,fill=green!30},
+  }
+  \resizebox{0.8\columnwidth}{!}{
+    \begin{tikzpicture}
+      \draw[dashed] ( 0, 6  ) rectangle (11,11);
+      \draw[dashed] ( 0, 0  ) rectangle (11, 5);
+      \node (ln) at ( 2,10  ) [ndom]                 {Local network};
+      \node (ln) at ( 2, 4  ) [ndom]                 {Cluster network};
+      \node (nm) at ( 6, 9  ) [ncmp,fill=blue!30]    {\texttt{neroman}};
+      \node (mm) at ( 6, 5.5) [nmum,fill=red!30]     {\texttt{neromum}};
+      \node (j1) at ( 3, 2  ) [njob]                 {\texttt{nerokid}};
+      \node (j2) at ( 5, 1  ) [njob]                 {\texttt{nerokid}};
+      \node (j4) at ( 7, 1  ) [njob]                 {\texttt{nerokid}};
+      \node (j3) at ( 9, 2  ) [njob]                 {\texttt{nerokid}};
+      \foreach \a/\b in {nm/mm,mm/j1,mm/j2,mm/j3,mm/j4}
+        \draw [<->] (\a) edge (\b);
+    \end{tikzpicture}
+  }
+  \end{figure}
+\end{frame}
+\begin{frame}{Project}{Outcome summary: what Neronet can do now?} % Joona
+  \begin{itemize}
+  \item 
+  \item 
+  \end{itemize}
+\end{frame}
+\begin{frame}{Project}{Demo} % Joona
+  \begin{itemize}
+  \item 
+  \item 
+  \end{itemize}
+\end{frame}
+
+
 \begin{frame}{Introduction}{What} % Samuel
   In essence the product is a Python-based tool that enables computational researchers to conduct their research more effectively.
   \begin{itemize}
@@ -52,7 +230,7 @@
 \begin{frame}{Results}{Sprint 2}
   Goal: \emph{Develop a stable version for end user testing}
   
-  \pause Product Backlog Items: 
+  Product Backlog Items: 
   \begin{itemize}
   \item US6: as a user, I want to set preferences (name, email, default cluster) \Done{}
   \item US7: As a user, I want my experiment config attributes to support generation of value combinations \Done{}
@@ -61,12 +239,12 @@
   \item US10: Aas a user, I want the program to enable easy setup. \Done{}
   \end{itemize}
   
-  \pause Stable but very limited functionality. % Only synchronous
+  Stable but very limited functionality. % Only synchronous
 \end{frame}
 \begin{frame}{Results}{Sprint 3}
   Goal: \emph{Finish asynchronous system functionality and create a GUI mockup}
   
-  \pause Product Backlog Items: 
+  Product Backlog Items: 
   \begin{itemize}
   \item US11: As a user, I want to save important information about my clusters \Done{}
   \item US12: As a user, I want to group my clusters \Done{}
@@ -75,7 +253,7 @@
   \item US15:: As a user, I want a status report so that I can get an overview \Done{}
   \end{itemize}
 
-  \pause Rewriting, refactoring and development under the hood. % In this
+  Rewriting, refactoring and development under the hood. % In this
   % sprint we also finished asynchronous daemon system so users could submit
   % and manage multiple experiments and clusters, created gui and made our
   % software to support python 2.7 and newer versions (previously only python
@@ -84,7 +262,7 @@
 \begin{frame}{Results}{Sprint 4}
   Goal: \emph{Publish Neronet as an open source project}
   
-  \pause Product Backlog Items: 
+  Product Backlog Items: 
   \begin{itemize}
   \item US16: As a user, I want to have example use cases that I can study \Done{}
   \item US17: As a user, I want to use basic functionalities via gui \Done{}
@@ -93,44 +271,44 @@
   \item US20:: As a user, I want to have a helpful web community to help me out \Done{}
   \end{itemize}
   
-  \pause Improving user experience; set up a continuous integration system
+  Improving user experience; set up a continuous integration system
   % In this sprint we started to use automated tests using travis CI and got
   % input from user testing. 
 \end{frame}
 \begin{frame}{Results}{Sprint 5}
   Goal: \emph{Fínish Neronet 1.0}
   
-  \pause Product Backlog Items: 
+  Product Backlog Items: \small
   \begin{itemize}
-  \pause \item US21: As a user I want to open plots directly from the GUI \Done{}
-  \pause \item US22: As a user I want to see cluster resource info easily \Done{}
-  \pause \item US23: As a user I want a cluster status report on individual clusters as well as an overview on all clusters \Done{}
-  \pause \item US24: As a user, I want to cancel a submitted experiment \Done{}
-  \pause \item US25: As a user I want to use the tool collaboratively \Undone{}
-  \pause \item US26: As a user I want clear feedback and messages and error handling \Done{}
-  \pause \item US27: As a user I want to filter by parameters in the GUI table \Done{}
-  \pause \item US28: As a user I want to have a big table with all experiments \Done{}
+  \item US21: As a user I want to open plots directly from the GUI \Done{}
+  \item US22: As a user I want to see cluster resource info easily \Done{}
+  \item US23: As a user I want a cluster status report on individual clusters as well as an overview on all clusters \Done{}
+  \item US24: As a user, I want to cancel a submitted experiment \Done{}
+  \item US25: As a user I want to use the tool collaboratively \Undone{}
+  \item US26: As a user I want clear feedback and messages and error handling \Done{}
+  \item US27: As a user I want to filter by parameters in the GUI table \Done{}
+  \item US28: As a user I want to have a big table with all experiments \Done{}
   \end{itemize}
   
-  %\pause finishing 
+  %finishing 
   % In this sprint we started to use automated tests using travis CI and got
   % input from user testing. 
 \end{frame}
 \begin{frame}{Results}{User testing}
 We reached out to Triton admin and he gave us great feedback.
 \begin{itemize}
-      \pause \item Synchronizing files between clusters and client computers:
+      \item Synchronizing files between clusters and client computers:
       \begin{itemize}
           \item Our system so far has used rsync and it has exceeding
               amounts of I/O operations when used with large experiments.
           \item We should use scp as to reduce disk operations.
           \item Home directory cannot be used in some clusters, we need to have an option to choose working directory.
       \end{itemize}
-      \pause \item In general he liked our usability.
+      \item In general he liked our usability.
 \end{itemize}
-\pause Our PO gave us some input regarding usability after his initial testing.
+Our PO gave us some input regarding usability after his initial testing.
 \begin{itemize}
-    \pause \item Test connection when specifying clusters to assure the ssh address is valid. FIXED
+    \item Test connection when specifying clusters to assure the ssh address is valid. FIXED
     \item Error and success messages should be more specific.
     \item Some bugs were also found and fixed.
 \end{itemize}
@@ -157,7 +335,7 @@ We reached out to Triton admin and he gave us great feedback.
   \item We defined \Done{} in three levels: BI, sprint and project
   \item BI level: Unit tests are written where applicable, Code confroms to guidelines (PEP8), Code is commented and documented, Independent peer review has been completed
   \item Sprint level: All BIs in the sprint backlog are \emph{Done}, Reasonable automated tests written, Comprehensive system tests are conducted, reported and reviewed, Sprint goal is achieved
-  \pause \item Updates to DoD:
+  \item Updates to DoD:
     \begin{itemize}
     \item All updates to DoD at the end of each sprint are written in the retrospectives section
     \end{itemize}
@@ -178,15 +356,15 @@ We reached out to Triton admin and he gave us great feedback.
 \begin{frame}{Quality}
   Relevant quality attributes:
   \begin{itemize}
-  \pause \item \alert{Usability} -- We have put a lot of effort in creating a helpful user manual, start guide and example use cases to help newbies better understand our product. Some error and success messages could be more helpful though, but we will make them better right at the start of the next sprint.
-  \pause \item \alert{Reliability} -- Our software's reliability should be good at this point. Tests haven't shown many unexpected crashes.
+  \item \alert{Usability} -- We have put a lot of effort in creating a helpful user manual, start guide and example use cases to help newbies better understand our product. Some error and success messages could be more helpful though, but we will make them better right at the start of the next sprint.
+  \item \alert{Reliability} -- Our software's reliability should be good at this point. Tests haven't shown many unexpected crashes.
   \end{itemize}
 \end{frame}
 \begin{frame}{Quality}
   Relevant quality attributes:
   \begin{itemize}
-  \pause \item \alert{Extendability} -- We have paid attention to making our software easily extendable from the start, and in the last sprint we put effort in creating a maintenance guide so it's easier to extend our software even without having been in the development team.
-  \pause \item \alert{Performance} -- We found out at the end of this sprint that our software using rsync might cause too much I/O operations in some cases. We will replace that with scp and after that our software's performance should be pretty good.
+  \item \alert{Extendability} -- We have paid attention to making our software easily extendable from the start, and in the last sprint we put effort in creating a maintenance guide so it's easier to extend our software even without having been in the development team.
+  \item \alert{Performance} -- We found out at the end of this sprint that our software using rsync might cause too much I/O operations in some cases. We will replace that with scp and after that our software's performance should be pretty good.
   \end{itemize}
 \end{frame}
 \section{Effort}
@@ -205,7 +383,7 @@ Spent and budgeted effort in hours by team member and sprint:
       & 291/175 & 161/225 & 164/225 & 160/225 & 138/225 & 168/225  \\
   \end{tabular}
   \end{table}
-  \pause \begin{itemize}
+  \begin{itemize}
   \item Our team had comparatively little experience
   \item The project's problem domain was challenging to understand
   \item Studying existing products and technologies took a lot of time

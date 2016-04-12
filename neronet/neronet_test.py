@@ -1,5 +1,5 @@
 import unittest
-from neronet.cluster import Cluster
+from neronet.node import Node
 from neronet.experiment import Experiment, ExperimentWarning
 
 class Neronet_test(unittest.TestCase):
@@ -44,15 +44,15 @@ class Neronet_test(unittest.TestCase):
         self.assertEqual(w.get_action("variable 51"), "email")
         self.assertEqual(w.get_action("var1 51"), "no action")
     
-    def test_cluster_str(self):
+    def test_node_str(self):
         
-        c = Cluster("triton","slurm", "triton.aalto.fi")
+        c = Node("triton","slurm", "triton.aalto.fi")
         self.assertEqual(c.__str__(), "triton     slurm      triton.aal None ")
         
-        c = Cluster("kosh","unmanaged", "kosh.aalto.fi")
+        c = Node("kosh","unmanaged", "kosh.aalto.fi")
         self.assertEqual(c.__str__(), "kosh       unmanaged  kosh.aalto None ")
         
-        #TODO: write more tests for different cluster methods
+        #TODO: write more tests for different node methods
         
     def test_experiment_get_action(self):
         
