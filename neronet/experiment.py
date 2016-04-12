@@ -4,6 +4,7 @@ import datetime
 import os
 import shlex
 import time
+import traceback
 
 import neronet.core
 
@@ -139,8 +140,9 @@ class Experiment(object):
                     try:
                         data = reader(f, *reader_args)
                     except:
-                        raise OutputReadError("%s: couldn't read %s with %s" \
-                                        % (self.id, filename, reader_name))
+                        raise OutputReadError("%s: couldn't read %s with %s\n" \
+                                        % (self.id, filename, reader_name) + \
+                                        traceback.format_exc())
                     if not isinstance(data, dict):
                         raise OutputReadError("%s: %s for %s didn't return a"
                                 "dict" % (self.id, processor_type, filename))
@@ -151,7 +153,8 @@ class Experiment(object):
                             line_data = reader(line, *reader_args)
                         except:
                             raise OutputReadError("%s: couldn't read %s "
-                                "with %s" % (self.id, filename, reader_name))
+                                "with %s:\n" % (self.id, filename, reader_name) \
+                                + traceback.format_exc())
                         if not isinstance(data, dict):
                             raise OutputReadError("%s: %s for %s didn't "
                                                     "return a dict" \
@@ -182,7 +185,8 @@ class Experiment(object):
             #Construct the plotter and arguments
             self.plotter(plot_name)
 
-    def plotter(self, plot_name, feedback=None, save_image=True):
+    def plotter(self, plot_name, feedback=None, save_image=True,
+                saved_name=None):
         """Plots the outputfile into plot image using user defined plotting
         and output reading functions
 
@@ -222,12 +226,13 @@ class Experiment(object):
                 plot_arg = (plot_arg, output[plot_arg])
             plot_data.append(plot_arg)
         try:
-            results_dir = self.get_results_dir()
-            return plot_function(os.path.join(results_dir, plot_name), \
-                            feedback, save_image, *plot_data)
+            if not saved_name:
+                results_dir = self.get_results_dir()
+                saved_name = os.path.join(results_dir, plot_name)
+            return plot_function(saved_name, feedback, save_image, *plot_data)
         except:
-            raise PlotError("%s: couldn't plot %s, maybe something is wrong"
-                            " with the plot function?" % (self.id, plot_name))
+            raise PlotError("%s: couldn't plot %s:\n" % (self.id, plot_name) \
+                            + traceback.format_exc())
 
     def get_action(self, logrow):
         init_action = ('no action', '')
