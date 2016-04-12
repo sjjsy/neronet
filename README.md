@@ -55,7 +55,7 @@ The files listed below offer lots of project related information:
   (architecture, etc.)
 - [Definition of Done](./doc/definition_of_done.pdf) -- a Scrum tool to help
   us ensure high quality
-- [Progress report](./doc/project_report.pdf) -- the project report presented
+- [Project report](./doc/project_report.pdf) -- the project report presented
   at the end of the project for our evaluators
 
 ## Notes on related themes
