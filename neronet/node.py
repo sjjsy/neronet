@@ -105,7 +105,6 @@ class Node(object):
 
     def start_neromum(self):
         res = self.sshrun('neromum --start')
-        print('Result of start_neromum:%s, %s, %s' % res.rv, res.out, res.err)
 
     def clean_experiments(self, exceptions):
         data = {'action': 'clean_experiments', 'exceptions': exceptions}
