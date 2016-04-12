@@ -11,7 +11,6 @@
 import sys
 import time
 import datetime
-import random
 
 count = int(sys.argv[1])
 interval = float(sys.argv[2])

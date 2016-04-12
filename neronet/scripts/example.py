@@ -20,7 +20,7 @@ def line_reader(line, names, sep=', ', *args):
     #Takes names and splits it to keys corresponding to each value in the line
     keys = names.split()
     #Splits the line and casts them as integers
-    vals = [int(val) for val in line.strip().split(sep) if val]
+    vals = [float(val) for val in line.strip().split(sep)]
     #Maps the values to the keys and makes a dictionary
     return dict(zip(keys, vals))
 
@@ -35,18 +35,18 @@ def file_reader(output_file, names, sep=', ', *args):
     Returns:
         dict: The data in the line mapped to the names
     """
-    file_data = f.read()
+    file_data = output_file.read().strip().split('\n')
     keys = names.split()
     data = {}
     for key in keys:
         data[key] = []
     for line in file_data:
-        vals = [int(val) for val in line.strip().split(sep) if val]
+        vals = [float(val) for val in line.strip().split(sep)]
         for key, val in zip(keys, vals):
             data[key].append(val)
     return data
 
-def plot(filename, feedback, save_image, x, y, *args):
+def plot(filename, feedback, save_image, y, x=None, *args):
     """ Plots the given values to file
 
     Parameters:
@@ -58,11 +58,13 @@ def plot(filename, feedback, save_image, x, y, *args):
     Returns:
         axes object: an axes object that can be used to combine the plots
     """
+    if not x:
+        x = ('x', [i for i in range(len(y[1]))])
     if feedback:
         #Adds the plot to the combined axes
-        feedback.plot(x,y)
+        feedback.plot(x[1],y[1])
         if save_image:
-            fig = ax.get_figure()
+            fig = feedback.get_figure()
             fig.savefig(filename)
         return feedback
     else:

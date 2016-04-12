@@ -200,6 +200,8 @@ class Neroman:
         yield "Plotted experiment %s\n" % experiment_id
     
     def combined_plot(self, experiment_ids):
+        """ Tries to 
+        """
         experiments = []
         plots = None
         first = True
@@ -227,11 +229,14 @@ class Neroman:
         for plot in plots:
             feedbacks[plot] = None
         for experiment in experiments[:-1]:
-            for plot, feedback in zip(plots, feedbacks):
-                plots[plot] = experiment.plotter(plot, feedback[plot], False)
-        for plot, feedback in zip(plots, feedbacks):
+            for plot in plots:
+                feedback = feedbacks[plot]
+                feedbacks[plot] = experiment.plotter(plot, feedback, False)
+        for plot in plots:
+            feedback = feedbacks[plot]
             experiment = experiments[-1]
-            experiment.plotter(plot, feedback, True)
+            saved_name = '_'.join(experiment_ids + [plot])
+            experiment.plotter(plot, feedback, True, saved_name)
         yield "Successfully plotted experiments\n"
 
     def terminate_experiment(self, experiment_id):

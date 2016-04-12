@@ -31,7 +31,9 @@ def create_argument_parser():
     parser.add_argument('--plot',
                         metavar='experiment_id',
                         nargs='+',
-                        help='Plots the experiment with the given ID')
+                        help='Plots the experiment with the given ID or tries'
+                        ' to create combined plots of the specified ' 
+                        'experiments')
     parser.add_argument('--addnode',
                         metavar=('node_id', 'ssh_address'),
                         nargs=2,
@@ -71,10 +73,10 @@ def main():
     args = parser.parse_args()
     if args.clean:
         answer = raw_input('Do you really want to remove all neronet '
-                            'configuration files? (y/n) ')
+                            'configuration files and experiment data? (y/n) ')
         if answer == 'y':
             remove_data()
-            print('Removed neronet configuration files!')
+            print('Removed neronet configuration files and experiment data!')
         else:
             print('Data removal cancelled.')
         return

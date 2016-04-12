@@ -33,7 +33,7 @@ artifacts:
 	  ./process_overview.pdf \
 	  ./technical_overview.pdf \
 	  ./definition_of_done.pdf \
-	  ./progress_report.pdf \
+	  ./project_report.pdf \
 	  ./test_session_charter.pdf
 	cd -
 	@echo "Compilation finished."
