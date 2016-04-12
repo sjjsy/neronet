@@ -260,14 +260,11 @@ class Neroman:
                 if not self.nodes['nodes']:
                     yield 'No nodes defined\n'
                 else:
-                    for cid, node in self.nodes['nodes'].iteritems():
-                        try:
-                            node.average_load = float(node.sshrun('uptime').out.split()[-1])
-                        except RuntimeError:
-                            node.average_load = None
-                    yield '{0:<11} {1:<11} {2:<11} {3:<6}\n'.format('Name','Type','Address','Load')
+                    yield '{0:<11} {1:<11} {2:<15} {3:<6} {4:<4} {5:<4}\n'.format('Name','Type','Address','Load', '%Mem', '%Dsk')
                     for node in self.nodes['nodes'].values():
-                        yield '{0:<11} {1:<11} {2:<11} {3:<6}\n'.format(node.cid, node.ctype, node.ssh_address, node.average_load)
+                        resources = node.gather_resource_info()
+                        yield '{0:<11} {1:<11} {2:<15} {3:<6} {4:<4.3} {5:<4}\n'.format(node.cid, node.ctype, node.ssh_address[:15], resources['avgload'], 100.0*int(resources['usedmem'])/int(resources['totalmem']), resources['percentagediskspace'])
+
                 raise StopIteration
             elif arg in self.database:
                 experiment = self.database[arg]

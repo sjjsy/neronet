@@ -87,9 +87,12 @@ class Node(object):
         return True
 
     def gather_resource_info(self):
-        #Gather resource information in a dictionary
+        #Gather node resource information in a dictionary
         results = {}
-        info = self.sshrun('uptime; free -m; df -k .').out.split('\n')
+        try:
+            info = self.sshrun('uptime; free -m; df -k .').out.split('\n')
+        except RuntimeError:
+            return {avgload: None, totalmem: None, usedmem: None, totaldiskspace:None, useddiskspace: None, percentagediskspace: None}
         results['avgload'] = info[0].split()[-1].replace(',', '.')
         memoryusage = info[2].split()
         results['totalmem'] = memoryusage[1]
