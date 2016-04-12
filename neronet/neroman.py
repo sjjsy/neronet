@@ -26,11 +26,9 @@ defined in its config:
 import os
 import time
 import datetime
-#FIXME: (collections) Can we do without this module?
 import collections
 import pickle
 import shutil
-#FIXME: (random) Can we do without this module?
 import random
 import sys
 
@@ -265,12 +263,13 @@ class Neroman:
                 for exp in self.database:
                     if self.database[exp].cluster_id == cluster.cid:
                         noexperiments = False
-                        yield "  Experiment id: %s, Status: %s\ņ" \
+                        yield "  Experiment id: %s, Status: %s\n" \
                                 % (exp, self.database[exp].state)
                 if noexperiments: yield "  No experiments in cluster.\n"
                 resources = cluster.gather_resource_info()
                 yield "Average load 15min: %s\n" % resources['avgload']
-                yield "Memory usage in MiB: %s out of %s total.(%.2f%%)\n" % (resources['usedmem'], resources['totalmem'], 100.0*int(resources['usedmem'])/int(resources['totalmem'])) 
+                yield "Memory usage in MiB: %s out of %s total.(%.2f%%)\n" % (resources['usedmem'], resources['totalmem'], 100.0*int(resources['usedmem'])/int(resources['totalmem']))
+                yield "Disk space in MiB: %s out of %s total. (%s)\n" % (resources['useddiskspace'], resources['totaldiskspace'], resources['percentagediskspace'])
                 raise StopIteration
             else:
                 raise IOError('Neroman: no experiment or cluster named "%s"!'\
