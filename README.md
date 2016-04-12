@@ -2,24 +2,29 @@
 
 # Neronet
 
-Neronet is going to be a framework designed to facilitate the specification,
-submission, monitoring, control, analysis and management of many different
-computational experiments in collaboration with computing cluster resource
-managers and job schedulers such as
-[Slurm](https://computing.llnl.gov/linux/slurm/).
+Neronet is a framework designed to facilitate the specification, submission,
+monitoring, control, analysis and management of many different computational
+experiments. The tool is ment to be used by computational researchers that
+have access to a computing cluster with several nodes accessible via SSH and
+SSH keys.
 
 Neronet is a software development project undertaken by Team 11 of the Aalto
 University course CSE-C2610 Software Project of semestern 2015-16 for Pyry
 Takala from the
 [Aalto deep learning research group](http://research.ics.aalto.fi/bayes/).
 The project was started in October 19th 2015 and will be finished by April
-11th 2016. The project is conducted in seven sprints and Scrum is employed.
+13th 2016. The project is conducted in seven sprints and Scrum is employed.
 
 This project is under the [MIT License](./LICENSE).
 
-To start using Neronet, follow the instructions at [Neronet start guide](https://github.com/smarisa/neronet/blob/sprint/doc/start_guide.rst)
+To start using Neronet, follow the instructions at the
+[Neronet start guide](./doc/start_guide.rst). A more extensive
+[manual](./doc/user_manual.rst) is also available. The shortest intro
+available is the briefly commented [CLI demo script](./doc/demo/script.sh).
 
-We have a user group at [Google](https://groups.google.com/forum/#!forum/neronet-users).
+We also have a user group at
+[Google](https://groups.google.com/forum/#!forum/neronet-users) for possible
+future user community creation and user support.
 
 ## Branches
 
@@ -31,26 +36,27 @@ The project repo contains two main branches:
 - [sprint](https://github.com/smarisa/neronet/tree/sprint) -- the work
   in progress of the currently ongoing increment (sprint).
 
-The `sprint` branch is under active development and will be merged to
-`stable` once the current sprint increment is done.
+The `sprint` branch has been used for active development work and was merged
+to `stable` once each sprint increment was done.
 
 ## General information
 
 The files listed below offer lots of project related information:
 
-- [Project Information](./doc/project_information.md) -- notes by the team to
-  direct development
 - [Project Introduction](./doc/project_introduction.pdf) -- original project
   proposal by the PO
-- [Product Vision](./doc/product_vision.pdf) -- why, what, for whom
-- [Process Overview](./doc/process_overview.pdf) -- how in practice (schedule,
-  development practices)
+- [Project Information](./doc/project_information.md) -- notes by the team
+  help in planning and directing development work
+- [Product Vision](./doc/product_vision.pdf) -- A scrum instrument answering
+  the why, what, and for whom questions regarding this project
+- [Process Overview](./doc/process_overview.pdf) -- how in practice that is
+  the schedule and development practices
 - [Technical Overview](./doc/technical_overview.pdf) -- what in practice
   (architecture, etc.)
 - [Definition of Done](./doc/definition_of_done.pdf) -- a Scrum tool to help
   us ensure high quality
-- [Progress report](./doc/progress_report.pdf) -- our latest project progress
-  overview
+- [Progress report](./doc/project_report.pdf) -- the project report presented
+  at the end of the project for our evaluators
 
 ## Notes on related themes
 
