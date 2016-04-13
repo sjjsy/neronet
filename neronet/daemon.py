@@ -381,8 +381,8 @@ class QueryInterface(object):
     def query(self, name, *pargs, **kwargs):
         trials = 4
         self.determine_port()
-        self.inf('Query "%s" with %s, %s to (%s, %s)...' % (name, pargs,
-                kwargs, self.host, self.port))
+        #self.inf('Query "%s" with %s, %s to (%s, %s)...' % (name, pargs,
+        #        kwargs, self.host, self.port))
         if name not in self.daemon._queries:
             raise RuntimeError('No such query "%s"!' % (name))
             #self.abort(11, 'No such query "%s"!' % (name))
@@ -400,9 +400,9 @@ class QueryInterface(object):
                 try:
                     byts = sckt.recv(4096)
                     data = pickle.loads(byts) if byts else None
-                    self.inf('Received reply: %s' % (data))
+                    #self.inf('Received reply: %s' % (data))
                 except socket.timeout:
-                    self.inf('No reply received!')
+                    #self.inf('No reply received!')
                     data = None
                 #self.inf('Closing socket.')
                 sckt.close()
@@ -431,7 +431,7 @@ class QueryInterface(object):
 
     def start(self):
         """Start the daemon."""
-        self.inf('start(): Starting the daemon...')
+        #self.inf('start(): Starting the daemon...')
         if self.daemon_is_alive():
             self.wrn('start(): The daemon is already running!')
             return
@@ -439,7 +439,7 @@ class QueryInterface(object):
         pid = os.fork()
         if pid == 0:
             self.daemon._daemonize()
-            self.inf('start(): Executing run...')
+            #self.inf('start(): Executing run...')
             self.daemon._run()
 
     def stop(self):
@@ -447,18 +447,19 @@ class QueryInterface(object):
         if not self.daemon_is_alive():
             self.wrn('stop(): The daemon is not even running!')
             return
-        self.inf('stop(): Stopping the daemon...')
+        #self.inf('stop(): Stopping the daemon...')
         self.query('stop')
         time.sleep(self.daemon._tdo*0.5)
         if os.path.exists(self.daemon._pfport):
             self.wrn('stop(): The daemon failed to cleanup!')
             self.daemon._cleanup(outfiles=True)
         else:
-            self.inf("stop(): The daemon exited cleanly.")
+            #self.inf("stop(): The daemon exited cleanly.")
+            pass
 
     def restart(self):
         """Restart the daemon."""
-        self.inf("restart(): Restarting the daemon...")
+        #self.inf("restart(): Restarting the daemon...")
         self.stop()
         self.start()
 
@@ -557,22 +558,23 @@ class Cli(QueryInterface):
         if not reply:
             self.err('No reply received!')
         else:
-            self.inf('Received a reply with code %d.' % (reply['rv']))
+            #self.inf('Received a reply with code %d.' % (reply['rv']))
             if 'msgbody' in reply:
-              self.inf('Message:\n%s' % (reply['msgbody']))
+              #self.inf('Message:\n%s' % (reply['msgbody']))
+              pass
 
     def func_input(self):
         """Read data input from stdin."""
-        print('Reading stdin...')
+        #print('Reading stdin...')
         byts = ''
         for ln in sys.stdin:
-            print('Read %d bytes ("%s").' % (len(ln), ln))
+            #print('Read %d bytes ("%s").' % (len(ln), ln))
             byts += ln
-        print('Reading finished!')
+        #print('Reading finished!')
         data = pickle.loads(byts)
-        print('Received %s' % (data))
+        #print('Received %s' % (data))
         try:
             reply = self.query('input', data)
         except self.NoPortFileError:
             reply = {'rv': 1, 'msgbody': 'No port file!'}
-        print('Reply %s' % (reply))
+        #print('Reply %s' % (reply))

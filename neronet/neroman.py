@@ -24,11 +24,9 @@ defined in its config:
 import os
 import time
 import datetime
-#FIXME: (collections) Can we do without this module?
 import collections
 import pickle
 import shutil
-#FIXME: (random) Can we do without this module?
 import random
 import sys
 
@@ -267,14 +265,11 @@ class Neroman:
                 if not self.nodes['nodes']:
                     yield 'No nodes defined\n'
                 else:
-                    for cid, node in self.nodes['nodes'].iteritems():
-                        try:
-                            node.average_load = float(node.sshrun('uptime').out.split()[-1])
-                        except RuntimeError:
-                            node.average_load = None
-                    yield '{0:<11} {1:<11} {2:<11} {3:<6}\n'.format('Name','Type','Address','Load')
+                    yield '{0:<11} {1:<11} {2:<15} {3:<6} {4:<4} {5:<4}\n'.format('Name','Type','Address','Load', '%Mem', '%Dsk')
                     for node in self.nodes['nodes'].values():
-                        yield '{0:<11} {1:<11} {2:<11} {3:<6}\n'.format(node.cid, node.ctype, node.ssh_address, node.average_load)
+                        resources = node.gather_resource_info()
+                        yield '{0:<11} {1:<11} {2:<15} {3:<6} {4:<4.3} {5:<4}\n'.format(node.cid, node.ctype, node.ssh_address[:15], resources['avgload'], 100.0*int(resources['usedmem'])/int(resources['totalmem']), resources['percentagediskspace'])
+
                 raise StopIteration
             elif arg in self.database:
                 experiment = self.database[arg]
@@ -292,12 +287,13 @@ class Neroman:
                 for exp in self.database:
                     if self.database[exp].node_id == node.cid:
                         noexperiments = False
-                        yield "  Experiment id: %s, Status: %s\ņ" \
+                        yield "  Experiment id: %s, Status: %s\n" \
                                 % (exp, self.database[exp].state)
                 if noexperiments: yield "  No experiments in node.\n"
                 resources = node.gather_resource_info()
                 yield "Average load 15min: %s\n" % resources['avgload']
-                yield "Memory usage in MiB: %s out of %s total.(%.2f%%)\n" % (resources['usedmem'], resources['totalmem'], 100.0*int(resources['usedmem'])/int(resources['totalmem'])) 
+                yield "Memory usage in MiB: %s out of %s total.(%.2f%%)\n" % (resources['usedmem'], resources['totalmem'], 100.0*int(resources['usedmem'])/int(resources['totalmem']))
+                yield "Disk space in MiB: %s out of %s total. (%s)\n" % (resources['useddiskspace'], resources['totaldiskspace'], resources['percentagediskspace'])
                 raise StopIteration
             else:
                 raise IOError('Neroman: no experiment or node named "%s"!'\
@@ -338,7 +334,7 @@ class Neroman:
                 experiments_by_state[experiment.state].append(experiment)
         return experiments_by_state
 
-    def submit(self, exp_id, node_id="", verbose=False):
+    def submit(self, exp_id, node_id=""):
         """Submit an experiment to a node using SSH.
 
         Args:
@@ -405,11 +401,11 @@ class Neroman:
         neronet_root_dir = os.path.dirname(os.path.abspath(__file__))
         # Add Neronet source code files and executables to the temporary dir
         neronet.core.osrun('rsync -az "%s" "%s"' %
-                (neronet_root_dir, local_tmp_dir), verbose)
+                (neronet_root_dir, local_tmp_dir))
         # Add the experiment files
         for file_path in exp.required_files + [exp.main_code_file]:
             neronet.core.osrun('cp -p "%s" "%s"' %
-                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir), verbose)
+                (os.path.join(local_exp_path, file_path), local_tmp_exp_dir))
         # Serialize the experiment object into the experiment folder
         neronet.core.write_file(os.path.join(local_tmp_exp_dir, 'exp.pickle'),
                 pickle.dumps(exp))
@@ -419,7 +415,7 @@ class Neroman:
         # Transfer the files to the remote server
         try:
             neronet.core.osrun('rsync -az -e "ssh" "%s/" "%s:%s"' %
-                (local_tmp_dir, node.ssh_address, remote_dir), verbose)
+                (local_tmp_dir, node.ssh_address, remote_dir))
             # Start the Neromum daemon
             node.start_neromum()
             yield("Experiment " + exp_id + " successfully submitted to " + node_id + "\n")

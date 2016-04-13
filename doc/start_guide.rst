@@ -64,7 +64,6 @@ For example, to configure kosh.aalto.fi as a usable node:
 ::
     
     blomqvt1@sromu:~$ nerocli --addnode kosh kosh.aalto.fi
-    > ssh kosh.aalto.fi "cd ~/.neronet; PATH="~/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="~/.neronet" python -V"
     Cluster successfully accessed! Adding it...Defined a new cluster with ID "kosh"
 
 Step 2: Specifying and submitting experiments
@@ -174,10 +173,6 @@ After you have successfully configured your experiments you can submit them to c
 
     blomqvt1@sromu:~$ nerocli --submit theanotest kosh
     
-    > rsync -az "/home/blomqvt1/projects/neronet/neronet" "/tmp/.neronet-theanotest"
-    > cp -p "/home/blomqvt1/experiments/theanotest/theanotest.py" "/tmp/.neronet-theanotest/experiments/theanotest"
-    > rsync -az -e "ssh" "/tmp/.neronet-theanotest/" "kosh.aalto.fi:~/.neronet"
-    > ssh kosh.aalto.fi "cd ~/.neronet; PATH="~/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="~/.neronet" neromum --start"
     Neromum daemon started...
     Experiment theanotest successfully submitted to kosh
 
@@ -191,20 +186,6 @@ To fetch data of submitted experiments, ``nerocli --fetch`` is used
     blomqvt1@sromu:~$ nerocli --fetch
     
     Fetching changes from cluster "kosh"...
-    > rsync -az -e "ssh" "kosh.aalto.fi:~/.neronet/experiments/" "/home/blomqvt1/.neronet/results"
-    > ssh kosh.aalto.fi "cd ~/.neronet; PATH="~/.neronet/neronet:/usr/local/bin:/usr/bin:/bin" PYTHONPATH="~/.neronet" neromum --input"
-    Reading stdin...
-    Read 39 bytes ("�}q(UactionqUclean_experimentsqU
-    ").
-    Read 17 bytes ("exceptionsq]qU
-    ").
-    Read 15 bytes ("theanotestqau.").
-    Reading finished!
-    Received {'action': 'clean_experiments', 'exceptions': ['theanotest']}
-    Query "input" with ({'action': 'clean_experiments', 'exceptions': ['theanotest']},), {} to (127.0.0.1, 46826)...
-    Received reply: {'data': {}, 'rv': 0, 'msgbody': '0 experiments cleaned.\n', 'uptime': 52.05758714675903}
-    Reply {'data': {}, 'rv': 0, 'msgbody': '0 experiments cleaned.\n', 'uptime': 52.05758714675903}
-    
     Updating experiment "theanotest"...
 
 2.7: Other important Neronet CLI commands
