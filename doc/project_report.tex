@@ -40,10 +40,11 @@
 
 
 \begin{frame}{Forecitation}
-  I have supervised several bachelors' theses and other student projects.
+  "I have supervised several bachelors' theses and other student projects.
 
   \vspace*{1cm}
-  You surprised me with your \alert{commitment} and \alert{effort}.
+  You and the product surpassed my expectations.
+  I did not expect such professional results."
 
   \vspace*{1cm}
   Pyry Takala, PO
@@ -69,7 +70,6 @@
   \begin{itemize}
   \item Machine learning researcher at Aalto
   \item Past: Amazon, McKinsey \& Company, Goldman Sachs, August...
-  \item A great PO!
   \end{itemize}
 \end{frame}
 \begin{frame}{Agile coach}
@@ -77,42 +77,51 @@
     \centering\includegraphics[width=0.4\columnwidth]{gfx/eero.jpg}
   \end{figure}
   \begin{itemize}
-  \item Continuous Delivery researcher at Aalto
+  \item Continuous delivery researcher at Aalto
   \item Past: Prosys PMS Ltd, WiRCA-miehet, Aalto...
-  \item A great coach!
   \end{itemize}
 \end{frame}
 
 \section{Project} \bgset{gfx/neural1__bgmod.jpg}
 
 \begin{frame}{Pyry's problem}
-  Challenges in training neural networks
+  Challenges in training neural networks:
   \begin{itemize}
-  \item Takes forever!
-  \item Might anything be wrong?
-  \item If yes, what?
-  \item Is it developing better than its precedants?
-  \item Why does it take forever?
+  \item Long duration of individual experiments
+  \item Difficult to manage of experiment variations, queues and computing nodes
+  \item Difficult to monitor and analyse experiment progress
+  \item Difficult to log experiment histories
   \end{itemize}
 \end{frame}
-\begin{frame}{Vision}
-  A tool that would
+\begin{frame}{Ideas}
+  Could a toolbox be developed that would
   \begin{itemize}
-  \item facilitate experiment management
-  \item provide information on ongoing experiments
-  \item be able to autoterminate experiments
-  \item archive all results
-  \item possibly even facilitate analysis
+  \item monitor experiment logs and detect problems
+  \item notify of and/or autoterminate poorly developing experiments
+  \item facilitate experiment variation
+  \item faciliate experiment and queue management
+  \item enable easy access to experiment data
+  \item potentially also visualize parameter evolution
   \end{itemize}
 \end{frame}
-\begin{frame}{Vision}
-  Other requirements
+%\begin{frame}{Vision}
+%  A tool that would
+%  \begin{itemize}
+%  \item facilitate experiment management
+%  \item provide information on ongoing experiments
+%  \item be able to autoterminate experiments
+%  \item archive all results
+%  \item possibly even facilitate analysis
+%  \end{itemize}
+%\end{frame}
+\begin{frame}{Ideas}
+  Such a toolbox should also be
   \begin{itemize}
   \item lightweight
   \item easily extensible
   \item open source
-  \item good usability
   \item framework agnostic
+  \item convenient in practice
   \end{itemize}
 \end{frame}
 \begin{frame}{Journey map}
@@ -196,6 +205,24 @@
   }
   \end{figure}
 \end{frame}
+\begin{frame}{Structural architecture}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.8\columnwidth]{gfx/structural_architecture.png}
+  \end{figure}
+\end{frame}
+\begin{frame}{Features}
+  Core features:
+  \begin{itemize}
+  \item extensible experiment specification system
+  \item easy experiment submission to remote nodes
+  \item experiment state and progress information easily accessible
+  \item access to computing node resources information
+  \item customizable notification and autotermination system
+  \item additional conveniences: drag drop, experiment template, customizable
+    parameter value plotting 
+  \end{itemize}
+\end{frame}
 
 \section{Demo}
 
@@ -224,13 +251,34 @@
   \end{itemize}
 \end{frame}
 \begin{frame}{User feedback}
-We utilized lots of end user testing and received great feedback from a
-Triton admin:
+We utilized lots of end user testing and received great feedback from
+Simo Tuomisto, a Triton admin:
 
 \begin{itemize}
   \item Thought that our design and architecture was well devised.
   \item Offered performance improvement ideas.
-  \item In general he liked our usability as did our PO.
+  \item In general he liked our usability.
+\end{itemize}
+\end{frame}
+\begin{frame}{User feedback}
+From our peer team we received feedback as well.
+
+Thus we did several
+\begin{itemize}
+  \item bug fixes
+  \item usability improvements
+  \item improvements to project documentation and the user guide
+\end{itemize}
+\end{frame}
+\begin{frame}{User feedback}
+Pyry also gave us great feedback during development,
+regarding requirements and usability etc.
+
+In the end he claimed that
+\begin{itemize}
+  \item the end product was surprisingly professional
+  \item the usability was excellent
+  \item and that our team had expertise
 \end{itemize}
 \end{frame}
 
@@ -252,7 +300,7 @@ Triton admin:
   \begin{itemize}
   \item BI level: unit tests, code confromity, commenting, documentation, peer review
   \item Sprint level: BIs \Done{}, unit and system tests ok, sprint goal achieved.
-  \item Project level: all sprints \Done{}.
+  \item Project level: all sprints \Done{} and PO satisfied.
   \end{itemize}
 \end{frame}
 \begin{frame}{QA practices}
@@ -279,6 +327,7 @@ Triton admin:
 
 \begin{frame}{Process overview}
   \begin{itemize}
+  \item Each developer as a sprint team leader in turn
   \item Teamwork sessions almost every Wed \& Fri at Maari
   \item Scrum as required
   \item Tried to employ professional SD practices
@@ -337,16 +386,21 @@ Spent and budgeted effort in hours by team member and sprint:
   \end{tabular}
   \end{table}
 \end{frame}
+\begin{frame}{Burnup}
+  \begin{figure}
+    \centering\includegraphics[width=1\columnwidth]{gfx/burnup.jpg}
+  \end{figure}
+\end{frame}
 
 \section{Remarks} \bgset{gfx/neural3__bgmod.jpg}
 
-\begin{frame}{Remarks}
-  Final remarks:
+\begin{frame}{Future}
+  The goal was to develop a tool with a bright future.
+
   \begin{itemize}
-  \item The project realized the initial vision
-  \item Complicating factors
-  \item Simplifying factors
-  \item Additional points
+  \item Extensive documentation, manual and user guide
+  \item Published as an open source project
+  \item Located in Github and installable via \texttt{pip}
   \end{itemize}
 \end{frame}
 \begin{frame}{Complicating factors}
@@ -357,7 +411,7 @@ Spent and budgeted effort in hours by team member and sprint:
   \item Very difficult domain
   \item Very inexperienced team
   \item Only five developers
-  \item PO nor the Scrum master had participated in the course before
+  \item The PO nor the scrum master had participated in the course before
   \end{itemize}
 \end{frame}
 \begin{frame}{Simplifying factors}
@@ -369,11 +423,22 @@ Spent and budgeted effort in hours by team member and sprint:
   \end{itemize}
 \end{frame}
 \begin{frame}{Additional points}
+  Additional points
   \begin{itemize}
   \item Sprint team leader system
   \item User guide/manuals in communication
   \item Early end user testing
   \item OS future focus
+  \end{itemize}
+\end{frame}
+\begin{frame}{Summary}
+  Summary:
+  \begin{itemize}
+  \item The process was smooth
+  \item All sprints were successful
+  \item More than fulfilled the initial vision
+  \item Surpassed PO's expectations
+  \item We learned and had fun together :)
   \end{itemize}
 \end{frame}
 \end{document}
