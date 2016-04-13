@@ -86,7 +86,6 @@ class Neroman:
             self.config_parser.save_nodes(NODES_FILENAME, self.nodes)
         except RuntimeError as e:
             yield('Error: %s' % (e))
-            sys.exit(1)
 
     def delete_node(self, node_id):
         """Deletes the node with the given node ID
