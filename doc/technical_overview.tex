@@ -169,11 +169,11 @@
       \node (ln) at ( 2, 4  ) [ndom]                 {Cluster network};
       \node (nm) at ( 6, 9  ) [ncmp,fill=blue!30]    {\texttt{neroman}};
       \node (mm) at ( 6, 5.5) [nmum,fill=red!30]     {\texttt{neromum}};
-      \node (j1) at ( 3, 2  ) [njob]                 {\texttt{nerokid}};
+      \node (jm) at ( 8, 2  ) [ncmp,fill=red!30]     {\texttt{warden}};
+      \node (j1) at ( 1, 2  ) [njob]                 {\texttt{nerokid}};
       \node (j2) at ( 5, 1  ) [njob]                 {\texttt{nerokid}};
-      \node (j4) at ( 7, 1  ) [njob]                 {\texttt{nerokid}};
-      \node (j3) at ( 9, 2  ) [njob]                 {\texttt{nerokid}};
-      \foreach \a/\b in {nm/mm,mm/j1,mm/j2,mm/j3,mm/j4}
+      \node (j3) at (3.8,3) [njob]                 {\texttt{nerokid}};
+      \foreach \a/\b in {nm/mm,mm/jm,jm/j1,jm/j2,jm/j3,mm/j1,mm/j2,mm/j3}
         \draw [<->] (\a) edge (\b);
     \end{tikzpicture}
   }
@@ -208,7 +208,7 @@
     and socket access to the nodes where \Nerokid{}s are deployed
   \item Collaborates with standard \Warden{}s.\footnote{SLURM is currently
     used by Triton and CSC. OGE is still used worldwide. Jobman could be
-    setup for the CS gpu cluster.}
+    setup for the CSE Dep. gpu cluster.}
   \item Key functionality
     \begin{itemize}
     \item Receive and execute commands from \Neroman{}
@@ -248,7 +248,7 @@
 \begin{frame}{Structural architecture design}
   \begin{figure}
     \centering
-    \includegraphics[width=0.8\columnwidth]{gfx/structural_architecture.png}
+    \includegraphics[width=0.8\columnwidth]{gfx/structural_architecture_plan.png}
   \end{figure}
 \end{frame}
 % \section{Views}
