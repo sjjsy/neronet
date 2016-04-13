@@ -81,6 +81,9 @@ def main():
             print('Data removal cancelled.')
         return
     nero = neronet.neroman.Neroman()
+    if not any(vars(args).values()):
+        parser.print_help()
+        sys.exit(1)
     if args.addexp:
         experiment_folder = args.addexp[0]
         changed_exps = {}

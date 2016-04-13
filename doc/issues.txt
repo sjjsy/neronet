@@ -26,6 +26,7 @@ Todo:
 - iss034 Better explanation what experiment id is (same for clusters) perhaps exp name instead
 - iss035 Where to see that data after fetching
 - iss036 Running nerocli wihtout parameters produces no results
+- iss037 Starting neromum in a node with HOME folder filesystem shared with another node with Neromum running kills existing Neromums.
 
 Done:
 
