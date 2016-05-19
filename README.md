@@ -1,5 +1,3 @@
-[![Floobits Status](https://floobits.com/smarisa/neronet.svg)](https://floobits.com/smarisa/neronet/redirect)
-
 # Neronet
 
 Neronet is a framework designed to facilitate the specification, submission,
@@ -8,12 +6,12 @@ experiments. The tool is ment to be used by computational researchers that
 have access to a computing cluster with several nodes accessible via SSH and
 SSH keys.
 
-Neronet is a software development project undertaken by Team 11 of the Aalto
-University course CSE-C2610 Software Project of semestern 2015-16 for Pyry
-Takala from the
+Neronet was born as a software development project undertaken by Team 11 of the
+Aalto University course CSE-C2610 Software Project of semestern 2015-16 for
+Pyry Takala from the
 [Aalto deep learning research group](http://research.ics.aalto.fi/bayes/).
-The project was started in October 19th 2015 and will be finished by April
-13th 2016. The project is conducted in seven sprints and Scrum is employed.
+The project was started on October 19th 2015 and finished on April 13th 2016.
+The project was conducted in seven sprints and Scrum was employed.
 
 This project is under the [MIT License](./LICENSE).
 
@@ -36,8 +34,8 @@ The project repo contains two main branches:
 - [sprint](https://github.com/smarisa/neronet/tree/sprint) -- the work
   in progress of the currently ongoing increment (sprint).
 
-The `sprint` branch has been used for active development work and was merged
-to `stable` once each sprint increment was done.
+During active development the `sprint` branch is used for active development
+work and is merged to `stable` once each sprint increment gets done.
 
 ## General information
 
@@ -72,7 +70,7 @@ The files listed below offer lots of project related information:
 
 ## Team
 
-The team consists of
+The project team consisted of
 
 - Samuel Marisa (smarisa) -- *scrum master*
 - Teemu	Blomqvist (blomqvt1) -- *developer*
